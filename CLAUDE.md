@@ -244,6 +244,25 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
 - To look at many pictures quickly, draw them into a LaTeX file and look at the PDF; never judge a layout from
   coordinates alone.
 
+## Versions
+
+Semantic versioning, MAJOR.MINOR.PATCH: the largest change since the last release decides the next number.
+
+- MAJOR: code written for the previous version can stop working or give a different result without notice: a public
+  name removed or renamed, the arguments or the default of an option changed, a convention of the expressions changed
+  (signs, normalisations, order of arguments).
+- MINOR: something new that existing code does not see: a public function, an option or a value of an option, an exact
+  equation, a statistics, a kind of picture.
+- PATCH: the package does better what its documents already say: a wrong result or a picture corrected, speed, messages.
+
+Changes to the documents alone (README, showcase, manual text, video, logo) need no release: GitHub Pages serves main.
+A tag and its paclet never move: a mistake in a release is corrected by the next patch release. A release: the version
+in `00_header.wl`, `PacletInfo.wl`, `CITATION.cff` (with `date-released`), the check of `Tests/RunTests.wl`, the README
+(install line, latest release), the manual (title, install line, how to cite), the showcase (title, values), `Examples.wl`
+and the map of the functions; `## Unreleased` of `CHANGELOG.md` becomes `## X.Y.Z (date)`; everything rebuilt and
+`check_consistency.py` passing, a commit "FunctionalDiagrams X.Y.Z"; the paclet built from a clean checkout
+(`Development/build_paclet.wl`); the GitHub release vX.Y.Z with the paclet and the two PDFs.
+
 ## Compatibility
 
 The package needs Mathematica 12.1 or later (`"WolframVersion" -> "12.1+"` in `PacletInfo.wl`): a function introduced
