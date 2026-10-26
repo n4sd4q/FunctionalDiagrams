@@ -18,7 +18,8 @@
   in a triangle, below); in one
   picture the blobs of one shape have one size, so that the lines between them stay parallel, and so do those of all the
   terms of a sum drawn together (Γ⁰ alone and beside Γ^(4) in one equation). The label of a triangle sits
-  near its incentre, not at its centroid.
+  near its incentre, not at its centroid. In the pictures of Mathematica a tilde or a hat is written above its letter
+  (it was a combining character, small and beside the apex of Λ̃).
 - **Triangles.** `"Triangle"` is equilateral, the same triangle as `"TriangleUp"` turned (it had a narrow 30-degree tip,
   with little room for a label).
 - **Lines between a box and a triangle** are parallel: the lines of a triangle always leave from its corners, and a box

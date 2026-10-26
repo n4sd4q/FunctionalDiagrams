@@ -42,9 +42,10 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
 - `Logo/` — the logo (SVG and PDF: the badge, which reads on light and dark pages; a white version for the dark title
   pages of the manual and the showcase; `_small.svg` for 16–32 px), drawn by `Development/make_logo.py`; the social preview
   `social_preview.png` is built by `Development/make_readme_figure.sh`.
-- `Media/` — the demo video `demo.mp4` (1280×720, H.264, under a minute), its looping preview `demo_preview.gif` (at the
-  top of the README, a plain `<img>`) and a poster frame `demo_poster.png`, made by `python3 Development/make_demo_video.py`
-  (about a minute; pdflatex, pdftocairo, PIL, ffmpeg) from the figures of the showcase and the first example of the
+- `Media/` — the demo video `demo.mp4` (1280×720, H.264, under a minute), its looping preview `demo_preview.webp` (an
+  animated WebP at 60 fps, at the top of the README, a plain `<img>`) and a poster frame `demo_poster.png`, made by
+  `python3 Development/make_demo_video.py` (about four minutes, most of them writing the WebP; pdflatex, pdftocairo, PIL,
+  ffmpeg) from the figures of the showcase and the first example of the
   README: run it again when they change, and look at frames of the result (`--frames` writes some to `build/video/frames`).
 - Map of the functions (in the README): `Development/make_function_map.wl` (Mathematica) reads the group (block of
   `00_header.wl`), kind (function or inert data head), usage message and dependencies of every public name (from its
@@ -235,13 +236,18 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   outward direction (`outwardGap`): a V outside a loop, never one inside; a vacuum cycle through such an insertion is
   rotated so that the picture is symmetric (`symmetricCycleRotation`).
 - Symmetric diagrams must be drawn symmetric: among layouts of equal quality the symmetric one wins.
+- Colours of the Graphics (`DiagramPlot`, `DrawDiagram`): only black, white and greys, each set explicitly through the
+  light/dark pairs of `05_drawing.wl` (`LightDarkSwitched` from 14.3, the light colours before), so that a picture reads
+  on light and dark notebooks; fills that hide lines take the notebook's background. `"Appearance" -> "Light" | "Dark"`
+  forces one look, on its own background. The TikZ code is for white pages and ignores it.
 - To look at many pictures quickly, draw them into a LaTeX file and look at the PDF; never judge a layout from
   coordinates alone.
 
 ## Compatibility
 
 The package needs Mathematica 12.1 or later (`"WolframVersion" -> "12.1+"` in `PacletInfo.wl`): a function introduced
-in a later version needs that requirement raised, in `PacletInfo.wl`, the README and the manual.
+in a later version needs that requirement raised, in `PacletInfo.wl`, the README and the manual, unless it is used only
+when it exists, with a fallback (as `LightDarkSwitched`, from 14.3, for the pictures and the load banner).
 
 ## Rules
 

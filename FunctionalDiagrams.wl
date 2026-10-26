@@ -4169,12 +4169,16 @@ blobHatchesOf[p_, {_, shape_, fill_, h_}] := Switch[fill,
    "CrossHatched", Join[blobHatchSegments[p, shape, h, 1], blobHatchSegments[p, shape, h, -1]],
    _, {}];
 (* the label of a blob as plain text, for the pictures of Mathematica: Greek letters, without the LaTeX markup; a tilde
-   or a hat as a combining accent on the letter that follows it *)
-plainBlobLabel[label_String] := StringReplace[StringReplace[StringReplace[label, {"\\overline" -> "", "\\mathrm" -> "", "\\rm" -> "",
-      "\\Sigma" -> "\[CapitalSigma]", "\\Gamma" -> "\[CapitalGamma]", "\\Lambda" -> "\[CapitalLambda]", "\\Phi" -> "\[CapitalPhi]",
-      "\\Pi" -> "\[CapitalPi]", "\\Delta" -> "\[CapitalDelta]", "\\chi" -> "\[Chi]"}],
-    {"{" -> "", "}" -> "", "^" -> "", "_" -> "", " " -> ""}],
-   {"\\tilde" ~~ c_ :> c <> "\:0303", "\\hat" ~~ c_ :> c <> "\:0302", "\\" -> ""}];
+   or a hat over the letter that follows it, as an accent written above the letter (a combining character would be small
+   and close to it) *)
+plainBlobLabel[label_String] := accentedBlobLabel[StringReplace[StringReplace[StringReplace[label, {"\\overline" -> "",
+       "\\mathrm" -> "", "\\rm" -> "", "\\Sigma" -> "\[CapitalSigma]", "\\Gamma" -> "\[CapitalGamma]",
+       "\\Lambda" -> "\[CapitalLambda]", "\\Phi" -> "\[CapitalPhi]", "\\Pi" -> "\[CapitalPi]", "\\Delta" -> "\[CapitalDelta]",
+       "\\chi" -> "\[Chi]"}],
+     {"{" -> "", "}" -> "", "^" -> "", "_" -> "", " " -> ""}],
+    {"\\tilde" ~~ c_ :> c <> "\:0303", "\\hat" ~~ c_ :> c <> "\:0302", "\\" -> ""}]];
+accentedBlobLabel[s_String] := If[StringFreeQ[s, "\:0303" | "\:0302"], s,
+   Row[StringCases[s, {c_ ~~ "\:0303" :> Overscript[c, "~"], c_ ~~ "\:0302" :> Overscript[c, "^"], c_ :> c}]]];
 (* where the label of a blob is written: the centre, or near the incentre of a triangle (blobLabelPlacement) *)
 blobLabelPoint[p_, {label_, shape_, fill_, h_}] := p + If[triangleShapeQ[shape] && StringQ[label],
     blobLabelPlacement[shape, h, blobLabelBox[label, fill, shape]][[1]], {0., 0.}];
