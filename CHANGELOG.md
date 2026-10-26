@@ -43,6 +43,13 @@
   whole unit high (the relative amplitude of the TikZ waves had overwritten the amplitude of the Graphics, 0.055 units):
   they are back to their size. The TikZ code was not affected.
 
+### Logo
+
+- **Arrows that read.** The fermion loop and the wavy line of the logo are slimmer (6.5 and 6 units of 128, from 8 and 7)
+  and the arrow heads larger and wider (19 units across, more than twice the loop), so that the direction of the loop
+  reads at 64 and 32 px too; in the Logo files, the title pages of the manual and of the showcase, the social preview and
+  `packageLogo`. The small badge (16 to 32 px, the load banner) keeps its heavier lines and no arrows.
+
 ## 2.3.0 (2026-10-26)
 
 Since 2.2.0: 54 new public names (132 in all), about 800 tests (805 at the last run). In short: the effective actions are

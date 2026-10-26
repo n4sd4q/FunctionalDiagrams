@@ -1738,5 +1738,13 @@ With[{banner = FunctionalDiagrams`Private`loadBanner[]},
     {Style, 1, True, True, True, {"https://github.com/n4sd4q/FunctionalDiagrams/blob/main/CITATION.cff",
       "https://github.com/n4sd4q/FunctionalDiagrams",
       "https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Documentation/FunctionalDiagrams_Manual.pdf"}}]];
+(* the full logo (make_logo.py): two arrow heads on the loop, each wider at its base than twice the line of the loop, so
+   that the arrows read at small sizes; the small badge of the banner has no arrows *)
+With[{full = FunctionalDiagrams`Private`packageLogo[64, False], small = FunctionalDiagrams`Private`packageLogo[30]},
+  check["logo: arrow heads wider than twice the loop; the small badge without them",
+    {Length[Cases[full, _Polygon, Infinity]],
+     Min[Cases[full, Polygon[{_, b_, c_}] :> Norm[b - c], Infinity]] > 2 128 Last[Cases[full, Thickness[t_] :> t, Infinity]],
+     Count[small, _Polygon, Infinity]},
+    {2, True, 0}]];
 
 Print["\n", passed, " passed, ", failed, " failed", If[failed > 0, ": " <> StringRiffle[failures, ", "], ""], "   (", Round[AbsoluteTime[] - startTime], " s)"];

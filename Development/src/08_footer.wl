@@ -39,15 +39,17 @@ logoWavyPoints[{ax_, ay_}, {bx_, by_}, amplitude_, halfwaves_, n_:120] :=
     {nx, ny} = {-(by - ay), bx - ax}/length;
     Table[{ax + (bx - ax) t, ay + (by - ay) t} + {nx, ny} amplitude Min[1, 6 t, 6 (1 - t)] Sin[Pi halfwaves t],
       {t, 0., 1., 1./n}]];
+(* the arrow heads wider than twice the loop (make_logo.py: 2 x 0.58 x size long, 2 x 0.72 x size wide), so that they
+   stand out of it at small sizes *)
 logoArrowhead[r_, angle_, size_] :=
   Module[{a = angle Degree, p, tangent, normal},
     p = {64 + r Cos[a], 64 + r Sin[a]}; tangent = {-Sin[a], Cos[a]}; normal = {Cos[a], Sin[a]};
-    Polygon[{p + 0.6 size tangent, p - 0.6 size tangent + 0.62 size normal, p - 0.6 size tangent - 0.62 size normal}]];
+    Polygon[{p + 0.58 size tangent, p - 0.58 size tangent + 0.72 size normal, p - 0.58 size tangent - 0.72 size normal}]];
 (* the badge as drawn for small sizes (Logo/FunctionalDiagrams_logo_small.svg: no arrows or dots, heavier lines),
    packageLogo[size, False] the full one *)
 packageLogo[size_:30, small_:True] :=
   Module[{r, loop, wave, amplitude, halfwaves},
-    {r, loop, wave, amplitude, halfwaves} = If[small, {42, 12, 10, 9, 4}, {38, 8, 7, 7.5, 6}];
+    {r, loop, wave, amplitude, halfwaves} = If[small, {42, 12, 10, 9, 4}, {38, 6.5, 6, 7.5, 6}];
     Graphics[{
        $logoAccent, Rectangle[{0, 0}, {128, 128}, RoundingRadius -> 28],
        {EdgeForm[{White, Opacity[0.16], Thickness[2/128]}], FaceForm[None],
@@ -55,7 +57,7 @@ packageLogo[size_:30, small_:True] :=
        CapForm["Round"], JoinForm["Round"], $logoLight, Thickness[wave/128],
        Line[logoWavyPoints[{64 - r, 64}, {64 + r, 64}, amplitude, halfwaves]],
        White, Thickness[loop/128], Circle[{64, 64}, r],
-       If[small, {}, {logoArrowhead[r, 90, 11], logoArrowhead[r, -90, 11], Disk[{64 - r, 64}, 7.5], Disk[{64 + r, 64}, 7.5]}]},
+       If[small, {}, {logoArrowhead[r, 90, 13], logoArrowhead[r, -90, 13], Disk[{64 - r, 64}, 7], Disk[{64 + r, 64}, 7]}]},
       PlotRange -> {{0, 128}, {0, 128}}, PlotRangePadding -> None, ImagePadding -> None, ImageSize -> size,
       BaselinePosition -> Scaled[0.2]]];
 (* lightDarkColor (a colour for light notebooks and one for dark notebooks) is defined with the pictures *)

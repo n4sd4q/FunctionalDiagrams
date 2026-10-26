@@ -29,20 +29,23 @@ def wavy(a, b, amplitude, halfwaves, n=240):
     return 'M ' + ' L '.join('%.2f %.2f' % p for p in points)
 
 
-def arrowhead(r, angle, size):
+def arrowhead(r, angle, size, length=0.58, width=0.72):
     """An isosceles arrowhead centred on the loop of radius r at the given angle (degrees; y points down), pointing
-    counterclockwise on the screen."""
+    counterclockwise on the screen: 2 length x size long, 2 width x size wide at its base (more than twice the width of
+    the loop, so that it reads at 32 px)."""
     a = math.radians(angle)
     px, py = C + r * math.cos(a), C + r * math.sin(a)
     tx, ty = math.sin(a), -math.cos(a)
     nx, ny = -ty, tx
-    tip = (px + tx * size * 0.6, py + ty * size * 0.6)
-    left = (px - tx * size * 0.6 + nx * size * 0.62, py - ty * size * 0.6 + ny * size * 0.62)
-    right = (px - tx * size * 0.6 - nx * size * 0.62, py - ty * size * 0.6 - ny * size * 0.62)
+    tip = (px + tx * size * length, py + ty * size * length)
+    left = (px - tx * size * length + nx * size * width, py - ty * size * length + ny * size * width)
+    right = (px - tx * size * length - nx * size * width, py - ty * size * length - ny * size * width)
     return 'M %.2f %.2f L %.2f %.2f L %.2f %.2f Z' % (tip + left + right)
 
 
-def logo(badge, r=38, loop_width=8, wave_width=7, amplitude=7.5, halfwaves=6, dots=7.5, arrows=11):
+# The lines are slimmer than the arrow heads (loop 6.5, wavy line 6, heads 15 long and 19 wide), so that the arrows of
+# the fermion loop stand out of it also at 64 and 32 px; the small badge, without arrows, keeps heavier lines.
+def logo(badge, r=38, loop_width=6.5, wave_width=6, amplitude=7.5, halfwaves=6, dots=7, arrows=13):
     parts = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">',
              '<title>FunctionalDiagrams</title>']
     if badge:
