@@ -49,7 +49,7 @@ BRACKET = (150, 172, 200)    # the cell brackets on the right
 # ---------------------------------------------------------------------------------------------------------------------
 # the pictures: LaTeX elements, one page each
 
-SHOWCASE_PT = {"tiny": 6, "scriptsize": 8, "footnotesize": 9, "small": 10}
+BLOB_EM = 0.6   # the font of a label in a blob, in units of length ($blobLabelEm of the package)
 # an arrow head: \fill (tip) -- (corner) -- (notch) -- (corner) -- cycle;
 ARROW_HEAD = re.compile(r"\\fill \((-?[0-9.]+),(-?[0-9.]+)\) -- \((-?[0-9.]+),(-?[0-9.]+)\) -- \((-?[0-9.]+),(-?[0-9.]+)\) -- "
                         r"\((-?[0-9.]+),(-?[0-9.]+)\) -- cycle;")
@@ -90,11 +90,11 @@ def scaled_figure(name, unit, line=0.62, font=r"\scriptsize", arrow=None):
             text = re.sub(r"line width=([0-9.]+)pt", lambda m: "line width=%.3fpt" % (float(m.group(1)) * g), text)
         text = re.sub(r"(amplitude|segment length)=([0-9.]+)mm", lambda m: "%s=%.3fmm" % (m.group(1), float(m.group(2)) * f), text)
         if r"\node" in text and "inner sep=0pt" not in text:
-            # the name written inside a blob: scaled with the blob, about as large in it as in the showcase (whose
-            # sizes are those of an 11pt document; a tenth larger, to be read in the frame), so that it does not cover
-            # the blob
+            # the name written inside a blob: scaled with the blob, as large in it as the package sizes blobs for
+            # (0.6 units of length, a little larger than in the showcase, whose sizes are those of an 11pt document), so
+            # that it fits with a band of hatching around it
             text = re.sub(r"font=\\(tiny|scriptsize|footnotesize|small)\b", lambda m: "font=\\fontsize{%.2f}{%.2f}\\selectfont" % (
-                (1.1 * SHOWCASE_PT[m.group(1)] * f,) * 2), text)
+                (BLOB_EM * unit * 72.27 / 2.54,) * 2), text)
             text = re.sub(r"(inner sep|rounded corners)=([0-9.]+)pt", lambda m: "%s=%.2fpt" % (m.group(1), float(m.group(2)) * f), text)
         text = re.sub(r"font=\\(tiny|scriptsize|footnotesize|small)\b", lambda m: "font=" + font, text)
         out.append(text)
@@ -751,7 +751,8 @@ def timeline(el, preview=False):
     d = (lambda video, gif: gif if preview else video)     # the preview is shorter
     twoparticle = card_scene(el, "twoparticle", ["eq_bethe_salpeter", "bs_rpa", "bs_ladder"], d(3.9, 3.4), gap=16)
     parquet = card_scene(el, "parquet", ["eq_parquet", "parquet_ph"], d(3.9, 3.4), gap=22, stagger=0.4)
-    hedin = card_scene(el, "hedin", ["hedin_sigma", "hedin_w", "hedin_p", "hedin_lambda"], d(3.4, 3.0), gap=14, stagger=0.22)
+    # four rows, the last one (the vertex, an equilateral triangle with its legs) tall: closer together, to fit the frame
+    hedin = card_scene(el, "hedin", ["hedin_sigma", "hedin_w", "hedin_p", "hedin_lambda"], d(3.4, 3.0), gap=4, stagger=0.22)
     # the end card of the preview fades out like the others, and the first card builds up again (a fade redraws the
     # whole card in every frame of the GIF: kept as short as those of the other cards); the GIF starts inside that
     # first card, in full view (PREVIEW_START)
