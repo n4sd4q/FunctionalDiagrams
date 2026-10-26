@@ -351,6 +351,10 @@ lineStyles = {{lsPlain, "Plain"}, {lsArrow, "Arrow"}, {lsDoubleArrow, "DoubleArr
 Scan[DeclareLineStyle[#[[1]], #[[2]]] &, lineStyles];
 check["DrawDiagram with each of the 14 line styles (a line, a line to a tadpole): Graphics, no message",
   Table[Check[Head[DrawDiagram[h[a, b] h[b, c] h[c, c], {a}]], "message"], {h, lineStyles[[All, 1]]}], ConstantArray[Graphics, 14]];
+(* the amplitude of the waves of the Graphics (0.055 units), not the relative factor of the TikZ waves *)
+check["a wavy line of the Graphics: its waves at most 0.06 units off the straight line between its ends",
+  With[{pts = First[Cases[DrawDiagram[lsWavy[a, b], {a, b}], Line[p_ /; Length[p] > 20] :> p, Infinity]]},
+   With[{u = Normalize[Last[pts] - First[pts]]}, Max[Abs[Cross[u] . (# - First[pts])] & /@ pts] < 0.06]], True];
 DeclareBlob[TrBlob, "\\Lambda", "Shape" -> "Triangle", "Fill" -> "Hatched"];
 check["DiagramPlot of blobs (a circle between two lines, a cross-hatched box, a hatched triangle): Graphics, no message",
   Table[Check[Head[DiagramPlot[bl[[1]], bl[[2]]]], "message"], {bl, {{IntegralOver[G[a, u] SgBlob[u, v] G[v, b], {u, v}], {a, b}},

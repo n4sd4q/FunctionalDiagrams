@@ -31,6 +31,9 @@
   Γ₂[G, D_σ] of φ⁴ theory is a dressed one, and is drawn in the plain style of its kind: the screened interaction W is an
   ordinary wavy line there (`"Interactions" -> {ScreenedW}` in one picture). The double wavy line marks W only where the
   bare V appears too, as in Hedin's equations, like the double arrow in the Dyson equation.
+- **Wavy lines of the Graphics.** The pictures that `DiagramPlot` and `DrawDiagram` return had wavy lines with waves a
+  whole unit high (the relative amplitude of the TikZ waves had overwritten the amplitude of the Graphics, 0.055 units):
+  they are back to their size. The TikZ code was not affected.
 
 ## 2.3.0 (2026-10-26)
 
