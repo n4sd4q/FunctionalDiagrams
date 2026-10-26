@@ -10,9 +10,10 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.3.0-1F4E79" alt="version 2.3.0">
+  <a href="https://github.com/n4sd4q/FunctionalDiagrams/releases/latest"><img src="https://img.shields.io/github/v/release/n4sd4q/FunctionalDiagrams?label=release&color=1F4E79" alt="latest release"></a>
   <img src="https://img.shields.io/badge/Mathematica-12.1%2B-1F4E79" alt="Mathematica 12.1 or later">
   <a href="Tests/RunTests.out"><img src="https://img.shields.io/badge/tests-805%20passed-2E7D32" alt="805 tests passed"></a>
+  <a href="https://github.com/n4sd4q/FunctionalDiagrams/actions/workflows/consistency.yml"><img src="https://github.com/n4sd4q/FunctionalDiagrams/actions/workflows/consistency.yml/badge.svg" alt="consistency check"></a>
   <img src="https://img.shields.io/badge/license-GPL--3.0--or--later-1F4E79" alt="GNU GPL v3 or later">
 </p>
 

@@ -151,10 +151,11 @@ free energy.
 
 ## Distribution
 
-- Publish 2.3.0 (prepared: the version is 2.3.0 everywhere and `build/FunctionalDiagrams-2.3.0.paclet` is built from a
-  clean checkout): the tag v2.3.0 and the GitHub release with the paclet and the two PDFs; the README installs the paclet
-  from the address of the release asset, which works once the release exists.
 - Upload `Logo/social_preview.png` in the GitHub settings (Social preview); it can only be done by hand.
+- A DOI for the releases (Zenodo), when wanted: switch the repository on at zenodo.org before a release, then add the
+  DOI to `CITATION.cff` and a badge to the README.
+- For every release: the version in `PacletInfo.wl`, `CITATION.cff`, `$FunctionalDiagramsVersion` and the documents, the
+  paclet built from a clean checkout (`Development/build_paclet.wl`), the GitHub release with the paclet and the two PDFs.
 
 ## Repository
 
