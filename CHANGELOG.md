@@ -15,6 +15,9 @@
 - **Lines between a box and a triangle** are parallel: two lines from the corners of one side of a triangle to two ports of
   a blob of another shape (Γ⁰ L₀ Λ, Γ_xc L₀ Λ̃) end on that side at the spacing of the other blob's ports, where they
   spread from the corners of the triangle, wider apart than those of the box.
+- **A line to the near corner of a blob** stays straight: a line that leaves a port of a blob outwards, 30 degrees or more
+  from its outline, is bent only if it would cross the blob, not for passing near it (in the Schwinger–Dyson equation of
+  φ⁴ the lines from the vertex to the two top corners of Γ^(4) were both bent, and left the vertex together).
 - **Diamonds** are hatched vertically (cross-hatched vertically and horizontally): the hatching at 45 degrees ran along
   two of their edges.
 - **The double wavy line** (a dressed interaction W) is one wavy line drawn double, its strokes 1.2 line widths apart along

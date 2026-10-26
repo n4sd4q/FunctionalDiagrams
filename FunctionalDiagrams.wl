@@ -3930,9 +3930,16 @@ insideBlobQ[q_, {c_, shape_, h_}, margin_ : -0.03] := Which[
        (b - a)[[1]] (q - a)[[2]] - (b - a)[[2]] (q - a)[[1]] > -margin vectorNorm[b - a]]]]],
    True, vectorNorm[q - c] < h + margin];
 (* a line from a point to a point or a port that crosses a blob, or passes close to it away from its ends: bent around
-   it, away from its centre *)
+   it, away from its centre. A line from a port of a blob that leaves it outwards, 30 degrees or more from its outline
+   (both sides at a corner), moves away from it all along (the blobs are convex): it is only tested for crossing that
+   blob, so that a line to the near corner of a box stays straight (in the Schwinger-Dyson equation of phi^4, the
+   lines from the vertex to the two top corners of Gamma4 would otherwise both be bent, and leave the vertex together) *)
+leavesBlobClearQ[e_, o_, d_] := With[{u = unitVectorOf[o - e]},
+   insideBlobQ[e, d, 0.03] && ! insideBlobQ[e, d, -0.03] &&
+    NoneTrue[{Pi/6., -Pi/6.}, insideBlobQ[e + 0.12 {{Cos[#], -Sin[#]}, {Sin[#], Cos[#]}} . u, d, -0.01] &]];
 blobAvoidingKind[pu_, pv_, uv_, discs_] := Module[{n = rotate90[unitVectorOf[pv - pu]], s = 0., t, r},
    Do[If[AnyTrue[Table[pu + k (pv - pu), {k, 0.05, 0.95, 0.05}], insideBlobQ[#, d] &] ||
+      ! leavesBlobClearQ[pu, pv, d] && ! leavesBlobClearQ[pv, pu, d] &&
       AnyTrue[Select[Table[pu + k (pv - pu), {k, 0.05, 0.95, 0.05}], vectorNorm[# - pu] > 0.3 && vectorNorm[# - pv] > 0.3 &],
        insideBlobQ[#, d, 0.22] &],
      t = (d[[1]] - pu) . n; r = Switch[d[[2]], "Box", Sqrt[2.] d[[3]], "Triangle" | "TriangleUp", 1.45 d[[3]], "Diamond", 1.3 d[[3]], _, d[[3]]] + 0.45;

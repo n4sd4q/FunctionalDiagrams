@@ -12,7 +12,7 @@
 -\frac{1}{6}
 %%PICTURE%%
 \begin{tikzpicture}[x=0.550cm, y=0.550cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
-  \draw (-1.780,-0.700) arc[start angle=197.140, end angle=87.565, radius=1.082];
+  \draw (-1.780,-0.700) -- (-0.700,0.700);
   \draw (-1.780,-0.700) -- (-0.700,-0.700);
   \draw (-1.780,-0.700) arc[start angle=198.478, end angle=40.413, radius=1.450];
   \draw (0.000,0.000) -- (-0.700,0.700);
