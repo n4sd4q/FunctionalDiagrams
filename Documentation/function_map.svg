@@ -124,20 +124,20 @@
 <rect x="335.6" y="446" width="10" height="10" rx="2.5" fill="#d8dade" stroke="#a4aab1"/>
 <text x="349.6" y="455" font-size="11" fill="#59636e">Effective actions and operator traces</text>
 <g><title>FunctionalDerivative: FunctionalDerivative[F, s1, s2, ..., sn] is the functional (left) derivative δ/δs1 δ/δs2 ... δ/δsn F, the rightmost acting first. The si are sources, e.g. J[x] or eta[x], and must be declared. The result is in canonical form. FunctionalDerivative[F, {s1, ..., sn}] is the same. FunctionalDerivative[F, G[x, y]], with G a propagator or any other two-index kernel that is not a source (a self-energy, an interaction V, a background propagator), treats every G[a, b] as an independent variable (the derivative symmetrised for a symmetric G, DeclareSymmetric, and antisymmetrised, (δF/δG(x, y) - δF/δG(y, x))/2, for an antisymmetric one, DeclareAntisymmetric), as SelfEnergy does for the Luttinger-Ward functional: Σ(x, y) = δPhi/δG(y, x) and the irreducible vertex Γ0(x1, x2; x3, x4) = δ^2 Phi/δG(x4, x3) δG(x2, x1) (IrreducibleVertex) (fermions) are such derivatives. F may contain TraceLog, OperatorTrace, OperatorKernel and LegendreTransform (δ Tr ln A = Tr(A^-1 δA), δG^-1 = -G^-1 δG G^-1), and kernels whose dependence on a source is declared with DeclareFunctionalDerivative; an expression free of G gives 0 when G is a known kernel (a declared line, a symmetric head), the message nosource otherwise. A variation that is not known (a non-integer power of an operator) gives the message opvariation. FunctionalDerivative[F, s1, ..., sn, &quot;MaximumOrder&quot; -&gt; {x, n}] is OrderPart[FunctionalDerivative[F, s1, ..., sn], x, Range[0, n]] for a coupling x or the head x of a line, with the terms of order above n dropped after each derivative; a logarithm of a sum polynomial in a coupling, such as Log[Z0 + Z1 + Z2/2], is first replaced by its series up to x^n (W = log Z order by order). When x is a source or a head with a declared derivative (the derivatives lower its order), the whole derivative is taken, then cut.</title>
-<rect class="box" x="250.6" y="472" width="298.7" height="48" rx="13" fill="#027d6e"/>
-<text x="272.6" y="503" font-size="20" font-weight="700" fill="#ffffff">∂<tspan dx="10">FunctionalDerivative</tspan></text></g>
-<text x="236.6" y="484.5" font-size="12" text-anchor="end" fill="#59636e"><tspan font-weight="700" fill="#027a6c">of Z and W</tspan>: correlation functions</text>
-<text x="236.6" y="500.5" font-size="12" text-anchor="end" fill="#59636e"><tspan font-weight="700" fill="#027a6c">of Γ</tspan>: vertex functions</text>
-<text x="236.6" y="516.5" font-size="12" text-anchor="end" fill="#59636e"><tspan font-weight="700" fill="#027a6c">of Φ</tspan>: Σ and Γ⁰</text>
-<path d="M549.4 496H560.4M560.4 478.6V513.4M560.4 478.6H571.4M560.4 513.4H571.4" stroke="#027d6e" stroke-width="1.5" fill="none"/>
+<rect class="box" x="249.3" y="472" width="301.3" height="48" rx="13" fill="#027d6e"/>
+<text x="271.3" y="503" font-size="20" font-weight="700" fill="#ffffff">δ<tspan dx="10">FunctionalDerivative</tspan></text></g>
+<text x="235.3" y="484.5" font-size="12" text-anchor="end" fill="#59636e"><tspan font-weight="700" fill="#027a6c">of Z and W</tspan>: correlation functions</text>
+<text x="235.3" y="500.5" font-size="12" text-anchor="end" fill="#59636e"><tspan font-weight="700" fill="#027a6c">of Γ</tspan>: vertex functions</text>
+<text x="235.3" y="516.5" font-size="12" text-anchor="end" fill="#59636e"><tspan font-weight="700" fill="#027a6c">of Φ</tspan>: Σ and Γ⁰</text>
+<path d="M550.7 496H561.7M561.7 478.6V513.4M561.7 478.6H572.7M561.7 513.4H572.7" stroke="#027d6e" stroke-width="1.5" fill="none"/>
 <g><title>SimplifyDiagrams: SimplifyDiagrams[expr] brings expr to canonical form: delta functions are integrated, integration variables are renamed canonically and equal diagrams are combined.</title>
-<rect class="box" x="571.4" y="469.1" width="122" height="19" rx="5" fill="#d4e9e6" stroke="#74b8af" stroke-width="1"/>
-<text x="577.4" y="483.1" font-size="12.5" fill="#1f2328">SimplifyDiagrams</text></g>
-<text x="577.4" y="498.4" font-size="10.8" font-style="italic" fill="#5f6872">the canonical form</text>
+<rect class="box" x="572.7" y="469.1" width="122" height="19" rx="5" fill="#d4e9e6" stroke="#74b8af" stroke-width="1"/>
+<text x="578.7" y="483.1" font-size="12.5" fill="#1f2328">SimplifyDiagrams</text></g>
+<text x="578.7" y="498.4" font-size="10.8" font-style="italic" fill="#5f6872">the canonical form</text>
 <g><title>OrderPart: OrderPart[expr, x, k] keeps the terms of expr of order k: if x is a symbol (a coupling constant) the terms proportional to x^k; if x is the head of an interaction line, e.g. V, the terms with k factors V[...]. OrderPart[expr, x, {k1, k2, ...}] keeps the terms of the orders k1, k2, ....</title>
-<rect class="box" x="571.4" y="503.9" width="72.3" height="19" rx="5" fill="#ddf1e4" stroke="#90d2a9" stroke-width="1"/>
-<text x="577.4" y="517.9" font-size="12.5" fill="#1f2328">OrderPart</text></g>
-<text x="577.4" y="533.1" font-size="10.8" font-style="italic" fill="#5f6872">the orders kept</text>
+<rect class="box" x="572.7" y="503.9" width="72.3" height="19" rx="5" fill="#ddf1e4" stroke="#90d2a9" stroke-width="1"/>
+<text x="578.7" y="517.9" font-size="12.5" fill="#1f2328">OrderPart</text></g>
+<text x="578.7" y="533.1" font-size="10.8" font-style="italic" fill="#5f6872">the orders kept</text>
 <path d="M172 393V410" stroke="#83a5c3" stroke-width="2.4" fill="none"/>
 <path d="M172 415l-5 -7h10z" fill="#83a5c3"/>
 <path d="M560 393V410" stroke="#83a5c3" stroke-width="2.4" fill="none"/>

@@ -819,7 +819,7 @@ def build(cv):
     panel(cv, MARGIN, y, inner, hpanel, 'differentiate')
     swatch_legend(cv, title_end, y + 14, legend_cats, MARGIN + inner - PAD - title_end)
     # the hub
-    hub_w = tw('∂', 20, True) + 10 + tw(HUB, 20, True) + 44
+    hub_w = tw('δ', 20, True) + 10 + tw(HUB, 20, True) + 44
     hx = MARGIN + inner / 2 - hub_w / 2
     hy = y + hub_top
     if not cv.measure:
@@ -827,7 +827,7 @@ def build(cv):
     open_name(cv, HUB, hx, hy, hub_w, hub_h)
     cv.add('<rect class="box" x="%s" y="%s" width="%s" height="%s" rx="13" %s/>'
            % (f(hx), f(hy), f(hub_w), f(hub_h), p(fill='hub')))
-    cv.add('<text x="%s" y="%s" font-size="20" font-weight="700" %s>∂<tspan dx="10">%s</tspan></text></g>'
+    cv.add('<text x="%s" y="%s" font-size="20" font-weight="700" %s>δ<tspan dx="10">%s</tspan></text></g>'
            % (f(hx + 22), f(hy + hub_h / 2 + 7), p(fill='on'), esc(HUB)))
     # what the derivatives give, to its left
     caption = [('of Z and W', ': correlation functions'), ('of Γ', ': vertex functions'), ('of Φ', ': Σ and Γ⁰')]
