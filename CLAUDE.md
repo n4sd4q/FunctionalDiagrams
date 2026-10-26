@@ -42,11 +42,12 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
 - `Logo/` — the logo (SVG and PDF: the badge, which reads on light and dark pages; a white version for the dark title
   pages of the manual and the showcase; `_small.svg` for 16–32 px), drawn by `Development/make_logo.py`; the social preview
   `social_preview.png` is built by `Development/make_readme_figure.sh`.
-- `Media/` — the demo video `demo.mp4` (1280×720, H.264, under a minute), its looping preview `demo_preview.webp` (an
-  animated WebP at 60 fps, at the top of the README, a plain `<img>`) and a poster frame `demo_poster.png`, made by
-  `python3 Development/make_demo_video.py` (about four minutes, most of them writing the WebP; pdflatex, pdftocairo, PIL,
-  ffmpeg) from the figures of the showcase and the first example of the
-  README: run it again when they change, and look at frames of the result (`--frames` writes some to `build/video/frames`).
+- `Media/` — the demo video `demo.mp4` (1920×1080, 60 fps, H.264, under a minute), its looping preview
+  `demo_preview.webp` (an animated WebP at 60 fps, 960×540, at the top of the README, a plain `<img>`) and a poster frame
+  `demo_poster.png`, made by `python3 Development/make_demo_video.py` (about four minutes, most of them writing the WebP;
+  pdflatex, pdftocairo, PIL, ffmpeg) from the figures of the showcase and the first example of the README: run it again
+  when they change, and look at frames of the result (`--frames` writes some to `build/video/frames`). Its lengths in
+  pixels are written for a frame 1280 px wide and scaled to the frame (`S`, `px`).
 - Map of the functions (in the README): `Development/make_function_map.wl` (Mathematica) reads the group (block of
   `00_header.wl`), kind (function or inert data head), usage message and dependencies of every public name (from its
   held definitions, through the private helpers, stopping at public names) into `Documentation/function_map.json`;

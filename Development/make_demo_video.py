@@ -7,11 +7,10 @@ Nothing in it is drawn by hand: the diagrams and formulas are the figures of the
 by Showcase/make_figures.wl; run it first), redrawn with one unit of length as in make_readme_figure.sh, and the code
 typed in the notebook is the first example of README.md. The pictures go through pdflatex and pdftocairo (one PNG per
 element, transparent), the frames are put together with PIL (at 1920 x 1080; the preview is reduced from them) and
-encoded by ffmpeg. The logo of the first and the last
-card is drawn again in every frame from the geometry of Development/make_logo.py, its wavy line rippling, its loop
-breathing and turning once (the arrow heads travel around it, with a soft start, a glide and a slight overshoot before
-they settle on their rest positions). Needs pdflatex (TeX Live: mathpazo,
-Source Code Pro, varwidth), pdftocairo (poppler), python3 with PIL, ffmpeg with libx264. Run from any folder:
+encoded by ffmpeg. The logo of the first and the last card is drawn again in every frame from the geometry of
+Development/make_logo.py, its wavy line rippling, its loop breathing and turning once (the arrow heads travel around it,
+with a soft start, a glide and a slight overshoot before they settle on their rest positions). Needs pdflatex (TeX Live:
+mathpazo, Source Code Pro, varwidth), pdftocairo (poppler), python3 with PIL, ffmpeg with libx264. Run from any folder:
     python3 Development/make_demo_video.py            (all three files, about four minutes: most of it the WebP)
     python3 Development/make_demo_video.py --frames   (also a few frames as PNG in build/video/frames, to look at;
                                                       with --only-frames, nothing else)
