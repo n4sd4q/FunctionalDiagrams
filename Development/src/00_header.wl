@@ -199,4 +199,4 @@ ZeroDimensionalValue::usage = "ZeroDimensionalValue[expr, {G -> g, V -> u, ...}]
 
 Begin["`Private`"];
 
-$FunctionalDiagramsVersion = "2.3.0";
+$FunctionalDiagramsVersion = "2.4.0";

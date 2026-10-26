@@ -15,7 +15,7 @@ With[{folder = Quiet[If[$InputFileName =!= \"\", DirectoryName[$InputFileName], 
     Get[FileNameJoin[{folder, \"FunctionalDiagrams.wl\"}]],
     Needs[\"FunctionalDiagrams`\"]]];", "Input"],
 Cell["$FunctionalDiagramsVersion
-(* the version of the package, e.g. \"2.3.0\" *)", "Input"],
+(* the version of the package, e.g. \"2.4.0\" *)", "Input"],
 Cell["The road map", "Subsection"],
 Cell["The tour follows the path of field theory. Each step is a new functional, obtained from the previous one by a logarithm or a Legendre transform, that keeps fewer diagrams:", "Text"],
 Cell[TextData[{"Z[J], the generating functional: all diagrams, the moments ", "\[LeftAngleBracket]\:03c6\:03c6\:22ef\[RightAngleBracket]", " (sections 2 and 3)."}], "Item"],

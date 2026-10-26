@@ -1,8 +1,12 @@
 # Changelog
 
-## Unreleased
+## 2.4.0 (2026-10-26)
 
-### Drawing
+Since 2.3.0: one new option, `"Appearance"` of `DiagramPlot` and `DrawDiagram`; no public name added, removed or renamed
+(132 in all), 821 tests. In short: the pictures of Mathematica follow light and dark notebooks, a blob is as large as its
+label, the lines between two blobs are parallel, and skeleton expansions are drawn with plain lines, as in the textbooks.
+
+### New
 
 - **Light and dark notebooks.** The pictures that `DiagramPlot` and `DrawDiagram` return follow the appearance of the
   notebook (Mathematica 14.3 and 15 have dark notebooks): dark lines and text on a light notebook, light ones on a dark
@@ -12,14 +16,16 @@
   notebook. The new option `"Appearance" -> Automatic | "Light" | "Dark"` forces one of them, on a background of its
   paper colour (for a picture exported for a page of the other kind; `SetOptions` for a session). The TikZ code, for white
   pages, is unchanged.
-- **Labels of blobs.** A blob declared by `DeclareBlob` is as large as its label needs: the label, on a hatched blob in a
-  white clearing, lies inside the blob with a band of hatching all around it, so that an accent, a subscript or a
-  superscript is never cut by the outline (Λ̃ in a triangle, Γ_ph, Γ^(4)). The blob grows, never its label shrinks (but
-  in a triangle, below); in one
-  picture the blobs of one shape have one size, so that the lines between them stay parallel, and so do those of all the
-  terms of a sum drawn together (Γ⁰ alone and beside Γ^(4) in one equation). The label of a triangle sits
-  near its incentre, not at its centroid. In the pictures of Mathematica a tilde or a hat is written above its letter
-  (it was a combining character, small and beside the apex of Λ̃).
+
+### Pictures
+
+- **Labels of blobs.** A blob declared by `DeclareBlob` is as large as its label needs: the label, on a hatched blob
+  in a white clearing, lies inside the blob with a band of hatching all around it, so that an accent, a subscript or a
+  superscript is never cut by the outline (Λ̃ in a triangle, Γ_ph, Γ^(4)). The blob grows, never its label shrinks
+  (but in a triangle, below); in one picture the blobs of one shape have one size, so that the lines between them stay
+  parallel, and so do those of all the terms of a sum drawn together (Γ⁰ alone and beside Γ^(4) in one equation). The
+  label of a triangle sits near its incentre, not at its centroid. In the pictures of Mathematica a tilde or a hat is
+  written above its letter (it was a combining character, small and beside the apex of Λ̃).
 - **Triangles.** `"Triangle"` is equilateral, the same triangle as `"TriangleUp"` turned (it had a narrow 30-degree tip,
   with little room for a label).
 - **Lines between a box and a triangle** are parallel: the lines of a triangle always leave from its corners, and a box
@@ -40,19 +46,20 @@
   Γ₂[G, D_σ] of φ⁴ theory is a dressed one, and is drawn in the plain style of its kind: the screened interaction W is an
   ordinary wavy line there (`"Interactions" -> {ScreenedW}` in one picture). The double wavy line marks W only where the
   bare V appears too, as in Hedin's equations, like the double arrow in the Dyson equation.
-- **Wavy lines of the Graphics.** The pictures that `DiagramPlot` and `DrawDiagram` return had wavy lines with waves a
-  whole unit high (the relative amplitude of the TikZ waves had overwritten the amplitude of the Graphics, 0.055 units):
-  they are back to their size. The TikZ code was not affected.
 
-### Logo
+### Documents
 
-- **Arrows that read.** The fermion loop and the wavy line of the logo are slimmer (6.5 and 6 units of 128, from 8 and 7)
-  and the arrow heads larger and wider (19 units across, more than twice the loop), so that the direction of the loop
-  reads at 64 and 32 px too; in the Logo files, the title pages of the manual and of the showcase, the social preview and
-  `packageLogo`. The small badge (16 to 32 px, the load banner) keeps its heavier lines and no arrows.
-
-### README
-
+- **Light and dark in the documents.** The manual (a paragraph in the section on pictures, the option in the table of
+  options) and the guided tour (a picture forced dark) describe `"Appearance"`. The usage message of `DiagramPlot` lists
+  every value of `"InteractionStyle"` (`"DoubleWavy"` and `"Curly"` were accepted, but not listed); those of
+  `DeclareBlob`, `DeclareLineStyle` and `DeclareInteractionLine` give the sizes of the blobs and say where the double
+  wavy line is used.
+- **Showcase.** Γ^(4) of the Schwinger–Dyson equation of φ⁴ is the box of the Bethe–Salpeter equation, sitting on the line
+  from a to b as F does in the equation of the electron gas (it was a diamond grown large by its label).
+- **Logo: arrows that read.** The fermion loop and the wavy line of the logo are slimmer (6.5 and 6 units of 128, from
+  8 and 7) and the arrow heads larger and wider (19 units across, more than twice the loop), so that the direction of
+  the loop reads at 64 and 32 px too; in the Logo files, the title pages of the manual and of the showcase, the social
+  preview and `packageLogo`. The small badge (16 to 32 px, the load banner) keeps its heavier lines and no arrows.
 - **Gallery by theme.** The panels of the README tell one story each: the first example (Φ[G], Σ and Γ⁰); exact
   equations (Dyson, Bethe–Salpeter, the vertex of the density, parquet); screening (Hedin's equations and Φ[G, W] with
   its derivatives, the *GW* approximation); pairing with the Nambu superfield (Φ at first order, the Gor'kov equations,
@@ -60,9 +67,14 @@
   and the β function; the three 1PI functions of one-loop QED with δ₂, β(e) and F₂(0); the gluon self-energy of QCD),
   with the formulas computed by the showcase. QCD no longer shares a panel with Φ[G, W], and φ⁴ theory at a non-zero
   source left the gallery (it stays in the showcase).
-- **Order for a first visit.** What the package is, the demo, the first example, the gallery, installation, the
-  documents, then the list of features with the map of the functions, the checks, related software, details, citing
-  (with a BibTeX entry) and the license. The demo video is no longer described by its duration (README, landing page).
+- **The README in order for a first visit.** What the package is, the demo, the first example, the gallery,
+  installation, the documents, then the list of features with the map of the functions, the checks, related software,
+  details, citing (with a BibTeX entry) and the license. The demo video is no longer described by its duration (README,
+  landing page).
+- **Badges and a landing page.** The README shows the badge of the latest release (it had a fixed version) and that of
+  the consistency check. GitHub Pages serves a landing page, `index.html`: the logo, what the package does in one
+  sentence, and links to the repository, the latest release, the showcase, the manual, the map of the functions (in
+  which the hub `FunctionalDerivative` is marked with δ) and the demo video.
 - **Demo.** The looping preview at the top of the README is an animated WebP at 60 fps, `Media/demo_preview.webp`
   (the GIF it replaces ran at 12 fps: a GIF cannot run at 60, its delays being hundredths of a second). The video is
   1920×1080 at 60 fps (it was 1280×720 at 30 fps): the same frames, sharper, and smoother motion; the preview is reduced

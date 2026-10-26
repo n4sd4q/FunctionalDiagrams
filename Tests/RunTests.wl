@@ -1730,7 +1730,7 @@ Get[FileNameJoin[{testDirectory, "Superfields.wl"}]];
 (* ------------------------------------------------------------------------- *)
 section["loading twice"];
 Get[FileNameJoin[{testDirectory, "..", "FunctionalDiagrams.wl"}]];
-check["package loaded again", $FunctionalDiagramsVersion, "2.3.0"];
+check["package loaded again", $FunctionalDiagramsVersion, "2.4.0"];
 (* the banner printed when the package is loaded in a notebook (never by a script): built here without printing it *)
 With[{banner = FunctionalDiagrams`Private`loadBanner[]},
   check["load banner: logo, the attribution of term (b) of NOTICE, version, license and links",
