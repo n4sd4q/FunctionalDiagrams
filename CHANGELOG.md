@@ -6,15 +6,17 @@
 
 - **Labels of blobs.** A blob declared by `DeclareBlob` is as large as its label needs: the label, on a hatched blob in a
   white clearing, lies inside the blob with a band of hatching all around it, so that an accent, a subscript or a
-  superscript is never cut by the outline (Λ̃ in a triangle, Γ_ph, Γ^(4)). The blob grows, never its label shrinks; in one
+  superscript is never cut by the outline (Λ̃ in a triangle, Γ_ph, Γ^(4)). The blob grows, never its label shrinks (but
+  in a triangle, below); in one
   picture the blobs of one shape have one size, so that the lines between them stay parallel, and so do those of all the
   terms of a sum drawn together (Γ⁰ alone and beside Γ^(4) in one equation). The label of a triangle sits
   near its incentre, not at its centroid.
 - **Triangles.** `"Triangle"` is equilateral, the same triangle as `"TriangleUp"` turned (it had a narrow 30-degree tip,
   with little room for a label).
-- **Lines between a box and a triangle** are parallel: two lines from the corners of one side of a triangle to two ports of
-  a blob of another shape (Γ⁰ L₀ Λ, Γ_xc L₀ Λ̃) end on that side at the spacing of the other blob's ports, where they
-  spread from the corners of the triangle, wider apart than those of the box. So are those between a circle and a box: a
+- **Lines between a box and a triangle** are parallel: the lines of a triangle always leave from its corners, and a box
+  joined by two lines to two corners of a triangle (Γ⁰ L₀ Λ, Γ_xc L₀ Λ̃) is as wide as the side between them, in that
+  picture and in every term of the sum drawn with it; the label inside a triangle is written 0.8 times smaller, so that
+  Λ̃ keeps the size of Λ and the box does not grow large. So are those between a circle and a box: a
   circle with two ports, both joined to one other blob (the gap function closed on Γ_pp in the criterion of Thouless),
   has them on the side facing it, on either side of the line of the centres (one was on the far side, and the picture was
   lopsided), and the box takes their spacing on its side.

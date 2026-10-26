@@ -3798,7 +3798,20 @@ blobSpecOf[h_] := First[Cases[$blobDeclarations, {h, l_, s_, f_, ___} :> {l, s, 
    $pictureBlobHeads: the heads of the blobs of the picture drawn, $sumBlobHeads those of the whole sum (geometriesOf) *)
 $pictureBlobHeads = {}; $sumBlobHeads = {};
 pictureBlobSize[l_, s_, f_] := Max[declaredBlobSize[l, s, f],
-   Cases[$blobDeclarations, {hh_, l2_, s, f2_, ___} /; MemberQ[$pictureBlobHeads, hh] :> declaredBlobSize[l2, s, f2]]];
+   Cases[$blobDeclarations, {hh_, l2_, s, f2_, ___} /; MemberQ[$pictureBlobHeads, hh] :> declaredBlobSize[l2, s, f2]],
+   If[s === "Box", $pictureBoxFloor, 0.]];
+(* the lines of a triangle leave from its corners: a box joined by two lines to two corners of a triangle (Gamma0 L0
+   Lambda) is at least as wide as the side between them, so that the lines are parallel. $pictureBoxFloor: the least
+   size of a box in the picture drawn, $sumBoxFloor in the whole sum (geometriesOf), as for $pictureBlobHeads *)
+$pictureBoxFloor = 0.; $sumBoxFloor = 0.; $boxTriangleSpacing = 1.;
+boxFloorOf[elements_List] := Module[{blobs = elements[[3]], lines = elements[[2]], shapeOf, joins},
+   shapeOf[h_] := With[{sp = blobSpecOf[h]}, If[ListQ[sp], sp[[2]], None]];
+   (* the legs of the triangle t joined by a line to legs of the box b *)
+   joins[b_, t_] := DeleteDuplicates[Join[Cases[lines, {p_, q_, __} /; MemberQ[b[[2]], p] && MemberQ[t[[2]], q] :> q],
+      Cases[lines, {q_, p_, __} /; MemberQ[b[[2]], p] && MemberQ[t[[2]], q] :> q]]];
+   Max[0., Flatten[Table[If[shapeOf[b[[3]]] === "Box" && MemberQ[{"Triangle", "TriangleUp"}, shapeOf[t[[3]]]] &&
+        Length[joins[b, t]] == 2,
+       $boxTriangleSpacing Sqrt[3.] 1.45 blobSizeOfHead[t[[3]]]/2, 0.], {b, blobs}, {t, blobs}]]]];
 blobAxialPorts[h_] := First[Cases[$blobDeclarations, {h, _, _, _, a_List} :> a], {}];
 (* the corners of a triangular blob of size h centred at p: top left, bottom left, right *)
 (* "Triangle": the first two corners on the left (top, bottom), the third on the right; "TriangleUp": the first two at the
@@ -3820,8 +3833,13 @@ blobSizeOfHead[h_] := With[{sp = blobSpecOf[h]}, If[ListQ[sp], sp[[4]], $declare
    with the white clearing around it on a hatched blob, lies inside the blob $blobLabelMargin within its outline, so that
    a band of hatching is left all around it. The label sits where it has most room: the centre of a circle, a box or a
    diamond, near the incentre of a triangle (moved towards its widest side); a blob whose label does not fit at
-   $declaredBlobSize is made larger, never its label smaller. *)
+   $declaredBlobSize is made larger, never its label smaller, except in a triangle. *)
 $blobLabelEm = 0.6;
+(* the label of a triangle is written 0.8 times smaller (TikZ scales its node), so that the triangle keeps the size of the
+   other blobs (Lambda-tilde would be 0.73): the lines of a three-point vertex leave from its corners, and a box joined
+   to two of them is as wide as the side between them (pictureBlobSize), so that a larger triangle would make it large *)
+$triangleLabelScale = 0.8;
+blobLabelScale[shape_] := If[MemberQ[{"Triangle", "TriangleUp"}, shape], $triangleLabelScale, 1.];
 blobClearingEm[fill_] := If[MemberQ[{"Hatched", "CrossHatched"}, fill], 0.135, 0.07];
 blobLabelMargin[fill_] := If[MemberQ[{"Hatched", "CrossHatched"}, fill], 0.1, 0.06];
 (* the box {width, height, depth} of a LaTeX label in units of its font size: the glyphs of Palatino and Computer Modern
@@ -3907,11 +3925,11 @@ blobLabelPlacement[shape_, h_, box_] := blobLabelPlacement[shape, h, box] = If[!
       {a, -0.4, 0.4, 0.01}];
     best = Max[cands[[All, 2]]];
     First[SortBy[Select[cands, #[[2]] >= best - 0.005 &], Last]][[{1, 2}]]]];
-blobLabelBox[label_, fill_] := With[{e = blobLabelExtent[label], c = blobClearingEm[fill]},
-   $blobLabelEm {e[[1]] + 2 c, e[[2]] + e[[3]] + 2 c}];
+blobLabelBox[label_, fill_, shape_ : None] := With[{e = blobLabelExtent[label], c = blobClearingEm[fill]},
+   blobLabelScale[shape] $blobLabelEm {e[[1]] + 2 c, e[[2]] + e[[3]] + 2 c}];
 (* the size of a blob: $declaredBlobSize, or the least size (to 0.01) at which its label fits *)
 declaredBlobSize[label_String, shape_, fill_] := declaredBlobSize[label, shape, fill] = Module[
-   {box = blobLabelBox[label, fill], m = blobLabelMargin[fill], lo = $declaredBlobSize, hi},
+   {box = blobLabelBox[label, fill, shape], m = blobLabelMargin[fill], lo = $declaredBlobSize, hi},
    If[blobLabelPlacement[shape, lo, box][[2]] >= m, $declaredBlobSize,
     hi = 2 lo; While[blobLabelPlacement[shape, hi, box][[2]] < m && hi < 5., hi *= 1.5];
     While[hi - lo > 0.005, With[{mid = (lo + hi)/2}, If[blobLabelPlacement[shape, mid, box][[2]] >= m, hi = mid, lo = mid]]];
@@ -4026,13 +4044,12 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
        Do[With[{o = r (-Cos[th] u + Sign[(a[[k]] - Mean[a]) . w] Sin[th] w)},
          ports[[portIndex[cp[[k]]], 3]] = o; ports[[portIndex[cp[[k]]], 4]] = unitVectorOf[o]], {k, 2}]]]],
     {i, Length[frameBlobs]}, {j, Length[frameBlobs]}];
-   (* a triangle joined by two lines to two ports of a blob of another shape (Gamma0 L0 Lambda), or a box joined so to a
-      circle: the two corners are the ends of one of its sides, wider apart than the ports of the other blob, so that the
-      lines would spread; the ports are moved along that side, symmetrically about its middle, to the spacing of the other
-      blob's ports, and the lines are parallel *)
+   (* a box joined by two lines to a circle: its two ports on the side facing the circle are wider apart than the circle's
+      ports, so that the lines would spread; they are moved along that side, symmetrically about its middle, to the
+      spacing of the circle's ports, and the lines are parallel. (The lines of a triangle always leave from its corners:
+      a box joined so to a triangle is as wide as the triangle's side instead, pictureBlobSize) *)
    Do[If[i != j && Length[links[i, j]] == 2 &&
-       (MemberQ[{"Triangle", "TriangleUp"}, blobSpecOf[frameBlobs[[j, 3]]][[2]]] && ! triangleShapeQ[blobSpecOf[frameBlobs[[i, 3]]][[2]]] ||
-        blobSpecOf[frameBlobs[[j, 3]]][[2]] === "Box" && blobSpecOf[frameBlobs[[i, 3]]][[2]] === "Circle" && Length[frameBlobs[[i, 2]]] == 2),
+       blobSpecOf[frameBlobs[[j, 3]]][[2]] === "Box" && blobSpecOf[frameBlobs[[i, 3]]][[2]] === "Circle" && Length[frameBlobs[[i, 2]]] == 2,
      Module[{ends, tp, pp, a, b, s},
       ends = Table[SortBy[l[[{1, 2}]], ports[[portIndex[#], 2]] == j &], {l, links[i, j]}];
       pp = ends[[All, 1]]; tp = ends[[All, 2]];
@@ -4040,7 +4057,7 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
        {a, b} = Table[ports[[portIndex[t], 3]], {t, tp}];
        s = vectorNorm[ports[[portIndex[pp[[1]]], 3]] - ports[[portIndex[pp[[2]]], 3]]];
        (* the two ports of a box on one side, not at opposite corners *)
-       If[s < vectorNorm[b - a] - 0.05 && (blobSpecOf[frameBlobs[[j, 3]]][[2]] =!= "Box" || Min[Abs[b - a]] < 0.01),
+       If[s < vectorNorm[b - a] - 0.05 && Min[Abs[b - a]] < 0.01,
         With[{m = (a + b)/2, e = unitVectorOf[b - a]},
          ports[[portIndex[tp[[1]]], 3]] = m - s e/2; ports[[portIndex[tp[[2]]], 3]] = m + s e/2]]]]],
     {i, Length[frameBlobs]}, {j, Length[frameBlobs]}];
@@ -4139,16 +4156,16 @@ plainBlobLabel[label_String] := StringReplace[StringReplace[StringReplace[label,
    {"\\tilde" ~~ c_ :> c <> "\:0303", "\\hat" ~~ c_ :> c <> "\:0302", "\\" -> ""}];
 (* where the label of a blob is written: the centre, or near the incentre of a triangle (blobLabelPlacement) *)
 blobLabelPoint[p_, {label_, shape_, fill_, h_}] := p + If[triangleShapeQ[shape] && StringQ[label],
-    blobLabelPlacement[shape, h, blobLabelBox[label, fill]][[1]], {0., 0.}];
+    blobLabelPlacement[shape, h, blobLabelBox[label, fill, shape]][[1]], {0., 0.}];
 declaredBlobPrimitives[p_, spec : {label_, shape_, fill_, h_}] := {
    If[fill === "Grey", GrayLevel[0.8], White],
    Switch[shape, "Box", Rectangle[p - {h, h}, p + {h, h}], "Triangle" | "TriangleUp" | "Diamond", Polygon[triangleCorners[p, h, shape]], _, Disk[p, h]],
    Black, {AbsoluteThickness[0.6], Line /@ blobHatchesOf[p, spec]},
    (* on a hatched blob the label sits in a white clearing with rounded corners, the outline drawn over it (as in TikZ) *)
    Text[If[MemberQ[{"Hatched", "CrossHatched"}, fill],
-     Framed[Style[plainBlobLabel[label], $fontPixels], Background -> White, FrameStyle -> White, RoundingRadius -> 3,
+     Framed[Style[plainBlobLabel[label], blobLabelScale[shape] $fontPixels], Background -> White, FrameStyle -> White, RoundingRadius -> 3,
       FrameMargins -> {{2, 2}, {1, 2}}],
-     Style[plainBlobLabel[label], $fontPixels]], blobLabelPoint[p, spec]],
+     Style[plainBlobLabel[label], blobLabelScale[shape] $fontPixels]], blobLabelPoint[p, spec]],
    Switch[shape, "Box", Line[{p + {-h, -h}, p + {h, -h}, p + {h, h}, p + {-h, h}, p + {-h, -h}}],
     "Triangle" | "TriangleUp" | "Diamond", Line[Append[triangleCorners[p, h, shape], First[triangleCorners[p, h, shape]]]], _, Circle[p, h]]};
 
@@ -4647,7 +4664,9 @@ straightenedSourceLines[positions_, sources_, pairs_] := Module[{pos = positions
 
 (* geometry of a canonical term, with its diagramElements: {weight, items, bounding box} *)
 diagramGeometry[t_diagramTerm, elements_List, ext0_List, opts_List, legDirections_] := Block[
-   {$pictureBlobHeads = Union[$sumBlobHeads, Cases[elements[[3]], {_, _, h_} :> h]]}, diagramGeometryOfPicture[t, elements, ext0, opts, legDirections]];
+   {$pictureBlobHeads = Union[$sumBlobHeads, Cases[elements[[3]], {_, _, h_} :> h]], $pictureBoxFloor = $sumBoxFloor},
+   $pictureBoxFloor = Max[$sumBoxFloor, boxFloorOf[elements]];
+   diagramGeometryOfPicture[t, elements, ext0, opts, legDirections]];
 diagramGeometryOfPicture[t_diagramTerm, elements_List, ext0_List, opts_List, legDirections_] := Module[{vertexLabels = drawingOption[opts, "VertexLabels"], weight,
     lines, blobs, stubs, classes, rules, d = t[[3]], ext, present, externalNodes, amputated, amputatedExt, dummies, nodes, pairs, propagatorPairs,
     components, mainComponents, vacuumComponents, frames = {}, positions, mode, items, bb, x0, groups, circles, sourceLayout, unitQ, straighten, multiplePairs,
@@ -4893,7 +4912,8 @@ geometriesOf[e_, ext_List, opts_List] := Module[{ts = termsForDrawing[e], elemen
    elements = Table[diagramElements[t, ext, opts], {t, ts}];
    directions = legDirectionsFor[elements, ext, opts];
    Block[{$densityLabels = densityLabelsFor[ts, elements, ext, opts, directions],
-     $sumBlobHeads = Union @@ Append[Table[Cases[el[[3]], {_, _, h_} :> h], {el, elements}], {}]},
+     $sumBlobHeads = Union @@ Append[Table[Cases[el[[3]], {_, _, h_} :> h], {el, elements}], {}], $sumBoxFloor = 0.},
+    $sumBoxFloor = Block[{$pictureBlobHeads = $sumBlobHeads}, Max[0., boxFloorOf /@ elements]];
     Table[ReplacePart[diagramGeometry[ts[[i]], elements[[i]], ext, opts, directions], 1 ->
        anomalousOrientationSign[elements[[i]], ext] displayedWeight[ts[[i]], elements[[i]], opts]], {i, Length[ts]}]]];
 
@@ -5112,7 +5132,9 @@ tikzLine[{"E", path_, style_}, t_, scale_, lw_ : 0.7, crossings_List : {}] := Mo
    hatch line runs through or touches them; the clearing is clipped to the blob and the outline drawn over it, so that a
    wide label never cuts the outline *)
 tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := Module[{shapeString, hatches = blobHatchesOf[p, spec],
-    at = coordinateString[blobLabelPoint[p, spec]]},
+    at = coordinateString[blobLabelPoint[p, spec]],
+    (* the label of a triangle is smaller (blobLabelScale): the node scaled, its clearing with it *)
+    scaleString = If[blobLabelScale[shape] == 1., "", ", scale=" <> numberString[blobLabelScale[shape]]]},
    shapeString = Switch[shape,
      "Box", coordinateString[p - {h, h}] <> " rectangle " <> coordinateString[p + {h, h}],
      "Triangle" | "TriangleUp" | "Diamond", joinStrings[coordinateString /@ triangleCorners[p, h, shape], " -- "] <> " -- cycle",
@@ -5121,10 +5143,10 @@ tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := 
     If[hatches === {}, "", "  \\draw[line width=" <> numberString[0.55 lw] <> "pt] " <>
       joinStrings[Table[coordinateString[hs[[1]]] <> " -- " <> coordinateString[hs[[2]]], {hs, hatches}], " "] <> ";\n"] <>
     If[MemberQ[{"Hatched", "CrossHatched"}, fill],
-     "  \\begin{scope}\n  \\clip " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <>
+     "  \\begin{scope}\n  \\clip " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <>
       ", inner sep=1.2pt, fill=white, rounded corners=2pt] at " <> at <> " {$" <> label <> "$};\n  \\end{scope}\n" <>
       "  \\draw " <> shapeString <> ";\n",
-     "  \\draw " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> ", inner sep=0.6pt] at " <> at <> " {$" <> label <> "$};\n"]];
+     "  \\draw " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <> ", inner sep=0.6pt] at " <> at <> " {$" <> label <> "$};\n"]];
 
 tikzItems[items_, opts_List] := Module[{scale = tikzScale[opts], rules = Flatten[{drawingOption[opts, "Labels"]}], es,
     lw = tikzLineWidth[opts], font = drawingOption[opts, "LabelFont"]},

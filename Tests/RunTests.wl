@@ -316,12 +316,26 @@ check["DeclareBlob: a two-label blob is a vertex for the cuts",
   ParticleIrreducibleDiagrams[IntegralOver[G[a, u] SgBlob[u, v] G[v, w] SgBlob[w, z] G[z, b], {u, v, w, z}], 1, {a, b}, {G}], 0];
 DeclareBlob[TriTilde, "\\tilde\\Lambda", "Shape" -> "Triangle", "Fill" -> "CrossHatched"];
 DeclareBlob[WideBox, "\\Gamma_{\\rm ph}", "Shape" -> "Box", "Fill" -> "CrossHatched"];
-check["DeclareBlob: a blob whose label needs room is larger (never its label smaller); a short label keeps the size",
+check["DeclareBlob: a blob whose label needs room is larger (its label never smaller, but in a triangle); a short label keeps the size",
   FunctionalDiagrams`Private`blobSpecOf /@ {TriTilde, WideBox, FBx, SgBlob} // #[[All, 4]] & // {#[[1]] > 0.6, #[[2]] > 0.6, #[[3]], #[[4]]} &,
   {True, True, 0.6, 0.6}];
 check["DeclareBlob: the label of a triangle, with its clearing, lies inside it with a band of hatching around",
-  With[{sp = FunctionalDiagrams`Private`blobSpecOf[TriTilde]}, With[{box = FunctionalDiagrams`Private`blobLabelBox[sp[[1]], sp[[3]]]},
+  With[{sp = FunctionalDiagrams`Private`blobSpecOf[TriTilde]}, With[{box = FunctionalDiagrams`Private`blobLabelBox[sp[[1]], sp[[3]], sp[[2]]]},
     FunctionalDiagrams`Private`blobBoxMargin[sp[[2]], sp[[4]], box, FunctionalDiagrams`Private`blobLabelPoint[{0., 0.}, sp]] >= 0.099]], True];
+check["DeclareBlob: the label of a triangle written 0.8 times smaller, in TikZ and in the size of the triangle",
+  {occurrences[DiagramToTikZ[TriTilde[a, b, c], {a, b, c}], "scale=0.8"],
+   FunctionalDiagrams`Private`declaredBlobSize["\\tilde\\Lambda", "Triangle", "CrossHatched"] < 0.65}, {1, True}];
+(* Gamma0 L0 Lambda: the lines leave from the two corners of the triangle, and the box is as wide as the side between them *)
+boxTriangle = Last[FunctionalDiagrams`Private`geometriesOf[DeltaFunction[a, z] DeltaFunction[b, z] +
+     IntegralOver[FBx[a, b, u1, u2] G[u2, u3] G[u4, u1] TriTilde[u3, u4, z], {u1, u2, u3, u4}], {a, b, z}, {}]][[2]];
+check["DeclareBlob: a box joined by two lines to a triangle is as wide as its side, the lines from its corners parallel",
+  With[{bl = Cases[boxTriangle, {"B", p_, sp_} :> {p, sp}], es = Cases[boxTriangle, {"E", {"segment", p_, q_}, "Arrow"} :> {p, q}]},
+   With[{tri = First[Select[bl, #[[2, 2]] === "Triangle" &]], box = First[Select[bl, #[[2, 2]] === "Box" &]]},
+    {Abs[box[[2, 4]] - Sqrt[3.] 1.45 tri[[2, 4]]/2] < 0.01, Length[es],
+     AllTrue[es, Abs[#[[1, 2]] - #[[2, 2]]] < 0.01 &],
+     AllTrue[Flatten[es, 1], Function[q, AnyTrue[Join[FunctionalDiagrams`Private`triangleCorners[tri[[1]], tri[[2, 4]]],
+         Flatten[Table[box[[1]] + box[[2, 4]] {sx, sy}, {sx, {-1, 1}}, {sy, {-1, 1}}], 1]], Norm[# - q] < 0.01 &]]]}]],
+  {True, 2, True, True}];
 check["DeclareBlob: in one picture the blobs of one shape have one size (F beside a wider label)",
   Union[Cases[geometryItems[IntegralOver[WideBox[a, b, u, v] FBx[v, u, c, d], {u, v}], {a, b, c, d}], {"B", _, sp_} :> sp[[4]]]] // Length, 1];
 check["DeclareBlob: in a sum drawn together a blob has one size in every term (F alone as large as beside the wider label)",

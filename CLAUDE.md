@@ -205,11 +205,13 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   large as its label needs (`declaredBlobSize`, from `blobLabelExtent`, an estimate of the LaTeX box, with the label font
   taken as `$blobLabelEm` = 0.6 units): the label, in a white clearing on a hatched blob, lies inside the blob with a band
   of hatching (0.1 units) all around it, at the centre or on the axis of a triangle near its incentre
-  (`blobLabelPlacement`); a blob grows (0.6 up), its label never shrinks; in one picture, and in all the terms of a sum
-  drawn together (`$sumBlobHeads`, set by `geometriesOf`), the blobs of one shape have one size (`pictureBlobSize`).
-  Two blobs joined by two lines have the lines parallel: a triangle joined by two of its corners to two ports of a blob of
-  another shape (Γ⁰ L₀ Λ) has these two ports moved along that side, about its middle, to the spacing of the other blob's
-  ports; a circle with two ports joined to one blob has them facing it, on either side of the line of the centres (at
+  (`blobLabelPlacement`); a blob grows (0.6 up), its label never shrinks, except in a triangle, where it is written 0.8
+  times smaller (`$triangleLabelScale`, a scaled TikZ node), so that Λ and Λ̃ keep about the size 0.6; in one picture, and in
+  all the terms of a sum drawn together (`$sumBlobHeads`, set by `geometriesOf`), the blobs of one shape have one size
+  (`pictureBlobSize`). Two blobs joined by two lines have the lines parallel: the lines of a triangle always leave from
+  its corners, and a box joined by two lines to two corners of a triangle (Γ⁰ L₀ Λ, Γ_xc L₀ Λ̃) is as wide as the side
+  between them, in that picture and in the whole sum drawn with it (`boxFloorOf`, `$pictureBoxFloor`, `$sumBoxFloor`);
+  a circle with two ports joined to one blob has them facing it, on either side of the line of the centres (at
   that blob's spacing if the circle is wide enough, else 45 degrees off the line), and a box so joined takes the circle's
   spacing on its side (in `blobLayoutWithExternals`). A line from a port of a blob that leaves it outwards, 30 degrees or
   more from its outline, is bent only to avoid crossing it (`leavesBlobClearQ` in `blobAvoidingKind`).

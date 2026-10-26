@@ -180,7 +180,9 @@ tikzLine[{"E", path_, style_}, t_, scale_, lw_ : 0.7, crossings_List : {}] := Mo
    hatch line runs through or touches them; the clearing is clipped to the blob and the outline drawn over it, so that a
    wide label never cuts the outline *)
 tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := Module[{shapeString, hatches = blobHatchesOf[p, spec],
-    at = coordinateString[blobLabelPoint[p, spec]]},
+    at = coordinateString[blobLabelPoint[p, spec]],
+    (* the label of a triangle is smaller (blobLabelScale): the node scaled, its clearing with it *)
+    scaleString = If[blobLabelScale[shape] == 1., "", ", scale=" <> numberString[blobLabelScale[shape]]]},
    shapeString = Switch[shape,
      "Box", coordinateString[p - {h, h}] <> " rectangle " <> coordinateString[p + {h, h}],
      "Triangle" | "TriangleUp" | "Diamond", joinStrings[coordinateString /@ triangleCorners[p, h, shape], " -- "] <> " -- cycle",
@@ -189,10 +191,10 @@ tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := 
     If[hatches === {}, "", "  \\draw[line width=" <> numberString[0.55 lw] <> "pt] " <>
       joinStrings[Table[coordinateString[hs[[1]]] <> " -- " <> coordinateString[hs[[2]]], {hs, hatches}], " "] <> ";\n"] <>
     If[MemberQ[{"Hatched", "CrossHatched"}, fill],
-     "  \\begin{scope}\n  \\clip " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <>
+     "  \\begin{scope}\n  \\clip " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <>
       ", inner sep=1.2pt, fill=white, rounded corners=2pt] at " <> at <> " {$" <> label <> "$};\n  \\end{scope}\n" <>
       "  \\draw " <> shapeString <> ";\n",
-     "  \\draw " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> ", inner sep=0.6pt] at " <> at <> " {$" <> label <> "$};\n"]];
+     "  \\draw " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <> ", inner sep=0.6pt] at " <> at <> " {$" <> label <> "$};\n"]];
 
 tikzItems[items_, opts_List] := Module[{scale = tikzScale[opts], rules = Flatten[{drawingOption[opts, "Labels"]}], es,
     lw = tikzLineWidth[opts], font = drawingOption[opts, "LabelFont"]},
