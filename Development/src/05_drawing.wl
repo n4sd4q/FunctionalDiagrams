@@ -1752,8 +1752,10 @@ blobHeadOf[v_, blobs_] := First[Cases[blobs, {v, _, h_} :> h], None];
    (declaredBlobSize) *)
 blobSpecOf[h_] := First[Cases[$blobDeclarations, {h, l_, s_, f_, ___} :> {l, s, f, pictureBlobSize[l, s, f]}], None];
 (* within one picture the blobs of one shape have one size, the largest their labels need: F beside Gamma_ph is as large
-   as it, so that the lines between them are parallel. $pictureBlobHeads: the heads of the blobs of the picture drawn *)
-$pictureBlobHeads = {};
+   as it, so that the lines between them are parallel; so do those of all the terms of a sum drawn together, so that a
+   blob looks the same in every term (Gamma0 alone and beside Gamma4 in Gamma4 = Gamma0 - Gamma0 L0 Gamma4/2).
+   $pictureBlobHeads: the heads of the blobs of the picture drawn, $sumBlobHeads those of the whole sum (geometriesOf) *)
+$pictureBlobHeads = {}; $sumBlobHeads = {};
 pictureBlobSize[l_, s_, f_] := Max[declaredBlobSize[l, s, f],
    Cases[$blobDeclarations, {hh_, l2_, s, f2_, ___} /; MemberQ[$pictureBlobHeads, hh] :> declaredBlobSize[l2, s, f2]]];
 blobAxialPorts[h_] := First[Cases[$blobDeclarations, {h, _, _, _, a_List} :> a], {}];
@@ -2562,7 +2564,7 @@ straightenedSourceLines[positions_, sources_, pairs_] := Module[{pos = positions
 
 (* geometry of a canonical term, with its diagramElements: {weight, items, bounding box} *)
 diagramGeometry[t_diagramTerm, elements_List, ext0_List, opts_List, legDirections_] := Block[
-   {$pictureBlobHeads = Cases[elements[[3]], {_, _, h_} :> h]}, diagramGeometryOfPicture[t, elements, ext0, opts, legDirections]];
+   {$pictureBlobHeads = Union[$sumBlobHeads, Cases[elements[[3]], {_, _, h_} :> h]]}, diagramGeometryOfPicture[t, elements, ext0, opts, legDirections]];
 diagramGeometryOfPicture[t_diagramTerm, elements_List, ext0_List, opts_List, legDirections_] := Module[{vertexLabels = drawingOption[opts, "VertexLabels"], weight,
     lines, blobs, stubs, classes, rules, d = t[[3]], ext, present, externalNodes, amputated, amputatedExt, dummies, nodes, pairs, propagatorPairs,
     components, mainComponents, vacuumComponents, frames = {}, positions, mode, items, bb, x0, groups, circles, sourceLayout, unitQ, straighten, multiplePairs,
@@ -2807,7 +2809,8 @@ geometriesOf[e_, ext_List, opts_List] := Module[{ts = termsForDrawing[e], elemen
    (* the elements of every term, computed once for the three steps that need them *)
    elements = Table[diagramElements[t, ext, opts], {t, ts}];
    directions = legDirectionsFor[elements, ext, opts];
-   Block[{$densityLabels = densityLabelsFor[ts, elements, ext, opts, directions]},
+   Block[{$densityLabels = densityLabelsFor[ts, elements, ext, opts, directions],
+     $sumBlobHeads = Union @@ Append[Table[Cases[el[[3]], {_, _, h_} :> h], {el, elements}], {}]},
     Table[ReplacePart[diagramGeometry[ts[[i]], elements[[i]], ext, opts, directions], 1 ->
        anomalousOrientationSign[elements[[i]], ext] displayedWeight[ts[[i]], elements[[i]], opts]], {i, Length[ts]}]]];
 

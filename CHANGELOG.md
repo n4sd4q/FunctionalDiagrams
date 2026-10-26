@@ -7,7 +7,8 @@
 - **Labels of blobs.** A blob declared by `DeclareBlob` is as large as its label needs: the label, on a hatched blob in a
   white clearing, lies inside the blob with a band of hatching all around it, so that an accent, a subscript or a
   superscript is never cut by the outline (Λ̃ in a triangle, Γ_ph, Γ^(4)). The blob grows, never its label shrinks; in one
-  picture the blobs of one shape have one size, so that the lines between them stay parallel. The label of a triangle sits
+  picture the blobs of one shape have one size, so that the lines between them stay parallel, and so do those of all the
+  terms of a sum drawn together (Γ⁰ alone and beside Γ^(4) in one equation). The label of a triangle sits
   near its incentre, not at its centroid.
 - **Triangles.** `"Triangle"` is equilateral, the same triangle as `"TriangleUp"` turned (it had a narrow 30-degree tip,
   with little room for a label).

@@ -324,6 +324,9 @@ check["DeclareBlob: the label of a triangle, with its clearing, lies inside it w
     FunctionalDiagrams`Private`blobBoxMargin[sp[[2]], sp[[4]], box, FunctionalDiagrams`Private`blobLabelPoint[{0., 0.}, sp]] >= 0.099]], True];
 check["DeclareBlob: in one picture the blobs of one shape have one size (F beside a wider label)",
   Union[Cases[geometryItems[IntegralOver[WideBox[a, b, u, v] FBx[v, u, c, d], {u, v}], {a, b, c, d}], {"B", _, sp_} :> sp[[4]]]] // Length, 1];
+check["DeclareBlob: in a sum drawn together a blob has one size in every term (F alone as large as beside the wider label)",
+  Union[Cases[FunctionalDiagrams`Private`geometriesOf[FBx[a, b, c, d] + IntegralOver[WideBox[a, b, u, v] FBx[v, u, c, d], {u, v}],
+      {a, b, c, d}, {}][[All, 2]], {"B", _, sp_} :> sp[[4]], Infinity]] // {Length[#], First[#] > 0.6} &, {1, True}];
 check["DoubleWavy: one wave drawn double, its strokes apart in proportion to the line width",
   occurrences[DiagramToTikZ[Wscr[a, b], {a, b}], "double distance=1.2\\pgflinewidth"], 1];
 check["DeclareBlob: an unknown shape: a message",quietCheck[DeclareBlob[SgBlob, "\\Sigma", "Shape" -> "Square"], "message"], "message"];

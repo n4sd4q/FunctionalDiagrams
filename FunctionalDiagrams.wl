@@ -61,7 +61,7 @@ DeclareInteractionLine::usage = "DeclareInteractionLine[V, ...] declares interac
 DeclareCoupling::usage = "DeclareCoupling[lambda, ...] declares couplings of local interactions, such as lambda in S_int = lambda/4! \[Integral] phi^4 or g in g \[Integral] phi psibar psi. In the weight written with a picture they are absorbed into the vertices, each of which stands for minus its coupling: lambda^n in the coefficient of a term becomes (-1)^n, so that the tadpole -lambda/2 G(a, z) G(z, z) G(z, b) has the weight 1/2. The expressions are not changed.";
 DeclareLocalVertex::usage = "DeclareLocalVertex[h, ...] declares heads of local vertices: kernels such as the quark-gluon vertex h[x, y, z] or the three-gluon vertex, whose labels carry different indices (Lorentz, colour, spinor) at one point of space-time. The pictures draw h[x, y, ...] as one point, at which its lines meet, instead of a grey blob; in the weight written with a picture the vertex stands for minus its kernel, -h (the sign of exp(-S_int)).";
 DeclareDisplayName::usage = "DeclareDisplayName[h, name] displays h[x, y, ...] as name with the subscript x y ..., for example DeclareDisplayName[BareGreenFunction, \"G0\"]: input keeps the explicit name, output is compact.";
-DeclareBlob::usage = "DeclareBlob[h, label] draws a factor h[x1, ..., xn] (n >= 2, a self-energy h[x, y] included) as a blob with label (a LaTeX string, e.g. \"\\\\Sigma\") written inside; its legs leave it counterclockwise from the top left, at the corners of a square for n = 4. Options: \"Shape\" -> \"Circle\" (default), \"Box\" or \"Triangle\" (equilateral, three legs at its corners, two on the left and one on the right: the vertex of a one-body operator), or \"TriangleUp\" (the same triangle with two legs at the bottom and one at the top), \"Diamond\" (a square turned by 45 degrees, legs at the left, bottom, right and top corners); \"AxialPorts\" -> {k1, ...}: the lines and legs of these ports leave horizontally, so that a self-energy can be drawn with its fermion line on an axis (the default for \"TriangleUp\" is {1, 2}); \"Fill\" -> \"Hatched\" (default), \"CrossHatched\", \"Grey\" or \"White\". A blob is as large as its label needs: the label (on a hatched blob in a white clearing, with a band of hatching left around it) sits at the centre, or near the incentre of a triangle, and a label with an accent, a subscript or a superscript makes the blob a little larger, never the label smaller; in one picture the blobs of one shape have one size. Blobs joined by lines are drawn side by side, as in the exact equations of many-body theory (Dyson, Schwinger-Dyson, Bethe-Salpeter, parquet).";
+DeclareBlob::usage = "DeclareBlob[h, label] draws a factor h[x1, ..., xn] (n >= 2, a self-energy h[x, y] included) as a blob with label (a LaTeX string, e.g. \"\\\\Sigma\") written inside; its legs leave it counterclockwise from the top left, at the corners of a square for n = 4. Options: \"Shape\" -> \"Circle\" (default), \"Box\" or \"Triangle\" (equilateral, three legs at its corners, two on the left and one on the right: the vertex of a one-body operator), or \"TriangleUp\" (the same triangle with two legs at the bottom and one at the top), \"Diamond\" (a square turned by 45 degrees, legs at the left, bottom, right and top corners); \"AxialPorts\" -> {k1, ...}: the lines and legs of these ports leave horizontally, so that a self-energy can be drawn with its fermion line on an axis (the default for \"TriangleUp\" is {1, 2}); \"Fill\" -> \"Hatched\" (default), \"CrossHatched\", \"Grey\" or \"White\". A blob is as large as its label needs: the label (on a hatched blob in a white clearing, with a band of hatching left around it) sits at the centre, or near the incentre of a triangle, and a label with an accent, a subscript or a superscript makes the blob a little larger, never the label smaller; in one picture, and in all the terms of a sum drawn together, the blobs of one shape have one size. Blobs joined by lines are drawn side by side, as in the exact equations of many-body theory (Dyson, Schwinger-Dyson, Bethe-Salpeter, parquet).";
 ResetDeclarations::usage = "ResetDeclarations[] removes all declarations (sources, fields, symmetries, derivative rules, line styles, interaction lines, couplings, local vertices, blobs, Matsubara frequencies): symmetric heads lose the attribute Orderless and antisymmetric ones their sign rules; display formats remain.";
 
 (* ---------------------------------------------------------------- calculus *)
@@ -3793,8 +3793,10 @@ blobHeadOf[v_, blobs_] := First[Cases[blobs, {v, _, h_} :> h], None];
    (declaredBlobSize) *)
 blobSpecOf[h_] := First[Cases[$blobDeclarations, {h, l_, s_, f_, ___} :> {l, s, f, pictureBlobSize[l, s, f]}], None];
 (* within one picture the blobs of one shape have one size, the largest their labels need: F beside Gamma_ph is as large
-   as it, so that the lines between them are parallel. $pictureBlobHeads: the heads of the blobs of the picture drawn *)
-$pictureBlobHeads = {};
+   as it, so that the lines between them are parallel; so do those of all the terms of a sum drawn together, so that a
+   blob looks the same in every term (Gamma0 alone and beside Gamma4 in Gamma4 = Gamma0 - Gamma0 L0 Gamma4/2).
+   $pictureBlobHeads: the heads of the blobs of the picture drawn, $sumBlobHeads those of the whole sum (geometriesOf) *)
+$pictureBlobHeads = {}; $sumBlobHeads = {};
 pictureBlobSize[l_, s_, f_] := Max[declaredBlobSize[l, s, f],
    Cases[$blobDeclarations, {hh_, l2_, s, f2_, ___} /; MemberQ[$pictureBlobHeads, hh] :> declaredBlobSize[l2, s, f2]]];
 blobAxialPorts[h_] := First[Cases[$blobDeclarations, {h, _, _, _, a_List} :> a], {}];
@@ -4603,7 +4605,7 @@ straightenedSourceLines[positions_, sources_, pairs_] := Module[{pos = positions
 
 (* geometry of a canonical term, with its diagramElements: {weight, items, bounding box} *)
 diagramGeometry[t_diagramTerm, elements_List, ext0_List, opts_List, legDirections_] := Block[
-   {$pictureBlobHeads = Cases[elements[[3]], {_, _, h_} :> h]}, diagramGeometryOfPicture[t, elements, ext0, opts, legDirections]];
+   {$pictureBlobHeads = Union[$sumBlobHeads, Cases[elements[[3]], {_, _, h_} :> h]]}, diagramGeometryOfPicture[t, elements, ext0, opts, legDirections]];
 diagramGeometryOfPicture[t_diagramTerm, elements_List, ext0_List, opts_List, legDirections_] := Module[{vertexLabels = drawingOption[opts, "VertexLabels"], weight,
     lines, blobs, stubs, classes, rules, d = t[[3]], ext, present, externalNodes, amputated, amputatedExt, dummies, nodes, pairs, propagatorPairs,
     components, mainComponents, vacuumComponents, frames = {}, positions, mode, items, bb, x0, groups, circles, sourceLayout, unitQ, straighten, multiplePairs,
@@ -4848,7 +4850,8 @@ geometriesOf[e_, ext_List, opts_List] := Module[{ts = termsForDrawing[e], elemen
    (* the elements of every term, computed once for the three steps that need them *)
    elements = Table[diagramElements[t, ext, opts], {t, ts}];
    directions = legDirectionsFor[elements, ext, opts];
-   Block[{$densityLabels = densityLabelsFor[ts, elements, ext, opts, directions]},
+   Block[{$densityLabels = densityLabelsFor[ts, elements, ext, opts, directions],
+     $sumBlobHeads = Union @@ Append[Table[Cases[el[[3]], {_, _, h_} :> h], {el, elements}], {}]},
     Table[ReplacePart[diagramGeometry[ts[[i]], elements[[i]], ext, opts, directions], 1 ->
        anomalousOrientationSign[elements[[i]], ext] displayedWeight[ts[[i]], elements[[i]], opts]], {i, Length[ts]}]]];
 
