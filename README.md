@@ -89,7 +89,7 @@ Each panel is drawn by the package from results it computes; the showcase derive
 <p align="center"><img src="Documentation/readme_2.svg" width="600" alt="Exact equations of many-body theory drawn by
 the package: the Dyson equation, the Bethe–Salpeter equation, the equation of the vertex of the density and the parquet
 decomposition of the full vertex"></p>
-<p align="center"><b>Exact equations</b>, drawn with blobs and checked order by order against perturbation theory:
+<p align="center"><b>Exact equations.</b> Drawn with blobs and checked order by order against perturbation theory:
 Dyson, Bethe–Salpeter, the vertex Λ of the density, and the parquet decomposition of the full vertex F.</p>
 
 <p align="center"><img src="Documentation/readme_3.svg" width="600" alt="Hedin's equations for Sigma, W, P and the vertex,
@@ -302,7 +302,9 @@ If you use FunctionalDiagrams in published work, please cite it as described in 
 ```bibtex
 @software{Africani_FunctionalDiagrams,
   author = {Africani, Nazzareno},
-  title  = {{FunctionalDiagrams}: functional derivatives and {Feynman} diagrams in {Mathematica}},
+  title  = {{FunctionalDiagrams}: functional derivatives and {Feynman}
+            diagrams in {Mathematica}},
+  year   = {2026},
   url    = {https://github.com/n4sd4q/FunctionalDiagrams}
 }
 ```
