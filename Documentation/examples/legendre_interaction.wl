@@ -1,0 +1,1 @@
+FunctionalDerivative[LegendreTransform[OrderPart[Phi, V, 1], G -> Sg], V[x, y]]

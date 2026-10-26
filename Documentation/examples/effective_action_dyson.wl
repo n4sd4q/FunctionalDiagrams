@@ -1,0 +1,1 @@
+FunctionalDerivative[gammaHF, G[y, x]]

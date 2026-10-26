@@ -1,0 +1,1 @@
+DiracSimplify[DiracProduct[GammaMatrix[mu], SlashedMomentum[a], GammaMatrix[mu]]]

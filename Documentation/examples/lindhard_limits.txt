@@ -1,0 +1,1 @@
+{-2*MomentumSum[Derivative[1][FermiFunction][xi[p]], {p}], 0}

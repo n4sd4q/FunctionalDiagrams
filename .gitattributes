@@ -1,0 +1,12 @@
+# generated files: collapsed in the diffs of GitHub and not counted in the languages of the repository
+FunctionalDiagrams.wl linguist-generated=true
+Examples.nb linguist-generated=true
+Showcase/figures/** linguist-generated=true
+Documentation/examples/** linguist-generated=true
+Documentation/index_rows.tex linguist-generated=true
+Documentation/readme_*.svg linguist-generated=true
+Documentation/function_map.json linguist-generated=true
+Documentation/function_map.svg linguist-generated=true
+Documentation/function_map.html linguist-generated=true
+Tests/RunTests.out linguist-generated=true
+*.pdf binary

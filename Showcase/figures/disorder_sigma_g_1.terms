@@ -1,0 +1,16 @@
+1
+%%PICTURE%%
+\begin{tikzpicture}[x=0.340cm, y=0.340cm, line width=0.420pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw[double, double distance=0.781pt] (0.500,0.000) -- (-0.500,0.000);
+  \fill (-0.173,0.000) -- (0.173,-0.148) -- (0.061,0.000) -- (0.173,0.148) -- cycle;
+  \draw[dash pattern=on 1.275pt off 1.275pt] (-0.500,0.000) arc[start angle=173.974, end angle=6.026, radius=0.503];
+  \draw (0.130,0.580) -- (-0.130,0.320) (0.130,0.320) -- (-0.130,0.580);
+  \draw (-0.500,0.000) -- (-1.100,0.000);
+  \fill (-0.949,0.000) -- (-0.711,-0.102) -- (-0.788,0.000) -- (-0.711,0.102) -- cycle;
+  \draw (0.500,0.000) -- (1.100,0.000);
+  \fill (0.651,0.000) -- (0.889,-0.102) -- (0.812,0.000) -- (0.889,0.102) -- cycle;
+  \fill (-0.500,0.000) circle (0.064);
+  \fill (0.500,0.000) circle (0.064);
+  \node[font=\tiny, inner sep=0pt, anchor=0] at (-1.190,0.000) {$x$};
+  \node[font=\tiny, inner sep=0pt, anchor=180] at (1.190,0.000) {$y$};
+\end{tikzpicture}

@@ -1,0 +1,1 @@
+FunctionalDerivative[-TraceLog[-G^-1], G[x, y]]

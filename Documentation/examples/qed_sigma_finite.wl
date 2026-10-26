@@ -1,0 +1,1 @@
+Expand[ExpandParameterIntegrals[sigmaOneLoop /. xi -> 1, eps, 0]]

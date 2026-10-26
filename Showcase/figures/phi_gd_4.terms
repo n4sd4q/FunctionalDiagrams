@@ -1,0 +1,18 @@
+\frac{1}{4}
+%%PICTURE%%
+\begin{tikzpicture}[x=0.340cm, y=0.340cm, line width=0.420pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (-0.778,0.000) arc[start angle=180.000, end angle=90.000, radius=0.778];
+  \fill (-0.466,0.634) -- (-0.707,0.538) -- (-0.580,0.520) -- (-0.562,0.393) -- cycle;
+  \draw (0.000,0.778) arc[start angle=90.000, end angle=0.000, radius=0.778];
+  \fill (0.634,0.466) -- (0.538,0.707) -- (0.520,0.580) -- (0.393,0.562) -- cycle;
+  \draw (0.000,-0.778) arc[start angle=270.000, end angle=180.000, radius=0.778];
+  \fill (-0.634,-0.466) -- (-0.538,-0.707) -- (-0.520,-0.580) -- (-0.393,-0.562) -- cycle;
+  \draw (0.778,0.000) arc[start angle=0.000, end angle=-90.000, radius=0.778];
+  \fill (0.466,-0.634) -- (0.707,-0.538) -- (0.580,-0.520) -- (0.562,-0.393) -- cycle;
+  \draw[dash pattern=on 1.275pt off 1.275pt] (0.000,0.778) -- (0.000,-0.778);
+  \draw[dash pattern=on 1.275pt off 1.275pt] (0.778,0.000) arc[start angle=325.518, end angle=574.482, radius=0.944];
+  \fill (0.000,0.778) circle (0.064);
+  \fill (0.778,0.000) circle (0.064);
+  \fill (-0.778,0.000) circle (0.064);
+  \fill (0.000,-0.778) circle (0.064);
+\end{tikzpicture}

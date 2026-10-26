@@ -1,0 +1,1 @@
+GaussianExpectationValue[Zf, {psi[a], psi[b], psibar[c], psibar[d]}]

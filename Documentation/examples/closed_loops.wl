@@ -1,0 +1,1 @@
+ClosedLoopCount[#, {G0}] & /@ DiagramTerms[greenFunction]

@@ -1,0 +1,1 @@
+SimplifyDiagrams[IntegralOver[f[x, u] Exp[IntegralOver[g[u, v] J[v], {v}]], {u}]]

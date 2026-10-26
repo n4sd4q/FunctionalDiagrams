@@ -1,0 +1,119 @@
+\frac{1}{2}
+%%PICTURE%%
+\begin{tikzpicture}[x=0.340cm, y=0.340cm, line width=0.420pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (-0.575,0.575) -- (0.000,-0.575);
+  \draw (-0.575,0.575) arc[start angle=215.159, end angle=324.841, radius=0.703];
+  \draw (-0.575,0.575) arc[start angle=144.841, end angle=35.159, radius=0.703];
+  \draw (0.000,-0.575) -- (0.575,0.575);
+  \draw (-0.575,0.575) -- (-0.999,0.999);
+  \draw (0.000,-0.575) -- (-0.424,-0.999);
+  \draw (0.575,0.575) -- (0.999,0.999);
+  \draw (0.000,-0.575) -- (0.424,-0.999);
+  \fill (-0.575,0.575) circle (0.064);
+  \fill (0.000,-0.575) circle (0.064);
+  \fill (0.575,0.575) circle (0.064);
+  \node[font=\tiny, inner sep=0pt, anchor=315] at (-1.063,1.063) {$a$};
+  \node[font=\tiny, inner sep=0pt, anchor=45] at (-0.488,-1.063) {$b$};
+  \node[font=\tiny, inner sep=0pt, anchor=225] at (1.063,1.063) {$c$};
+  \node[font=\tiny, inner sep=0pt, anchor=135] at (0.488,-1.063) {$d$};
+\end{tikzpicture}
+%%TERM%%
+\frac{1}{2}
+%%PICTURE%%
+\begin{tikzpicture}[x=0.340cm, y=0.340cm, line width=0.420pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (0.000,0.575) -- (-0.575,-0.575);
+  \draw (0.000,0.575) -- (0.575,-0.575);
+  \draw (-0.575,-0.575) arc[start angle=215.159, end angle=324.841, radius=0.703];
+  \draw (-0.575,-0.575) arc[start angle=144.841, end angle=35.159, radius=0.703];
+  \draw (0.000,0.575) -- (-0.424,0.999);
+  \draw (-0.575,-0.575) -- (-0.999,-0.999);
+  \draw (0.575,-0.575) -- (0.999,-0.999);
+  \draw (0.000,0.575) -- (0.424,0.999);
+  \fill (0.000,0.575) circle (0.064);
+  \fill (-0.575,-0.575) circle (0.064);
+  \fill (0.575,-0.575) circle (0.064);
+  \node[font=\tiny, inner sep=0pt, anchor=315] at (-0.488,1.063) {$a$};
+  \node[font=\tiny, inner sep=0pt, anchor=45] at (-1.063,-1.063) {$b$};
+  \node[font=\tiny, inner sep=0pt, anchor=135] at (1.063,-1.063) {$c$};
+  \node[font=\tiny, inner sep=0pt, anchor=225] at (0.488,1.063) {$d$};
+\end{tikzpicture}
+%%TERM%%
+-\frac{1}{2}
+%%PICTURE%%
+\begin{tikzpicture}[x=0.340cm, y=0.340cm, line width=0.420pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (-0.575,0.575) -- (0.000,-0.575);
+  \draw (-0.575,0.575) arc[start angle=215.159, end angle=324.841, radius=0.703];
+  \draw (-0.575,0.575) arc[start angle=144.841, end angle=35.159, radius=0.703];
+  \draw (0.000,-0.575) -- (0.575,0.575);
+  \draw (-0.575,0.575) -- (-0.999,0.999);
+  \draw (0.000,-0.575) -- (-0.424,-0.999);
+  \draw (0.000,-0.575) -- (0.424,-0.999);
+  \draw (0.575,0.575) -- (0.999,0.999);
+  \fill (-0.575,0.575) circle (0.064);
+  \fill (0.000,-0.575) circle (0.064);
+  \fill (0.575,0.575) circle (0.064);
+  \node[font=\tiny, inner sep=0pt, anchor=315] at (-1.063,1.063) {$a$};
+  \node[font=\tiny, inner sep=0pt, anchor=45] at (-0.488,-1.063) {$b$};
+  \node[font=\tiny, inner sep=0pt, anchor=135] at (0.488,-1.063) {$c$};
+  \node[font=\tiny, inner sep=0pt, anchor=225] at (1.063,1.063) {$d$};
+\end{tikzpicture}
+%%TERM%%
+-\frac{1}{2}
+%%PICTURE%%
+\begin{tikzpicture}[x=0.340cm, y=0.340cm, line width=0.420pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (0.000,0.575) -- (-0.575,-0.575);
+  \draw (0.000,0.575) -- (0.575,-0.575);
+  \draw (-0.575,-0.575) arc[start angle=215.159, end angle=324.841, radius=0.703];
+  \draw (-0.575,-0.575) arc[start angle=144.841, end angle=35.159, radius=0.703];
+  \draw (0.000,0.575) -- (-0.424,0.999);
+  \draw (-0.575,-0.575) -- (-0.999,-0.999);
+  \draw (0.000,0.575) -- (0.424,0.999);
+  \draw (0.575,-0.575) -- (0.999,-0.999);
+  \fill (0.000,0.575) circle (0.064);
+  \fill (-0.575,-0.575) circle (0.064);
+  \fill (0.575,-0.575) circle (0.064);
+  \node[font=\tiny, inner sep=0pt, anchor=315] at (-0.488,1.063) {$a$};
+  \node[font=\tiny, inner sep=0pt, anchor=45] at (-1.063,-1.063) {$b$};
+  \node[font=\tiny, inner sep=0pt, anchor=225] at (0.488,1.063) {$c$};
+  \node[font=\tiny, inner sep=0pt, anchor=135] at (1.063,-1.063) {$d$};
+\end{tikzpicture}
+%%TERM%%
+-\frac{1}{4}
+%%PICTURE%%
+\begin{tikzpicture}[x=0.340cm, y=0.340cm, line width=0.420pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (0.000,0.813) arc[start angle=96.026, end angle=263.974, radius=0.409];
+  \draw (0.000,0.813) arc[start angle=83.974, end angle=-83.974, radius=0.409];
+  \draw (0.000,-0.813) arc[start angle=276.026, end angle=443.974, radius=0.409];
+  \draw (0.000,-0.813) arc[start angle=263.974, end angle=96.026, radius=0.409];
+  \draw (0.000,0.813) -- (-0.424,1.237);
+  \draw (0.000,-0.813) -- (-0.424,-1.237);
+  \draw (0.000,-0.813) -- (0.424,-1.237);
+  \draw (0.000,0.813) -- (0.424,1.237);
+  \fill (0.000,0.813) circle (0.064);
+  \fill (0.000,-0.813) circle (0.064);
+  \fill (0.000,0.000) circle (0.064);
+  \node[font=\tiny, inner sep=0pt, anchor=315] at (-0.488,1.301) {$a$};
+  \node[font=\tiny, inner sep=0pt, anchor=45] at (-0.488,-1.301) {$b$};
+  \node[font=\tiny, inner sep=0pt, anchor=135] at (0.488,-1.301) {$c$};
+  \node[font=\tiny, inner sep=0pt, anchor=225] at (0.488,1.301) {$d$};
+\end{tikzpicture}
+%%TERM%%
+\frac{1}{4}
+%%PICTURE%%
+\begin{tikzpicture}[x=0.340cm, y=0.340cm, line width=0.420pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (0.000,0.813) arc[start angle=96.026, end angle=263.974, radius=0.409];
+  \draw (0.000,0.813) arc[start angle=83.974, end angle=-83.974, radius=0.409];
+  \draw (0.000,-0.813) arc[start angle=276.026, end angle=443.974, radius=0.409];
+  \draw (0.000,-0.813) arc[start angle=263.974, end angle=96.026, radius=0.409];
+  \draw (0.000,0.813) -- (-0.424,1.237);
+  \draw (0.000,-0.813) -- (-0.424,-1.237);
+  \draw (0.000,0.813) -- (0.424,1.237);
+  \draw (0.000,-0.813) -- (0.424,-1.237);
+  \fill (0.000,0.813) circle (0.064);
+  \fill (0.000,-0.813) circle (0.064);
+  \fill (0.000,0.000) circle (0.064);
+  \node[font=\tiny, inner sep=0pt, anchor=315] at (-0.488,1.301) {$a$};
+  \node[font=\tiny, inner sep=0pt, anchor=45] at (-0.488,-1.301) {$b$};
+  \node[font=\tiny, inner sep=0pt, anchor=225] at (0.488,1.301) {$c$};
+  \node[font=\tiny, inner sep=0pt, anchor=135] at (0.488,-1.301) {$d$};
+\end{tikzpicture}

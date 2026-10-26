@@ -1,0 +1,1 @@
+SimplifyDiagrams[SelfEnergy[Phi, G, {x, y}] - sigmaG]

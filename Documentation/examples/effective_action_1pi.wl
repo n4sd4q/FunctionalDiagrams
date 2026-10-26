@@ -1,0 +1,1 @@
+EffectiveAction1PI[Z0, Phi4Vertex, 2, phi -> phiMean, D0 -> Dm]

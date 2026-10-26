@@ -1,0 +1,15 @@
+1
+%%PICTURE%%
+\begin{tikzpicture}[x=0.550cm, y=0.550cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (0.000,0.000) arc[start angle=353.974, end angle=186.026, radius=0.553];
+  \draw (0.000,0.000) arc[start angle=6.026, end angle=173.974, radius=0.553];
+  \draw (0.000,0.000) arc[start angle=186.026, end angle=353.974, radius=0.553];
+  \draw (0.000,0.000) arc[start angle=173.974, end angle=6.026, radius=0.553];
+  \draw (-1.100,0.000) -- (-1.700,0.000);
+  \draw (1.100,0.000) -- (1.700,0.000);
+  \fill[white] (-0.600,-0.600) rectangle (0.600,0.600);
+  \draw (-0.600,-0.600) rectangle (0.600,0.600);
+  \node[font=\footnotesize, inner sep=0.6pt] at (0.000,0.000) {$L$};
+  \node[font=\footnotesize, inner sep=0pt, anchor=0] at (-1.790,0.000) {$z_{1}$};
+  \node[font=\footnotesize, inner sep=0pt, anchor=180] at (1.790,0.000) {$z_{2}$};
+\end{tikzpicture}

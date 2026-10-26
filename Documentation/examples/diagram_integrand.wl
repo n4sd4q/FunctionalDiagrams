@@ -1,0 +1,1 @@
+DiagramIntegrand[bubble, {b -> {q, I nu}, a -> {-q, -I nu}}, rules]

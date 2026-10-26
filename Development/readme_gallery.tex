@@ -1,0 +1,63 @@
+% The pictures of README.md: results of the showcase as the package draws them, one panel per page (each page becomes
+% Documentation/readme_<n>.svg). Built by make_readme_figure.sh, which first copies the figures of Showcase/figures
+% (run Showcase/make_figures.wl first) to \figdir with one unit of length, heavier lines and larger labels for all of
+% them. Every panel has the same width, so that the README shows them all at the same scale; the titles are captions
+% in README.md.
+\documentclass[multi=panel,border=11pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage[sc]{mathpazo}
+\usepackage{amsmath,tikz,xcolor,array,varwidth,environ}
+\usetikzlibrary{decorations.pathmorphing}
+\providecommand{\figdir}{../Showcase/figures}
+\newcommand{\fig}[1]{\input{\figdir/#1.tex}}
+\newcommand{\diagramgap}{\hskip 0.6em\relax}
+% a group of diagrams of one channel starts a line of its own, with its channel in front
+\newcommand{\channelmark}[1]{\par\mbox{\footnotesize(#1)}\diagramgap}
+% lines of diagrams in a paragraph kept apart, so that the labels of two lines never touch
+\newcommand{\figlines}{\lineskiplimit=7pt\lineskip=7pt\relax}
+% the rest of a series, kept on the line of the last diagram
+\newcommand{\rest}{\unskip\nobreak\diagramgap\mbox{${}+\cdots$}}
+% a panel: rows "left-hand side = diagrams", the diagrams as a ragged paragraph in the rest of the width, the whole
+% centred in the panel (the left-hand sides are measured first, without the diagrams)
+\newlength{\panelwidth}\setlength{\panelwidth}{10.4cm}
+\newlength{\lhswidth}
+\NewEnviron{rows}{%
+  \settowidth{\lhswidth}{\begin{tabular}{@{}r@{}>{\setbox0\vbox\bgroup\arraybackslash}l<{\egroup}@{}}\BODY\end{tabular}}%
+  \makebox[\panelwidth][c]{\begin{tabular}{@{}r@{}>{\begin{varwidth}[t]{\dimexpr\panelwidth-\lhswidth\relax}%
+    \raggedright\arraybackslash\figlines}l<{\end{varwidth}}@{}}\BODY\end{tabular}}}
+% the space between two rows (\\[...] would add nothing after a row of two lines)
+\newcommand{\rowgap}{\\\noalign{\vskip 11pt}}
+\begin{document}
+% 1: the first example of README.md: Phi[G] and its derivatives
+\begin{panel}
+\begin{rows}
+$\Phi[G]={}$ & \fig{luttinger_ward_1}\diagramgap\fig{luttinger_ward_2}\rest\rowgap
+$\Sigma=\dfrac{\delta\Phi}{\delta G}={}$ & \fig{self_energy_1}\diagramgap\fig{self_energy_2}\rest\rowgap
+$\Gamma^0=\dfrac{\delta\Sigma}{\delta G}={}$ & \fig{irreducible_vertex_1}\diagramgap\fig{irreducible_vertex_2}\rest
+\end{rows}
+\end{panel}
+% 2: exact equations, drawn with blobs
+\begin{panel}
+\begin{rows}
+\fig{exact_dyson_lhs}\,${}={}$ & \fig{exact_dyson}\rowgap
+\fig{exact_vertex_lhs}\,${}={}$ & \fig{exact_bethe_salpeter}\rowgap
+\fig{exact_lambda_lhs}\,${}={}$ & \fig{exact_vertex_equation}\rowgap
+$\Sigma(x,y)={}$ & \fig{hedin_sigma}\rowgap
+\fig{hedin_w_lhs}\,${}={}$ & \fig{hedin_w}
+\end{rows}
+\end{panel}
+% 3: phi^4 theory from the generating functional, at a non-zero source
+\begin{panel}
+\begin{rows}
+$z_1[J]={}$ & \fig{phi4_z_source_1}\rowgap
+$w_2[J]={}$ & \fig{phi4_w_source_2}
+\end{rows}
+\end{panel}
+% 4: other theories: Phi[G, W] and QCD
+\begin{panel}
+\begin{rows}
+$\Phi[G,W]={}$ & \fig{phi_gw_1}\diagramgap\fig{phi_gw_2}\rest\rowgap
+$\Pi_{\rm QCD}(x,y)={}$ & \fig{qcd_gluon_self_energy}
+\end{rows}
+\end{panel}
+\end{document}

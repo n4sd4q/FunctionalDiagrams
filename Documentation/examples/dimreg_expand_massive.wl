@@ -1,0 +1,1 @@
+EpsilonExpand[16 Pi^2 BubbleIntegral[{1, 1}, p^2, {m, m}, eps], eps, 0]

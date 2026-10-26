@@ -1,0 +1,1 @@
+IntegrateOneLoop[MinkowskiLoopIntegral[FeynmanDenominator[k, m]^2, {k}], eps]

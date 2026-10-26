@@ -1,0 +1,1 @@
+MatsubaraSum[1/((z - a)^2 (z - b)), z, "Fermion"]

@@ -1,0 +1,1 @@
+-AnomalousDimensionFromZ[zM2/zPhi /. solution, lambda, eps, -2 eps lambda + beta, 2]

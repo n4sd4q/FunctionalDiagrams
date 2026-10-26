@@ -1,0 +1,1 @@
+FunctionalDerivative[IntegralOver[f[x] J[x]^3, {x}], J[a]]

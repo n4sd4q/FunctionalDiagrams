@@ -1,0 +1,1 @@
+fockInsertion = IntegralOver[G0[x, u] G0[u, v] G0[v, y] V[x, y] V[u, v], {u, v}]

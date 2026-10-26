@@ -1,0 +1,1 @@
+MatsubaraSum[1/(z - a), z, "Fermion", "ConvergenceFactor" -> 1]

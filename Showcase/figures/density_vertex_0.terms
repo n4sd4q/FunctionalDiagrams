@@ -1,0 +1,13 @@
+1
+%%PICTURE%%
+\begin{tikzpicture}[x=0.340cm, y=0.340cm, line width=0.420pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (0.000,0.000) -- (-0.300,0.520);
+  \fill (-0.225,0.389) -- (-0.194,0.131) -- (-0.144,0.250) -- (-0.017,0.233) -- cycle;
+  \draw (0.000,0.000) -- (-0.300,-0.520);
+  \fill (-0.075,-0.130) -- (-0.283,-0.286) -- (-0.156,-0.270) -- (-0.106,-0.388) -- cycle;
+  \draw[fill=white] (0.000,0.000) circle (0.100);
+  \draw[line width=0.298pt] (0.070,0.070) -- (-0.070,-0.070) (0.070,-0.070) -- (-0.070,0.070);
+  \node[font=\tiny, inner sep=0pt, anchor=180] at (0.190,0.000) {$z$};
+  \node[font=\tiny, inner sep=0pt, anchor=300] at (-0.345,0.598) {$x_{1}$};
+  \node[font=\tiny, inner sep=0pt, anchor=60] at (-0.345,-0.598) {$x_{2}$};
+\end{tikzpicture}

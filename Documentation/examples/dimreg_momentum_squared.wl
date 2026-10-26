@@ -1,0 +1,1 @@
+{MomentumSquared[-p], MomentumSquared[-p - q], MomentumSquared[3 p]}

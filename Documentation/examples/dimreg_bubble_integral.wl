@@ -1,0 +1,1 @@
+BubbleIntegral[{1, 1}, p^2, {0, 0}, eps]

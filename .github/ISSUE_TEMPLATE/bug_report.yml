@@ -1,0 +1,26 @@
+name: Problem report
+description: A wrong result, a message, a picture drawn badly, or a mistake in the documentation
+body:
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: The values of $FunctionalDiagramsVersion and $Version.
+      placeholder: '"2.3.0", "14.3.0 for Linux x86 (64-bit)"'
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Minimal input
+      description: The shortest input that shows the problem, with the declarations it needs, after loading the package.
+      render: mathematica
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: What you get and what you expected
+      description: The output or the message; for a picture, a screenshot; for a sign or a weight, the convention you compared with.
+    validations:
+      required: true

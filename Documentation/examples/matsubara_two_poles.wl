@@ -1,0 +1,1 @@
+MatsubaraSum[1/((z - a) (z - b)), z, "Boson"]

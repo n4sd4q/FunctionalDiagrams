@@ -1,0 +1,1 @@
+RetardedImaginaryPart[AnalyticContinuation[lindhard, nu -> omega], omega]

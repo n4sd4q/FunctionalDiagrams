@@ -1,0 +1,11 @@
+1
+%%PICTURE%%
+\begin{tikzpicture}[x=0.340cm, y=0.340cm, line width=0.420pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (0.000,0.000) -- (-0.300,0.520);
+  \draw (0.000,0.000) -- (-0.300,-0.520);
+  \draw[fill=white] (0.000,0.000) circle (0.100);
+  \draw[line width=0.298pt] (0.070,0.070) -- (-0.070,-0.070) (0.070,-0.070) -- (-0.070,0.070);
+  \node[font=\tiny, inner sep=0pt, anchor=180] at (0.190,0.000) {$z$};
+  \node[font=\tiny, inner sep=0pt, anchor=300] at (-0.345,0.598) {$a$};
+  \node[font=\tiny, inner sep=0pt, anchor=60] at (-0.345,-0.598) {$b$};
+\end{tikzpicture}

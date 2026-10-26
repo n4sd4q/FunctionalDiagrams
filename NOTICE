@@ -1,0 +1,32 @@
+FunctionalDiagrams
+Functional derivatives and Feynman diagrams in Mathematica
+
+Copyright (C) 2026 Nazzareno Africani (SISSA, Trieste)
+Original author: Nazzareno Africani
+https://github.com/n4sd4q/FunctionalDiagrams
+
+This file must be kept in all copies and modified versions (see the additional terms below).
+If you use FunctionalDiagrams in published work, please cite it as described in CITATION.cff.
+
+License
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+version, with the additional terms below.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License, version 3, along with this program in the file
+LICENSE. If not, see <https://www.gnu.org/licenses/>.
+
+Additional terms under section 7 of the GNU General Public License, version 3
+
+(b) Author attributions. You must preserve the attribution "FunctionalDiagrams, by Nazzareno Africani" and the contents
+    of the file NOTICE in all copies and in all modified versions of this program, in their documentation, and in the
+    message that the program prints when it is loaded in a notebook, if it prints one.
+
+(c) Origin and modified versions. Misrepresentation of the origin of this program is prohibited. A modified version
+    must be marked as different from the original: it must not be distributed under the name "FunctionalDiagrams"
+    alone, and its documentation and its loading message must state that it is a modified version of FunctionalDiagrams
+    by Nazzareno Africani, with the name of the person who modified it and the date of the modification.

@@ -1,0 +1,149 @@
+-1
+%%PICTURE%%
+\begin{tikzpicture}[x=0.500cm, y=0.500cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (-0.360,0.624) -- (0.000,0.000);
+  \draw (-0.720,0.000) -- (0.000,0.000);
+  \draw (-0.360,-0.624) -- (0.000,0.000);
+  \draw (0.360,-0.624) -- (0.000,0.000);
+  \draw (0.720,0.000) -- (0.000,0.000);
+  \draw (0.360,0.624) -- (0.000,0.000);
+  \draw[fill=black!22] (0.000,0.000) circle (0.200);
+  \draw[fill=white] (-0.360,0.624) circle (0.080);
+  \draw[fill=white] (-0.720,0.000) circle (0.080);
+  \draw[fill=white] (-0.360,-0.624) circle (0.080);
+  \draw[fill=white] (0.360,-0.624) circle (0.080);
+  \draw[fill=white] (0.720,0.000) circle (0.080);
+  \draw[fill=white] (0.360,0.624) circle (0.080);
+\end{tikzpicture}
+%%TERM%%
+10
+%%PICTURE%%
+\begin{tikzpicture}[x=0.500cm, y=0.500cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (-0.860,0.624) -- (-0.500,0.000);
+  \draw (-1.220,0.000) -- (-0.500,0.000);
+  \draw (-0.860,-0.624) -- (-0.500,0.000);
+  \draw (0.860,-0.624) -- (0.500,0.000);
+  \draw (1.220,0.000) -- (0.500,0.000);
+  \draw (0.860,0.624) -- (0.500,0.000);
+  \draw (-0.500,0.000) -- (0.500,0.000);
+  \draw[fill=black!22] (-0.500,0.000) circle (0.200);
+  \draw[fill=black!22] (0.500,0.000) circle (0.200);
+  \draw[fill=white] (-0.860,0.624) circle (0.080);
+  \draw[fill=white] (-1.220,0.000) circle (0.080);
+  \draw[fill=white] (-0.860,-0.624) circle (0.080);
+  \draw[fill=white] (0.860,-0.624) circle (0.080);
+  \draw[fill=white] (1.220,0.000) circle (0.080);
+  \draw[fill=white] (0.860,0.624) circle (0.080);
+\end{tikzpicture}
+%%TERM%%
+15
+%%PICTURE%%
+\begin{tikzpicture}[x=0.500cm, y=0.500cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (-1.009,0.509) -- (-0.500,0.000);
+  \draw (-1.009,-0.509) -- (-0.500,0.000);
+  \draw (0.722,-0.685) -- (0.500,0.000);
+  \draw (1.158,-0.293) -- (0.500,0.000);
+  \draw (1.158,0.293) -- (0.500,0.000);
+  \draw (0.722,0.685) -- (0.500,0.000);
+  \draw (-0.500,0.000) -- (0.500,0.000);
+  \draw[fill=black!22] (-0.500,0.000) circle (0.200);
+  \draw[fill=black!22] (0.500,0.000) circle (0.200);
+  \draw[fill=white] (-1.009,0.509) circle (0.080);
+  \draw[fill=white] (-1.009,-0.509) circle (0.080);
+  \draw[fill=white] (0.722,-0.685) circle (0.080);
+  \draw[fill=white] (1.158,-0.293) circle (0.080);
+  \draw[fill=white] (1.158,0.293) circle (0.080);
+  \draw[fill=white] (0.722,0.685) circle (0.080);
+\end{tikzpicture}
+%%TERM%%
+-45
+%%PICTURE%%
+\begin{tikzpicture}[x=0.500cm, y=0.500cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (-1.509,0.509) -- (-1.000,0.000);
+  \draw (-1.509,-0.509) -- (-1.000,0.000);
+  \draw (1.509,-0.509) -- (1.000,0.000);
+  \draw (1.509,0.509) -- (1.000,0.000);
+  \draw (0.000,0.720) -- (0.000,0.000);
+  \draw (0.000,-0.720) -- (0.000,0.000);
+  \draw (-1.000,0.000) -- (0.000,0.000);
+  \draw (1.000,0.000) -- (0.000,0.000);
+  \draw[fill=black!22] (-1.000,0.000) circle (0.200);
+  \draw[fill=black!22] (1.000,0.000) circle (0.200);
+  \draw[fill=black!22] (0.000,0.000) circle (0.200);
+  \draw[fill=white] (-1.509,0.509) circle (0.080);
+  \draw[fill=white] (-1.509,-0.509) circle (0.080);
+  \draw[fill=white] (1.509,-0.509) circle (0.080);
+  \draw[fill=white] (1.509,0.509) circle (0.080);
+  \draw[fill=white] (0.000,0.720) circle (0.080);
+  \draw[fill=white] (0.000,-0.720) circle (0.080);
+\end{tikzpicture}
+%%TERM%%
+-60
+%%PICTURE%%
+\begin{tikzpicture}[x=0.500cm, y=0.500cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (-1.509,0.509) -- (-1.000,0.000);
+  \draw (-1.509,-0.509) -- (-1.000,0.000);
+  \draw (0.000,0.720) -- (0.000,0.000);
+  \draw (1.360,-0.624) -- (1.000,0.000);
+  \draw (1.720,0.000) -- (1.000,0.000);
+  \draw (1.360,0.624) -- (1.000,0.000);
+  \draw (-1.000,0.000) -- (0.000,0.000);
+  \draw (0.000,0.000) -- (1.000,0.000);
+  \draw[fill=black!22] (-1.000,0.000) circle (0.200);
+  \draw[fill=black!22] (0.000,0.000) circle (0.200);
+  \draw[fill=black!22] (1.000,0.000) circle (0.200);
+  \draw[fill=white] (-1.509,0.509) circle (0.080);
+  \draw[fill=white] (-1.509,-0.509) circle (0.080);
+  \draw[fill=white] (0.000,0.720) circle (0.080);
+  \draw[fill=white] (1.360,-0.624) circle (0.080);
+  \draw[fill=white] (1.720,0.000) circle (0.080);
+  \draw[fill=white] (1.360,0.624) circle (0.080);
+\end{tikzpicture}
+%%TERM%%
+90
+%%PICTURE%%
+\begin{tikzpicture}[x=0.500cm, y=0.500cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (-2.009,0.509) -- (-1.500,0.000);
+  \draw (-2.009,-0.509) -- (-1.500,0.000);
+  \draw (2.009,-0.509) -- (1.500,0.000);
+  \draw (2.009,0.509) -- (1.500,0.000);
+  \draw (-0.500,0.720) -- (-0.500,0.000);
+  \draw (0.500,-0.720) -- (0.500,0.000);
+  \draw (-1.500,0.000) -- (-0.500,0.000);
+  \draw (1.500,0.000) -- (0.500,0.000);
+  \draw (-0.500,0.000) -- (0.500,0.000);
+  \draw[fill=black!22] (-1.500,0.000) circle (0.200);
+  \draw[fill=black!22] (1.500,0.000) circle (0.200);
+  \draw[fill=black!22] (-0.500,0.000) circle (0.200);
+  \draw[fill=black!22] (0.500,0.000) circle (0.200);
+  \draw[fill=white] (-2.009,0.509) circle (0.080);
+  \draw[fill=white] (-2.009,-0.509) circle (0.080);
+  \draw[fill=white] (2.009,-0.509) circle (0.080);
+  \draw[fill=white] (2.009,0.509) circle (0.080);
+  \draw[fill=white] (-0.500,0.720) circle (0.080);
+  \draw[fill=white] (0.500,-0.720) circle (0.080);
+\end{tikzpicture}
+%%TERM%%
+15
+%%PICTURE%%
+\begin{tikzpicture}[x=0.500cm, y=0.500cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (0.509,1.509) -- (0.000,1.000);
+  \draw (-0.509,1.509) -- (0.000,1.000);
+  \draw (-1.561,-0.314) -- (-0.866,-0.500);
+  \draw (-1.052,-1.195) -- (-0.866,-0.500);
+  \draw (1.052,-1.195) -- (0.866,-0.500);
+  \draw (1.561,-0.314) -- (0.866,-0.500);
+  \draw (0.000,1.000) -- (0.000,0.000);
+  \draw (-0.866,-0.500) -- (0.000,0.000);
+  \draw (0.866,-0.500) -- (0.000,0.000);
+  \draw[fill=black!22] (0.000,1.000) circle (0.200);
+  \draw[fill=black!22] (-0.866,-0.500) circle (0.200);
+  \draw[fill=black!22] (0.866,-0.500) circle (0.200);
+  \draw[fill=black!22] (0.000,0.000) circle (0.200);
+  \draw[fill=white] (0.509,1.509) circle (0.080);
+  \draw[fill=white] (-0.509,1.509) circle (0.080);
+  \draw[fill=white] (-1.561,-0.314) circle (0.080);
+  \draw[fill=white] (-1.052,-1.195) circle (0.080);
+  \draw[fill=white] (1.052,-1.195) circle (0.080);
+  \draw[fill=white] (1.561,-0.314) circle (0.080);
+\end{tikzpicture}

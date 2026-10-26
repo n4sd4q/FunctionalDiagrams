@@ -1,0 +1,1 @@
+MatsubaraSum[Log[(z - a)/(z - b)], z, "Fermion", "ConvergenceFactor" -> 1]

@@ -1,0 +1,1 @@
+sigmaG = FunctionalDerivative[Phi, G[y, x]]

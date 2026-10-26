@@ -1,0 +1,1 @@
+polarizationQED = qedVertexFunction[{photon[x], photon[y]}, {x, y}, 2]

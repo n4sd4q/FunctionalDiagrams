@@ -1,0 +1,1 @@
+IntegrateLoops[LoopIntegral[ScalarPropagator[k, m], {k}], eps]

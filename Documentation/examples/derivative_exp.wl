@@ -1,0 +1,1 @@
+FunctionalDerivative[Exp[IntegralOver[f[x] J[x], {x}]], J[a], J[b]]

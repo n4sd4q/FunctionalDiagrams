@@ -1,0 +1,1 @@
+ConnectedFunctionFromVertices[{a, b, c, d}, "Fermion"]

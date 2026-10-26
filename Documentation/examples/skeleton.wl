@@ -1,0 +1,1 @@
+SkeletonDiagrams[selfEnergy2, {x, y}, {G0}]

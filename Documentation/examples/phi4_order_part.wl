@@ -1,0 +1,1 @@
+OrderPart[ConnectedVacuumDiagrams[Z0, Phi4Vertex, 2], lambda, 2]

@@ -1,0 +1,1 @@
+ReduceParameterIntegrals[ParameterIntegral[t^-eps (1 - t)^(1 - 2 eps), t]]

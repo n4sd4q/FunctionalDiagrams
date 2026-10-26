@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this package in published work, please cite it as below."
+title: "FunctionalDiagrams: functional derivatives and Feynman diagrams in Mathematica"
+type: software
+authors:
+  - family-names: Africani
+    given-names: Nazzareno
+    affiliation: "SISSA, Trieste"
+version: 2.3.0
+date-released: "2026-10-26"
+license: GPL-3.0-or-later
+repository-code: "https://github.com/n4sd4q/FunctionalDiagrams"
+url: "https://github.com/n4sd4q/FunctionalDiagrams"
+abstract: >-
+  A Mathematica package that takes functional derivatives of generating functionals and effective actions
+  symbolically, with the signs of fermions, and writes the results as Feynman diagrams with their weights: perturbation
+  theory, classes of diagrams, the 1PI and 2PI effective actions, the Luttinger-Ward functional, Bethe-Salpeter and
+  parquet equations, Hedin's equations, pictures in TikZ, and the evaluation of diagrams in Matsubara frequency and in
+  dimensional regularization.
+keywords:
+  - functional derivatives
+  - Feynman diagrams
+  - many-body perturbation theory
+  - Luttinger-Ward functional
+  - parquet equations
+  - Hedin's equations
+  - GW approximation
+  - Matsubara sums
+  - 2PI effective action
+  - Nambu-Gor'kov superfield
+  - dimensional regularization
+  - quantum electrodynamics
+  - Mathematica

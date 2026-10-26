@@ -1,0 +1,1 @@
+EpsilonExpand[Gamma[eps]^3, eps, 0]

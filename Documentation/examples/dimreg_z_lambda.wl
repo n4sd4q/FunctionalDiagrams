@@ -1,0 +1,1 @@
+Expand[zLambda /. solution]

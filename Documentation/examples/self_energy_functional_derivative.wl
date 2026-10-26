@@ -1,0 +1,1 @@
+FunctionalDerivative[omega, Sg[x, y]]

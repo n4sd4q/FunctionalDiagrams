@@ -1,0 +1,1 @@
+SimplifyDiagrams[IntegralOver[DeltaFunction[x, u] f[u, y], {u}]]

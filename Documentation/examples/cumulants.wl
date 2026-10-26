@@ -1,0 +1,1 @@
+SetSourcesToZero[FunctionalDerivative[Log[Zw], J[a], J[b]]]

@@ -1,0 +1,1 @@
+{h[x, y], 3*IntegralOver[f[x, DummyVariable[1, 1]]*g[DummyVariable[1, 1], y], {DummyVariable[1, 1]}]}

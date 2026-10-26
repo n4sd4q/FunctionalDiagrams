@@ -1,0 +1,31 @@
+1
+%%PICTURE%%
+\begin{tikzpicture}[x=0.500cm, y=0.500cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (0.500,0.000) -- (-0.500,0.000);
+  \fill (-0.087,0.000) -- (0.087,-0.074) -- (0.030,0.000) -- (0.087,0.074) -- cycle;
+  \draw[dash pattern=on 1.875pt off 1.875pt] (-0.500,0.000) arc[start angle=173.974, end angle=6.026, radius=0.503];
+  \draw (-0.500,0.000) -- (-1.100,0.000);
+  \fill (-0.917,0.000) -- (-0.743,-0.074) -- (-0.800,0.000) -- (-0.743,0.074) -- cycle;
+  \draw (0.500,0.000) -- (1.100,0.000);
+  \fill (0.683,0.000) -- (0.857,-0.074) -- (0.800,0.000) -- (0.857,0.074) -- cycle;
+  \fill (-0.500,0.000) circle (0.064);
+  \fill (0.500,0.000) circle (0.064);
+  \node[font=\tiny, inner sep=0pt, anchor=0] at (-1.190,0.000) {$x$};
+  \node[font=\tiny, inner sep=0pt, anchor=180] at (1.190,0.000) {$y$};
+\end{tikzpicture}
+%%TERM%%
+-1
+%%PICTURE%%
+\begin{tikzpicture}[x=0.500cm, y=0.500cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw[dash pattern=on 1.875pt off 1.875pt] (0.000,0.000) -- (0.000,0.850);
+  \draw (0.000,0.850) arc[start angle=270.000, end angle=630.000, radius=0.280];
+  \fill (-0.087,1.410) -- (0.087,1.336) -- (0.030,1.410) -- (0.087,1.484) -- cycle;
+  \draw (0.000,0.000) -- (-0.600,0.000);
+  \fill (-0.417,0.000) -- (-0.243,-0.074) -- (-0.300,0.000) -- (-0.243,0.074) -- cycle;
+  \draw (0.000,0.000) -- (0.600,0.000);
+  \fill (0.183,0.000) -- (0.357,-0.074) -- (0.300,0.000) -- (0.357,0.074) -- cycle;
+  \fill (0.000,0.000) circle (0.064);
+  \fill (0.000,0.850) circle (0.064);
+  \node[font=\tiny, inner sep=0pt, anchor=0] at (-0.690,0.000) {$x$};
+  \node[font=\tiny, inner sep=0pt, anchor=180] at (0.690,0.000) {$y$};
+\end{tikzpicture}

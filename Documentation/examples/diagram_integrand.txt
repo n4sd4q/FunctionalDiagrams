@@ -1,0 +1,1 @@
+{{"Weight" -> -1, "Integrand" -> 1/((I*LoopFrequency[1, "Fermion"] - xi[LoopMomentum[1]])*(I*(nu + LoopFrequency[1, "Fermion"]) - xi[q + LoopMomentum[1]])), "LoopMomenta" -> {LoopMomentum[1]}, "LoopFrequencies" -> {LoopFrequency[1, "Fermion"]}, "EqualTimeFrequency" -> 0}}

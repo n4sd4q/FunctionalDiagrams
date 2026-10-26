@@ -1,0 +1,28 @@
+% The social preview of the GitHub repository (Logo/social_preview.png, 1280 x 640 px; uploaded by hand in the settings
+% of the repository): the logo, the name and the first panel of the README. Built by make_readme_figure.sh, after the
+% gallery (\gallery is the PDF of readme_gallery.tex) and the logo (python3 make_logo.py ../Logo).
+\documentclass[border=0pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage[sc]{mathpazo}
+\usepackage{tikz,graphicx}
+\providecommand{\gallery}{readme_gallery.pdf}
+\definecolor{accent}{HTML}{1F4E79}
+\definecolor{muted}{HTML}{59636E}
+\definecolor{edge}{HTML}{D0D7DE}
+\begin{document}
+\begin{tikzpicture}[x=1bp, y=1bp]
+  \useasboundingbox (0, 0) rectangle (640, 320);
+  \fill[white] (0, 0) rectangle (640, 320);
+  \fill[accent] (0, 0) rectangle (640, 5);
+  % left: logo, name, what it is; right: the first panel of the README, on a card; both centred vertically, the card
+  % 280bp high, so that the 2:1 picture keeps a margin of about 40 px above and below it
+  \node[anchor=west, inner sep=0pt] at (40, 163) {\begin{minipage}{262bp}\raggedright
+    \includegraphics[height=66bp]{../Logo/FunctionalDiagrams_logo.pdf}\par\vskip 22bp
+    {\color{accent}\fontsize{23}{28}\selectfont\bfseries FunctionalDiagrams}\par\vskip 12bp
+    {\fontsize{14}{18}\selectfont Feynman diagrams from\\ functional derivatives}\par\vskip 9bp
+    {\color{muted}\fontsize{10.5}{14}\selectfont A Mathematica package for perturbation theory,\\ effective actions and many-body physics}
+  \end{minipage}};
+  \node[anchor=east, inner sep=5bp, draw=edge, line width=0.6bp, rounded corners=4bp, fill=white] at (608, 163)
+    {\includegraphics[height=270bp, page=1]{\gallery}};
+\end{tikzpicture}
+\end{document}

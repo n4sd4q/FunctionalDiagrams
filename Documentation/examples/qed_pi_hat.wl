@@ -1,0 +1,1 @@
+piHat = ExpandParameterIntegrals[piQ - (piQ /. ScalarProduct[q, q] -> 0), eps, 0]

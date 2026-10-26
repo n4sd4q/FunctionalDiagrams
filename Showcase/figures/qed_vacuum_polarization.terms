@@ -1,0 +1,14 @@
+-e^{2}
+%%PICTURE%%
+\begin{tikzpicture}[x=0.500cm, y=0.500cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (0.900,0.000) arc[start angle=353.974, end angle=186.026, radius=0.905];
+  \fill (-0.087,-0.810) -- (0.087,-0.884) -- (0.030,-0.810) -- (0.087,-0.736) -- cycle;
+  \draw (-0.900,0.000) arc[start angle=173.974, end angle=6.026, radius=0.905];
+  \fill (0.087,0.810) -- (-0.087,0.884) -- (-0.030,0.810) -- (-0.087,0.736) -- cycle;
+  \draw (-0.900,0.000) -- (-1.500,0.000);
+  \draw (0.900,0.000) -- (1.500,0.000);
+  \fill (-0.900,0.000) circle (0.064);
+  \fill (0.900,0.000) circle (0.064);
+  \node[font=\tiny, inner sep=0pt, anchor=0] at (-1.590,0.000) {$x$};
+  \node[font=\tiny, inner sep=0pt, anchor=180] at (1.590,0.000) {$y$};
+\end{tikzpicture}

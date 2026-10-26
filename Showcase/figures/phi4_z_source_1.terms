@@ -1,0 +1,38 @@
+\frac{1}{8}
+%%PICTURE%%
+\begin{tikzpicture}[x=0.450cm, y=0.450cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (0.000,0.000) arc[start angle=180.000, end angle=540.000, radius=0.280];
+  \draw (0.000,0.000) arc[start angle=0.000, end angle=360.000, radius=0.280];
+  \fill (0.000,0.000) circle (0.064);
+\end{tikzpicture}
+%%TERM%%
+\frac{1}{4}
+%%PICTURE%%
+\begin{tikzpicture}[x=0.450cm, y=0.450cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (-1.100,0.000) -- (0.000,0.000);
+  \draw (1.100,0.000) -- (0.000,0.000);
+  \draw (0.000,0.000) arc[start angle=270.000, end angle=630.000, radius=0.280];
+  \draw[fill=white] (-1.100,0.000) circle (0.100);
+  \draw[line width=0.320pt] (-1.030,0.070) -- (-1.170,-0.070) (-1.030,-0.070) -- (-1.170,0.070);
+  \draw[fill=white] (1.100,0.000) circle (0.100);
+  \draw[line width=0.320pt] (1.170,0.070) -- (1.030,-0.070) (1.170,-0.070) -- (1.030,0.070);
+  \fill (0.000,0.000) circle (0.064);
+\end{tikzpicture}
+%%TERM%%
+\frac{1}{24}
+%%PICTURE%%
+\begin{tikzpicture}[x=0.450cm, y=0.450cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (-0.813,0.813) -- (0.000,0.000);
+  \draw (-0.813,-0.813) -- (0.000,0.000);
+  \draw (0.813,-0.813) -- (0.000,0.000);
+  \draw (0.813,0.813) -- (0.000,0.000);
+  \draw[fill=white] (-0.813,0.813) circle (0.100);
+  \draw[line width=0.320pt] (-0.743,0.883) -- (-0.883,0.743) (-0.743,0.743) -- (-0.883,0.883);
+  \draw[fill=white] (-0.813,-0.813) circle (0.100);
+  \draw[line width=0.320pt] (-0.743,-0.743) -- (-0.883,-0.883) (-0.743,-0.883) -- (-0.883,-0.743);
+  \draw[fill=white] (0.813,-0.813) circle (0.100);
+  \draw[line width=0.320pt] (0.883,-0.743) -- (0.743,-0.883) (0.883,-0.883) -- (0.743,-0.743);
+  \draw[fill=white] (0.813,0.813) circle (0.100);
+  \draw[line width=0.320pt] (0.883,0.883) -- (0.743,0.743) (0.883,0.743) -- (0.743,0.883);
+  \fill (0.000,0.000) circle (0.064);
+\end{tikzpicture}

@@ -1,0 +1,1 @@
+BetaFunctionFromZ[1 - delta3/2, e, eps, 3, "ScalePower" -> 1]

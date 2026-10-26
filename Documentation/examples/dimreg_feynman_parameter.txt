@@ -1,0 +1,1 @@
+{{FeynmanParameterIntegral[Log[(4*(1 - FeynmanParameter) + FeynmanParameter + 5*(1 - FeynmanParameter)*FeynmanParameter)/RenormalizationScale^2]^2, FeynmanParameter]}, 0.009800320655996796}

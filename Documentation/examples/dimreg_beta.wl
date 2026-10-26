@@ -1,0 +1,1 @@
+beta = BetaFunctionFromZ[zLambda /. solution, lambda, eps, 3]

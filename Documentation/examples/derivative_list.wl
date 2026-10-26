@@ -1,0 +1,1 @@
+FunctionalDerivative[IntegralOver[Q[x, y] J[x] J[y], {x, y}], {J[a], J[b]}]

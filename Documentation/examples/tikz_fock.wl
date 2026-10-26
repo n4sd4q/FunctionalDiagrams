@@ -1,0 +1,1 @@
+DiagramToTikZ[-G[x, y] V[x, y], {x, y}]

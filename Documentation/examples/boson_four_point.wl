@@ -1,0 +1,1 @@
+GaussianExpectationValue[Z0, {phi[a], phi[b], phi[c], phi[d]}]

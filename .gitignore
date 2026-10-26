@@ -1,0 +1,30 @@
+# LaTeX auxiliary files
+Showcase/*.aux
+Showcase/*.log
+Showcase/*.out
+Showcase/*.toc
+Showcase/*.listing
+Showcase/*.synctex.gz
+Showcase/*.fdb_latexmk
+Showcase/*.fls
+# notebooks saved with their results
+*_with_results*.nb
+# personal settings of Claude Code (hooks, permissions), and their backups
+.claude/settings.local.json*
+# personal notes for Claude Code (CLAUDE.md is the public guide)
+CLAUDE.local.md
+# system files
+.DS_Store
+Thumbs.db
+desktop.ini
+Documentation/*.aux
+Documentation/*.log
+Documentation/*.out
+Documentation/*.toc
+Documentation/*.listing
+Documentation/*.fdb_latexmk
+Documentation/*.fls
+# the paclet archive (Development/build_paclet.wl)
+build/
+# Python bytecode (Development/latex_lines.py is imported by the scripts)
+__pycache__/

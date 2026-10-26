@@ -1,0 +1,1 @@
+ExpandTrace[IntegralOver[OperatorKernel[G^-1][x, u] G[u, y], {u}]]

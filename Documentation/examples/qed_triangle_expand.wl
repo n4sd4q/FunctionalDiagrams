@@ -1,0 +1,1 @@
+ExpandParameterIntegrals[triangle /. onShell, eps, 0]

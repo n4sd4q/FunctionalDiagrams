@@ -1,0 +1,227 @@
+# FunctionalDiagrams — notes for Claude Code
+
+A Mathematica package for functional derivatives and the Feynman diagrams they generate (see `README.md`).
+Author: Nazzareno Africani (SISSA). Code, comments and documentation are written in English. Personal notes of a
+developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is not versioned.
+
+## Layout
+
+- `FunctionalDiagrams.wl` — the package, a single file **generated** from `Development/src/*.wl` by
+  `Development/build.sh`. Never edit it directly: edit the sources, then run `Development/build.sh`.
+- `Development/src/` — `00_header` (usage messages, version), `01_notation_declarations`,
+  `02_terms_derivative_canonical` (terms, functional derivative, canonical form), `03_wick_perturbation`,
+  `04_classes_vertices` (classes of diagrams, Luttinger–Ward, vertices, parquet, exact equations: `ExactEquation`,
+  `CheckEquation`, `LabelFunction`, `PerturbativeDensityVertex`), `05_drawing` (layout), `06_tikz_footer` (TikZ export,
+  LaTeX formulas), `07_matsubara` (evaluation in momentum and Matsubara frequency, cutting rules), `09_dimreg`
+  (Feynman integrals in dimensional regularization: loop integrals of the diagrams, one-loop integrals in closed form,
+  Laurent expansion in ε, infrared rearrangement, renormalization-group functions from Z factors), `10_qed` (QED at one
+  loop: Dirac algebra in d, `QEDIntegrand`, `IntegrateOneLoop`, Feynman-parameter integrals, form factors), `11_effective_actions` (the 1PI and 2PI
+  effective actions, traces, Potthoff's functionals, zero dimensions; 09, 10 and 11 are concatenated before 08), `08_footer` (`$publicNames`, load-time checks, end of the package).
+- `Examples.wl` — the guided tour as a script. `Examples.nb` is generated from it:
+  `python3 Development/make_notebook.py Examples.wl Examples.nb`. Edit the `.wl`, never the `.nb`.
+- `Documentation/` — the reference manual. `FunctionalDiagrams_Manual.tex` (edit it directly) uses the examples computed
+  by `make_examples.wl` (every example is a code string, evaluated and written to
+  `examples/NAME.wl`, with its output as `NAME.tex` (formula), `NAME_pictures.tex` (diagrams) or `NAME.txt`);
+  `build_manual.sh` runs `make_index.py` (index of functions, long formulas broken into lines by
+  `Development/latex_lines.py`, shared with `Showcase/assemble.py`) and pdflatex (through latexmk when installed). Keep the
+  manual in sync with the usage messages.
+- `Tests/RunTests.wl` — the test suite; `Tests/RunTests.out` is its last output. `Tests/QEDOneLoop.wl` is the one-loop QED
+  computation (self-energy, vacuum polarization, vertex), loaded by the tests and runnable on its own (it prints a report);
+  `Tests/MatsubaraBruteForce.wl`, the brute-force Matsubara sums of the integrand of a diagram, is loaded by the tests and
+  by `Showcase/make_figures.wl`. `Tests/EffectiveActions.wl` and `Tests/Superfields.wl` are loaded by the suite too, with
+  the shared helpers of `Tests/Harness.wl`; `Tests/FullyIrreducibleVertices.m` stores the reference vertices of the parquet
+  check (`RECOMPUTE_REFERENCES=1` rebuilds them).
+- `Showcase/` — the presentation of the package. `make_figures.wl` (Mathematica, about two minutes) computes and draws
+  everything into `figures/`: `NAME.terms` (one term per block: weight, `%%PICTURE%%`, tikzpicture; a sum written
+  order by order is split into `NAME_m.terms`), `formula_NAME.tex` (formulas, by `ExpressionToLaTeX`) and `values.txt`
+  (checks, numbers of diagrams, timings). `build_pdf.sh` runs `assemble.py` (→ `figures/*.tex`, `figures/values.tex`,
+  `figures/parquet_table.tex`, long formulas split) and pdflatex. In the `.tex`, `\begin{ordersum}{lhs}
+  \orderrow{V^2}{name_2} ... \end{ordersum}` draws a sum with one coloured band per order, `\figuresum{lhs}{name}` a
+  plain sum, `\formula{name}` a formula, `\val{Key}` a value of `values.txt`. The pictures are small:
+  `pictureOptions` in `make_figures.wl`.
+- `Logo/` — the logo (SVG and PDF: the badge, which reads on light and dark pages; a white version for the dark title
+  pages of the manual and the showcase; `_small.svg` for 16–32 px), drawn by `Development/make_logo.py`; the social preview
+  `social_preview.png` is built by `Development/make_readme_figure.sh`.
+- `Media/` — the demo video `demo.mp4` (1280×720, H.264, under a minute), its looping preview `demo_preview.gif` (at the
+  top of the README, a plain `<img>`) and a poster frame `demo_poster.png`, made by `python3 Development/make_demo_video.py`
+  (about a minute; pdflatex, pdftocairo, PIL, ffmpeg) from the figures of the showcase and the first example of the
+  README: run it again when they change, and look at frames of the result (`--frames` writes some to `build/video/frames`).
+- Map of the functions (in the README): `Development/make_function_map.wl` (Mathematica) reads the group (block of
+  `00_header.wl`), kind (function or inert data head), usage message and dependencies of every public name (from its
+  held definitions, through the private helpers, stopping at public names) into `Documentation/function_map.json`;
+  `Development/make_function_map.py` (numpy, matplotlib for the text metrics) lays out the names by their role in a
+  calculation, in six stages (declare, write a functional, differentiate around `FunctionalDerivative`, classify and
+  check, draw, evaluate; `STAGE_OVERRIDE` holds the few editorial placements, `PARTNER_NOTE` the captions of the names
+  `FunctionalDerivative` itself uses, drawn beside it), with the names built on another indented
+  under it and "uses" notes, and writes `Documentation/function_map.svg` (a white card legible on light and dark pages,
+  the one the README shows) and the self-contained interactive `function_map.html` (the same layout, light and dark,
+  every dependency drawn for the selected name).
+- `Development/TODO.md` — things worth doing sooner or later; keep it up to date.
+- `.nojekyll` (empty) — GitHub Pages serves the main branch as it is, so that the README can link the interactive map
+  (`https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html`) and the video (`.../Media/demo.mp4`).
+- `PacletInfo.wl` — the repository is a paclet (``Needs["FunctionalDiagrams`"]`` after `PacletDirectoryLoad` or
+  `PacletInstall`); `Development/build_paclet.wl` builds `build/FunctionalDiagrams-<version>.paclet` for a GitHub release.
+  The version is the same in `PacletInfo.wl`, `CITATION.cff` and `$FunctionalDiagramsVersion` (`00_header.wl`).
+
+## Workflow
+
+1. Edit `Development/src/*.wl`, then `Development/build.sh`.
+2. Run the tests: `wolfram -script Tests/RunTests.wl > Tests/RunTests.out`; every check must pass.
+3. If results or pictures change: `cd Showcase && wolfram -script make_figures.wl && ./build_pdf.sh`, then look
+   at the pages of the PDF (symmetric diagrams drawn symmetric, nothing overlapping, no overfull lines).
+4. Every time something is implemented and works: commit it, then right away document it in the showcase, the manual
+   (`cd Documentation && wolfram -script make_examples.wl && ./build_manual.sh`), `Examples.wl` (then regenerate
+   `Examples.nb`), `README.md` and `CHANGELOG.md`, as clearly and linearly as possible and in the right place, so that the
+   documents keep a natural, clean order (never appended at the end). Everything is generated by functional derivatives:
+   the documents show the derivative that produces an object before any shortcut function.
+5. `python3 Development/check_consistency.py` (also run by GitHub on every push) checks that the package, the notebook
+   and the documentation of the public names are up to date; `Development/make_readme_figure.sh` redraws the pictures of
+   the README (`Development/readme_gallery.tex`) and the social preview from the figures of the showcase. The README uses
+   plain `<img>` elements, one file legible on light and dark pages for each picture: no `<picture>` (the GitHub mobile
+   apps do not show it). When public names or their dependencies change, redraw the map of the
+   functions: `wolfram -script Development/make_function_map.wl && python3 Development/make_function_map.py` (about
+   fifteen seconds; look at the SVG), also after a version bump: `check_consistency.py` compares the map with `$publicNames` and
+   the version.
+
+`wolfram -script FILE` and `wolframscript -file FILE` do the same; on some installations only the first one works.
+`check_consistency.py` on GitHub catches a commit in which a generated file is stale.
+
+## Conventions
+
+- `G0(x, y) = -<T psi(x) psibar(y)>`; free fermions `Exp[-IntegralOver[G0[x, y] etabar[x] ** eta[y], {x, y}]]`;
+  `psi` ↔ δ/δ`etabar`, `psibar` ↔ −δ/δ`eta`. An arrow from `y` to `x` is `G[x, y]`.
+- `S_int = 1/2 ∫ V(x, y) psibar(x) psibar(y) psi(y) psi(x)`; the weight written with a picture is such
+  that the weight times the values of the elements is the term: an interaction line stands for −V and a vertex for minus its
+  coupling (the minus sign comes from expanding exp(−S_int)); so Fock +1, Hartree −1, the φ⁴ tadpole +½. Interaction lines
+  are the heads of `DeclareInteractionLine` (also the Hubbard–Stratonovich propagators and W), couplings those of
+  `DeclareCoupling` (λ, g: λⁿ → (−1)ⁿ), local vertices (`DeclareLocalVertex`) stand for minus their kernel; propagators
+  (phonon, disorder correlator, photon, gluon) stand for themselves; `"Weights" -> "Coefficients"` shows the coefficients.
+  Only the displayed weights follow this convention: the expressions are unchanged.
+- Φ = −(2PI skeleton vacuum diagrams with G0 → G); Σ(x, y) = δΦ/δG(y, x); Γ⁰(1, 2; 3, 4) = δΣ(1, 2)/δG(4, 3), so that
+  Γ⁰·Y puts Y in place of one line of Σ. Channels: ph (12|34), ph̄ (14|32), pp (13|24); Γ⁰ = F − R_ph = Γ_irr + R_ph̄ + R_pp,
+  and Γ_irr (the fully irreducible vertex) is the bare vertex up to third order.
+- Vertex of the density: Λ(x1, x2; z) = −δG⁻¹(x1, x2)/δU(z), ⟨ψψ̄ρ⟩_c = L₀Λ, ⟨ρρ⟩_c = −L₀Λ; Λ = γ + Γ⁰L₀Λ = γ + FL₀γ,
+  Σ = Σ_H − VGΛ. Hedin: W = V − V⟨ρρ⟩_cV, P = −(proper part of ⟨ρρ⟩_c) = L₀Λ̃, Σ = Σ_H − GWΛ̃ (L₀ a pair of propagators, never written GG). Hubbard–Stratonovich:
+  ⟨φφ⟩_0 = V and the coupling −i∫φρ (φ⁴: ⟨σσ⟩_0 = λ/3 δ, coupling −(i/2)∫σφ²). Real bosons: Γ⁰ = −2δΣ/δG, and a pair of
+  lines in a channel carries −½.
+- Superfields (`"Statistics" -> "Superfield"`): 𝛙 = (ψ, ψ̄) (bold ψ in the documents: χ is the density response), one
+  Grassmann field with one source; its propagator 𝒢 = −⟨T𝛙𝛙⟩ is the antisymmetric Nambu matrix with the blocks G,
+  𝒢_ψψ = −⟨Tψψ⟩ and 𝒢_ψ̄ψ̄ = −⟨Tψ̄ψ̄⟩ (never called F: F is the full vertex). Γ = Φ − ½Tr ln(−𝒢⁻¹) − ½Tr((𝒢0⁻¹ − K)𝒢 − 1),
+  the source entering as S + ½∫𝛙K𝛙; 𝚺 = −2δΦ/δ𝒢 (derivatives with respect to antisymmetric kernels are antisymmetrised),
+  the gap functions Δ = 𝚺_ψ̄ψ̄ (= V𝒢_ψψ at first order) and Δ̄; Γ⁰ = 4δ²Φ/δ𝒢δ𝒢, whose channels (`"Channel"`) s, t, u are
+  ph, pp, ph̄, with the ladders +½, −½, +½; `SuperfieldComponents` projects on ψ and ψ̄. Tests in `Tests/Superfields.wl`.
+- Matsubara: G0(k, iω) = 1/(iω − ξ_k); the package's ⟨ρρ⟩_c is minus the Lindhard χ0, and its boson propagator ⟨φφ⟩ is
+  minus the textbook D0.
+- Dimensional regularization (`09_dimreg.wl`): Euclidean, a line is 1/(q² + m²), d = 4 − 2ε, every loop μ^(2ε) (e^γE/4π)^ε ∫d^dk/(2π)^d (the
+  MS-bar measure: minimal subtraction is MS-bar, no γE or ln 4π in the results); φ⁴ with λ/4!, Γ⁽⁴⁾ = −(amputated 1PI part
+  of the connected four-point function), β = μ dλ/dμ, γ_φ = ½ μ d ln Z_φ/dμ, γ_m2 = μ d ln m²/dμ.
+- QED at one loop (`10_qed.wl`): Minkowski, Peskin–Schroeder except for the sign of the charge: metric (+,−,−,−), {γ^μ, γ^ν} = 2g^μν, Tr 1 = 4, no γ5
+  (`GammaMatrix[5]` refused), abstract d-dimensional indices; `FeynmanDenominator[q, m]` = 1/(q² − m² + i0), electron line
+  i(q̸ + m)/(q² − m²), photon −i[g − (1 − ξ)qq/(q² − λ²)]/(q² − λ²) (λ optional, an infrared regulator); e > 0 everywhere, the
+  electron has charge −e: S_int = +e∫ψ̄γ^μψA_μ, vertex +ieγ^μ, α = e²/4π. The package expands exp(−X), so the interaction
+  passed is X = −iS_int = e∫V ψ̄ψA with V = −iγ^μ δδ (`QEDVertex -> {"Vertex", -I}`), and the 1PI functions are −iΣ, iΠ^μν,
+  +ieΓ^μ (Γ^μ = γ^μ + δΓ^μ); the MS-bar measure as above (P&S's 2/ε is
+  our 1/ε); Feynman-parameter integrals with Δ − i0.
+- In the documents φ⁴ theory and the electron gas are both shown at every step, complete up to third order, grouped by
+  order; the third order is not presented as anything special.
+- Names of propagators and fields must not be built-in symbols (`GreenFunction`, `Gamma`, `C`, `D`, `E`, `I`, `K`, `N`,
+  `O`, …); this holds for the examples too (a symmetric kernel is `Q`, not `K`).
+
+## Drawing rules (`05_drawing.wl`)
+
+- Diagrams in which every vertex lies on one fermion line (open or closed) use the unit layout (`unitLayoutWithExternals`,
+  `unitLayoutVacuum`): a two-point function has its open line on a horizontal axis (`layoutAxisUnits`), a four-point
+  function its two open lines as parallel rails (`layoutRailUnits`), with the legs towards the corners of a rectangle,
+  counterclockwise from the top left (`x1` out, `x2` in, `x3` out, `x4` in); `"ExternalOrder" -> {x4, x2, x3, x1}` for
+  particle–particle diagrams; a rail that would join opposite corners has the labels of the right corners exchanged.
+  Rails keep the picture low: along vertical rails the nodes are 0.75 apart, between horizontal rails the lines to loops
+  are 0.5 long and the bubbles 0.7 wide (above and below them the lines to loops keep their length); a rail of one node (bare vertex) has its legs open at 110 degrees, 1.25 legLength
+  long (up to 2.2 towards the corners beside a longer rail), a wide V, never a straight line. Loops are circles hanging from the lines and from each other (`placeBlock`, `placeUnit`, `placeLoopOnLine`; a loop
+  joined to points of a line further apart than it is wide has the joined vertices over its lowest 100 degrees, the lines
+  leaning inwards, never tangent to it); sides of
+  arcs and loops by counting conflicts (`axisSideChoice`, `railArcSides`); spacing widened until no loops overlap.
+  A bubble joined to two points further apart than its width keeps its size and its lines are bent into one arc with
+  it (`bubbleBends` in `frameItems`), unless the bent line would leave its point within 45 degrees of a leg or another
+  line there (then the lines are straight).
+  A bubble (two lines between two vertices) whose vertices carry another line or leg that would run into it (closer to
+  its chord than a right angle: the bubble of a triangle, a vertex above a bubble on the axis) is a lens, flattened until
+  the line stays outside (`lensLimit` in `frameItems`); so is a bubble with a line or leg at about a right angle to its
+  chord on one side only (it would leave along the arc of a semicircle; with lines on both sides, a loop sitting on a
+  line, the bubble stays round). Vacuum trees of loops: `layoutVacuumTree` (the central loop turned symmetric about
+  the vertical axis). Three diameters of a loop of six: one horizontal, between two vertices 25 degrees above the horizontal, drawn outside
+  over the top, the other two crossing at 70 degrees at the centre (vertices at 155, 235, 305, 25, 55, 125 degrees, the
+  outside one found by `graphDiameterQ`); two bubbles joined to each other at both vertices (`layoutVacuumLoops`): the
+  vertices on the facing sides, 50 degrees from the line of the centres, the bubble drawn as its circle
+  (`bubbleCircleKind`); a diameter crossed by two or more chords is horizontal, the chords vertical (a "#"); four or more
+  diameters: the vertices moved alternately apart (`layoutVacuumCycle`).
+- Anomalous propagators: `"DivergingArrows"` for 𝒢_ψψ (arrows into both ends), `"ConvergingArrows"` for 𝒢_ψ̄ψ̄ (arrows
+  towards the middle). A fermion line may run through anomalous segments: chains, loops and density points are found by
+  the kind (ψ or ψ̄) of each line end, and the weight of a picture reads an anomalous line along its fermion line (a loop in
+  either sense, an open line from its first external label).
+- Three or more open fermion lines with their ends at external points or sources, joined in a chain (Z[eta, etabar] with
+  six sources): horizontal rails one above the other, the lines between them vertical, their free ends spread to common
+  ends so that the rails are aligned (`layoutStackedRails`). The unit
+  layouts are upright by construction: only the general layout of a picture without external points is turned along
+  its principal axes (`alignPrincipalAxes`).
+- Density points: an external label alone at its point that, in every term, ends exactly two propagators (one in and
+  one out, or two undirected) and nothing else, and is not an argument of a local vertex, is a density insertion: a
+  crossed circle at the point, no leg (`densityLabelsFor`). So is a label alone at the third corner of a triangle blob,
+  or sharing its point with exactly an outgoing and an incoming leg (a bare vertex); every density point carries its
+  label (`$densityNodeLabels`), so the vertex of the density looks the same in every picture.
+- Loops: of two crossing chords the one bulging up or down is drawn outside, over the top (a loop with two diameters has
+  a vertex at the top), on a loop hanging from a line or a point the one farthest from where it hangs; an interaction
+  line along the arc of a round loop is well inside it, three or more lines along it (a sunset) a melon about the chord,
+  never a second circle; a bubble between two of
+  three or more external points with no free vertex keeps the width of a bubble; vacuum diagrams whose vertices all lie
+  on loops of undirected propagators (`scalarLoops`) use `layoutVacuumLoops`; a single pendant part
+  (`placePendantVertices`) is turned, within its free sector, to the direction farthest from what is placed. A chord
+  drawn outside a loop is 0.4 + 0.3 (chord/diameter) outside the circle at its middle, so a long one does not hug it
+  and a diameter does not rise far above the loop. A source point at the end of a nearly vertical or horizontal line
+  (general layout of Z[J]) is moved to make the line exactly vertical or horizontal (`straightenedSourceLines`).
+- General layout with external points: a vertex on a leg with a tadpole or a pendant part hanging from it is pulled
+  towards its external point (`tutteEmbedding` with `outward`) and the external points are 1.15 times farther out, so
+  the hanging part is not wedged between two legs. A coil self-loop (gluon loop at the four-gluon vertex) sits on its
+  vertex, its lines leaving almost sideways, and a unit of one node joined to several points is raised so that its
+  lines are steep (a circle on a V, not an X).
+- Trees of vertex functions with the external points at the leaves (the tree expansion of `ConnectedFunctionFromVertices`):
+  `treeLayoutWithExternals`.
+  Everything else uses the general layout (`layoutWithExternals`, `layoutVacuumComponent`).
+- TikZ: arrow heads are polygons (`tikzArrowHead`) and wavy lines (straight or arcs) and zigzag arcs explicit curves with a
+  half-integer number of waves, never decorations on arcs; where two wavy lines cross, the waves are flattened
+  (`waveCrossingParameters`, `waveEnvelope`) so that the crossing reads as an X
+  (the markings decoration fails with "Dimension too large" on small arcs); the code needs only
+  `decorations.pathmorphing`.
+  A wavy arc has a half-integer number of waves (mirror symmetric about its middle) and, when short or low (the Fock
+  arc), waves in proportion to its height, down to 0.95 mm, with an amplitude of a quarter of a wave (`tikzLine`).
+  The arrow head of a double line (G) is 1.45 times larger, so that it stands out of the two strokes.
+- Disconnected pieces side by side (`diagramGeometry`): those with external points, and open lines between sources or
+  means, keep their axis at y = 0; every other piece, the first one too, is centred on it.
+- Of two crossing interaction arcs one is drawn above and one below the axis; two arcs on one side that overlap over less
+  than half of one of them are round, so that they cross high above the axis at a wide angle; an arc over another one
+  stays above it. Closed fermion loops are circles.
+- Blobs (`DeclareBlob`): circles, squares, and triangles for three-point vertices (two fermion legs on the left); a dressed
+  interaction (W) is `"DoubleWavy"`. A source at the end of a single line (Z[J] at a non-zero source) is drawn at the point.
+- A mean (source insertion on a stub) and a tadpole go to the largest free sector at their vertex that leads outside
+  the loops and bubbles drawn (`outsideGapDirection`): a mean on a vertex of a bubble on the axis sticks out of it, a
+  tadpole on a side of a triangle hangs outside it. With four means, the corners of the two rails between them are
+  chosen so that the lines cross least (`meanUnitLayout`). A one-point function whose vertex is joined to one other
+  vertex by a bundle of lines (a melon) has the bundle along its leg, on the axis.
+- A ring through blobs (Tr ln(1 - G0 Sigma)): the blobs evenly around a circle wide enough for them, symmetric about the
+  vertical axis (one at the bottom, two left and right, three with one at the bottom), the other vertices between them
+  (`layoutVacuumCycle`). A fermion loop through a stretch of the axis (a loop closed on a density point) is a circle on
+  the stretch as a diameter (`backboneSegmentOfLoop` in `roundFermionLoops`).
+- Several means on a vertex with lines (the mass insertion λφ̄²/2) are spread evenly in its free sector closest to the
+  outward direction (`outwardGap`): a V outside a loop, never one inside; a vacuum cycle through such an insertion is
+  rotated so that the picture is symmetric (`symmetricCycleRotation`).
+- Symmetric diagrams must be drawn symmetric: among layouts of equal quality the symmetric one wins.
+- To look at many pictures quickly, draw them into a LaTeX file and look at the PDF; never judge a layout from
+  coordinates alone.
+
+## Compatibility
+
+The package needs Mathematica 12.1 or later (`"WolframVersion" -> "12.1+"` in `PacletInfo.wl`): a function introduced
+in a later version needs that requirement raised, in `PacletInfo.wl`, the README and the manual.
+
+## Rules
+
+- Keep commits small and their messages clear.

@@ -1,0 +1,1 @@
+omega = SelfEnergyFunctional[Phi, G0 -> Sg, G]
