@@ -255,13 +255,14 @@ Semantic versioning, MAJOR.MINOR.PATCH: the largest change since the last releas
   equation, a statistics, a kind of picture.
 - PATCH: the package does better what its documents already say: a wrong result or a picture corrected, speed, messages.
 
-Changes to the documents alone (README, showcase, manual text, video, logo) need no release: GitHub Pages serves main.
-A tag and its paclet never move: a mistake in a release is corrected by the next patch release. A release: the version
-in `00_header.wl`, `PacletInfo.wl`, `CITATION.cff` (with `date-released`), the check of `Tests/RunTests.wl`, the README
-(install line, latest release), the manual (title, install line, how to cite), the showcase (title, values), `Examples.wl`
-and the map of the functions; `## Unreleased` of `CHANGELOG.md` becomes `## X.Y.Z (date)`; everything rebuilt and
-`check_consistency.py` passing, a commit "FunctionalDiagrams X.Y.Z"; the paclet built from a clean checkout
-(`Development/build_paclet.wl`); the GitHub release vX.Y.Z with the paclet and the two PDFs.
+Changes to the documents alone (README, showcase, manual text, video, logo) need no release: GitHub Pages serves main. A
+tag and its paclet never move: a mistake in a release is corrected by the next patch release. A release: the version in
+`00_header.wl`, `PacletInfo.wl`, `CITATION.cff` (with `date-released`), the check of `Tests/RunTests.wl`, the README
+(install line, latest release), the manual (title, install line, latest release, the value of
+`$FunctionalDiagramsVersion`, how to cite), the showcase (title, values), `Examples.wl` and the map of the functions
+(`git grep` the old number: only `CHANGELOG.md` keeps it); `## Unreleased` of `CHANGELOG.md` becomes `## X.Y.Z (date)`;
+everything rebuilt and `check_consistency.py` passing, a commit "FunctionalDiagrams X.Y.Z"; the paclet built from a
+clean checkout (`Development/build_paclet.wl`); the GitHub release vX.Y.Z with the paclet and the two PDFs.
 
 ## Compatibility
 
