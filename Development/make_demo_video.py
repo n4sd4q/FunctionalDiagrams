@@ -26,6 +26,9 @@ import sys
 
 from PIL import Image, ImageChops, ImageDraw, ImageFont
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from latex_lines import sign_positions      # noqa: E402  (Development/latex_lines.py, shared with the documents)
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIGURES = os.path.join(ROOT, "Showcase", "figures")
 BUILD = os.path.join(ROOT, "build", "video")
@@ -113,7 +116,7 @@ PREAMBLE = r"""\documentclass[12pt,multi=elem,border=3pt]{standalone}
 \usepackage[T1]{fontenc}
 \usepackage[sc]{mathpazo}
 \usepackage[scale=0.9]{sourcecodepro}
-\usepackage{amsmath,tikz,xcolor,graphicx,varwidth}
+\usepackage{amsmath,slashed,tikz,xcolor,graphicx,varwidth}
 \usetikzlibrary{decorations.pathmorphing}
 \definecolor{accent}{HTML}{1F4E79}\definecolor{muted}{HTML}{59636E}\definecolor{comment}{HTML}{6A7B8C}
 \definecolor{codebg}{HTML}{F5F7FA}\definecolor{codeframe}{HTML}{C9D3DF}
@@ -199,10 +202,26 @@ def elements():
     e["lindhard_diagram"] = r"{%s$\langle\rho\rho\rangle_c(q,i\nu_m)={}$\,%s}" % (big, fig("density_correlation_0", unit=0.8, line=0.8, font=r"\footnotesize"))
     e["lindhard_formula"] = r"{%s$\displaystyle {}={}%s$}" % (big, formula("lindhard"))
     # QED
-    qd = dict(unit=0.6, line=0.8, font=r"\footnotesize", arrow=0.2)
-    e["qed_sigma"] = r"{%s$-i\Sigma={}$\,%s}" % (big, fig("qed_self_energy", **qd))
-    e["qed_pi"] = r"{%s$i\Pi^{\mu\nu}={}$\,%s}" % (big, fig("qed_vacuum_polarization", **qd))
-    e["qed_vertex"] = r"{%s$ie\,\delta\Gamma^{\mu}={}$\,%s}" % (big, fig("qed_vertex", **qd))
+    qd = dict(unit=0.45, line=0.75, font=r"\footnotesize", arrow=0.2)
+    qbig = r"\fontsize{12}{15}\selectfont"
+    e["qed_sigma"] = r"{%s$-i\Sigma={}$\,%s}" % (qbig, fig("qed_self_energy", **qd))
+    e["qed_pi"] = r"{%s$i\Pi^{\mu\nu}={}$\,%s}" % (qbig, fig("qed_vacuum_polarization", **qd))
+    e["qed_vertex"] = r"{%s$ie\,\delta\Gamma^{\mu}={}$\,%s}" % (qbig, fig("qed_vertex", **qd))
+    # what the package computes from each of them (QEDIntegrand, IntegrateOneLoop, VertexFormFactors; the showcase's
+    # section on QED, Tests/QEDOneLoop.wl): the pole of Sigma, the transverse Pi with its logarithm, F2(0)
+    # (without the thin spaces of the package's TeX between factors, so that the long ones fit beside the diagrams)
+    res = r"\fontsize{10}{13}\selectfont"
+    compact = lambda name: formula(name).replace(r"\,", "")
+    note = lambda text: r"\\[1pt]{\color{muted}\fontsize{8.5}{10}\selectfont %s}" % text
+    result = lambda body: r"{%s\begin{tabular}{@{}l@{}}%s\end{tabular}}" % (res, body)
+    e["qed_sigma_result"] = result(r"$\displaystyle\Sigma=%s+O(\varepsilon^0)$" % compact("qed_sigma_pole") +
+                                   note(r"its pole, in any covariant gauge $\xi$"))
+    pi = compact("qed_pi")
+    cut = sign_positions(pi)[0][0]      # the pole, then the logarithm on a second line
+    e["qed_pi_result"] = result(r"$\displaystyle\Pi^{\mu\nu}=(q^2g^{\mu\nu}-q^\mu q^\nu)\,\Pi_2(q^2),\quad\Pi_2=%s$\\"
+                                r"$\displaystyle\qquad%s$" % (pi[:cut], pi[cut:]) + note(r"transverse, and the same in every gauge"))
+    e["qed_vertex_result"] = result(r"$\displaystyle F_2(0)=%s,\qquad g=2+\frac{\alpha}{\pi}$" % compact("qed_F2_zero") +
+                                    note("the anomalous magnetic moment of the electron"))
     # TikZ
     e["tikz_picture"] = r"{%s$\Sigma^{(1)}(x_1,x_2)=%s$}" % (big, fig("tikz_example", unit=0.62, line=0.75, font=r"\footnotesize"))
     # headings of the cards, their second lines and the names of the package they show
@@ -227,7 +246,8 @@ HEADINGS = {
               ["ExactEquation[\"Hedin\", \\dots]"]),
     "matsubara": ("Momentum and Matsubara frequency", "the free density correlation: minus the Lindhard function",
                   ["EvaluateMatsubara"]),
-    "qed": ("QED at one loop", "electron self-energy, vacuum polarization and vertex",
+    # no second line: the three diagrams below say it, and their results need the room
+    "qed": ("QED at one loop", "",
             ["QEDIntegrand", "IntegrateOneLoop", "VertexFormFactors"]),
     "tikz": ("TikZ export, ready for a paper", "", ["DiagramToTikZ"]),
 }
@@ -635,7 +655,7 @@ def card_scene(el, key, body, duration, horizontal=False, gap=26, body_start=0.2
             x += img.width + gap
     else:
         total = sum(i.height for i in imgs) + gap * (len(imgs) - 1)
-        widest = max(i.width for i in imgs)
+        widest = max((i.width for i in imgs), default=0)
         x, y = (W - widest) / 2, top + max(0, (H - 30 - top - total) / 2)
         for k, img in enumerate(imgs):
             items.append(Item(img, x, y, body_start + stagger * k))
@@ -666,6 +686,53 @@ def arrow_image(width=60):
     d.line([4, 15, width - 8, 15], fill=MUTED + (255,), width=2)
     d.polygon([(width - 4, 15), (width - 14, 9), (width - 14, 21)], fill=MUTED + (255,))
     return img
+
+
+class Reveal(Item):
+    """An image uncovered from left to right (an arrow drawing itself), from t0 in `fade` seconds."""
+
+    def draw(self, frame, t, dy=0):
+        if t < self.t0:
+            return
+        u = ease((t - self.t0) / self.fade)
+        w = int(round(self.img.width * u))
+        if w > 0:
+            paste_clipped(frame, self.img.crop((0, 0, w, self.img.height)), int(round(self.x)), int(round(self.y - dy)))
+
+
+def result_arrow(width=78, colour=ACCENT):
+    """A slim arrow to the right, drawn four times larger and reduced, for smooth edges."""
+    k, h = 4, 26
+    img = Image.new("RGBA", (width * k, h * k), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    d.line([3 * k, h * k // 2, (width - 12) * k, h * k // 2], fill=colour + (255,), width=int(2.4 * k))
+    d.polygon([((width - 2) * k, h * k / 2), ((width - 17) * k, (h / 2 - 7) * k), ((width - 13) * k, h * k / 2),
+               ((width - 17) * k, (h / 2 + 7) * k)], fill=colour + (255,))
+    return img.resize((width, h), Image.LANCZOS)
+
+
+def results_scene(el, key, rows, duration, top=None, gap=22, start=0.28, step=0.55):
+    """A card whose body is a column of diagrams, each with an arrow to what the package computes from it: row k (a
+    diagram and its result, each centred on the row) appears at start + k step, its arrow drawing itself, then the
+    result."""
+    scene = card_scene(el, key, [], duration)
+    head_bottom = max(i.y + i.img.height for i in scene.items) + 20
+    left = [el[a] for a, _ in rows]
+    right = [el[b] for _, b in rows]
+    arrow = result_arrow()
+    lw, rw, aw, pad = max(i.width for i in left), max(i.width for i in right), arrow.width, 18
+    heights = [max(a.height, b.height) for a, b in zip(left, right)]
+    total = sum(heights) + gap * (len(rows) - 1)
+    y = head_bottom + max(0, (H - 30 - head_bottom - total) / 2)
+    x0 = (W - (lw + 2 * pad + aw + rw)) / 2
+    for k, (a, b, h) in enumerate(zip(left, right, heights)):
+        t = start + step * k
+        mid = y + h / 2
+        scene.items.append(Item(a, x0 + lw - a.width, mid - a.height / 2, t))
+        scene.items.append(Reveal(arrow, x0 + lw + pad, mid - arrow.height / 2, t + 0.3, fade=0.3))
+        scene.items.append(Item(b, x0 + lw + 2 * pad + aw, mid - b.height / 2, t + 0.5))
+        y += h + gap
+    return scene
 
 
 class Notebook:
@@ -797,7 +864,9 @@ def timeline(el, preview=False):
     notebook = Notebook(el)
     # the last element of each card in full view for at least about 1.6 s
     matsubara = card_scene(el, "matsubara", ["lindhard_diagram", "lindhard_formula"], 3.0, gap=30, stagger=0.3)
-    qed = card_scene(el, "qed", ["qed_sigma", "qed_pi", "qed_vertex"], 2.8, gap=14, stagger=0.22)
+    # the three diagrams, each with an arrow to its result: the last one in full view for about 2.7 s
+    qed = results_scene(el, "qed", [("qed_sigma", "qed_sigma_result"), ("qed_pi", "qed_pi_result"),
+                                    ("qed_vertex", "qed_vertex_result")], 4.5, gap=12)
     tikz = card_scene(el, "tikz", [tikz_code_panel(), arrow_image(), "tikz_picture"], 3.0, horizontal=True, gap=36, stagger=0.24)
     return [title_scene(el, 2.4, url=False, turn=0.3), Scene(notebook.duration, draw=notebook.draw, fade_out=0.25),
             twoparticle, parquet, hedin, matsubara, qed, tikz, end]
