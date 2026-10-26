@@ -58,9 +58,7 @@ packageLogo[size_:30, small_:True] :=
        If[small, {}, {logoArrowhead[r, 90, 11], logoArrowhead[r, -90, 11], Disk[{64 - r, 64}, 7.5], Disk[{64 + r, 64}, 7.5]}]},
       PlotRange -> {{0, 128}, {0, 128}}, PlotRangePadding -> None, ImagePadding -> None, ImageSize -> size,
       BaselinePosition -> Scaled[0.2]]];
-(* a colour for light notebooks and one for dark notebooks (LightDarkSwitched, Mathematica 14.3 or later) *)
-lightDarkColor[light_, dark_] := If[Names["System`LightDarkSwitched"] =!= {}, Symbol["LightDarkSwitched"][light, dark],
-   light];
+(* lightDarkColor (a colour for light notebooks and one for dark notebooks) is defined with the pictures *)
 $repositoryURL = "https://github.com/n4sd4q/FunctionalDiagrams";
 (* the name in the blue of the logo (light blue in a dark notebook), the rest in grey (contrast above 4.5:1 on both
    backgrounds); U+2010 (a hyphen, not a minus sign), U+00B7 and U+00A0 by character code, so that the file stays plain

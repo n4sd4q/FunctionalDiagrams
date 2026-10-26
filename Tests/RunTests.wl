@@ -361,6 +361,34 @@ check["DiagramPlot of blobs (a circle between two lines, a cross-hatched box, a 
      {FBx[a, b, c, d], {a, b, c, d}}, {TrBlob[a, b, c], {a, b, c}}}}], {Graphics, Graphics, Graphics}];
 check["DiagramPlot with \"Output\" -> \"Grid\": a Grid, no message",
   Check[Head[DiagramPlot[G[a, b] - IntegralOver[G[a, u] V[u, v] G[u, v] G[v, b], {u, v}], {a, b}, "Output" -> "Grid"]], "message"], Grid];
+(* the colours of the Graphics follow the notebook: LightDarkSwitched (Mathematica 14.3 or later) with "Appearance" ->
+   Automatic, else the light colours; "Light" and "Dark" force them, on a background; the TikZ code has no colours *)
+DeclareBlob[GreyFilled, "P", "Fill" -> "Grey"];
+colourPicture[opts___] := DrawDiagram[IntegralOver[G[a, u] SgBlob[u, v] G[v, b] FBx[u, v, c, c], {u, v, c}], {a, b}, opts];
+colourDirectives[g_] := Union[Cases[g, (GrayLevel | RGBColor)[__], Infinity]];
+switchedColours[g_] := Union[Cases[g, h_Symbol[l : GrayLevel[_], d_] /; SymbolName[h] === "LightDarkSwitched" :> {l, d}, Infinity]];
+check["\"Appearance\" -> Automatic: with LightDarkSwitched every colour is a light one and a dark one (lines and text; the paper, dark as the notebook), no Background; before 14.3 the light colours",
+  With[{g = colourPicture[]}, {FreeQ[Rest[List @@ g], Background], If[Names["System`LightDarkSwitched"] =!= {},
+     {switchedColours[g], FreeQ[g /. h_Symbol[__] /; SymbolName[h] === "LightDarkSwitched" -> "switched", GrayLevel]},
+     {{{GrayLevel[0], GrayLevel[0.9]}, {GrayLevel[1], Automatic}}, True}]}], {True, {{{GrayLevel[0], GrayLevel[0.9]}, {GrayLevel[1], Automatic}}, True}}];
+check["\"Appearance\" -> Automatic before Mathematica 14.3 (no LightDarkSwitched): the colours of a light notebook, as before",
+  Block[{Names = ({} &)}, colourDirectives[colourPicture[]]], {GrayLevel[0], GrayLevel[1]}];
+check["\"Appearance\" -> \"Dark\": light lines on a dark background, the clearings of the background colour; \"Light\": the light colours on white",
+  {colourDirectives[colourPicture["Appearance" -> "Dark"]], Cases[List @@ colourPicture["Appearance" -> "Dark"], (Background -> c_) :> c],
+   colourDirectives[colourPicture["Appearance" -> "Light"]], Cases[List @@ colourPicture["Appearance" -> "Light"], (Background -> c_) :> c],
+   FreeQ[colourPicture["Appearance" -> "Dark"], h_Symbol /; SymbolName[h] === "LightDarkSwitched"]},
+  {{GrayLevel[0.1], GrayLevel[0.9]}, {GrayLevel[0.1]}, {GrayLevel[0], GrayLevel[1]}, {GrayLevel[1]}, True}];
+check["\"Appearance\": the grey vertex blobs, the grey fill, the frames and the weights of DiagramPlot in the dark colours; a Grid with a background",
+  {colourDirectives[DiagramPlot[GreyBlob3[a, b, c] + IntegralOver[G[a, u] GreyFilled[u, v] G[v, b], {u, v}], {a, b, c}, "Appearance" -> "Dark"]],
+   Cases[List @@ DiagramPlot[G[a, b] - G[a, b] V[a, b], {a, b}, "Output" -> "Grid", "Appearance" -> "Dark"], (Background -> c_) :> c]},
+  {{GrayLevel[0.1], GrayLevel[0.3], GrayLevel[0.42], GrayLevel[0.48], GrayLevel[0.9]}, {GrayLevel[0.1]}}];
+check["\"Appearance\" -> \"Bright\": message appearance, Automatic used",
+  {messageGivenQ[colourPicture["Appearance" -> "Bright"], FunctionalDiagrams::appearance],
+   Quiet[colourPicture["Appearance" -> "Bright"]] === colourPicture[]}, {True, True}];
+check["the TikZ code ignores \"Appearance\": it stays for white pages (the clearings white)",
+  With[{t = DiagramToTikZ[IntegralOver[G[a, u] SgBlob[u, v] G[v, b] FBx[u, v, c, c], {u, v, c}], {a, b}]},
+   {t === DiagramToTikZ[IntegralOver[G[a, u] SgBlob[u, v] G[v, b] FBx[u, v, c, c], {u, v, c}], {a, b}, "Appearance" -> "Dark"],
+    StringContainsQ[t, "fill=white"], StringContainsQ[t, "LightDark" | "gray" | "black"]}], {True, True, False}];
 (* the smallest distance between two points of a list *)
 minimumDistance[ps_List] := Min[Flatten[Table[Sqrt[(ps[[i]] - ps[[j]]) . (ps[[i]] - ps[[j]])], {i, Length[ps]}, {j, i + 1, Length[ps]}]]];
 tadpoleChain[n_Integer] := IntegralOver[Product[G[t[i], t[i]], {i, n}] Product[V[t[i], t[i + 1]], {i, n - 1}], Table[t[i], {i, n}]];

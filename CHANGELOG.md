@@ -4,6 +4,14 @@
 
 ### Drawing
 
+- **Light and dark notebooks.** The pictures that `DiagramPlot` and `DrawDiagram` return follow the appearance of the
+  notebook (Mathematica 14.3 and 15 have dark notebooks): dark lines and text on a light notebook, light ones on a dark
+  notebook, through `LightDarkSwitched`; the inside of the blobs, of the external points and of the sources, and the
+  clearings behind the labels of hatched blobs, take the background of the notebook, so that they hide no line there;
+  grey fills and the frames of the cells are a darker grey. Before 14.3 the pictures keep the colours of a light
+  notebook. The new option `"Appearance" -> Automatic | "Light" | "Dark"` forces one of them, on a background of its
+  paper colour (for a picture exported for a page of the other kind; `SetOptions` for a session). The TikZ code, for white
+  pages, is unchanged.
 - **Labels of blobs.** A blob declared by `DeclareBlob` is as large as its label needs: the label, on a hatched blob in a
   white clearing, lies inside the blob with a band of hatching all around it, so that an accent, a subscript or a
   superscript is never cut by the outline (Λ̃ in a triangle, Γ_ph, Γ^(4)). The blob grows, never its label shrinks (but

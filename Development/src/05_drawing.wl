@@ -16,8 +16,29 @@
 $drawingDefaults = {"VertexLabels" -> Automatic, "Interactions" -> {}, "Directed" -> {}, "InteractionStyle" -> Automatic,
    "Columns" -> Automatic, "ImageSize" -> Automatic, "Output" -> "Graphics", "Weights" -> True, "ExternalOrder" -> Automatic,
    "LegDirections" -> Automatic, "AmputatedLegs" -> Automatic, "Scale" -> 0.7, "Labels" -> {}, "LineWidth" -> Automatic,
-   "LabelFont" -> "\\small", "Couplings" -> {}};
+   "LabelFont" -> "\\small", "Couplings" -> {}, "Appearance" -> Automatic};
 drawingOption[opts_List, name_String] := optionValue[opts, $drawingDefaults, name];
+
+(* the colours of the pictures of Mathematica (the TikZ code is for white pages and has none), as {light, dark}: the
+   lines and the text, the paper (what hides the lines under it: the inside of a blob, of an external point or of a
+   source, the clearing behind the label of a hatched blob), the fill "Grey" of a blob, the grey vertex blobs and the
+   frames of the cells of DiagramPlot. "Appearance" -> Automatic follows the notebook (dark lines on a light notebook,
+   light ones on a dark notebook) through LightDarkSwitched, of Mathematica 14.3 or later, the paper being then the
+   background of the notebook itself; before 14.3 the light colours. "Light" and "Dark" force one of them, on a
+   background of the paper colour (for a picture exported or shown on a page of the other kind) *)
+$diagramPalette = <|"Foreground" -> {GrayLevel[0], GrayLevel[0.9]}, "Paper" -> {GrayLevel[1], GrayLevel[0.1]},
+    "GreyFill" -> {GrayLevel[0.8], GrayLevel[0.42]}, "VertexBlob" -> {GrayLevel[0.75], GrayLevel[0.48]},
+    "CellFrame" -> {GrayLevel[0.85], GrayLevel[0.3]}|>;
+(* a colour for light notebooks and one for dark notebooks (LightDarkSwitched, Mathematica 14.3 or later; dark ->
+   Automatic: the dark variant chosen by the front end) *)
+lightDarkColor[light_, dark_] := If[Names["System`LightDarkSwitched"] =!= {}, Symbol["LightDarkSwitched"][light, dark],
+   light];
+FunctionalDiagrams::appearance = "\"Appearance\" -> `1` is not Automatic, \"Light\" or \"Dark\": Automatic is used.";
+diagramAppearance[opts_List] := With[{a = drawingOption[opts, "Appearance"]},
+   If[MemberQ[{Automatic, "Light", "Dark"}, a], a, Message[FunctionalDiagrams::appearance, a]; Automatic]];
+diagramColor[appearance_, key_String] := With[{c = $diagramPalette[key]}, Switch[appearance,
+    "Light", c[[1]], "Dark", c[[2]],
+    _, If[key === "Paper", lightDarkColor[c[[1]], Automatic], lightDarkColor @@ c]]];
 
 (* the options of a call: the explicit ones first, then those of the function (which SetOptions changes); unknown
    names give a message *)
@@ -2116,13 +2137,15 @@ plainBlobLabel[label_String] := StringReplace[StringReplace[StringReplace[label,
 (* where the label of a blob is written: the centre, or near the incentre of a triangle (blobLabelPlacement) *)
 blobLabelPoint[p_, {label_, shape_, fill_, h_}] := p + If[triangleShapeQ[shape] && StringQ[label],
     blobLabelPlacement[shape, h, blobLabelBox[label, fill, shape]][[1]], {0., 0.}];
-declaredBlobPrimitives[p_, spec : {label_, shape_, fill_, h_}] := {
-   If[fill === "Grey", GrayLevel[0.8], White],
+declaredBlobPrimitives[p_, spec : {label_, shape_, fill_, h_}, a_ : Automatic] := {
+   If[fill === "Grey", diagramColor[a, "GreyFill"], diagramColor[a, "Paper"]],
    Switch[shape, "Box", Rectangle[p - {h, h}, p + {h, h}], "Triangle" | "TriangleUp" | "Diamond", Polygon[triangleCorners[p, h, shape]], _, Disk[p, h]],
-   Black, {AbsoluteThickness[0.6], Line /@ blobHatchesOf[p, spec]},
-   (* on a hatched blob the label sits in a white clearing with rounded corners, the outline drawn over it (as in TikZ) *)
+   diagramColor[a, "Foreground"], {AbsoluteThickness[0.6], Line /@ blobHatchesOf[p, spec]},
+   (* on a hatched blob the label sits in a clearing of the paper colour with rounded corners, the outline drawn over it
+      (as in TikZ) *)
    Text[If[MemberQ[{"Hatched", "CrossHatched"}, fill],
-     Framed[Style[plainBlobLabel[label], blobLabelScale[shape] $fontPixels], Background -> White, FrameStyle -> White, RoundingRadius -> 3,
+     Framed[Style[plainBlobLabel[label], blobLabelScale[shape] $fontPixels], Background -> diagramColor[a, "Paper"],
+      FrameStyle -> diagramColor[a, "Paper"], RoundingRadius -> 3,
       FrameMargins -> {{2, 2}, {1, 2}}],
      Style[plainBlobLabel[label], blobLabelScale[shape] $fontPixels]], blobLabelPoint[p, spec]],
    Switch[shape, "Box", Line[{p + {-h, -h}, p + {h, -h}, p + {h, h}, p + {-h, h}, p + {-h, -h}}],
@@ -2792,24 +2815,28 @@ anomalousArrowHeads[path_, "ConvergingArrows"] := {{path, 0.25}, {reversedPath[p
 legPrimitives[{"L", q_, e_, direction_}] := With[{path = If[direction === "In", {"segment", e, q}, {"segment", q, e}]},
    If[direction === "In" || direction === "Out", {Line[{q, e}], Polygon[pathArrowHead[path, 0.55]]}, Line[{q, e}]]];
 
-itemPrimitives[items_, opts_List] := {AbsoluteThickness[With[{w = drawingOption[opts, "LineWidth"]}, If[NumberQ[w] && w > 0, w, 1.3]]], Black,
+(* a: the appearance (diagramAppearance): every colour is that of the light or the dark notebook *)
+itemPrimitives[items_, opts_List, a_ : Automatic] := With[{fg = diagramColor[a, "Foreground"], paper = diagramColor[a, "Paper"]},
+  {AbsoluteThickness[With[{w = drawingOption[opts, "LineWidth"]}, If[NumberQ[w] && w > 0, w, 1.3]]], fg,
    With[{es = Cases[items, {"E", __}]}, MapThread[linePrimitives[#1, #2] &, {es, arrowParameters[es, Cases[items, {"B", p_, spec_} :> {p, spec[[2]], spec[[4]]}]]}]],
    legPrimitives /@ Cases[items, {"L", __}],
-   Cases[items, {"S", {p_, q_}} :> {Line[{p, q}], {EdgeForm[{Black, AbsoluteThickness[1.]}], White, Disk[q, 0.1]},
+   Cases[items, {"S", {p_, q_}} :> {Line[{p, q}], {EdgeForm[{fg, AbsoluteThickness[1.]}], paper, Disk[q, 0.1]},
       AbsoluteThickness[1.], crossAt[q, 0.07]}],
-   Cases[items, {"N", p_, "blob"} :> {EdgeForm[{Black, AbsoluteThickness[1.]}], GrayLevel[0.75], Disk[p, $blobRadius]}],
-   Cases[items, {"B", p_, spec_} :> declaredBlobPrimitives[p, spec]],
+   Cases[items, {"N", p_, "blob"} :> {EdgeForm[{fg, AbsoluteThickness[1.]}], diagramColor[a, "VertexBlob"], Disk[p, $blobRadius]}],
+   Cases[items, {"B", p_, spec_} :> declaredBlobPrimitives[p, spec, a]],
    Cases[items, {"N", p_, "dot"} :> Disk[p, $dotRadius]],
-   Cases[items, {"N", p_, "ext"} :> {EdgeForm[{Black, AbsoluteThickness[1.]}], White, Disk[p, $externalPointRadius]}],
-   Cases[items, {"T", p_, label_, ___} :> labelPrimitive[label, p]]};
+   Cases[items, {"N", p_, "ext"} :> {EdgeForm[{fg, AbsoluteThickness[1.]}], paper, Disk[p, $externalPointRadius]}],
+   Cases[items, {"T", p_, label_, ___} :> labelPrimitive[label, p]]}];
 
 weightPrimitive[w_, p_] := Text[Style[w, $fontPixels + 1], p, {1, 0}];
 
-finishGraphics[primitives_, bb_, opts_List] := Module[{x1 = bb[[1, 1]] - 0.12, x2 = bb[[1, 2]] + 0.12, y1 = bb[[2, 1]] - 0.12,
+(* the Graphics of a picture; with a forced appearance ("Light" or "Dark") on a background of the paper colour, else
+   transparent (the notebook shows through) *)
+finishGraphics[primitives_, bb_, opts_List, a_ : Automatic] := Module[{x1 = bb[[1, 1]] - 0.12, x2 = bb[[1, 2]] + 0.12, y1 = bb[[2, 1]] - 0.12,
     y2 = bb[[2, 2]] + 0.12, imageSize = drawingOption[opts, "ImageSize"], pixelsPerUnit},
    pixelsPerUnit = If[NumberQ[imageSize], N[imageSize/(x2 - x1)], $pixelsPerUnit];
    Graphics[primitives, PlotRange -> {{x1, x2}, {y1, y2}}, ImageSize -> Round[pixelsPerUnit (x2 - x1)],
-    AspectRatio -> Automatic, PlotRangePadding -> None]];
+    AspectRatio -> Automatic, PlotRangePadding -> None, If[a === Automatic, Sequence @@ {}, Background -> diagramColor[a, "Paper"]]]];
 
 (* the canonical terms in drawing order: fewer integration variables first *)
 termsForDrawing[e_] := With[{ts = canonicalTermsOf[e]}, ts[[Ordering[Length[#[[3]]] & /@ ts]]]];
@@ -2882,16 +2909,19 @@ DrawDiagram[t_, ext_List : {}, opts___] := Module[{ts = termsForDrawing[t], g, a
     Length[ts] > 1, DiagramPlot[t, ext, Sequence @@ allOpts],
     True,
     g = First[geometriesOf[t, ext, allOpts]];
-    finishGraphics[itemPrimitives[g[[2]], allOpts], g[[3]], allOpts]]];
+    With[{a = diagramAppearance[allOpts]}, finishGraphics[itemPrimitives[g[[2]], allOpts, a], g[[3]], allOpts, a]]]];
 
 DiagramPlot[e_, ext_List : {}, opts___] := Module[{allOpts = drawingOptions[DiagramPlot, {opts}], gs, n, ww, dw, dh, cw, ch, columns,
-    cells, bb},
+    cells, bb, a},
+   a = diagramAppearance[allOpts];
    gs = geometriesOf[e, ext, allOpts]; n = Length[gs];
    Which[
     n == 0, Graphics[{}],
     drawingOption[allOpts, "Output"] === "Grid",
-    Grid[Table[{g[[1]], finishGraphics[itemPrimitives[g[[2]], allOpts], g[[3]], allOpts]}, {g, gs}], Frame -> All,
-     Alignment -> {Left, Center}],
+    Grid[Table[{g[[1]], finishGraphics[itemPrimitives[g[[2]], allOpts, a], g[[3]], allOpts, a]}, {g, gs}], Frame -> All,
+     Alignment -> {Left, Center}, If[a === Automatic, Sequence @@ {},
+      Sequence @@ {Background -> diagramColor[a, "Paper"], FrameStyle -> diagramColor[a, "CellFrame"],
+        BaseStyle -> {FontColor -> diagramColor[a, "Foreground"]}}]],
     True,
     ww = If[TrueQ[drawingOption[allOpts, "Weights"]] || drawingOption[allOpts, "Weights"] === Automatic,
       Max[0.62 $fontPixels StringLength[ToString[#[[1]], InputForm]]/$pixelsPerUnit & /@ gs] + 0.3, 0.];
@@ -2906,6 +2936,6 @@ DiagramPlot[e_, ext_List : {}, opts___] := Module[{allOpts = drawingOptions[Diag
          {{x0, y0}, {x0 + cw, y0}, {x0 + cw, y0 - ch}, {x0, y0 - ch}, {x0, y0}}}]], {i, n}];
     bb = {{0., Min[n, columns] cw}, {-Ceiling[n/columns] ch, 0.}};
     finishGraphics[{
-      {GrayLevel[0.85], AbsoluteThickness[0.6], Line[#[[4]]] & /@ cells},
-      If[ww > 0, weightPrimitive[#[[2]], #[[3]]] & /@ cells, {}],
-      itemPrimitives[#[[1]], allOpts] & /@ cells}, bb, allOpts]]];
+      {diagramColor[a, "CellFrame"], AbsoluteThickness[0.6], Line[#[[4]]] & /@ cells},
+      If[ww > 0, {diagramColor[a, "Foreground"], weightPrimitive[#[[2]], #[[3]]] & /@ cells}, {}],
+      itemPrimitives[#[[1]], allOpts, a] & /@ cells}, bb, allOpts, a]]];
