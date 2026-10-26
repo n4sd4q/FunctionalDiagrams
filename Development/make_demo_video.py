@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""The demo video of the package: Media/demo.mp4 (1280 x 720, 30 fps, H.264), its looping preview for the README,
+"""The demo video of the package: Media/demo.mp4 (1920 x 1080, 60 fps, H.264), its looping preview for the README,
 Media/demo_preview.webp (960 x 540, 60 fps; its first frame, the one shown where animated images do not play, is a card
 in full view), and a poster frame, Media/demo_poster.png.
 
 Nothing in it is drawn by hand: the diagrams and formulas are the figures of the showcase (Showcase/figures, computed
 by Showcase/make_figures.wl; run it first), redrawn with one unit of length as in make_readme_figure.sh, and the code
 typed in the notebook is the first example of README.md. The pictures go through pdflatex and pdftocairo (one PNG per
-element, transparent), the frames are put together with PIL and encoded by ffmpeg. The logo of the first and the last
+element, transparent), the frames are put together with PIL (at 1920 x 1080; the preview is reduced from them) and
+encoded by ffmpeg. The logo of the first and the last
 card is drawn again in every frame from the geometry of Development/make_logo.py, its wavy line rippling, its loop
 breathing and turning once (the arrow heads travel around it, with a soft start, a glide and a slight overshoot before
 they settle on their rest positions). Needs pdflatex (TeX Live: mathpazo,
@@ -33,7 +34,22 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIGURES = os.path.join(ROOT, "Showcase", "figures")
 BUILD = os.path.join(ROOT, "build", "video")
 MEDIA = os.path.join(ROOT, "Media")
-W, H, FPS = 1280, 720, 30
+W, H, FPS = 1920, 1080, 60
+# Every length in pixels below (fonts, margins, gaps, line widths, arrows, brackets) is written for a frame 1280 px wide
+# and scaled by S, so that a frame of another size is the same picture, only sharper
+S = W / 1280
+
+
+def px(v):
+    """A length in pixels of a frame 1280 px wide, in pixels of this frame."""
+    return v * S
+
+
+def ipx(v):
+    """The same, in whole pixels."""
+    return int(math.floor(v * S + 0.5))
+
+
 # The preview: an animated WebP, which can run at 60 fps (a GIF cannot: its delays are in hundredths of a second, so
 # 50 fps at most, and browsers slow down delays below 0.02 s), in full colour; GitHub shows it in the README as a plain
 # <img>, and it plays wherever WebP does (every current browser, the GitHub apps)
@@ -356,8 +372,8 @@ class CodeCell:
                     draw.text((self.x + col * self.advance, y), part, font=self.font, fill=colour)
                 col += len(part)
         if cursor:
-            cx, cy = self.x + col * self.advance + 1, self.y + row * self.lh - dy
-            draw.rectangle([cx, cy - 1, cx + 1, cy + self.lh - 7], fill=ACCENT)
+            cx, cy = self.x + col * self.advance + px(1), self.y + row * self.lh - dy
+            draw.rectangle([cx, cy - px(1), cx + ipx(2) - 1, cy + self.lh - px(7)], fill=ACCENT)
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -391,7 +407,7 @@ def with_alpha(img, a):
 class Item:
     """An image on the frame from time t0, fading in (and rising a few pixels), until t1 (or the end of its scene)."""
 
-    def __init__(self, img, x, y, t0=0.0, fade=0.28, t1=None, rise=10):
+    def __init__(self, img, x, y, t0=0.0, fade=0.28, t1=None, rise=px(10)):
         self.img, self.x, self.y, self.t0, self.fade, self.t1, self.rise = img, x, y, t0, fade, t1, rise
 
     def draw(self, frame, t, dy=0):
@@ -565,7 +581,7 @@ class LogoItem:
             return
         u = (t - self.t0) / self.fade
         scale = 0.8 + 0.2 * ease_out_back(u)
-        size = max(8, int(round(self.size * scale)))
+        size = max(ipx(8), int(round(self.size * scale)))
         img = with_alpha(logo_image(size, t, self.turn), ease_out(1.6 * u))
         paste_clipped(frame, img, int(round(self.x + (self.size - size) / 2)), int(round(self.y - dy + (self.size - size) / 2)))
 
@@ -578,7 +594,7 @@ def paste_clipped(frame, img, x, y):
 
 def blank():
     frame = Image.new("RGBA", (W, H), WHITE + (255,))
-    ImageDraw.Draw(frame).rectangle([0, H - 6, W, H], fill=ACCENT)   # the band of the social preview
+    ImageDraw.Draw(frame).rectangle([0, H - ipx(6), W, H], fill=ACCENT)   # the band of the social preview
     return frame
 
 
@@ -602,10 +618,10 @@ class Scene:
             item.draw(frame, t)
         if self.fade_out and t > self.duration - self.fade_out:
             a = (self.duration - t) / self.fade_out
-            shift = int(round(36 * (1 - a) ** 2))
+            shift = int(round(px(36) * (1 - a) ** 2))
             if shift:
                 moved = blank()
-                moved.paste(frame.crop((shift, 0, W, H - 6)), (0, 0))
+                moved.paste(frame.crop((shift, 0, W, H - ipx(6))), (0, 0))
                 frame = moved
             frame = fade_to_white(frame, a)
         return frame
@@ -620,9 +636,9 @@ def title_scene(el, duration, url, fade_out=None, turn=None):
     fades out, the end card only with `fade_out` (the preview, which loops). With `turn` (a time), the fermion loop of
     the logo turns once from then on (Turn: about two seconds to come to rest)."""
     parts = ["logo", "name", "tagline"] + (["url"] if url else [])
-    gaps = {"name": 26, "tagline": 12, "url": 34}
+    gaps = {"name": px(26), "tagline": px(12), "url": px(34)}
     height = sum(el[p].height for p in parts) + sum(gaps[p] for p in parts[1:])
-    y, items = (H - height) / 2 - 8, []
+    y, items = (H - height) / 2 - px(8), []
     times = {"logo": 0.0, "name": 0.25, "tagline": 0.45, "url": 0.7}
     for p in parts:
         y += gaps.get(p, 0) if p != "logo" else 0
@@ -638,28 +654,29 @@ def title_scene(el, duration, url, fade_out=None, turn=None):
 
 def card_scene(el, key, body, duration, horizontal=False, gap=26, body_start=0.28, stagger=0.3, extra=()):
     """A heading (top left), its second line, the names of the functions (top right) and a body of elements, stacked
-    and left-aligned (or side by side), centred in the rest of the frame, appearing one after the other."""
-    items, x0, y0 = [], 64, 44
+    and left-aligned (or side by side), centred in the rest of the frame, appearing one after the other (`gap`: in pixels
+    of a frame 1280 px wide, like every length here)."""
+    items, x0, y0, gap = [], px(64), px(44), px(gap)
     h = el["h_" + key]
     items.append(Item(h, x0, y0, 0.0, fade=0.22))
     y = y0 + h.height
     if "s_" + key in el:
-        items.append(Item(el["s_" + key], x0, y + 2, 0.07, fade=0.22))
-        y += el["s_" + key].height + 2
+        items.append(Item(el["s_" + key], x0, y + px(2), 0.07, fade=0.22))
+        y += el["s_" + key].height + px(2)
     chips = el["c_" + key]
-    items.append(Item(chips, x0 - 3, y + 10, 0.14, fade=0.22))
-    top = y + 10 + chips.height + 20
+    items.append(Item(chips, x0 - px(3), y + px(10), 0.14, fade=0.22))
+    top = y + px(10) + chips.height + px(20)
     imgs = [el[b] if isinstance(b, str) else b for b in body]
     if horizontal:
         total = sum(i.width for i in imgs) + gap * (len(imgs) - 1)
-        x, mid = (W - total) / 2, (top + H - 30) / 2
+        x, mid = (W - total) / 2, (top + H - px(30)) / 2
         for k, img in enumerate(imgs):
             items.append(Item(img, x, mid - img.height / 2, body_start + stagger * k))
             x += img.width + gap
     else:
         total = sum(i.height for i in imgs) + gap * (len(imgs) - 1)
         widest = max((i.width for i in imgs), default=0)
-        x, y = (W - widest) / 2, top + max(0, (H - 30 - top - total) / 2)
+        x, y = (W - widest) / 2, top + max(0, (H - px(30) - top - total) / 2)
         for k, img in enumerate(imgs):
             items.append(Item(img, x, y, body_start + stagger * k))
             y += img.height + gap
@@ -671,23 +688,26 @@ def tikz_code_panel():
     """The first lines of the TikZ code of the showcase's example (DiagramToTikZ), on a code background."""
     lines = open(os.path.join(FIGURES, "tikz_example_first.tex"), encoding="utf-8").read().splitlines()
     shown = [l if len(l) <= 36 else l[:34] + " \u2026" for l in lines[:6]] + ["  \u2026", lines[-1]]
-    fnt = font("SourceCodePro-Regular.otf", 16)
-    lh, pad = 25, 16
+    fnt = font("SourceCodePro-Regular.otf", px(16))
+    lh, pad = px(25), ipx(16)
     width = int(max(fnt.getlength(l) for l in shown)) + 2 * pad
-    img = Image.new("RGBA", (width, lh * len(shown) + 2 * pad - 4), (0, 0, 0, 0))
+    img = Image.new("RGBA", (width, int(round(lh * len(shown) + 2 * pad - px(4)))), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    d.rounded_rectangle([0, 0, img.width - 1, img.height - 1], radius=6, fill=CODE_BG + (255,), outline=CODE_FRAME + (255,))
+    d.rounded_rectangle([0, 0, img.width - 1, img.height - 1], radius=ipx(6), fill=CODE_BG + (255,), outline=CODE_FRAME + (255,),
+                        width=ipx(1))
     for k, l in enumerate(shown):
         colour = ACCENT if re.match(r"\s*\\(begin|end)", l) or l.startswith("-") else (40, 40, 40)
-        d.text((pad, pad + k * lh - 2), l, font=fnt, fill=colour)
+        d.text((pad, pad + k * lh - px(2)), l, font=fnt, fill=colour)
     return img
 
 
 def arrow_image(width=60):
-    img = Image.new("RGBA", (width, 30), (0, 0, 0, 0))
+    """An arrow to the right, `width` px long (in a frame 1280 px wide)."""
+    w, y = ipx(width), ipx(15)
+    img = Image.new("RGBA", (w, ipx(30)), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    d.line([4, 15, width - 8, 15], fill=MUTED + (255,), width=2)
-    d.polygon([(width - 4, 15), (width - 14, 9), (width - 14, 21)], fill=MUTED + (255,))
+    d.line([ipx(4), y, w - ipx(8), y], fill=MUTED + (255,), width=ipx(2))
+    d.polygon([(w - ipx(4), y), (w - ipx(14), y - ipx(6)), (w - ipx(14), y + ipx(6))], fill=MUTED + (255,))
     return img
 
 
@@ -704,14 +724,17 @@ class Reveal(Item):
 
 
 def result_arrow(width=78, colour=ACCENT):
-    """A slim arrow to the right, drawn four times larger and reduced, for smooth edges."""
-    k, h = 4, 26
-    img = Image.new("RGBA", (width * k, h * k), (0, 0, 0, 0))
+    """A slim arrow to the right, `width` px long (in a frame 1280 px wide), drawn four times larger and reduced, for
+    smooth edges."""
+    k, w, h = 4, ipx(width), ipx(26)
+    f = k * S       # one pixel of a frame 1280 px wide, in the large drawing
+    right, mid = w * k, h * k / 2
+    img = Image.new("RGBA", (w * k, h * k), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    d.line([3 * k, h * k // 2, (width - 12) * k, h * k // 2], fill=colour + (255,), width=int(2.4 * k))
-    d.polygon([((width - 2) * k, h * k / 2), ((width - 17) * k, (h / 2 - 7) * k), ((width - 13) * k, h * k / 2),
-               ((width - 17) * k, (h / 2 + 7) * k)], fill=colour + (255,))
-    return img.resize((width, h), Image.LANCZOS)
+    d.line([3 * f, h * k // 2, right - 12 * f, h * k // 2], fill=colour + (255,), width=int(2.4 * f))
+    d.polygon([(right - 2 * f, mid), (right - 17 * f, mid - 7 * f), (right - 13 * f, mid), (right - 17 * f, mid + 7 * f)],
+              fill=colour + (255,))
+    return img.resize((w, h), Image.LANCZOS)
 
 
 def results_scene(el, key, rows, duration, top=None, gap=22, start=0.28, step=0.55):
@@ -719,14 +742,14 @@ def results_scene(el, key, rows, duration, top=None, gap=22, start=0.28, step=0.
     diagram and its result, each centred on the row) appears at start + k step, its arrow drawing itself, then the
     result."""
     scene = card_scene(el, key, [], duration)
-    head_bottom = max(i.y + i.img.height for i in scene.items) + 20
+    head_bottom = max(i.y + i.img.height for i in scene.items) + px(20)
     left = [el[a] for a, _ in rows]
     right = [el[b] for _, b in rows]
     arrow = result_arrow()
-    lw, rw, aw, pad = max(i.width for i in left), max(i.width for i in right), arrow.width, 18
+    lw, rw, aw, pad, gap = max(i.width for i in left), max(i.width for i in right), arrow.width, px(18), px(gap)
     heights = [max(a.height, b.height) for a, b in zip(left, right)]
     total = sum(heights) + gap * (len(rows) - 1)
-    y = head_bottom + max(0, (H - 30 - head_bottom - total) / 2)
+    y = head_bottom + max(0, (H - px(30) - head_bottom - total) / 2)
     x0 = (W - (lw + 2 * pad + aw + rw)) / 2
     for k, (a, b, h) in enumerate(zip(left, right, heights)):
         t = start + step * k
@@ -743,33 +766,33 @@ class Notebook:
     notebook: In[n]:= on the left of an input cell, Out[n]= on the left of each output cell (a cell of several lines
     without a semicolon has one output for each, numbered on), and on the right a bracket for each cell and one around
     the group of an input with its outputs. The page scrolls to keep the newest line in view."""
-    X_CODE, LH, CELL_GAP, OUT_GAP = 122, 30, 26, 14
-    X_BRACKET, X_GROUP = W - 36, W - 27     # the cell brackets, and those of the groups
+    X_CODE, LH, CELL_GAP, OUT_GAP = px(122), px(30), px(26), px(14)
+    X_BRACKET, X_GROUP = W - ipx(36), W - ipx(27)     # the cell brackets, and those of the groups
 
     def __init__(self, el, start=0.25):
-        self.codefont = font("SourceCodePro-Medium.otf", 19)
-        self.labelfont = font("SourceCodePro-Regular.otf", 14)
+        self.codefont = font("SourceCodePro-Medium.otf", px(19))
+        self.labelfont = font("SourceCodePro-Regular.otf", px(14))
         cells = readme_cells()
         # the outputs, and the height of their Out[n]= (from their top): the first band of the Green function, the
         # middle of the left-hand side of an equation (Out[n]= level with its = sign)
-        outputs = {2: [(el["nb_green"], 6)], 3: [(el[k], self.lhs_middle(el[k]) - 9) for k in ("nb_sigma", "nb_gamma")]}
+        outputs = {2: [(el["nb_green"], px(6))], 3: [(el[k], self.lhs_middle(el[k]) - px(9)) for k in ("nb_sigma", "nb_gamma")]}
         speeds = [70, 260, 170, 240]    # characters per second
-        self.cells, t, y, line = [], start, 34, 1
+        self.cells, t, y, line = [], start, px(34), 1
         for i, code in enumerate(cells):
             cell = CodeCell(code, self.codefont, self.X_CODE, y, self.LH)
             cps = speeds[min(i, len(speeds) - 1)]
             typing = len(code) / cps
-            c = dict(cell=cell, n=line, t0=t, cps=cps, t_eval=t + typing + 0.15, top=y - 8, outs=[])
+            c = dict(cell=cell, n=line, t0=t, cps=cps, t_eval=t + typing + 0.15, top=y - px(8), outs=[])
             y += cell.height
-            c["input_bottom"] = y + 2
+            c["input_bottom"] = y + px(2)
             t = c["t_eval"] + 0.15
             outs = outputs.get(i, [])
             for k, (img, at) in enumerate(outs):
                 y += self.OUT_GAP
-                c["outs"].append((Item(img, self.X_CODE - 12, y, t + 0.32 * k + 0.1, fade=0.3), line + k, at))
+                c["outs"].append((Item(img, self.X_CODE - px(12), y, t + 0.32 * k + 0.1, fade=0.3), line + k, at))
                 y += img.height
             line += max(1, len(outs))
-            c["bottom"] = y + 4
+            c["bottom"] = y + px(4)
             hold = {0: 0.1, 1: 0.2, 2: 1.5, 3: 2.6}.get(i, 1.0)
             t += 0.32 * max(0, len(outs) - 1) + (0.3 if outs else 0) + hold
             y += self.CELL_GAP
@@ -796,7 +819,7 @@ class Notebook:
         s, track, dt = 0.0, [], 1 / FPS
         for k in range(int(self.duration * FPS) + 2):
             t = k * dt
-            target = max(0.0, self._bottom(t) + 34 - H)
+            target = max(0.0, self._bottom(t) + px(34) - H)
             s += (max(s, target) - s) * (1 - math.exp(-dt / 0.12))
             track.append(s)
         return track
@@ -816,7 +839,7 @@ class Notebook:
             blink = n < len(cell.code) or int(t * 2.2) % 2 == 0
             cell.draw(d, n, dy, cursor=typing and blink)
             if t >= c["t_eval"]:
-                self.label(d, "In[%d]:=" % c["n"], cell.y + 4 - dy, LABEL)
+                self.label(d, "In[%d]:=" % c["n"], cell.y + px(4) - dy, LABEL)
             self.bracket(d, self.X_BRACKET, c["top"] - dy, c["input_bottom"] - dy)
             bottom = None
             for item, number, at in c["outs"]:
@@ -826,8 +849,8 @@ class Notebook:
                 a = ease((t - item.t0) / 0.3)
                 colour = tuple(int(255 - (255 - v) * a) for v in LABEL)
                 self.label(d, "Out[%d]=" % number, item.y + at - dy, colour)
-                bottom = item.y + item.img.height + 4
-                self.bracket(d, self.X_BRACKET, item.y - 6 - dy, bottom - dy, colour=tuple(
+                bottom = item.y + item.img.height + px(4)
+                self.bracket(d, self.X_BRACKET, item.y - px(6) - dy, bottom - dy, colour=tuple(
                     int(255 - (255 - v) * a) for v in BRACKET))
             if bottom is not None:
                 self.bracket(d, self.X_GROUP, c["top"] - dy, bottom - dy)
@@ -840,13 +863,13 @@ class Notebook:
 
     def label(self, d, text, y, colour):
         """In[n]:= or Out[n]=, right-aligned before the cells."""
-        d.text((self.X_CODE - 12 - self.labelfont.getlength(text), y), text, font=self.labelfont, fill=colour)
+        d.text((self.X_CODE - px(12) - self.labelfont.getlength(text), y), text, font=self.labelfont, fill=colour)
 
     @staticmethod
     def bracket(d, x, top, bottom, colour=BRACKET):
-        d.line([x, top, x, bottom], fill=colour, width=1)
-        d.line([x - 5, top, x, top], fill=colour, width=1)
-        d.line([x - 5, bottom, x, bottom], fill=colour, width=1)
+        d.line([x, top, x, bottom], fill=colour, width=ipx(1))
+        d.line([x - ipx(5), top, x, top], fill=colour, width=ipx(1))
+        d.line([x - ipx(5), bottom, x, bottom], fill=colour, width=ipx(1))
 
 
 # ---------------------------------------------------------------------------------------------------------------------
