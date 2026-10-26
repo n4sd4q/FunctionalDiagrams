@@ -55,6 +55,7 @@ ARROW_HEAD = re.compile(r"\\fill \((-?[0-9.]+),(-?[0-9.]+)\) -- \((-?[0-9.]+),(-
                         r"\((-?[0-9.]+),(-?[0-9.]+)\) -- cycle;")
 # the length of an arrow head in the plain diagrams of the showcase (drawn with the unit 0.34 cm), in units
 PLAIN_ARROW = 0.238
+PARQUET_UNIT = 0.51
 
 
 def longer_arrow_head(m, length):
@@ -178,13 +179,17 @@ def elements():
     eq = lambda left, right: r"{%s\eqrow{%s}{%s\,${}={}$}{%s}{%s}}" % (big, lhs, fig(left, **ex), rhs, fig(right, **ex))
     # two particles, for the electron gas: the exact equations (blobs, fermion legs) and their first diagrams
     bs = dict(cd, unit=0.47, line=0.8)
-    e["eq_bethe_salpeter"] = r"{%s\eqrow{%s}{%s\,${}={}$}{%s}{%s}}" % (big, lhs, fig("exact_vertex_lhs", **bs), rhs, fig("exact_bethe_salpeter", **bs))
+    # the exact equation, with blobs, a little larger: the names in the blobs as large as the parquet card's
+    bsq, bslhs = dict(bs, unit=0.50), "2.9cm"
+    e["eq_bethe_salpeter"] = r"{%s\eqrow{%s}{%s\,${}={}$}{%s}{%s}}" % (big, bslhs, fig("exact_vertex_lhs", **bsq), rhs, fig("exact_bethe_salpeter", **bsq))
     row = lambda left, name, more=True: r"{%s\eqrow{%s}{$%s={}$}{%s}{%s%s}}" % (
-        big, lhs, left, rhs, fig(name, **bs), r"\rest" if more else "")
+        big, bslhs, left, rhs, fig(name, **bs), r"\rest" if more else "")
     e["bs_rpa"] = row(r"F_{\rm chain}", "rpa_chain")
     e["bs_ladder"] = row(r"T^{(2)}", "pp_ladder", more=False)
-    e["eq_parquet"] = eq("exact_vertex_lhs", "exact_parquet")
-    e["parquet_ph"] = r"{%s\eqrow{%s}{$R_{\rm ph}={}$}{%s}{%s\rest}}" % (big, lhs, rhs, fig("vertex_ph_2", **ex))
+    # the parquet equation alone, drawn larger, so that the names in its blobs read (12 px and more): its four terms
+    # on two lines
+    pq = dict(cd, unit=PARQUET_UNIT)
+    e["eq_parquet"] = r"{%s\eqrow{%s}{%s\,${}={}$}{%s}{%s}}" % (big, "3.3cm", fig("exact_vertex_lhs", **pq), rhs, fig("exact_parquet", **pq))
     lhs, ex = "2.7cm", dict(cd, unit=0.45)
     e["hedin_sigma"] = r"{%s\eqrow{%s}{$\Sigma={}$}{%s}{%s}}" % (big, lhs, rhs, fig("hedin_sigma", **ex))
     for name in ("w", "p", "lambda"):
@@ -749,8 +754,8 @@ class Notebook:
 
 def timeline(el, preview=False):
     d = (lambda video, gif: gif if preview else video)     # the preview is shorter
-    twoparticle = card_scene(el, "twoparticle", ["eq_bethe_salpeter", "bs_rpa", "bs_ladder"], d(3.9, 3.4), gap=16)
-    parquet = card_scene(el, "parquet", ["eq_parquet", "parquet_ph"], d(3.9, 3.4), gap=22, stagger=0.4)
+    twoparticle = card_scene(el, "twoparticle", ["eq_bethe_salpeter", "bs_rpa", "bs_ladder"], d(3.9, 3.4), gap=8)
+    parquet = card_scene(el, "parquet", ["eq_parquet"], d(3.9, 3.4))
     # four rows, the last one (the vertex, an equilateral triangle with its legs) tall: closer together, to fit the frame
     hedin = card_scene(el, "hedin", ["hedin_sigma", "hedin_w", "hedin_p", "hedin_lambda"], d(3.4, 3.0), gap=4, stagger=0.22)
     # the end card of the preview fades out like the others, and the first card builds up again (a fade redraws the
