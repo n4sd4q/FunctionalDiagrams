@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Checks that the generated files are up to date and that the public functions are documented (no Mathematica needed):
 FunctionalDiagrams.wl is the concatenation of Development/src, Examples.nb is generated from Examples.wl, and every public
-name has a usage message and an entry in the manual; the map of the functions (Documentation/function_map.*) is drawn from
-the current public names and version. Run from any folder: python3 Development/check_consistency.py"""
+name has a usage message and an entry in the manual; one version is stated in the package, PacletInfo.wl, CITATION.cff,
+the install line of the README, the title of the manual and the check of the tests; the map of the functions
+(Documentation/function_map.*) is drawn from the current public names and version. Run from any folder:
+python3 Development/check_consistency.py"""
 import json, os, re, subprocess, sys, tempfile
 
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -37,11 +39,22 @@ for name in public:
 for name in sorted(usages - set(public) - {'FunctionalDiagrams'}):
     problems.append(name + ' has a usage message but is not in $publicNames')
 
-# one version everywhere: the package, the paclet, the citation
+# one version everywhere: the package, the paclet, the citation, and the places easy to forget at a release (the
+# install line of the README, the manual, the check of the tests); '?' where the version is not found
+def stated(name, pattern, flags=0):
+    m = re.search(pattern, open(os.path.join(root, name), encoding='utf-8').read(), flags)
+    return m.group(1) if m else '?'
+
 versions = {
     'FunctionalDiagrams.wl': re.search(r'\$FunctionalDiagramsVersion = "([^"]+)"', package).group(1),
-    'PacletInfo.wl': re.search(r'"Version" -> "([^"]+)"', open(os.path.join(root, 'PacletInfo.wl'), encoding='utf-8').read()).group(1),
-    'CITATION.cff': re.search(r'^version: (\S+)', open(os.path.join(root, 'CITATION.cff'), encoding='utf-8').read(), re.M).group(1),
+    'PacletInfo.wl': stated('PacletInfo.wl', r'"Version" -> "([^"]+)"'),
+    'CITATION.cff': stated('CITATION.cff', r'^version: (\S+)', re.M),
+    'README.md (release of PacletInstall)': stated('README.md', r'PacletInstall\["https://\S+/releases/download/v([^/"]+)/'),
+    'README.md (paclet of PacletInstall)': stated('README.md', r'PacletInstall\["https://\S+/FunctionalDiagrams-([^"]+)\.paclet"\]'),
+    'the title of the manual': stated(os.path.join('Documentation', 'FunctionalDiagrams_Manual.tex'),
+                                      r'SISSA \\textperiodcentered\{\} version (\S+) \\textperiodcentered'),
+    'Tests/RunTests.wl': stated(os.path.join('Tests', 'RunTests.wl'),
+                                r'check\["package loaded again", \$FunctionalDiagramsVersion, "([^"]+)"\]'),
 }
 if len(set(versions.values())) > 1:
     problems.append('different versions: ' + ', '.join('%s %s' % kv for kv in versions.items()))
