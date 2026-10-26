@@ -1,8 +1,9 @@
 % The pictures of README.md: results of the showcase as the package draws them, one panel per page (each page becomes
 % Documentation/readme_<n>.svg). Built by make_readme_figure.sh, which first copies the figures of Showcase/figures
 % (run Showcase/make_figures.wl first) to \figdir with one unit of length, heavier lines and larger labels for all of
-% them. Every panel has the same width, so that the README shows them all at the same scale; the titles are captions
-% in README.md.
+% them; the formulas are those the showcase computes (\formula). One panel, one theme: the first example, exact
+% equations, screening, pairing, field theory. Every panel has the same width, so that the README shows them all at the
+% same scale; the titles are captions in README.md.
 \documentclass[multi=panel,border=11pt]{standalone}
 \usepackage[T1]{fontenc}
 \usepackage[sc]{mathpazo}
@@ -10,6 +11,9 @@
 \usetikzlibrary{decorations.pathmorphing}
 \providecommand{\figdir}{../Showcase/figures}
 \newcommand{\fig}[1]{\input{\figdir/#1.tex}}
+% a formula written by ExpressionToLaTeX in the showcase (figures/formula_NAME.tex), so that every number is computed
+\providecommand{\formuladir}{../Showcase/figures}
+\newcommand{\formula}[1]{\input{\formuladir/formula_#1.tex}\unskip}
 \newcommand{\diagramgap}{\hskip 0.6em\relax}
 % a group of diagrams of one channel starts a line of its own, with its channel in front
 \newcommand{\channelmark}[1]{\par\mbox{\footnotesize(#1)}\diagramgap}
@@ -36,27 +40,46 @@ $\Sigma=\dfrac{\delta\Phi}{\delta G}={}$ & \fig{self_energy_1}\diagramgap\fig{se
 $\Gamma^0=\dfrac{\delta\Sigma}{\delta G}={}$ & \fig{irreducible_vertex_1}\diagramgap\fig{irreducible_vertex_2}\rest
 \end{rows}
 \end{panel}
-% 2: exact equations, drawn with blobs
+% 2: exact equations of many-body theory, drawn with blobs: Dyson, Bethe-Salpeter, the vertex of the density, parquet
 \begin{panel}
 \begin{rows}
 \fig{exact_dyson_lhs}\,${}={}$ & \fig{exact_dyson}\rowgap
 \fig{exact_vertex_lhs}\,${}={}$ & \fig{exact_bethe_salpeter}\rowgap
 \fig{exact_lambda_lhs}\,${}={}$ & \fig{exact_vertex_equation}\rowgap
+\fig{exact_vertex_lhs}\,${}={}$ & \fig{exact_parquet}
+\end{rows}
+\end{panel}
+% 3: the screened interaction: Hedin's equations, and the functional Phi[G, W] whose derivatives give GW
+\begin{panel}
+\begin{rows}
 $\Sigma(x,y)={}$ & \fig{hedin_sigma}\rowgap
-\fig{hedin_w_lhs}\,${}={}$ & \fig{hedin_w}
-\end{rows}
-\end{panel}
-% 3: phi^4 theory from the generating functional, at a non-zero source
-\begin{panel}
-\begin{rows}
-$z_1[J]={}$ & \fig{phi4_z_source_1}\rowgap
-$w_2[J]={}$ & \fig{phi4_w_source_2}
-\end{rows}
-\end{panel}
-% 4: other theories: Phi[G, W] and QCD
-\begin{panel}
-\begin{rows}
+\fig{hedin_w_lhs}\,${}={}$ & \fig{hedin_w}\rowgap
+\fig{hedin_p_lhs}\,${}={}$ & \fig{hedin_p}\rowgap
+\fig{hedin_lambda_lhs}\,${}={}$ & \fig{hedin_lambda}\rowgap
 $\Phi[G,W]={}$ & \fig{phi_gw_1}\diagramgap\fig{phi_gw_2}\rest\rowgap
+$\Sigma=\dfrac{\delta\Phi}{\delta G}={}$ & \fig{sigma_gw_1}\rest\rowgap
+$P=-2\dfrac{\delta\Phi}{\delta W}={}$ & \fig{polarization_gw_0}\diagramgap\fig{polarization_gw_1}\rest
+\end{rows}
+\end{panel}
+% 4: pairing: the superfield of Nambu and Gor'kov
+\begin{panel}
+\begin{rows}
+$\Phi[G,\mathcal G_{\psi\psi},\mathcal G_{\bar\psi\bar\psi}]={}$ & \fig{nambu_phi_components_1}\rest\rowgap
+\fig{gorkov_g_lhs}\,${}={}$ & \fig{gorkov_g}\rowgap
+\fig{gorkov_gpp_lhs}\,${}={}$ & \fig{gorkov_gpp}\rowgap
+\fig{nambu_sigma_lhs}\,${}={}$ & \fig{nambu_hartree_fock}\rowgap
+\fig{nambu_gap_lhs}\,${}={}$ & \fig{nambu_gap}
+\end{rows}
+\end{panel}
+% 5: field theory: phi^4 in dimensional regularization to two loops, QED at one loop (each 1PI function with its main
+% result), the gluon self-energy of QCD; the formulas are those the showcase computes
+\begin{panel}
+\begin{rows}
+$\Sigma^{(2)}(p)={}$ & \fig{phi4_self_energy_2_alone}$\displaystyle{}=\frac{\kappa^2\lambda^2p^2}{6}\biggl(\formula{dimreg_sunset_expanded}\biggr)$\rowgap
+$\beta(\lambda)={}$ & $\displaystyle\formula{dimreg_beta},\qquad \kappa=\frac1{16\pi^2}$\rowgap
+$-i\Sigma_2={}$ & \fig{qed_self_energy}\qquad$\delta_2=\displaystyle\formula{qed_delta2}$\rowgap
+$i\Pi_2^{\mu\nu}={}$ & \fig{qed_vacuum_polarization}\qquad$\beta(e)=\displaystyle\formula{qed_beta}$\rowgap
+$ie\,\delta\Gamma^\mu={}$ & \fig{qed_vertex}\qquad$F_2(0)=\displaystyle\formula{qed_F2_zero}$\rowgap
 $\Pi_{\rm QCD}(x,y)={}$ & \fig{qcd_gluon_self_energy}
 \end{rows}
 \end{panel}

@@ -1,8 +1,9 @@
 #!/bin/bash
 # Draw the pictures of README.md from the figures of the showcase (run Showcase/make_figures.wl first): the panels
 # Documentation/readme_1.svg, readme_2.svg, ... (readme_gallery.tex) and the social preview of the repository,
-# Logo/social_preview.png (social_preview.tex; it needs the logo, python3 make_logo.py ../Logo). Needs pdflatex, perl
-# and pdftocairo (poppler). Run from any folder.
+# Logo/social_preview.png (social_preview.tex; it needs the logo, python3 make_logo.py ../Logo). The formulas of the
+# panels are read from ../Showcase/figures/formula_*.tex, and a sum of one order shown on its own, \fig{NAME_m_alone},
+# is written by Showcase/assemble.py. Needs pdflatex, perl and pdftocairo (poppler). Run from any folder.
 set -e
 cd "$(dirname "$0")"
 build=$(mktemp -d)

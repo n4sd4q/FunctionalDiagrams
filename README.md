@@ -24,24 +24,26 @@
   ·&nbsp;<a href="#installation"><b>Installation</b></a>
 </p>
 
+FunctionalDiagrams is a Mathematica package that derives Feynman diagrams the way one does on paper: from a generating
+functional and an interaction, by functional derivatives with respect to the sources and the propagators, with the
+fermion signs of the Grassmann algebra and the symmetry factors that the derivatives produce. It is meant for many-body
+physics and effective actions (Luttinger–Ward functionals, vertices, Bethe–Salpeter, parquet and Hedin's equations, *GW*,
+pairing), and also reaches relativistic field theory: φ⁴ theory and one-loop QED in dimensional regularization, and
+the diagrams of QCD.
+
+The diagrams it produces can be compared up to relabelling, sorted into classes (connected, one- and two-particle
+irreducible, skeleton, reducible in a channel), differentiated again, checked against exact equations, evaluated in a
+few common cases, and drawn in Mathematica or exported as TikZ. Every step is worked out for φ⁴ theory and for the
+electron gas.
+
 <p align="center">
   <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4"><img src="Media/demo_preview.gif" width="720" alt="Preview of the demo video: the
   Luttinger–Ward functional and its derivatives Sigma and Gamma0, the Bethe–Salpeter and parquet equations of the
   electron gas, Hedin's equations"></a><br>
-  <sub>A preview of the <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4">demo video</a> (an MP4 file, under 40 seconds, also in the repository as
-  <a href="Media/demo.mp4"><code>Media/demo.mp4</code></a>): the first example below typed and run, then a few other
-  results.</sub>
+  <sub>A preview of the <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4">demo video</a> (an MP4 file,
+  also in the repository as <a href="Media/demo.mp4"><code>Media/demo.mp4</code></a>): the first example below typed and
+  run, then a few other results.</sub>
 </p>
-
-FunctionalDiagrams derives Feynman diagrams the way one does on paper: you write the free generating functional and the
-interaction, and the package takes the functional derivatives with respect to the sources. The fermion signs come from
-the Grassmann algebra and the symmetry factors from the derivatives, so nothing is put in by hand. The resulting
-diagrams can be compared up to relabelling, sorted into classes (connected, one- and two-particle irreducible, skeleton,
-reducible in a channel), differentiated with respect to the propagator, checked against exact equations, evaluated in
-a few common cases, and drawn in Mathematica or exported as TikZ.
-
-The package is aimed at many-body physics and effective actions: Luttinger–Ward functionals, Bethe–Salpeter and parquet
-equations, vertices, Hedin's equations. Every step is worked out for φ⁴ theory and for the electron gas.
 
 ## A first example
 
@@ -70,15 +72,70 @@ DiagramPlot[FunctionalDerivative[Phi, G[x4, x3], G[x2, x1]], {x1, x2, x3, x4}]
 
 <p align="center"><img src="Documentation/readme_1.svg" width="600" alt="The Luttinger–Ward functional Phi[G] of the
 electron gas to second order, the self-energy Sigma = dPhi/dG and the irreducible vertex Gamma0 = dSigma/dG"></p>
-<p align="center">Up to second order (the code goes on to third): the Luttinger–Ward functional Φ[G], and Σ and Γ⁰, which
-the last two lines obtain from it by functional derivatives and draw, with their signs and weights: a wavy line stands
-for −V, so that the number in front of a picture times the values of its lines is the term. Γ⁰ is irreducible in the particle–hole channel; (ph̄) and
-(pp) mark its second-order diagrams reducible in the other two channels.</p>
+<p align="center">The output of the last three lines, up to second order: Φ[G] and its derivatives Σ and Γ⁰. A wavy
+line stands for −V, so that the number in front of a picture times the values of its lines is the term; (ph̄) and (pp)
+mark the diagrams of Γ⁰ reducible in those channels.</p>
 
 The [guided tour](Examples.nb) ([`Examples.wl`](Examples.wl), the same as a script, can be read on GitHub) goes on from
 here in thirteen short sections: the effective actions, the Bethe–Salpeter and parquet equations, pairing, Hedin's
-equations and *GW*, and then linear response, Matsubara sums, phonons, disorder, dimensional regularization, QED and QCD. The [showcase](Showcase/FunctionalDiagrams_Showcase.pdf) covers everything in more depth, and every
-picture and number in it is computed by the package.
+equations and *GW*, and then linear response, Matsubara sums, phonons, disorder, dimensional regularization, QED and
+QCD. The [showcase](Showcase/FunctionalDiagrams_Showcase.pdf) covers everything in more depth; every picture and number
+in it is computed by the package.
+
+## Gallery
+
+Each panel is drawn by the package from results it computes; the showcase derives and checks all of them.
+
+<p align="center"><img src="Documentation/readme_2.svg" width="600" alt="Exact equations of many-body theory drawn by
+the package: the Dyson equation, the Bethe–Salpeter equation, the equation of the vertex of the density and the parquet
+decomposition of the full vertex"></p>
+<p align="center"><b>Exact equations</b>, drawn with blobs and checked order by order against perturbation theory:
+Dyson, Bethe–Salpeter, the vertex Λ of the density, and the parquet decomposition of the full vertex F.</p>
+
+<p align="center"><img src="Documentation/readme_3.svg" width="600" alt="Hedin's equations for Sigma, W, P and the vertex,
+and the functional Phi[G, W] with its derivatives, the GW self-energy and the polarization"></p>
+<p align="center"><b>Screening.</b> Hedin's equations (the double wavy line is the screened interaction <i>W</i>), and
+the 2PI functional Φ[G, W] of the dressed lines (here the wavy ones are <i>W</i>) with its derivatives: the first diagram
+gives the <i>GW</i> approximation, the next ones its vertex corrections.</p>
+
+<p align="center"><img src="Documentation/readme_4.svg" width="600" alt="Pairing with the Nambu superfield: the first
+order of Phi in the normal and anomalous propagators, the Gor'kov equations, the Hartree–Fock self-energy and the BCS gap"></p>
+<p align="center"><b>Pairing.</b> With the Nambu superfield (ψ, ψ̄) the anomalous propagators (lines with two arrows)
+are variables of Φ: the first order of Φ, the Gor'kov equations, and the Hartree–Fock self-energy and the BCS gap Δ.</p>
+
+<p align="center"><img src="Documentation/readme_5.svg" width="600" alt="Field theory: the second-order self-energy of
+phi^4 theory in dimensional regularization with its pole and the two-loop beta function; the one-loop electron
+self-energy, vacuum polarization and vertex of QED with delta2, beta(e) and F2(0) = alpha/2pi; the one-loop gluon
+self-energy of QCD"></p>
+<p align="center"><b>Field theory.</b> φ⁴ theory in dimensional regularization: the two-loop self-energy with its pole,
+and the β function. One-loop QED: the three 1PI functions, with δ₂, β(e) and the anomalous magnetic moment. QCD: the
+one-loop gluon self-energy.</p>
+
+## Installation
+
+The package needs Mathematica 12.1 or later (for the paclet manager that loads it). Install the paclet of a
+[release](https://github.com/n4sd4q/FunctionalDiagrams/releases), which also contains the showcase, the manual and the
+guided tour:
+
+```mathematica
+PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.3.0/FunctionalDiagrams-2.3.0.paclet"]   (* once *)
+Needs["FunctionalDiagrams`"]
+```
+
+or download the `.paclet` file of the release and pass its path to `PacletInstall`. The latest release is 2.3.0, which
+this page and the documents describe (see the [changelog](CHANGELOG.md)).
+
+A clone of the repository works as it is, with `PacletDirectoryLoad["/path/to/FunctionalDiagrams"]` and
+``Needs["FunctionalDiagrams`"]``, or simply `Get["/path/to/FunctionalDiagrams/FunctionalDiagrams.wl"]`.
+``?FunctionalDiagrams`*`` lists the functions and `?Name` explains each one.
+
+## Documentation
+
+| Document | Contents |
+|---|---|
+| [**Showcase**](Showcase/FunctionalDiagrams_Showcase.pdf) | an introduction to the diagrammatic methods through the package, in three parts. Many-body theory: perturbation theory, the self-energy, linear response, Matsubara sums, the 1PI and 2PI effective actions, the grand potential, the Bethe–Salpeter equation from the response to a one-body source, vertices and response functions, the parquet equations from the derivatives of the 2PI action, pairing with the superfield of Nambu and Gor'kov, Hedin's equations, Hubbard–Stratonovich and *GW*, Potthoff's functional and divergent vertices, phonons and disorder. Quantum field theory: dimensional regularization, one-loop QED, the vertices of QCD. Tools: pictures and formulas, and what the package does under the hood |
+| [**Manual**](Documentation/FunctionalDiagrams_Manual.pdf) | every function, option and convention, with examples computed by the package |
+| [**Guided tour**](Examples.nb) | a notebook to run in Mathematica (GitHub shows its source: download it with *Download raw file*); [`Examples.wl`](Examples.wl) is the same as a script, readable on GitHub |
 
 ## What it does
 
@@ -133,62 +190,6 @@ calculations.
 The theories are written in condensed notation, so the same functions work for real and complex bosons, fermions,
 phonons, disorder and QCD (quarks, gluons, ghosts).
 
-## Gallery
-
-All pictures are drawn by the package from the results it computes.
-
-<p align="center"><img src="Documentation/readme_2.svg" width="600" alt="Exact equations drawn by the package: Dyson,
-Bethe–Salpeter, the vertex of the density, Hedin's self-energy and the screened interaction"></p>
-<p align="center"><b>Exact equations</b> drawn with blobs: Dyson, Bethe–Salpeter, the vertex of the density, and Hedin's
-self-energy and screened interaction. The showcase checks each of them order by order against perturbation theory.</p>
-
-<p align="center"><img src="Documentation/readme_3.svg" width="600" alt="phi^4 theory at a non-zero source J: the
-first order of Z[J] and the second order of W[J] = log Z[J]"></p>
-<p align="center"><b>φ⁴ theory at a non-zero source</b> (crossed circles): the first order of Z[J] = Z₀[J](1 + z₁ + z₂ + …)
-and the second order of W[J] = log Z[J], connected, with the symmetry factors that the derivatives produce.</p>
-
-<p align="center"><img src="Documentation/readme_4.svg" width="600" alt="The functional Phi[G, W] of the electron gas
-and the one-loop gluon self-energy of QCD"></p>
-<p align="center"><b>Other theories:</b> the functional Φ[G, W] of the electron gas, whose first diagram is the
-<i>GW</i> approximation, and the one-loop gluon self-energy of QCD, with gluon, ghost and quark loops.</p>
-
-## Checks
-
-The results are checked against each other, order by order, and the showcase reports every residual. For the electron
-gas and φ⁴ theory to third order these include the Dyson equation and the linked-cluster theorem, Σ[G] against the
-skeleton part of the perturbative Σ, the Ward identity, the Bethe–Salpeter and parquet equations in every channel, the
-Schwinger–Dyson, vertex and Hedin equations, and a Hubbard–Stratonovich theory against the original one. The evaluation
-is checked against numbers: frequency sums against brute-force sums, imaginary parts against the cutting rules, loop
-integrals against numerical integration in non-integer dimension, and the renormalization of φ⁴ theory and of one-loop
-QED against the textbook results (β functions, anomalous dimensions, the Ising exponents at the Wilson–Fisher fixed
-point, Z₁ = Z₂, the anomalous magnetic moment).
-
-## Installation
-
-The package needs Mathematica 12.1 or later (for the paclet manager that loads it). Install the paclet of a
-[release](https://github.com/n4sd4q/FunctionalDiagrams/releases), which also contains the showcase, the manual and the
-guided tour:
-
-```mathematica
-PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.3.0/FunctionalDiagrams-2.3.0.paclet"]   (* once *)
-Needs["FunctionalDiagrams`"]
-```
-
-or download the `.paclet` file of the release and pass its path to `PacletInstall`. The latest release is 2.3.0, which
-this page and the documents describe (see the [changelog](CHANGELOG.md)).
-
-A clone of the repository works as it is, with `PacletDirectoryLoad["/path/to/FunctionalDiagrams"]` and
-``Needs["FunctionalDiagrams`"]``, or simply `Get["/path/to/FunctionalDiagrams/FunctionalDiagrams.wl"]`.
-``?FunctionalDiagrams`*`` lists the functions and `?Name` explains each one.
-
-## Documentation
-
-| Document | Contents |
-|---|---|
-| [**Showcase**](Showcase/FunctionalDiagrams_Showcase.pdf) | an introduction to the diagrammatic methods through the package, in three parts. Many-body theory: perturbation theory, the self-energy, linear response, Matsubara sums, the 1PI and 2PI effective actions, the grand potential, the Bethe–Salpeter equation from the response to a one-body source, vertices and response functions, the parquet equations from the derivatives of the 2PI action, pairing with the superfield of Nambu and Gor'kov, Hedin's equations, Hubbard–Stratonovich and *GW*, Potthoff's functional and divergent vertices, phonons and disorder. Quantum field theory: dimensional regularization, one-loop QED, the vertices of QCD. Tools: pictures and formulas, and what the package does under the hood |
-| [**Manual**](Documentation/FunctionalDiagrams_Manual.pdf) | every function, option and convention, with examples computed by the package |
-| [**Guided tour**](Examples.nb) | a notebook to run in Mathematica (GitHub shows its source: download it with *Download raw file*); [`Examples.wl`](Examples.wl) is the same as a script, readable on GitHub |
-
 ## Map of the functions
 
 <p align="center"><img src="Documentation/function_map.svg" width="100%" alt="Map of the public functions of
@@ -203,6 +204,17 @@ used as data. A name indented under another is built on it, and *uses* lists the
 dependency: select a name to read its usage message and to see the lines to the names it uses and from the names that
 use it (the file is [`Documentation/function_map.html`](Documentation/function_map.html): GitHub shows only its source,
 so download it and open it in a browser).
+
+## Checks
+
+The results are checked against each other, order by order, and the showcase reports every residual. For the electron
+gas and φ⁴ theory to third order these include the Dyson equation and the linked-cluster theorem, Σ[G] against the
+skeleton part of the perturbative Σ, the Ward identity, the Bethe–Salpeter and parquet equations in every channel, the
+Schwinger–Dyson, vertex and Hedin equations, and a Hubbard–Stratonovich theory against the original one. The evaluation
+is checked against numbers: frequency sums against brute-force sums, imaginary parts against the cutting rules, loop
+integrals against numerical integration in non-integer dimension, and the renormalization of φ⁴ theory and of one-loop
+QED against the textbook results (β functions, anomalous dimensions, the Ising exponents at the Wilson–Fisher fixed
+point, Z₁ = Z₂, the anomalous magnetic moment).
 
 ## Related software
 
@@ -285,8 +297,20 @@ Every check prints PASS or FAIL; `Tests/RunTests.out` is the output of the last 
 ## Citing
 
 If you use FunctionalDiagrams in published work, please cite it as described in [`CITATION.cff`](CITATION.cff)
-(GitHub shows a *Cite this repository* button). The history of the package is in [`CHANGELOG.md`](CHANGELOG.md).
-Problems, questions and suggestions are welcome as issues: see [`CONTRIBUTING.md`](CONTRIBUTING.md).
+(GitHub shows a *Cite this repository* button), for example
+
+```bibtex
+@software{Africani_FunctionalDiagrams,
+  author = {Africani, Nazzareno},
+  title  = {{FunctionalDiagrams}: functional derivatives and {Feynman} diagrams in {Mathematica}},
+  url    = {https://github.com/n4sd4q/FunctionalDiagrams}
+}
+```
+
+The history of the package is in [`CHANGELOG.md`](CHANGELOG.md). Problems, questions and suggestions are welcome as
+issues: see [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+## License
 
 Released under the [GNU General Public License, version 3 or later](LICENSE), with two additional terms: the attribution
 to the author must be kept, and modified versions must say that they are modified, by whom and when (see

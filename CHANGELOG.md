@@ -50,6 +50,19 @@
   reads at 64 and 32 px too; in the Logo files, the title pages of the manual and of the showcase, the social preview and
   `packageLogo`. The small badge (16 to 32 px, the load banner) keeps its heavier lines and no arrows.
 
+### README
+
+- **Gallery by theme.** The panels of the README tell one story each: the first example (Φ[G], Σ and Γ⁰); exact
+  equations (Dyson, Bethe–Salpeter, the vertex of the density, parquet); screening (Hedin's equations and Φ[G, W] with
+  its derivatives, the *GW* approximation); pairing with the Nambu superfield (Φ at first order, the Gor'kov equations,
+  Hartree–Fock and the BCS gap); field theory (φ⁴ in dimensional regularization, the two-loop self-energy with its pole
+  and the β function; the three 1PI functions of one-loop QED with δ₂, β(e) and F₂(0); the gluon self-energy of QCD),
+  with the formulas computed by the showcase. QCD no longer shares a panel with Φ[G, W], and φ⁴ theory at a non-zero
+  source left the gallery (it stays in the showcase).
+- **Order for a first visit.** What the package is, the demo, the first example, the gallery, installation, the
+  documents, then the list of features with the map of the functions, the checks, related software, details, citing
+  (with a BibTeX entry) and the license. The demo video is no longer described by its duration (README, landing page).
+
 ## 2.3.0 (2026-10-26)
 
 Since 2.2.0: 54 new public names (132 in all), about 800 tests (805 at the last run). In short: the effective actions are
@@ -218,7 +231,7 @@ F₂(0) = α/2π in every gauge, Z₁ = Z₂). 22 new public functions, 146 test
 - **Manual**: the principle in the overview; the sections in the order functionals, effective actions, channels and
   parquet, exact equations, trees, pictures, evaluation; the new functions, messages and conventions; a subsection on
   superfields.
-- **README**: one image file per picture, legible on light and dark pages; a demo video of under 40 s (the first example
+- **README**: one image file per picture, legible on light and dark pages; a demo video (the first example
   typed and run, then the Bethe–Salpeter and parquet equations of the electron gas, Hedin's equations, a Matsubara sum,
   QED at one loop and the TikZ export, between two cards with the logo animated: its fermion loop turns once, the arrow
   heads travelling in the direction they point); the map of the functions (`Documentation/function_map.svg` and the
