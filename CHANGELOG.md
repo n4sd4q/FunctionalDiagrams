@@ -14,7 +14,10 @@
   with little room for a label).
 - **Lines between a box and a triangle** are parallel: two lines from the corners of one side of a triangle to two ports of
   a blob of another shape (Γ⁰ L₀ Λ, Γ_xc L₀ Λ̃) end on that side at the spacing of the other blob's ports, where they
-  spread from the corners of the triangle, wider apart than those of the box.
+  spread from the corners of the triangle, wider apart than those of the box. So are those between a circle and a box: a
+  circle with two ports, both joined to one other blob (the gap function closed on Γ_pp in the criterion of Thouless),
+  has them on the side facing it, on either side of the line of the centres (one was on the far side, and the picture was
+  lopsided), and the box takes their spacing on its side.
 - **A line to the near corner of a blob** stays straight: a line that leaves a port of a blob outwards, 30 degrees or more
   from its outline, is bent only if it would cross the blob, not for passing near it (in the Schwinger–Dyson equation of
   φ⁴ the lines from the vertex to the two top corners of Γ^(4) were both bent, and left the vertex together).

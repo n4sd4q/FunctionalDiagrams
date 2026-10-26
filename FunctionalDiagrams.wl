@@ -4009,19 +4009,38 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
    links[i_, j_] := Select[frameLines, MemberQ[portNodes, #[[1]]] && MemberQ[portNodes, #[[2]]] &&
        Sort[{ports[[portIndex[#[[1]]], 2]], ports[[portIndex[#[[2]]], 2]]}] === Sort[{i, j}] &];
    shared[i_, j_] := If[i == j, {}, Intersection[frameBlobs[[i, 2]], frameBlobs[[j, 2]]]];
-   (* a triangle joined by two lines to two ports of a blob of another shape (Gamma0 L0 Lambda): the two corners are the
-      ends of one of its sides, wider apart than the ports of the other blob, so that the lines would spread; the ports
-      are moved along that side, symmetrically about its middle, to the spacing of the other blob's ports, and the lines
-      are parallel *)
-   Do[If[i != j && MemberQ[{"Triangle", "TriangleUp"}, blobSpecOf[frameBlobs[[j, 3]]][[2]]] &&
-       ! triangleShapeQ[blobSpecOf[frameBlobs[[i, 3]]][[2]]] && Length[links[i, j]] == 2,
+   (* a circle whose two ports are both joined to two ports of one other blob (the gap function closed on the
+      particle-particle vertex, Delta = -1/2 Delta L0 Gamma_pp): its ports, otherwise on opposite sides, turned to face
+      that blob, on either side of the line of the centres as the ports they are joined to, at their spacing if the
+      circle is wide enough, else 45 degrees off that line (the ports of the other blob then follow, below) *)
+   Do[If[i != j && blobSpecOf[frameBlobs[[i, 3]]][[2]] === "Circle" && Length[frameBlobs[[i, 2]]] == 2 && Length[links[i, j]] == 2,
+     Module[{ends, cp, op, a, u, w, r, th},
+      ends = Table[SortBy[l[[{1, 2}]], ports[[portIndex[#], 2]] == j &], {l, links[i, j]}];
+      cp = ends[[All, 1]]; op = ends[[All, 2]];
+      If[DuplicateFreeQ[cp] && DuplicateFreeQ[op] && AllTrue[Join[cp, op], Count[portNodes, #] == 1 &] &&
+        vectorNorm[Total[Table[ports[[portIndex[q], 3]], {q, op}]]] > 0.1,
+       a = Table[ports[[portIndex[q], 3]], {q, op}];
+       (* u: from the other blob towards the circle, the side its two ports face; w across it *)
+       u = unitVectorOf[Total[a]]; w = rotate90[u]; r = blobSizeOfHead[frameBlobs[[i, 3]]];
+       th = ArcSin[Min[vectorNorm[a[[1]] - a[[2]]]/(2 r), Sin[Pi/4.]]];
+       Do[With[{o = r (-Cos[th] u + Sign[(a[[k]] - Mean[a]) . w] Sin[th] w)},
+         ports[[portIndex[cp[[k]]], 3]] = o; ports[[portIndex[cp[[k]]], 4]] = unitVectorOf[o]], {k, 2}]]]],
+    {i, Length[frameBlobs]}, {j, Length[frameBlobs]}];
+   (* a triangle joined by two lines to two ports of a blob of another shape (Gamma0 L0 Lambda), or a box joined so to a
+      circle: the two corners are the ends of one of its sides, wider apart than the ports of the other blob, so that the
+      lines would spread; the ports are moved along that side, symmetrically about its middle, to the spacing of the other
+      blob's ports, and the lines are parallel *)
+   Do[If[i != j && Length[links[i, j]] == 2 &&
+       (MemberQ[{"Triangle", "TriangleUp"}, blobSpecOf[frameBlobs[[j, 3]]][[2]]] && ! triangleShapeQ[blobSpecOf[frameBlobs[[i, 3]]][[2]]] ||
+        blobSpecOf[frameBlobs[[j, 3]]][[2]] === "Box" && blobSpecOf[frameBlobs[[i, 3]]][[2]] === "Circle" && Length[frameBlobs[[i, 2]]] == 2),
      Module[{ends, tp, pp, a, b, s},
       ends = Table[SortBy[l[[{1, 2}]], ports[[portIndex[#], 2]] == j &], {l, links[i, j]}];
       pp = ends[[All, 1]]; tp = ends[[All, 2]];
       If[DuplicateFreeQ[pp] && DuplicateFreeQ[tp] && AllTrue[tp, Count[portNodes, #] == 1 &],
        {a, b} = Table[ports[[portIndex[t], 3]], {t, tp}];
        s = vectorNorm[ports[[portIndex[pp[[1]]], 3]] - ports[[portIndex[pp[[2]]], 3]]];
-       If[s < vectorNorm[b - a] - 0.05,
+       (* the two ports of a box on one side, not at opposite corners *)
+       If[s < vectorNorm[b - a] - 0.05 && (blobSpecOf[frameBlobs[[j, 3]]][[2]] =!= "Box" || Min[Abs[b - a]] < 0.01),
         With[{m = (a + b)/2, e = unitVectorOf[b - a]},
          ports[[portIndex[tp[[1]]], 3]] = m - s e/2; ports[[portIndex[tp[[2]]], 3]] = m + s e/2]]]]],
     {i, Length[frameBlobs]}, {j, Length[frameBlobs]}];

@@ -68,20 +68,20 @@ PASS phi^4 self-energy from Gamma2
 PASS exact Bethe-Salpeter equation (phi^4, second order), whole and with "MaximumOrder"
 PASS CheckEquation: the residual of each order, only up to the order asked
 
----- response functions, loops   (1 s)
+---- response functions, loops   (2 s)
 PASS density correlation to first order
 PASS RPA-reducible part
 PASS closed loops
 PASS no closed loops
 
----- tree expansion   (1 s)
+---- tree expansion   (2 s)
 PASS bosonic four-point: 4 trees
 PASS bosonic five-point: 26 trees
 PASS fermionic four-point: one vertex
 PASS tree expansion with fermion lines: 1 and 10 trees
 PASS tree expansion with fermion lines = the electron gas at second order
 
----- pictures   (2 s)
+---- pictures   (3 s)
 PASS DiagramPlot gives Graphics
 PASS arrows on the legs and the lines of the Fock diagram
 PASS one point for labels joined by delta functions
@@ -138,7 +138,7 @@ PASS a gluon coil starts and ends on its line and is mirror symmetric
 PASS a gluon self-loop: a balloon whose coils stay on one side of the line it hangs from
 PASS a gluon loop and a quark loop in a gluon line: as wide as each other, narrower than the points they hang from, their lines bent
 
----- input checks   (3 s)
+---- input checks   (4 s)
 PASS OutputForm: no recursive formatting
 PASS fields declared before their Grassmann source are odd
 PASS derivative with respect to an undeclared source: a message
@@ -180,7 +180,7 @@ PASS ResetDeclarations undoes the symmetries
 PASS ResetDeclarations removes the blobs
 PASS ResetDeclarations removes the interaction lines and the couplings
 
----- Matsubara sums: closed forms   (3 s)
+---- Matsubara sums: closed forms   (5 s)
 PASS fermion, e^(i w 0+): n_F
 PASS fermion, e^(-i w 0+): n_F - 1
 PASS fermion, symmetric: n_F - 1/2
@@ -213,7 +213,7 @@ PASS a constant in the argument does not decide its sign
 PASS a loop frequency in the summand
 PASS invalid arguments: messages and $Failed
 
----- Matsubara sums: brute-force sums   (3 s)
+---- Matsubara sums: brute-force sums   (5 s)
 PASS brute force: (-a + z)^(-1), Fermion, eta = 1   [error 4.9e-9]
 PASS brute force: (-a + z)^(-1), Fermion, eta = -1   [error 2.2e-9]
 PASS brute force: (-a + z)^(-1), Boson, eta = 1   [error 1.9e-9]
@@ -233,7 +233,7 @@ PASS brute force: 1/((-a + z)*((-I)*w + z)), Boson, eta = 0   [error 2.3e-10]
 PASS brute force: 1/((-0.37 + z)*(-0.2 + z)*(-0.1 + z)), Fermion, eta = 0   [error 1.5e-14]
 PASS nested sum, brute force   [error 3.4e-7]
 
----- Matsubara sums: diagrams of the electron gas   (3 s)
+---- Matsubara sums: diagrams of the electron gas   (6 s)
 PASS Hartree and Fock
 PASS Hartree and Fock: "ConvergenceFactor" -> 1 is the default
 PASS Hartree and Fock with e^(-i w 0+) and with the symmetric sum: n_F - 1, n_F - 1/2
@@ -262,13 +262,13 @@ PASS cutting rules with Hartree and Fock insertions, e^(-i w 0+) and symmetric s
 PASS bubble with a Fock insertion: delta' in the imaginary part
 PASS perturbative self-energy at second order: cutting rules
 
----- Matsubara sums: third order   (6 s)
+---- Matsubara sums: third order   (9 s)
 third-order self-energy: 10 diagrams evaluated in 0.4 s
 PASS third-order self-energy: sums in the opposite order   [error 5.6e-14]
 perturbative self-energy at third order: 42 diagrams, 32 checked by the cutting rules, 10 not of the implemented kind; 12 with a non-zero imaginary part
 PASS perturbative self-energy at third order: cutting rules where implemented
 
----- Matsubara sums: functions that are not amputated, invalid input   (9 s)
+---- Matsubara sums: functions that are not amputated, invalid input   (12 s)
 PASS G at second order: the external legs as factors, no denominator free of w with xi(k)
 PASS G at first order: G0(k)^2 times the self-energy
 PASS two bubbles joined by an interaction: no denominator free of nu
@@ -282,7 +282,7 @@ PASS EvaluateMatsubara, invalid input: messages and $Failed
 PASS a term that fails: $Failed for the whole sum
 PASS cutting rules for a frequency that does not cross the diagram: a message and $Failed
 
----- Matsubara sums: electron-phonon (Migdal)   (10 s)
+---- Matsubara sums: electron-phonon (Migdal)   (12 s)
 PASS Migdal self-energy: textbook statistical factors
 PASS Migdal self-energy: textbook form
 PASS Migdal self-energy: cutting rules
@@ -292,7 +292,7 @@ PASS two-mode boson: cutting rules
 PASS two-mode boson: brute force   [error 2.2e-9]
 PASS T -> 0 of the derivative of n_F
 
----- Matsubara sums: LaTeX, messages   (10 s)
+---- Matsubara sums: LaTeX, messages   (13 s)
 PASS LaTeX of n_F''
 PASS LaTeX of the Lindhard imaginary part
 PASS LaTeX: named subexpressions and subscripts
@@ -300,7 +300,7 @@ PASS LaTeX: a factor outside a momentum sum comes first
 PASS a rule that is not a line rule: a message
 PASS ResetDeclarations removes the Matsubara frequencies
 
----- dimensional regularization: integrands of the diagrams   (10 s)
+---- dimensional regularization: integrands of the diagrams   (13 s)
 PASS sunset of Sigma as a loop integral
 PASS tadpole of Sigma as a loop integral
 PASS a tree has no loop integral
@@ -317,14 +317,14 @@ PASS ((k + p)^2 + mn^2)^2/(k^2 + md^2)^4 in d = 3.3: reduction vs radial integra
 PASS a rule that is not a line rule: a message
 PASS momentum squared of a combination
 
----- dimensional regularization: messages of the routing   (10 s)
+---- dimensional regularization: messages of the routing   (13 s)
 PASS external momenta that do not add up to zero
 PASS too few loop names
 PASS a factor that is not a line
 PASS loop names that are not a list
 PASS inconsistent poles in AnomalousDimensionFromZ: its own message
 
----- dimensional regularization: one-loop integrals   (10 s)
+---- dimensional regularization: one-loop integrals   (13 s)
 PASS massive tadpole, Laurent expansion
 PASS massless bubble: 1/eps + 2 - ln(p^2/mu^2)
 PASS massless bubble in d = 3: 1/(8 |p|)
@@ -351,7 +351,7 @@ PASS EpsilonExpand of an unknown function: a message, $Failed
 PASS EpsilonExpand and PolePart of an unevaluated LoopIntegral: a message, $Failed
 PASS a bubble in another variable: a message, $Failed
 
----- dimensional regularization: massive bubbles   (11 s)
+---- dimensional regularization: massive bubbles   (13 s)
 PASS B(1,1) finite part, 26 cases of masses and momenta (largest error)   [error 0]
 PASS B(1,1) pole is 1/eps for all masses
 PASS B(2,1) (finite) in closed form, 18 cases, 6 with a massless line (largest error)   [error 0]
@@ -365,12 +365,12 @@ PASS ... whose numerical value is the eps term of the parameter integral   [erro
 PASS ... and N[., 30] has 30 digits
 PASS massive bubble, exact parameter integral at eps = 10^-3 vs expansion to eps^1   [error 1.3e-9]
 
----- dimensional regularization: tadpoles in non-integer d   (12 s)
+---- dimensional regularization: tadpoles in non-integer d   (14 s)
 PASS A(2; m) in d = 3.3: closed form vs radial integral   [error 0]
 PASS A(1; m) in d = 1.3: closed form vs radial integral   [error 1.1e-16]
 PASS A(1; m): expansion to eps^2 vs the exact Gamma function at eps = 10^-3   [error 3.6e-12]
 
----- dimensional regularization: G-functions and the sunset   (12 s)
+---- dimensional regularization: G-functions and the sunset   (14 s)
 PASS G(1, 1) at d = 33/10 vs Feynman parameters   [error 0]
 PASS G(7/10, 13/10) at d = 37/10 vs Feynman parameters   [error 0]
 PASS G(1, 6/5) at d = 31/10 vs Feynman parameters   [error 0]
@@ -382,7 +382,7 @@ PASS massless sunset at eps = 0.3: nested G-functions vs position space   [error
 PASS massless sunset at eps = -0.4: nested G-functions vs position space   [error 4.2e-21]
 PASS massless sunset: -p^2/(4 eps) - 13 p^2/8 + p^2 ln(p^2/mu^2)/2
 
----- dimensional regularization: two-loop four-point diagrams   (12 s)
+---- dimensional regularization: two-loop four-point diagrams   (14 s)
 PASS Gamma4 to lambda^3: 16 terms, all evaluated
 PASS the 6 eye diagrams: p routed from the vertex with two legs
 PASS eye = lambda^3/2 G(1,1) G(1+eps,1) (p^2)^(-2 eps)
@@ -393,7 +393,7 @@ PASS an integral that is not nested one-loop (massive sunset): a message, left u
 PASS a numerator k.p: a message, left unevaluated
 PASS the non-skeleton terms of Gamma4 are the tadpole insertions (PerturbativeFullVertex)
 
----- dimensional regularization: infrared and scaleless divergences   (13 s)
+---- dimensional regularization: infrared and scaleless divergences   (15 s)
 PASS a bubble at zero momenta: 0 with a message (its ultraviolet pole is lost)
 PASS G(2, 1): a message for the infrared pole
 PASS a massless tree line at zero momentum: a message, left as ScalarPropagator[0, 0]
@@ -404,13 +404,13 @@ PASS a logarithmically divergent scaleless term with no routing: a message, $Fai
 PASS ... the same with w external: its pole lambda/(32 pi^2 eps)
 PASS a numerator k.p in a rearranged term: one message, $Failed
 
----- dimensional regularization: mass insertion   (13 s)
+---- dimensional regularization: mass insertion   (15 s)
 PASS dSigma/dm^2 of the tadpole and of the sunset
 PASS dSigma/dm^2: 4 terms (sunset x 3 lines, double tadpole x 2 kinds)
 PASS the m^2 derivative of the one-loop massive tadpole matches the insertion (pole)
 PASS an insertion at a label of the diagrams: a message, $Failed
 
----- dimensional regularization: MS-bar renormalization of phi^4 to two loops   (13 s)
+---- dimensional regularization: MS-bar renormalization of phi^4 to two loops   (15 s)
 PASS no poles left in Gamma2, Gamma4, Gamma(2,1)
 PASS Z_phi
 PASS Z_4 (vertex)
@@ -425,14 +425,14 @@ PASS consistent poles (double pole = square of the single one): a finite beta
 PASS "ScalePower" -> 1 (g_B = mu^eps Z g): beta = 2 c g^3
 PASS Wilson-Fisher: eta = e^2/54, nu = 1/2 + e/12 + 7 e^2/162, omega = e - 17 e^2/27 (Ising, d = 4 - e)
 
----- dimensional regularization: LaTeX and display   (13 s)
+---- dimensional regularization: LaTeX and display   (15 s)
 PASS LaTeX of a loop integral: one fraction
 PASS LaTeX of the expanded bubble, with mu
 PASS LaTeX of a power of a power, a massive bubble, a line with a power
 PASS zeta(3) instead of PolyGamma(2, 1)
 PASS display of a line as a fraction
 
----- Hubbard-Stratonovich and integrating out a field   (13 s)
+---- Hubbard-Stratonovich and integrating out a field   (15 s)
 PASS HS: the propagator of the auxiliary field is the interaction
 PASS HS: the coupling -i Integral phi psibar psi
 PASS HS: the same Green function to second order
@@ -445,7 +445,7 @@ PASS phonons integrated out: -g^2/2 Integral rho D rho
 PASS phonons integrated out: the same electron Green function to g^4
 PASS a term that is not of the form 1/2 O K O is kept, with a message
 
----- QED: Dirac algebra   (14 s)
+---- QED: Dirac algebra   (15 s)
 PASS gamma^mu gamma_mu = d
 PASS gamma^mu a gamma_mu = (2 - d) a
 PASS gamma^mu a b gamma_mu = 4 a.b - (4 - d) a b
@@ -464,7 +464,7 @@ PASS symbolic coefficient x p: message, left as it is
 PASS m p and p/m: the same (message, left as they are)
 PASS a four-vector that is not split stays, the rest is contracted
 
----- QED: refused input   (14 s)
+---- QED: refused input   (15 s)
 PASS GammaMatrix[5] (no gamma5): message, $Failed
 PASS GammaMatrix[5] in a loop integral: message, unevaluated
 PASS explicit component index: message, $Failed
@@ -478,7 +478,7 @@ PASS an index three times inside a loop integral: message, $Failed
 PASS an index free inside a loop integral and twice outside: message, $Failed
 PASS the trace table is local to DiracSimplify (no definitions left)
 
----- QED: traces   (14 s)
+---- QED: traces   (15 s)
 PASS Tr 1 = 4
 PASS Tr of an odd number of gammas = 0
 PASS Tr gamma^mu gamma^nu = 4 g
@@ -488,7 +488,7 @@ PASS Tr of six: cyclicity
 PASS Tr (pslash + m)(qslash + m) = 4 (p.q + m^2)
 PASS Tr gamma^mu (k + m) gamma^nu (k + q + m) (vacuum polarization numerator)
 
----- QED: explicit Dirac matrices   (14 s)
+---- QED: explicit Dirac matrices   (15 s)
 PASS Tr of eight against explicit matrices (all mu, nu)
 PASS Tr of six slashes against explicit matrices
 PASS gamma^rho a gamma^mu b gamma_rho against explicit matrices
@@ -498,7 +498,7 @@ PASS Gordon identity against explicit spinors
 PASS d = 6 Clifford relations of the reference matrices
 PASS d = 6: 60 random products, traces, spinor chains and DiracOrder against the explicit matrices
 
----- QED: one-loop integrals   (15 s)
+---- QED: one-loop integrals   (17 s)
 PASS tadpole = -i A(1; m) (exact in d)
 PASS 1/(k^2 - m^2)^3 = -i A(3; m)
 PASS k^2/(k^2 - m^2)^3 = 1/(k^2 - m^2)^2 + m^2/(k^2 - m^2)^3 (exact in d)
@@ -528,7 +528,7 @@ PASS rank 2, four denominators, a squared one: (k.r)^2/((k^2-m^2)^2 ...) against
 PASS rank 3, five denominators: (k.r)^2 (k.p)/(...) against Schwinger parameters (N to 20 digits)   [relative error 7.e-19]
 PASS rank 3, five denominators: (k.r)^2 (k.p)/(...) against direct 4D integration   [relative error 3.9e-8]
 
----- QED: Feynman-parameter integrals   (16 s)
+---- QED: Feynman-parameter integrals   (18 s)
 PASS Beta-function closed form (IR divergent at eps = 0) at eps = -3/10   [error 2.4e-15]
 PASS simplex integral reduced to one parameter, against N of the two-dimensional integral   [error 2.4e-11]
 PASS a factor that is not polynomial in the variables integrated out: the simplex integral stays
@@ -548,14 +548,14 @@ PASS both endpoints singular: the Laurent series to eps^2 against the integral a
 PASS an infrared divergence that eps does not regulate: message, $Failed
 PASS more than one singular face of a simplex: message, $Failed
 
----- QED: above threshold   (16 s)
+---- QED: above threshold   (18 s)
 PASS bubble at p^2 = 5 m^2, eps^0: (i/16 pi^2)(2 - beta ln((1 + beta)/(1 - beta)) + i pi beta)   [error 6.1e-17]
 PASS the same below threshold, p^2 = 3 m^2: (i/16 pi^2)(2 - 2 Sqrt[3] ArcTan[1/Sqrt[3]])   [error 8.7e-19]
 PASS 1/Delta with a root inside: message, Indeterminate
 PASS the same on a simplex
 PASS N to 25 digits above a threshold (Log[x^2 - 3 x + 1], a root at x = 0.38): no message, all digits
 
----- QED: the self-energy, the vacuum polarization and the vertex   (16 s)
+---- QED: the self-energy, the vacuum polarization and the vertex   (18 s)
 PASS bad rule: message, $Failed
 PASS photon rule with three elements (old form): message, $Failed
 PASS external momenta that do not add up to zero: message, $Failed
@@ -597,7 +597,7 @@ PASS Ward identity with a photon mass: F1(0) - 1 + delta Z2 = 0 (lambda = 10^-3 
 PASS F1(-m^2) - 1, massless photon (IR in dim. reg.), xi = 1: {eps^-1, eps^0} against the exact expansion   [error 1.1e-10]
 PASS F1(-m^2) - 1, massless photon (IR in dim. reg.), xi = 2/5: {eps^-1, eps^0} against the exact expansion   [error 2.e-10]
 
----- QED: LaTeX   (22 s)
+---- QED: LaTeX   (23 s)
 PASS LaTeX of a product of Dirac matrices: pslash, p1slash, a slashed sum written as its terms
 PASS LaTeX of a trace, the metric, the unit matrix and d
 PASS LaTeX: the unit matrix after a number and a scalar product (4 a.b 1, not 4 1 a.b)
@@ -610,9 +610,9 @@ PASS LaTeX of the default loop momentum in an integrand taken out of its integra
 PASS LaTeX of a squared line
 PASS LaTeX of the tree vertex of the package: i e gamma^mu
 
----- effective actions (EffectiveActions.wl)   (22 s)
+---- effective actions (EffectiveActions.wl)   (23 s)
 
----- operator algebra   (22 s)
+---- operator algebra   (23 s)
 PASS kernel of a product
 PASS trace of a product: a ring
 PASS inverse pairs cancel in a trace
@@ -622,10 +622,10 @@ PASS Tr ln(-(A0^-1 - B0)): rings
 PASS derivative of Tr ln A^-1
 PASS derivative of Tr(B0 . A0)
 
----- perturbative objects (third order)   (22 s)
+---- perturbative objects (third order)   (23 s)
 diagrams: vacuum 27 and 7, self-energy 50 and 8, Phi 10 and 3
 
----- FunctionalDerivative with respect to two-index objects (propagators, interactions)   (23 s)
+---- FunctionalDerivative with respect to two-index objects (propagators, interactions)   (24 s)
 PASS dPhi/dG(b, a) = SelfEnergy (fermions), third order
 PASS d^2 Phi/dG(x4, x3) dG(x2, x1) = IrreducibleVertex (fermions), third order
 PASS -2 dSigma(x1, x2)/dG(x3, x4) = IrreducibleVertex (phi^4), third order
@@ -633,7 +633,7 @@ PASS dPhi/dV(a, b) is symmetric (V symmetric)
 PASS Euler: Integral V dPhi/dV = Sum_m m Phi_m (m interaction lines)
 PASS Euler: Integral G dPhi/dG = Sum_m 2 m Phi_m (2 m lines G)
 
----- the 2PI effective action Gamma[G]: electron gas   (24 s)
+---- the 2PI effective action Gamma[G]: electron gas   (25 s)
 PASS Gamma = Phi - Tr ln(-G^-1) - Tr(G0^-1 G - 1)
 PASS EffectiveAction2PI[Z0, interaction, n, G0 -> G] is the same
 PASS dGamma/dG(b, a) = Sigma(a, b) + G^-1(a, b) - G0^-1(a, b)
@@ -642,21 +642,21 @@ PASS stationary at the perturbative G, order by order (Sigma[G] = Sigma)
 PASS Gamma at the perturbative G = -log Z0 - (connected vacuum diagrams), orders 1 to 3
 PASS -Tr ln(-(G0^-1 - Sigma)) = -Tr ln(-G0^-1) + Sum_k Tr((G0 Sigma)^k)/k (rings)
 
----- the 2PI effective action Gamma[G]: phi^4 theory   (26 s)
+---- the 2PI effective action Gamma[G]: phi^4 theory   (27 s)
 PASS Gamma = Gamma2 + 1/2 Tr ln G^-1 + 1/2 Tr(D0^-1 G - 1)
 PASS dGamma/dG(a, b) = 1/2 (D0^-1 - G^-1 - Sigma)(a, b)
 PASS -2 D0 (dGamma/dG) G = -(G - D0 - D0 Sigma[G] G)
 PASS stationary at the perturbative G, order by order
 PASS Gamma at the perturbative G = -log Z0 - (connected vacuum diagrams), orders 1 to 3
 
----- mean fields as variables (free theory)   (26 s)
+---- mean fields as variables (free theory)   (27 s)
 PASS fermions: Gamma[Psibar, Psi, G] = -Psibar G0^-1 Psi + Gamma[G]
 PASS dGamma/dPsibar = -G0^-1 Psi (= eta, the source): Psi = -G0 eta
 PASS dGamma/dPsi = Psibar G0^-1
 PASS on shell at zero sources the means vanish (the derivatives are odd)
 PASS real bosons: dGamma/dphibar = D0^-1 phibar (= J)
 
----- Phi: self-consistent (counterterm) representation   (26 s)
+---- Phi: self-consistent (counterterm) representation   (27 s)
 PASS fermions, orders 1 to 3
 PASS without the trace term the first order fails
 PASS phi^4, orders 1 to 3
@@ -688,11 +688,11 @@ PASS Gamma(g) = Phi(g) - log(g^-2) - 2 (a g - 1)
 PASS Gamma at the exact g = -log Z, to u^4
 PASS stationary at the exact g, to u^4
 
----- zero dimensions: Gamma2 of phi^3 + phi^4 against the exact Legendre transform   (39 s)
+---- zero dimensions: Gamma2 of phi^3 + phi^4 against the exact Legendre transform   (38 s)
 PASS Gamma2[0, g] of phi^3 + phi^4: all terms with up to four vertices
   (1.1 s; 8 terms, e.g. InputForm[(-5*g^7)/16] c3^2 lam^2)
 
----- zero dimensions: Potthoff's functionals   (40 s)
+---- zero dimensions: Potthoff's functionals   (39 s)
 PASS F[Sigma] = log(1 - Sigma^2/u) (Sigma = u sig), to u^4
 PASS Omega_a(S) = F(S) - Tr ln(-(a - S)) is stationary only at S = u/a
 PASS its value there is -log Z
@@ -744,7 +744,7 @@ PASS free bosons: Omega/V = Integral (W/2 + T ln(1 - e^(-W/T))), the same with e
   Sigma_H = InputForm[-1/4*(lambda*MomentumSum[(1 + 2*BoseFunction[bm[p1]])/bm[p1], {p1}])]
 PASS ring, phi^4 Hartree: dOmega/dm^2 = 1/2 <phi^2> = 1/2 Tr G (the mass is the source of phi^2/2)
 
----- expectation values and responses as variations   (44 s)
+---- expectation values and responses as variations   (43 s)
 PASS fermions: dGamma/dU(x, y) = G(y, x) = <psibar(x) psi(y)>, only through the trace term (any Phi)
 PASS real bosons: dGamma/dU(x, y) = 1/2 G(x, y) = 1/2 <phi(x) phi(y)>
 PASS 0d: Gamma(g; U) is stationary at the exact g(U)
@@ -793,13 +793,13 @@ PASS pitfall: selected as 2PI open graphs, Sigma loses the bubble with two verti
   (skeletons that are not 2PI as open graphs at lambda^3: 3)
 PASS d^2 Gamma/dphibar(a) dphibar(b) at phibar = 0 and fixed G = D0^-1 - Sigma[G] (the skeletons, Hartree included), orders 0-3
 
----- tadpoles: phi^3 and phi^4 at phibar != 0, the self-consistent representation with the one-point counterterm j   (47 s)
+---- tadpoles: phi^3 and phi^4 at phibar != 0, the self-consistent representation with the one-point counterterm j   (46 s)
 PASS phi^3: D^-1[phibar] = D0^-1 + c3 phibar, and Gamma2 does not depend on phibar
 PASS phi^3: with j = c3 G(y, y)/2 the representation holds at c3^2 and c3^4
 PASS phi^3: without j the tadpoles (the dumbbell, c3^2) survive
 PASS phi^4 at phibar != 0: j = lambda phibar G(y, y)/2 + dGamma2/dphibar, orders 1-3
 
----- the electron gas with Grassmann-odd means Psi, Psibar   (50 s)
+---- the electron gas with Grassmann-odd means Psi, Psibar   (49 s)
 PASS Psi = Psibar = 0: Gamma[0, 0, G] is Gamma[G] on the Luttinger-Ward functional
 PASS classical action: -Psibar G0^-1 Psi + S_int[Psibar, Psi]
 PASS on shell the means vanish: dGamma/dPsibar = 0 at Psi = Psibar = 0 (odd)
@@ -820,7 +820,7 @@ PASS the exact equation for the mean field, lambda^1: D0^-1 phibar + lambda phib
 PASS Gamma^(2) at phibar = 0 = D0^-1 - Sigma (the 1PI self-energy with lines D0), orders 0-3
 PASS Gamma^(4) at phibar = 0: its skeletons (lines D0 -> G) are PerturbativeFullVertex, orders 1-3
 PASS Gamma^(4) at phibar = 0 = -(amputated 1PI connected four-point function, lines D0), orders 1-3
-  (181 diagrams in Gamma^(4) to lambda^3, 58 skeletons; 10.600000000000001 s)
+  (181 diagrams in Gamma^(4) to lambda^3, 58 skeletons; 10.4 s)
 PASS ConnectedFunctionFromVertices with VertexFunction = derivatives of Gamma[phibar] and FullPropagator = (Gamma^(2))^-1: the connected four-point function, orders 1-2
 
 ---- the 1PI effective action with bare lines: phi^4 and Gamma[Psibar, Psi] of fermions   (63 s)
@@ -834,7 +834,7 @@ PASS Gamma[Psibar, Psi]: the fourth derivative at zero means = F(x1, x2; x3, x4)
 PASS Gamma[Psibar, Psi]: the skeletons of its fourth derivative (lines G0 -> G) are PerturbativeFullVertex, orders 1-2
 PASS Gamma[Psibar, Psi, G] at the stationary G = Gamma[Psibar, Psi] minus its diagrams with an anomalous vertex, orders 0-3
 PASS the diagrams with an anomalous vertex by order (V, V^2, V^3)
-  (Gamma[Psibar, Psi]: {5, 15, 103} diagrams at V, V^2, V^3; 3.6 s)
+  (Gamma[Psibar, Psi]: {5, 15, 103} diagrams at V, V^2, V^3; 3.8000000000000003 s)
 
 ---- zero dimensions: the exact effective actions of phi^3 + phi^4   (67 s)
 PASS Gamma(ph, g) = exact double Legendre transform: all terms with up to four vertices (c3, lambda)
@@ -843,9 +843,9 @@ PASS Gamma(ph) = Gamma(ph, g(ph)) with dGamma/dg = 0 (the 1PI action from the 2P
 PASS d^2 Gamma(ph)/dph^2 = Gamma_phph - Gamma_phg Gamma_gg^-1 Gamma_gph at g(ph) (Schur complement), to fourth order
 PASS dGamma/dph = 0 at ph = <phi> = -c3 d0^2/2 + ... (the tadpoles of phi^3 come from the field equation), to fourth order
 PASS Gamma at the stationary point = -log Z = -1/2 log d0 - log<exp(-V)>, to fourth order
-  (8.200000000000001 s)
+  (9.1 s)
 
----- vertex divergences and the branches of Sigma[G]: one site, spin 1/2, at a = i nu   (75 s)
+---- vertex divergences and the branches of Sigma[G]: one site, spin 1/2, at a = i nu   (76 s)
 PASS Sigma_s = u/a_(-s), and Gamma0 = dSigma/dg = L0^-1 - L^-1 (the Bethe-Salpeter equation inverted, L = -dg/da, L0 = g^2)
 PASS charge and spin channels: L_c = (a^2 + u)/(a^2 - u)^2, L_s = 1/(a^2 - u); Gamma0_c = u (a^2 - u)^2/(a^2 (a^2 + u)), Gamma0_s = -u (a^2 - u)/a^2
 PASS Gamma0_c = d Sigma_skel/dg of the package's skeleton series at the exact g, to u^4
@@ -914,9 +914,9 @@ PASS ExpandTrace writes G[S] as G
 PASS 0d: dF/dV at fixed S = dF/du = s^2/(u (u - s^2)) (Hellmann-Feynman), to u^3
 PASS the symbol G[S] in LaTeX
 
----- superfields (Superfields.wl)   (77 s)
+---- superfields (Superfields.wl)   (78 s)
 
----- derivatives with respect to antisymmetric kernels   (77 s)
+---- derivatives with respect to antisymmetric kernels   (78 s)
 PASS d/dA(x, y) of Integral A(u, v) f(u) q(v), A antisymmetric: antisymmetrised
 PASS the same written as -Integral A(v, u) f(u) q(v): the same derivative
 PASS the labels out of canonical order: d/dA(y, x) = -d/dA(x, y) (A[y, x] has evaluated to -A[x, y]), no message
@@ -924,7 +924,7 @@ PASS second derivative of -1/2 Integral V Gbb Gpp with respect to Gbb(x3, x4) an
 PASS the kernel of the inverse of an antisymmetric operator is antisymmetric
 PASS ExpandTrace contracts an antisymmetric kernel with its inverse in every orientation
 
----- the superfield: Luttinger-Ward functional, self-energy, kernel   (77 s)
+---- the superfield: Luttinger-Ward functional, self-energy, kernel   (78 s)
 PASS Phi of the superfield: one diagram at each order to V^3
 PASS Phi of the superfield at first order: 1/8 Integral calV calG calG
 PASS the superfield self-energy at first order: -1/2 Integral calV(a, b, c, d) calG(c, d)
