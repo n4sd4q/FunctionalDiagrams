@@ -37,7 +37,7 @@ few common cases, and drawn in Mathematica or exported as TikZ. Every step is wo
 electron gas.
 
 <p align="center">
-  <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4"><img src="Media/demo_preview.gif" width="720" alt="Preview of the demo video: the
+  <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4"><img src="Media/demo_preview.webp" width="720" alt="Preview of the demo video: the
   Luttinger–Ward functional and its derivatives Sigma and Gamma0, the Bethe–Salpeter and parquet equations of the
   electron gas, Hedin's equations"></a><br>
   <sub>A preview of the <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4">demo video</a> (an MP4 file,

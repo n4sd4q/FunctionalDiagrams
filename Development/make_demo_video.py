@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""The demo video of the package: Media/demo.mp4 (1280 x 720, H.264, under 40 s), its looping preview for the
-README, Media/demo_preview.gif (its first frame, the one shown where animated images do not play, a card in full
-view), and a poster frame, Media/demo_poster.png.
+"""The demo video of the package: Media/demo.mp4 (1280 x 720, 30 fps, H.264), its looping preview for the README,
+Media/demo_preview.webp (960 x 540, 60 fps; its first frame, the one shown where animated images do not play, is a card
+in full view), and a poster frame, Media/demo_poster.png.
 
 Nothing in it is drawn by hand: the diagrams and formulas are the figures of the showcase (Showcase/figures, computed
 by Showcase/make_figures.wl; run it first), redrawn with one unit of length as in make_readme_figure.sh, and the code
@@ -11,7 +11,7 @@ card is drawn again in every frame from the geometry of Development/make_logo.py
 breathing and turning once (the arrow heads travel around it, with a soft start, a glide and a slight overshoot before
 they settle on their rest positions). Needs pdflatex (TeX Live: mathpazo,
 Source Code Pro, varwidth), pdftocairo (poppler), python3 with PIL, ffmpeg with libx264. Run from any folder:
-    python3 Development/make_demo_video.py            (all three files, about a minute)
+    python3 Development/make_demo_video.py            (all three files, about four minutes: most of it the WebP)
     python3 Development/make_demo_video.py --frames   (also a few frames as PNG in build/video/frames, to look at;
                                                       with --only-frames, nothing else)
 """
@@ -34,7 +34,10 @@ FIGURES = os.path.join(ROOT, "Showcase", "figures")
 BUILD = os.path.join(ROOT, "build", "video")
 MEDIA = os.path.join(ROOT, "Media")
 W, H, FPS = 1280, 720, 30
-GIF_W, GIF_H, GIF_FPS = 960, 540, 12
+# The preview: an animated WebP, which can run at 60 fps (a GIF cannot: its delays are in hundredths of a second, so
+# 50 fps at most, and browsers slow down delays below 0.02 s), in full colour; GitHub shows it in the README as a plain
+# <img>, and it plays wherever WebP does (every current browser, the GitHub apps)
+PREVIEW_W, PREVIEW_H, PREVIEW_FPS, PREVIEW_QUALITY = 960, 540, 60, 90
 # the LaTeX pages are drawn for a frame 16 cm wide: 80 px to the centimetre
 DPI = W / (16 / 2.54)
 
@@ -849,14 +852,14 @@ class Notebook:
 # ---------------------------------------------------------------------------------------------------------------------
 
 def timeline(el, preview=False):
-    d = (lambda video, gif: gif if preview else video)     # the preview is shorter
+    d = (lambda video, short: short if preview else video)     # the preview is shorter
     twoparticle = card_scene(el, "twoparticle", ["eq_bethe_salpeter", "bs_rpa", "bs_ladder"], d(3.9, 3.4), gap=8)
     parquet = card_scene(el, "parquet", ["eq_parquet"], d(3.9, 3.4))
     # four rows, the last one tall: close together, to fit the frame
     hedin = card_scene(el, "hedin", ["hedin_sigma", "hedin_w", "hedin_p", "hedin_lambda"], d(3.4, 3.0), gap=0, stagger=0.22)
     # the end card of the preview fades out like the others, and the first card builds up again (a fade redraws the
-    # whole card in every frame of the GIF: kept as short as those of the other cards); the GIF starts inside that
-    # first card, in full view (PREVIEW_START)
+    # whole card in every frame of the preview: kept as short as those of the other cards); the preview starts inside
+    # that first card, in full view (PREVIEW_START)
     end = title_scene(el, d(3.4, 2.8), url=True, fade_out=d(0, 0.22), turn=d(0.55, 0.45))
     if preview:
         derivatives = card_scene(el, "derivatives", ["card_phi", "card_sigma", "card_gamma"], 3.4, gap=26, stagger=0.35)
@@ -872,8 +875,8 @@ def timeline(el, preview=False):
             twoparticle, parquet, hedin, matsubara, qed, tikz, end]
 
 
-# The preview loops from this time (s) of its first card, when all of it is in view: the first frame of the GIF, the
-# one seen by visitors who do not play animated images and in link previews, is that card (not the white frame before
+# The preview loops from this time (s) of its first card, when all of it is in view: the first frame of the preview,
+# the one seen by visitors who do not play animated images and in link previews, is that card (not the white frame before
 # it builds up); its build-up, after the end card, closes the loop on that frame.
 PREVIEW_START = 1.5
 
@@ -916,6 +919,27 @@ def encode(scenes, fps, args, size=None, start=0.0):
         sys.exit("ffmpeg failed")
 
 
+def write_preview(scenes, path):
+    """The looping preview, from PREVIEW_START, as an animated WebP at PREVIEW_FPS (written by PIL): a run of identical
+    frames (a card in full view) is one frame, held as long; each frame is stored lossy or lossless, whichever is smaller
+    (allow_mixed), so that the fades stay small and the lines of the cards sharp."""
+    size, kept, counts = (PREVIEW_W, PREVIEW_H), [], []
+    for f in frames(scenes, PREVIEW_FPS, size, PREVIEW_START):
+        if kept and f == kept[-1]:
+            counts[-1] += 1
+        else:
+            kept.append(f)
+            counts.append(1)
+    # the delays in milliseconds, rounded so that they add up to the time of the frames (16 or 17 ms at 60 fps)
+    durations, k = [], 0
+    for c in counts:
+        durations.append(round((k + c) * 1000 / PREVIEW_FPS) - round(k * 1000 / PREVIEW_FPS))
+        k += c
+    images = [Image.frombytes("RGB", size, f) for f in kept]
+    images[0].save(path, save_all=True, append_images=images[1:], duration=durations, loop=0, minimize_size=True,
+                   allow_mixed=True, quality=PREVIEW_QUALITY, method=6)
+
+
 def main():
     os.makedirs(BUILD, exist_ok=True)
     os.makedirs(MEDIA, exist_ok=True)
@@ -932,9 +956,9 @@ def main():
                 s.frame(u * s.duration).convert("RGB").save(os.path.join(out, "scene%d_%02d.png" % (i, round(u * 100))))
             t0 += s.duration
         for i, s in enumerate(timeline(el, preview=True)):
-            s.frame(0.9 * s.duration).convert("RGB").resize((GIF_W, GIF_H), Image.LANCZOS).save(os.path.join(out, "preview%d.png" % i))
+            s.frame(0.9 * s.duration).convert("RGB").resize((PREVIEW_W, PREVIEW_H), Image.LANCZOS).save(os.path.join(out, "preview%d.png" % i))
             if i == 0:
-                s.frame(PREVIEW_START).convert("RGB").resize((GIF_W, GIF_H), Image.LANCZOS).save(os.path.join(out, "preview_first.png"))
+                s.frame(PREVIEW_START).convert("RGB").resize((PREVIEW_W, PREVIEW_H), Image.LANCZOS).save(os.path.join(out, "preview_first.png"))
         print("frames in", out)
         if "--only-frames" in sys.argv:
             return
@@ -949,11 +973,9 @@ def main():
     first = preview[0]
     if not max(i.t0 + i.fade for i in first.items) <= PREVIEW_START < first.duration - first.fade_out:
         print("warning: the first frame of the preview is not its first card in full view (PREVIEW_START)")
-    gif = os.path.join(MEDIA, "demo_preview.gif")
-    encode(preview, GIF_FPS, ["-vf", "split[a][b];[a]palettegen=max_colors=44:stats_mode=diff[p];"
-                                     "[b][p]paletteuse=dither=none:diff_mode=rectangle", "-loop", "0", gif], size=(GIF_W, GIF_H),
-           start=PREVIEW_START)
-    for path, length in ((mp4, total), (gif, sum(s.duration for s in preview)), (os.path.join(MEDIA, "demo_poster.png"), 0)):
+    webp = os.path.join(MEDIA, "demo_preview.webp")
+    write_preview(preview, webp)
+    for path, length in ((mp4, total), (webp, sum(s.duration for s in preview)), (os.path.join(MEDIA, "demo_poster.png"), 0)):
         print("%s: %.0f kB%s" % (os.path.relpath(path, ROOT), os.path.getsize(path) / 1024, ", %.1f s" % length if length else ""))
 
 

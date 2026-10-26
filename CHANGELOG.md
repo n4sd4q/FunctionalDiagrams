@@ -62,6 +62,11 @@
 - **Order for a first visit.** What the package is, the demo, the first example, the gallery, installation, the
   documents, then the list of features with the map of the functions, the checks, related software, details, citing
   (with a BibTeX entry) and the license. The demo video is no longer described by its duration (README, landing page).
+- **Demo.** The looping preview at the top of the README is an animated WebP at 60 fps, `Media/demo_preview.webp`
+  (the GIF it replaces ran at 12 fps: a GIF cannot run at 60, its delays being hundredths of a second). In the video the
+  notebook shows each input with its outputs in one cell group (In[n] and Out[n] on the left, the cell brackets and the
+  bracket of the group on the right), the QED card points from each one-loop diagram to its result (the pole of Σ, the
+  transverse Π with its logarithm, F₂(0) = α/2π), and the logo is the slimmer one.
 
 ## 2.3.0 (2026-10-26)
 
