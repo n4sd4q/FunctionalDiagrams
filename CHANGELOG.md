@@ -12,6 +12,9 @@
   near its incentre, not at its centroid.
 - **Triangles.** `"Triangle"` is equilateral, the same triangle as `"TriangleUp"` turned (it had a narrow 30-degree tip,
   with little room for a label).
+- **Lines between a box and a triangle** are parallel: two lines from the corners of one side of a triangle to two ports of
+  a blob of another shape (Γ⁰ L₀ Λ, Γ_xc L₀ Λ̃) end on that side at the spacing of the other blob's ports, where they
+  spread from the corners of the triangle, wider apart than those of the box.
 - **Diamonds** are hatched vertically (cross-hatched vertically and horizontally): the hatching at 45 degrees ran along
   two of their edges.
 - **The double wavy line** (a dressed interaction W) is one wavy line drawn double, its strokes 1.2 line widths apart along

@@ -1961,6 +1961,22 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
    links[i_, j_] := Select[frameLines, MemberQ[portNodes, #[[1]]] && MemberQ[portNodes, #[[2]]] &&
        Sort[{ports[[portIndex[#[[1]]], 2]], ports[[portIndex[#[[2]]], 2]]}] === Sort[{i, j}] &];
    shared[i_, j_] := If[i == j, {}, Intersection[frameBlobs[[i, 2]], frameBlobs[[j, 2]]]];
+   (* a triangle joined by two lines to two ports of a blob of another shape (Gamma0 L0 Lambda): the two corners are the
+      ends of one of its sides, wider apart than the ports of the other blob, so that the lines would spread; the ports
+      are moved along that side, symmetrically about its middle, to the spacing of the other blob's ports, and the lines
+      are parallel *)
+   Do[If[i != j && MemberQ[{"Triangle", "TriangleUp"}, blobSpecOf[frameBlobs[[j, 3]]][[2]]] &&
+       ! triangleShapeQ[blobSpecOf[frameBlobs[[i, 3]]][[2]]] && Length[links[i, j]] == 2,
+     Module[{ends, tp, pp, a, b, s},
+      ends = Table[SortBy[l[[{1, 2}]], ports[[portIndex[#], 2]] == j &], {l, links[i, j]}];
+      pp = ends[[All, 1]]; tp = ends[[All, 2]];
+      If[DuplicateFreeQ[pp] && DuplicateFreeQ[tp] && AllTrue[tp, Count[portNodes, #] == 1 &],
+       {a, b} = Table[ports[[portIndex[t], 3]], {t, tp}];
+       s = vectorNorm[ports[[portIndex[pp[[1]]], 3]] - ports[[portIndex[pp[[2]]], 3]]];
+       If[s < vectorNorm[b - a] - 0.05,
+        With[{m = (a + b)/2, e = unitVectorOf[b - a]},
+         ports[[portIndex[tp[[1]]], 3]] = m - s e/2; ports[[portIndex[tp[[2]]], 3]] = m + s e/2]]]]],
+    {i, Length[frameBlobs]}, {j, Length[frameBlobs]}];
    progress = True;
    While[progress && MemberQ[centres, None], progress = False;
     Do[If[centres[[j]] === None, Do[If[centres[[i]] =!= None && (links[i, j] =!= {} || shared[i, j] =!= {}) && centres[[j]] === None,

@@ -207,6 +207,9 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   of hatching (0.1 units) all around it, at the centre or on the axis of a triangle near its incentre
   (`blobLabelPlacement`); a blob grows (0.6 up), its label never shrinks; in one picture, and in all the terms of a sum
   drawn together (`$sumBlobHeads`, set by `geometriesOf`), the blobs of one shape have one size (`pictureBlobSize`).
+  Two blobs joined by two lines have the lines parallel: a triangle joined by two of its corners to two ports of a blob of
+  another shape (Γ⁰ L₀ Λ) has these two ports moved along that side, about its middle, to the spacing of the other blob's
+  ports (in `blobLayoutWithExternals`).
   A dressed interaction (W) is `"DoubleWavy"`: one flatter wavy line drawn
   `double, double distance=1.2\pgflinewidth`, so that its two strokes stay apart along the wave and with heavier lines. A source at the end of a single line (Z[J] at a non-zero source) is drawn at the point.
 - A mean (source insertion on a stub) and a tadpole go to the largest free sector at their vertex that leads outside
