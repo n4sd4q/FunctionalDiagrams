@@ -314,7 +314,19 @@ check["DeclareBlob: a four-point box has its legs at its corners",
   {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}}];
 check["DeclareBlob: a two-label blob is a vertex for the cuts",
   ParticleIrreducibleDiagrams[IntegralOver[G[a, u] SgBlob[u, v] G[v, w] SgBlob[w, z] G[z, b], {u, v, w, z}], 1, {a, b}, {G}], 0];
-check["DeclareBlob: an unknown shape: a message", quietCheck[DeclareBlob[SgBlob, "\\Sigma", "Shape" -> "Square"], "message"], "message"];
+DeclareBlob[TriTilde, "\\tilde\\Lambda", "Shape" -> "Triangle", "Fill" -> "CrossHatched"];
+DeclareBlob[WideBox, "\\Gamma_{\\rm ph}", "Shape" -> "Box", "Fill" -> "CrossHatched"];
+check["DeclareBlob: a blob whose label needs room is larger (never its label smaller); a short label keeps the size",
+  FunctionalDiagrams`Private`blobSpecOf /@ {TriTilde, WideBox, FBx, SgBlob} // #[[All, 4]] & // {#[[1]] > 0.6, #[[2]] > 0.6, #[[3]], #[[4]]} &,
+  {True, True, 0.6, 0.6}];
+check["DeclareBlob: the label of a triangle, with its clearing, lies inside it with a band of hatching around",
+  With[{sp = FunctionalDiagrams`Private`blobSpecOf[TriTilde]}, With[{box = FunctionalDiagrams`Private`blobLabelBox[sp[[1]], sp[[3]]]},
+    FunctionalDiagrams`Private`blobBoxMargin[sp[[2]], sp[[4]], box, FunctionalDiagrams`Private`blobLabelPoint[{0., 0.}, sp]] >= 0.099]], True];
+check["DeclareBlob: in one picture the blobs of one shape have one size (F beside a wider label)",
+  Union[Cases[geometryItems[IntegralOver[WideBox[a, b, u, v] FBx[v, u, c, d], {u, v}], {a, b, c, d}], {"B", _, sp_} :> sp[[4]]]] // Length, 1];
+check["DoubleWavy: one wave drawn double, its strokes apart in proportion to the line width",
+  occurrences[DiagramToTikZ[Wscr[a, b], {a, b}], "double distance=1.2\\pgflinewidth"], 1];
+check["DeclareBlob: an unknown shape: a message",quietCheck[DeclareBlob[SgBlob, "\\Sigma", "Shape" -> "Square"], "message"], "message"];
 (* the Graphics output, what a notebook shows: every line style, the blobs, a sum as a grid *)
 lineStyles = {{lsPlain, "Plain"}, {lsArrow, "Arrow"}, {lsDoubleArrow, "DoubleArrow"}, {lsDottedArrow, "DottedArrow"}, {lsDouble, "Double"},
    {lsWavy, "Wavy"}, {lsDoubleWavy, "DoubleWavy"}, {lsCurly, "Curly"}, {lsDashed, "Dashed"}, {lsDotted, "Dotted"}, {lsZigzag, "Zigzag"},

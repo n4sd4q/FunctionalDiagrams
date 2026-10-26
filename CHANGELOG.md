@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+### Drawing
+
+- **Labels of blobs.** A blob declared by `DeclareBlob` is as large as its label needs: the label, on a hatched blob in a
+  white clearing, lies inside the blob with a band of hatching all around it, so that an accent, a subscript or a
+  superscript is never cut by the outline (Λ̃ in a triangle, Γ_ph, Γ^(4)). The blob grows, never its label shrinks; in one
+  picture the blobs of one shape have one size, so that the lines between them stay parallel. The label of a triangle sits
+  near its incentre, not at its centroid.
+- **Triangles.** `"Triangle"` is equilateral, the same triangle as `"TriangleUp"` turned (it had a narrow 30-degree tip,
+  with little room for a label).
+- **Diamonds** are hatched vertically (cross-hatched vertically and horizontally): the hatching at 45 degrees ran along
+  two of their edges.
+- **The double wavy line** (a dressed interaction W) is one wavy line drawn double, its strokes 1.2 line widths apart along
+  the wave: the two waves shifted along the line closed up on their slopes and read as one thick line in small pictures.
+
 ## 2.3.0 (2026-10-26)
 
 Since 2.2.0: 54 new public names (132 in all), about 800 tests (805 at the last run). In short: the effective actions are

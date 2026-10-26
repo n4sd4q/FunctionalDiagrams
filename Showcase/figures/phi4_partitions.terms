@@ -1,21 +1,21 @@
 1
 %%PICTURE%%
 \begin{tikzpicture}[x=0.550cm, y=0.550cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
-  \draw (0.000,0.000) -- (-0.424,0.424);
-  \draw (0.000,0.000) -- (-0.424,-0.424);
-  \draw (0.000,0.000) -- (0.424,-0.424);
-  \draw (0.000,0.000) -- (0.424,0.424);
-  \draw (-0.424,0.424) -- (-0.849,0.849);
-  \draw (-0.424,-0.424) -- (-0.849,-0.849);
-  \draw (0.424,-0.424) -- (0.849,-0.849);
-  \draw (0.424,0.424) -- (0.849,0.849);
-  \fill[white] (0.000,0.000) circle (0.600);
-  \draw (0.000,0.000) circle (0.600);
+  \draw (0.000,0.000) -- (-0.431,0.431);
+  \draw (0.000,0.000) -- (-0.431,-0.431);
+  \draw (0.000,0.000) -- (0.431,-0.431);
+  \draw (0.000,0.000) -- (0.431,0.431);
+  \draw (-0.431,0.431) -- (-0.856,0.856);
+  \draw (-0.431,-0.431) -- (-0.856,-0.856);
+  \draw (0.431,-0.431) -- (0.856,-0.856);
+  \draw (0.431,0.431) -- (0.856,0.856);
+  \fill[white] (0.000,0.000) circle (0.610);
+  \draw (0.000,0.000) circle (0.610);
   \node[font=\footnotesize, inner sep=0.6pt] at (0.000,0.000) {$\scriptstyle W^{(4)}$};
-  \node[font=\footnotesize, inner sep=0pt, anchor=315] at (-0.912,0.912) {$a$};
-  \node[font=\footnotesize, inner sep=0pt, anchor=45] at (-0.912,-0.912) {$b$};
-  \node[font=\footnotesize, inner sep=0pt, anchor=135] at (0.912,-0.912) {$c$};
-  \node[font=\footnotesize, inner sep=0pt, anchor=225] at (0.912,0.912) {$d$};
+  \node[font=\footnotesize, inner sep=0pt, anchor=315] at (-0.919,0.919) {$a$};
+  \node[font=\footnotesize, inner sep=0pt, anchor=45] at (-0.919,-0.919) {$b$};
+  \node[font=\footnotesize, inner sep=0pt, anchor=135] at (0.919,-0.919) {$c$};
+  \node[font=\footnotesize, inner sep=0pt, anchor=225] at (0.919,0.919) {$d$};
 \end{tikzpicture}
 %%TERM%%
 1

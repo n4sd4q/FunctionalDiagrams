@@ -565,14 +565,20 @@ an interaction line does (section~\ref{sec:weights}). The one-loop gluon self-en
 \end{function}
 Draws a factor \pkg{h[x1, \dots, xn]} with $n\ge2$ labels --- also a self-energy \pkg{h[x, y]}, which would otherwise be a
 line --- as a blob with \pkg{label} written inside: a LaTeX string such as \pkg{"\textbackslash\textbackslash Sigma"} (in
-the graphics of Mathematica, plain text). Options: \opt{Shape} -> \opt{Circle} (the default), \opt{Box}, \opt{Triangle} (three
-legs at its corners, two on the left and one on the right: the vertex of a one-body operator), \opt{TriangleUp} (two
-legs at the bottom, one at the top) or \opt{Diamond} (a square turned by 45 degrees, legs at its four corners);
+the graphics of Mathematica, plain text). Options: \opt{Shape} -> \opt{Circle} (the default), \opt{Box}, \opt{Triangle} (equilateral,
+three legs at its corners, two on the left and one on the right: the vertex of a one-body operator), \opt{TriangleUp} (the
+same triangle, two legs at the bottom, one at the top) or \opt{Diamond} (a square turned by 45 degrees, legs at its four corners);
 \opt{AxialPorts} -> \pkg{\{k1, \dots\}}: the lines of these legs leave horizontally, so that a self-energy is drawn with its
 fermion line on an axis (default \pkg{\{1, 2\}} for \opt{TriangleUp});
 \opt{Fill} -> \opt{Hatched} (the default), \opt{CrossHatched}, \opt{Grey} or \opt{White}; an unknown value gives the
 message \pkg{DeclareBlob::opt}. The legs leave the blob counterclockwise from the top left, from the corners of a square
-for four legs. Blobs joined by lines are drawn side by side, on the side of the legs that join them, and a line that would
+for four legs. A blob is as large as its label needs: the label sits at the centre, or near the incentre of a triangle,
+on a hatched blob in a white clearing with a band of hatching left around it, and a label with an accent, a subscript or
+a superscript ($\tilde\Lambda$, $\Gamma_{\rm ph}$, $\Gamma^{(4)}$) makes the blob a little larger, never the label
+smaller; in one picture the blobs of one shape have one size, so that the lines between them are parallel. The size is
+estimated from the LaTeX of the label for a label font up to 0.6 units of length (\pkg{"\textbackslash\textbackslash
+footnotesize"} at \opt{Scale} -> \pkg{0.55}, the default \pkg{"\textbackslash\textbackslash small"} at \pkg{0.7}). Blobs
+joined by lines are drawn side by side, on the side of the legs that join them, and a line that would
 cross a blob, or pass close to it, is bent around it. The hatching is drawn as lines, so the TikZ code still needs only
 \pkg{decorations.pathmorphing}. For the cuts a blob is a vertex, like any factor that is not a line. The exact equations
 of many-body theory are drawn in this way, e.g. the right-hand side of the Bethe--Salpeter equation

@@ -61,7 +61,7 @@ DeclareInteractionLine::usage = "DeclareInteractionLine[V, ...] declares interac
 DeclareCoupling::usage = "DeclareCoupling[lambda, ...] declares couplings of local interactions, such as lambda in S_int = lambda/4! \[Integral] phi^4 or g in g \[Integral] phi psibar psi. In the weight written with a picture they are absorbed into the vertices, each of which stands for minus its coupling: lambda^n in the coefficient of a term becomes (-1)^n, so that the tadpole -lambda/2 G(a, z) G(z, z) G(z, b) has the weight 1/2. The expressions are not changed.";
 DeclareLocalVertex::usage = "DeclareLocalVertex[h, ...] declares heads of local vertices: kernels such as the quark-gluon vertex h[x, y, z] or the three-gluon vertex, whose labels carry different indices (Lorentz, colour, spinor) at one point of space-time. The pictures draw h[x, y, ...] as one point, at which its lines meet, instead of a grey blob; in the weight written with a picture the vertex stands for minus its kernel, -h (the sign of exp(-S_int)).";
 DeclareDisplayName::usage = "DeclareDisplayName[h, name] displays h[x, y, ...] as name with the subscript x y ..., for example DeclareDisplayName[BareGreenFunction, \"G0\"]: input keeps the explicit name, output is compact.";
-DeclareBlob::usage = "DeclareBlob[h, label] draws a factor h[x1, ..., xn] (n >= 2, a self-energy h[x, y] included) as a blob with label (a LaTeX string, e.g. \"\\\\Sigma\") written inside; its legs leave it counterclockwise from the top left, at the corners of a square for n = 4. Options: \"Shape\" -> \"Circle\" (default), \"Box\" or \"Triangle\" (three legs at its corners, two on the left and one on the right: the vertex of a one-body operator), or \"TriangleUp\" (two legs at the bottom and one at the top), \"Diamond\" (a square turned by 45 degrees, legs at the left, bottom, right and top corners); \"AxialPorts\" -> {k1, ...}: the lines and legs of these ports leave horizontally, so that a self-energy can be drawn with its fermion line on an axis (the default for \"TriangleUp\" is {1, 2}); \"Fill\" -> \"Hatched\" (default), \"CrossHatched\", \"Grey\" or \"White\". Blobs joined by lines are drawn side by side, as in the exact equations of many-body theory (Dyson, Schwinger-Dyson, Bethe-Salpeter, parquet).";
+DeclareBlob::usage = "DeclareBlob[h, label] draws a factor h[x1, ..., xn] (n >= 2, a self-energy h[x, y] included) as a blob with label (a LaTeX string, e.g. \"\\\\Sigma\") written inside; its legs leave it counterclockwise from the top left, at the corners of a square for n = 4. Options: \"Shape\" -> \"Circle\" (default), \"Box\" or \"Triangle\" (equilateral, three legs at its corners, two on the left and one on the right: the vertex of a one-body operator), or \"TriangleUp\" (the same triangle with two legs at the bottom and one at the top), \"Diamond\" (a square turned by 45 degrees, legs at the left, bottom, right and top corners); \"AxialPorts\" -> {k1, ...}: the lines and legs of these ports leave horizontally, so that a self-energy can be drawn with its fermion line on an axis (the default for \"TriangleUp\" is {1, 2}); \"Fill\" -> \"Hatched\" (default), \"CrossHatched\", \"Grey\" or \"White\". A blob is as large as its label needs: the label (on a hatched blob in a white clearing, with a band of hatching left around it) sits at the centre, or near the incentre of a triangle, and a label with an accent, a subscript or a superscript makes the blob a little larger, never the label smaller; in one picture the blobs of one shape have one size. Blobs joined by lines are drawn side by side, as in the exact equations of many-body theory (Dyson, Schwinger-Dyson, Bethe-Salpeter, parquet).";
 ResetDeclarations::usage = "ResetDeclarations[] removes all declarations (sources, fields, symmetries, derivative rules, line styles, interaction lines, couplings, local vertices, blobs, Matsubara frequencies): symmetric heads lose the attribute Orderless and antisymmetric ones their sign rules; display formats remain.";
 
 (* ---------------------------------------------------------------- calculus *)
@@ -3781,28 +3781,140 @@ treeLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
    {pos, {"circle", {}, {0., 0.}}, {}}];
 
 (* ---------------------------------------------------------------- declared blobs *)
-(* A diagram with blobs declared by DeclareBlob: each blob is a circle or a square of half size $declaredBlobSize, or a
-   triangle pointing to the right inscribed in that circle, its legs (ports) on its boundary, counterclockwise from the top
+(* A diagram with blobs declared by DeclareBlob: each blob is a circle or a square of half size $declaredBlobSize (larger
+   when its label needs it), or a triangle inscribed in a circle 1.45 times larger, its legs (ports) on its boundary, counterclockwise from the top
    left (the corners of a square for four legs, of the triangle for three). Blobs joined
    by lines are placed side by side, on the side of the ports that join them (Bethe-Salpeter ladders); the other points
    outside the ports they are joined to; the legs of external labels at ports point outwards, or along the side of the
    blob when they would meet a neighbouring blob. {positions, {"blob", blobs, centre}, {}}, or None. *)
 $declaredBlobSize = 0.6; $hatchSpacing = 0.1; $blobGap = 0.95; $blobPointDistance = 0.9;
 blobHeadOf[v_, blobs_] := First[Cases[blobs, {v, _, h_} :> h], None];
-blobSpecOf[h_] := First[Cases[$blobDeclarations, {h, l_, s_, f_, ___} :> {l, s, f, $declaredBlobSize}], None];
+(* the spec {label, shape, fill, size} of a declared blob: its size is $declaredBlobSize, or larger when its label needs it
+   (declaredBlobSize) *)
+blobSpecOf[h_] := First[Cases[$blobDeclarations, {h, l_, s_, f_, ___} :> {l, s, f, pictureBlobSize[l, s, f]}], None];
+(* within one picture the blobs of one shape have one size, the largest their labels need: F beside Gamma_ph is as large
+   as it, so that the lines between them are parallel. $pictureBlobHeads: the heads of the blobs of the picture drawn *)
+$pictureBlobHeads = {};
+pictureBlobSize[l_, s_, f_] := Max[declaredBlobSize[l, s, f],
+   Cases[$blobDeclarations, {hh_, l2_, s, f2_, ___} /; MemberQ[$pictureBlobHeads, hh] :> declaredBlobSize[l2, s, f2]]];
 blobAxialPorts[h_] := First[Cases[$blobDeclarations, {h, _, _, _, a_List} :> a], {}];
 (* the corners of a triangular blob of size h centred at p: top left, bottom left, right *)
 (* "Triangle": the first two corners on the left (top, bottom), the third on the right; "TriangleUp": the first two at the
    bottom (left, right), the third at the top *)
 triangleShapeQ[shape_] := MemberQ[{"Triangle", "TriangleUp", "Diamond"}, shape];
-(* "Diamond": a square turned by 45 degrees, its corners left, bottom, right, top *)
+(* "Diamond": a square turned by 45 degrees, its corners left, bottom, right, top. Both triangles are equilateral (the
+   same triangle turned), so that a vertex looks the same in either orientation and its label has room *)
 triangleCorners[p_, h_, shape_ : "Triangle"] := Table[p + If[shape === "Diamond", 1.3, 1.45] h {Cos[a], Sin[a]},
-   {a, Switch[shape, "TriangleUp", {7. Pi/6, 11. Pi/6, Pi/2}, "Diamond", {Pi, 3. Pi/2, 0., Pi/2}, _, {5. Pi/6, 7. Pi/6, 0.}]}];
-blobPortOffset[shape_, k_, n_] := With[{a = Pi/2 + Pi/n + 2. Pi (k - 1)/n},
+   {a, Switch[shape, "TriangleUp", {7. Pi/6, 11. Pi/6, Pi/2}, "Diamond", {Pi, 3. Pi/2, 0., Pi/2}, _, {2. Pi/3, 4. Pi/3, 0.}]}];
+blobPortOffset[shape_, k_, n_, size_ : $declaredBlobSize] := With[{a = Pi/2 + Pi/n + 2. Pi (k - 1)/n},
    Which[
-    triangleShapeQ[shape] && n == Length[triangleCorners[{0., 0.}, 1., shape]], triangleCorners[{0., 0.}, $declaredBlobSize, shape][[k]],
-    shape === "Box", $declaredBlobSize {Cos[a], Sin[a]}/Max[Abs[Cos[a]], Abs[Sin[a]]],
-    True, $declaredBlobSize {Cos[a], Sin[a]}]];
+    triangleShapeQ[shape] && n == Length[triangleCorners[{0., 0.}, 1., shape]], triangleCorners[{0., 0.}, size, shape][[k]],
+    shape === "Box", size {Cos[a], Sin[a]}/Max[Abs[Cos[a]], Abs[Sin[a]]],
+    True, size {Cos[a], Sin[a]}]];
+blobSizeOfHead[h_] := With[{sp = blobSpecOf[h]}, If[ListQ[sp], sp[[4]], $declaredBlobSize]];
+
+(* The label of a blob fits it: its box (estimated from its LaTeX by blobLabelExtent, in units of the font size, the font
+   taken as $blobLabelEm picture units: \footnotesize at 0.55 cm, \small at the default 0.7 cm and anything smaller fit),
+   with the white clearing around it on a hatched blob, lies inside the blob $blobLabelMargin within its outline, so that
+   a band of hatching is left all around it. The label sits where it has most room: the centre of a circle, a box or a
+   diamond, near the incentre of a triangle (moved towards its widest side); a blob whose label does not fit at
+   $declaredBlobSize is made larger, never its label smaller. *)
+$blobLabelEm = 0.6;
+blobClearingEm[fill_] := If[MemberQ[{"Hatched", "CrossHatched"}, fill], 0.135, 0.07];
+blobLabelMargin[fill_] := If[MemberQ[{"Hatched", "CrossHatched"}, fill], 0.1, 0.06];
+(* the box {width, height, depth} of a LaTeX label in units of its font size: the glyphs of Palatino and Computer Modern
+   (the wider of the two), scripts at 0.7 (0.5 in scripts) shifted as TeX shifts them, accents and bars above. An
+   estimate on the safe side, enough to size a blob *)
+$labelGreekWidths = <|"Gamma" -> 0.63, "Delta" -> 0.75, "Theta" -> 0.8, "Lambda" -> 0.8, "Xi" -> 0.7, "Pi" -> 0.8, "Sigma" -> 0.7,
+   "Upsilon" -> 0.72, "Phi" -> 0.8, "Psi" -> 0.82, "Omega" -> 0.8|>;
+$labelAccents = {"tilde", "hat", "bar", "widetilde", "widehat", "vec", "dot", "ddot", "check", "breve", "acute", "grave"};
+$labelSpaces = <|"," -> 0.17, ":" -> 0.22, ";" -> 0.28, "!" -> -0.17, "quad" -> 1., "qquad" -> 2.|>;
+labelTokens[s_String] := StringCases[s, {"\\" ~~ c : LetterCharacter .. :> {"cs", c}, "\\" ~~ c_ :> {"cs", c},
+    c : Except[WhitespaceCharacter] :> {"ch", c}}];
+labelCharBox[c_String] := Which[
+   MemberQ[CharacterRange["0", "9"], c], {0.5, 0.69, 0.},
+   MemberQ[{"(", ")", "[", "]", "|"}, c], {0.45, 0.8, 0.25},
+   MemberQ[{"+", "-", "=", "<", ">"}, c], {0.8, 0.58, 0.08},
+   MemberQ[{",", ".", ";"}, c], {0.28, 0.12, If[c === ".", 0., 0.2]},
+   c === "'", {0.3, 0.8, 0.},
+   UpperCaseQ[c], {Switch[c, "W", 1., "M", 0.95, "I", 0.42, "J", 0.55, "L" | "T", 0.65, "F", 0.66, "P", 0.68, _, 0.75], 0.69, If[c === "Q", 0.2, 0.]},
+   LowerCaseQ[c], {Switch[c, "i" | "j" | "l", 0.3, "f" | "t" | "r", 0.42, "m", 0.9, "w", 0.8, _, 0.58],
+    If[StringContainsQ["bdfhklt", c], 0.72, 0.47], If[StringContainsQ["gjpqy", c], 0.24, 0.]},
+   True, {0.6, 0.69, 0.}];
+labelGreekBox[name_String] := Which[
+   KeyExistsQ[$labelGreekWidths, name], {$labelGreekWidths[name], 0.7, 0.},
+   MemberQ[{"alpha", "beta", "gamma", "delta", "epsilon", "varepsilon", "zeta", "eta", "theta", "vartheta", "iota", "kappa", "lambda", "mu",
+     "nu", "xi", "pi", "rho", "varrho", "sigma", "tau", "upsilon", "phi", "varphi", "chi", "psi", "omega"}, name],
+   {If[MemberQ[{"iota"}, name], 0.35, If[MemberQ[{"omega", "psi", "phi", "varphi"}, name], 0.72, 0.62]],
+    If[MemberQ[{"beta", "delta", "zeta", "theta", "vartheta", "lambda", "xi", "phi", "psi"}, name], 0.72, 0.47],
+    If[MemberQ[{"beta", "gamma", "zeta", "eta", "mu", "xi", "rho", "varrho", "phi", "varphi", "chi", "psi"}, name], 0.24, 0.]},
+   name === "prime", {0.3, 0.8, 0.},
+   True, {0.8, 0.7, 0.}];
+blobLabelExtent[label_String] := Module[{toks = labelTokens[label], i = 1, sequence, atom, scripted, size = 1.},
+   (* a sequence of atoms up to a closing brace, at the size s (\scriptstyle changes it for the rest of the group) *)
+   sequence[s0_] := Module[{s = s0, w = 0., h = 0., d = 0., b},
+     While[i <= Length[toks] && toks[[i]] =!= {"ch", "}"},
+      Which[
+       toks[[i]] === {"cs", "scriptstyle"}, s = 0.7; i++,
+       toks[[i]] === {"cs", "scriptscriptstyle"}, s = 0.5; i++,
+       MemberQ[{{"cs", "displaystyle"}, {"cs", "textstyle"}}, toks[[i]]], s = 1.; i++,
+       MemberQ[{"rm", "it", "bf", "sf", "cal", "left", "right", "big", "Big", "limits", "nolimits"}, toks[[i, 2]]] && toks[[i, 1]] === "cs", i++,
+       True, b = scripted[s]; w += b[[1]]; h = Max[h, b[[2]]]; d = Max[d, b[[3]]]]];
+     {w, h, d}];
+   atom[s_] := Module[{t, b},
+     If[i > Length[toks], Return[{0., 0., 0.}]];
+     t = toks[[i]]; i++;
+     Which[
+      t === {"ch", "{"}, b = sequence[s]; If[i <= Length[toks], i++]; b,
+      t[[1]] === "ch", s labelCharBox[t[[2]]],
+      MemberQ[$labelAccents, t[[2]]], b = atom[s]; {Max[b[[1]], 0.5 s], b[[2]] + 0.2 s, b[[3]]},
+      t[[2]] === "overline", b = atom[s]; {b[[1]], b[[2]] + 0.22 s, b[[3]]},
+      t[[2]] === "underline", b = atom[s]; {b[[1]], b[[2]], b[[3]] + 0.22 s},
+      MemberQ[{"mathrm", "mathit", "mathbf", "mathsf", "mathcal", "text", "textrm", "operatorname", "boldsymbol", "mathbb"}, t[[2]]], atom[s],
+      KeyExistsQ[$labelSpaces, t[[2]]], {s $labelSpaces[t[[2]]], 0., 0.},
+      True, s labelGreekBox[t[[2]]]]];
+   (* an atom with its superscript and subscript *)
+   scripted[s_] := Module[{b = atom[s], sup = None, sub = None, ss = If[s >= 1., 0.7, 0.5], u, v},
+     While[i <= Length[toks] && MemberQ[{{"ch", "^"}, {"ch", "_"}}, toks[[i]]],
+      If[toks[[i]] === {"ch", "^"}, i++; sup = atom[ss], i++; sub = atom[ss]]];
+     If[sup === None && sub === None, Return[b]];
+     u = 0.41 s; v = If[sub === None, 0., Max[If[sup === None, 0.19, 0.25] s, sub[[2]] - 0.24 s]];
+     {b[[1]] + Max[If[sup === None, 0., sup[[1]]], If[sub === None, 0., sub[[1]]]] + 0.05 s,
+      Max[b[[2]], If[sup === None, 0., u + sup[[2]]], If[sub === None, 0., sub[[2]] - v]],
+      Max[b[[3]], If[sup === None, 0., sup[[3]] - u], If[sub === None, 0., v + sub[[3]]]]}];
+   With[{b = sequence[size]}, {1.03 b[[1]], b[[2]], b[[3]]}]];
+(* the margin of a box {wd, ht} centred at the offset q in a blob of size h centred at the origin: the least distance
+   from its corners to the outline (negative when it sticks out) *)
+blobBoxMargin[shape_, h_, {wd_, ht_}, q_] := Which[
+   shape === "Box", h - Max[Abs[q[[1]]] + wd/2, Abs[q[[2]]] + ht/2],
+   triangleShapeQ[shape], With[{t = triangleCorners[{0., 0.}, h, shape]},
+    Min[Table[With[{a = t[[k]], e = unitVectorOf[t[[Mod[k, Length[t]] + 1]] - t[[k]]]},
+       Min[Table[e[[1]] (q + {sx wd/2, sy ht/2} - a)[[2]] - e[[2]] (q + {sx wd/2, sy ht/2} - a)[[1]], {sx, {-1, 1}}, {sy, {-1, 1}}]]],
+      {k, Length[t]}]]],
+   True, h - vectorNorm[Abs[q] + {wd, ht}/2]];
+(* the incentre of a triangle (the centre of a diamond) *)
+blobIncentre[shape_, h_] := With[{t = triangleCorners[{0., 0.}, h, shape]},
+   If[Length[t] == 3, With[{l = Table[vectorNorm[t[[Mod[k, 3] + 1]] - t[[Mod[k + 1, 3] + 1]]], {k, 3}]}, l . t/Total[l]], Mean[t]]];
+(* the offset of the label from the centre of a blob of size h, and the margin it has there: in a triangle the point on
+   its axis of symmetry, near the incentre, with the largest margin (among the points within 0.005 of it, the nearest to
+   the incentre) *)
+blobLabelPlacement[shape_, h_, box_] := blobLabelPlacement[shape, h, box] = If[! MemberQ[{"Triangle", "TriangleUp"}, shape],
+   {{0., 0.}, blobBoxMargin[shape, h, box, {0., 0.}]},
+   Module[{c = blobIncentre[shape, h], cands, best},
+    cands = Table[With[{q = c + h If[shape === "Triangle", {a, 0.}, {0., a}]}, {q, blobBoxMargin[shape, h, box, q], vectorNorm[q - c]}],
+      {a, -0.4, 0.4, 0.01}];
+    best = Max[cands[[All, 2]]];
+    First[SortBy[Select[cands, #[[2]] >= best - 0.005 &], Last]][[{1, 2}]]]];
+blobLabelBox[label_, fill_] := With[{e = blobLabelExtent[label], c = blobClearingEm[fill]},
+   $blobLabelEm {e[[1]] + 2 c, e[[2]] + e[[3]] + 2 c}];
+(* the size of a blob: $declaredBlobSize, or the least size (to 0.01) at which its label fits *)
+declaredBlobSize[label_String, shape_, fill_] := declaredBlobSize[label, shape, fill] = Module[
+   {box = blobLabelBox[label, fill], m = blobLabelMargin[fill], lo = $declaredBlobSize, hi},
+   If[blobLabelPlacement[shape, lo, box][[2]] >= m, $declaredBlobSize,
+    hi = 2 lo; While[blobLabelPlacement[shape, hi, box][[2]] < m && hi < 5., hi *= 1.5];
+    While[hi - lo > 0.005, With[{mid = (lo + hi)/2}, If[blobLabelPlacement[shape, mid, box][[2]] >= m, hi = mid, lo = mid]]];
+    N[Ceiling[hi, 0.01]]]];
+declaredBlobSize[_, _, _] := $declaredBlobSize;
 (* the direction in which the legs and lines leave a port: outwards, but horizontally for the axial ports of the blob
    (option "AxialPorts" of DeclareBlob; the two bottom corners of a triangle with its apex up): the fermion line of a
    self-energy *)
@@ -3845,10 +3957,10 @@ orderSymmetricBlobPorts[blobs0_List, labelNodes_List, frameLines_List] := Module
    Do[i = order[[m]]; args = blobs[[i, 2]]; n = Length[args];
     If[n > 1 && freeQ[blobs[[i, 3]]],
      shape = blobSpecOf[blobs[[i, 3]]][[2]];
-     offs = Table[blobPortOffset[shape, kk, n], {kk, n}];
+     offs = Table[blobPortOffset[shape, kk, n, blobSizeOfHead[blobs[[i, 3]]]], {kk, n}];
      (* {argument, offset of the port it is joined to} for the blobs placed before, and those whose ports are fixed *)
      back = Join @@ Table[With[{sj = blobSpecOf[blobs[[j, 3]]][[2]], nj = Length[blobs[[j, 2]]]},
-         Table[{pq[[1]], blobPortOffset[sj, First[First[Position[blobs[[j, 2]], pq[[2]], {1}]]], nj]}, {pq, partners[i, j]}]],
+         Table[{pq[[1]], blobPortOffset[sj, First[First[Position[blobs[[j, 2]], pq[[2]], {1}]]], nj, blobSizeOfHead[blobs[[j, 3]]]]}, {pq, partners[i, j]}]],
        {j, Join[Take[order, m - 1], Select[Drop[order, m], ! freeQ[blobs[[#, 3]]] &]]}];
      With[{xs = DeleteDuplicates[back[[All, 1]]]}, back = Table[First[Cases[back, {x, _}]], {x, xs}]];
      slot = Table[None, {n}]; free = Range[n];
@@ -3877,7 +3989,7 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
    frameBlobs = orderSymmetricBlobPorts[frameBlobs, labelNodes, frameLines];
    (* ports: {node, blob, offset from the centre of the blob} *)
    ports = Flatten[Table[With[{b = frameBlobs[[i]], n = Length[frameBlobs[[i, 2]]]},
-       Table[{b[[2, k]], i, blobPortOffset[blobSpecOf[b[[3]]][[2]], k, n], portDirection[b[[3]], blobSpecOf[b[[3]]][[2]], k, n]}, {k, n}]],
+       Table[{b[[2, k]], i, blobPortOffset[blobSpecOf[b[[3]]][[2]], k, n, blobSizeOfHead[b[[3]]]], portDirection[b[[3]], blobSpecOf[b[[3]]][[2]], k, n]}, {k, n}]],
       {i, Length[frameBlobs]}], 1];
    portNodes = ports[[All, 1]];
    portIndex[v_] := First[First[Position[portNodes, v, {1}]]];
@@ -3895,8 +4007,8 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
          With[{d = Total[Join[Table[If[ports[[portIndex[e], 2]] == i, 1, -1] ports[[portIndex[e], 3]], {e, ends}],
               Table[portOffsetIn[s, i] - portOffsetIn[s, j], {s, shared[i, j]}]]]},
           (* ports on opposite corners (the particle-particle ladder): side by side, further apart, as the lines cross *)
-          centres[[j]] = centres[[i]] + If[vectorNorm[d] < 0.1, (2 $declaredBlobSize + gap + 0.65) {1., 0.},
-             (2 $declaredBlobSize + gap) unitVectorOf[d]];
+          centres[[j]] = centres[[i]] + With[{hh = blobSizeOfHead[frameBlobs[[i, 3]]] + blobSizeOfHead[frameBlobs[[j, 3]]]},
+             If[vectorNorm[d] < 0.1, (hh + gap + 0.65) {1., 0.}, (hh + gap) unitVectorOf[d]]];
           progress = True]]], {i, Length[frameBlobs]}]], {j, Length[frameBlobs]}]];
    If[MemberQ[centres, None], Return[None]];
    (* a point shared by two blobs midway between their ports, which are kept (blobPortCorner) as the ends of the links *)
@@ -3950,17 +4062,19 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
     {k, Length[labels]}];
    (* the blobs centred on the axis of the formula *)
    With[{m = Mean[centres]},
-    discs = Table[{centres[[i]] - m, blobSpecOf[frameBlobs[[i, 3]]][[2]], $declaredBlobSize}, {i, Length[frameBlobs]}];
+    discs = Table[{centres[[i]] - m, blobSpecOf[frameBlobs[[i, 3]]][[2]], blobSizeOfHead[frameBlobs[[i, 3]]]}, {i, Length[frameBlobs]}];
     {Table[{q[[1]], q[[2]] - m}, {q, Join[pos, legPositions]}], {"blob", discs, centroid - m}, {}}]];
 
 (* the chords that hatch a blob, at 45 degrees (sense 1) or at -45 degrees (sense -1); for a triangle, the parts of the
-   lines t n + s e inside it *)
+   lines t n + s e inside it. A diamond, whose edges are at 45 degrees, is hatched vertically (sense 1) and horizontally
+   (sense -1), so that no hatch line runs along an edge and doubles it *)
 triangleChord[t_, e_, n_, corners_] := Module[{ss = {}},
    Do[With[{a = corners[[i]], b = corners[[Mod[i, Length[corners]] + 1]]},
      With[{den = (b - a) . n},
       If[Abs[den] > 10.^-9, With[{u = (t - a . n)/den}, If[0 <= u <= 1, AppendTo[ss, (a + u (b - a)) . e]]]]]], {i, Length[corners]}];
    If[Length[ss] < 2, None, {t n + Min[ss] e, t n + Max[ss] e}]];
-blobHatchSegments[p_, shape : "Triangle" | "TriangleUp" | "Diamond", h_, sense_] := With[{e = {1., sense}/Sqrt[2.], n = {1., -sense}/Sqrt[2.],
+blobHatchSegments[p_, shape : "Triangle" | "TriangleUp" | "Diamond", h_, sense_] := With[{e = If[shape === "Diamond", If[sense == 1, {0., 1.}, {1., 0.}], {1., sense}/Sqrt[2.]],
+    n = If[shape === "Diamond", If[sense == 1, {1., 0.}, {0., 1.}], {1., -sense}/Sqrt[2.]],
     corners = triangleCorners[{0., 0.}, h, shape]},
    Select[Table[With[{c = triangleChord[t, e, n, corners]}, If[c === None, None, p + # & /@ c]],
      {t, $hatchSpacing Range[-Floor[1.5 h/$hatchSpacing], Floor[1.5 h/$hatchSpacing]]}], # =!= None && vectorNorm[#[[2]] - #[[1]]] > 0.02 &]];
@@ -3979,8 +4093,9 @@ plainBlobLabel[label_String] := StringReplace[StringReplace[StringReplace[label,
       "\\Pi" -> "\[CapitalPi]", "\\Delta" -> "\[CapitalDelta]", "\\chi" -> "\[Chi]"}],
     {"{" -> "", "}" -> "", "^" -> "", "_" -> "", " " -> ""}],
    {"\\tilde" ~~ c_ :> c <> "\:0303", "\\hat" ~~ c_ :> c <> "\:0302", "\\" -> ""}];
-(* where the label of a blob is written: the centre, or the centroid of a triangle *)
-blobLabelPoint[p_, shape_, h_] := If[triangleShapeQ[shape], Mean[triangleCorners[p, h, shape]], p];
+(* where the label of a blob is written: the centre, or near the incentre of a triangle (blobLabelPlacement) *)
+blobLabelPoint[p_, {label_, shape_, fill_, h_}] := p + If[triangleShapeQ[shape] && StringQ[label],
+    blobLabelPlacement[shape, h, blobLabelBox[label, fill]][[1]], {0., 0.}];
 declaredBlobPrimitives[p_, spec : {label_, shape_, fill_, h_}] := {
    If[fill === "Grey", GrayLevel[0.8], White],
    Switch[shape, "Box", Rectangle[p - {h, h}, p + {h, h}], "Triangle" | "TriangleUp" | "Diamond", Polygon[triangleCorners[p, h, shape]], _, Disk[p, h]],
@@ -3989,7 +4104,7 @@ declaredBlobPrimitives[p_, spec : {label_, shape_, fill_, h_}] := {
    Text[If[MemberQ[{"Hatched", "CrossHatched"}, fill],
      Framed[Style[plainBlobLabel[label], $fontPixels], Background -> White, FrameStyle -> White, RoundingRadius -> 3,
       FrameMargins -> {{2, 2}, {1, 2}}],
-     Style[plainBlobLabel[label], $fontPixels]], blobLabelPoint[p, shape, h]],
+     Style[plainBlobLabel[label], $fontPixels]], blobLabelPoint[p, spec]],
    Switch[shape, "Box", Line[{p + {-h, -h}, p + {h, -h}, p + {h, h}, p + {-h, h}, p + {-h, -h}}],
     "Triangle" | "TriangleUp" | "Diamond", Line[Append[triangleCorners[p, h, shape], First[triangleCorners[p, h, shape]]]], _, Circle[p, h]]};
 
@@ -4487,7 +4602,9 @@ straightenedSourceLines[positions_, sources_, pairs_] := Module[{pos = positions
    pos];
 
 (* geometry of a canonical term, with its diagramElements: {weight, items, bounding box} *)
-diagramGeometry[t_diagramTerm, elements_List, ext0_List, opts_List, legDirections_] := Module[{vertexLabels = drawingOption[opts, "VertexLabels"], weight,
+diagramGeometry[t_diagramTerm, elements_List, ext0_List, opts_List, legDirections_] := Block[
+   {$pictureBlobHeads = Cases[elements[[3]], {_, _, h_} :> h]}, diagramGeometryOfPicture[t, elements, ext0, opts, legDirections]];
+diagramGeometryOfPicture[t_diagramTerm, elements_List, ext0_List, opts_List, legDirections_] := Module[{vertexLabels = drawingOption[opts, "VertexLabels"], weight,
     lines, blobs, stubs, classes, rules, d = t[[3]], ext, present, externalNodes, amputated, amputatedExt, dummies, nodes, pairs, propagatorPairs,
     components, mainComponents, vacuumComponents, frames = {}, positions, mode, items, bb, x0, groups, circles, sourceLayout, unitQ, straighten, multiplePairs,
     axisFrame},
@@ -4554,7 +4671,7 @@ diagramGeometry[t_diagramTerm, elements_List, ext0_List, opts_List, legDirection
       {positions, circles} = roundFermionLoops[positions, lines, mode, sourcePoints, Select[pairs, MemberQ[c, #[[1]]] &]]; straighten = sourcePoints,
       unitLayout =!= None, {positions, mode, circles} = unitLayout; unitQ = True,
       True,
-      {positions, mode} = Block[{$blobRadii = Table[b[[1]] -> If[blobSpecOf[b[[3]]] =!= None, $declaredBlobSize, $blobRadius], {b, blobs}]},
+      {positions, mode} = Block[{$blobRadii = Table[b[[1]] -> If[blobSpecOf[b[[3]]] =!= None, blobSizeOfHead[b[[3]]], $blobRadius], {b, blobs}]},
         layoutVacuumComponent[c, Select[pairs, MemberQ[c, #[[1]]] &], Select[propagatorPairs, MemberQ[c, #[[1]]] &], lines]];
       {positions, circles} = If[mode[[1]] === "loops", {positions, mode[[2]]},
         roundFermionLoops[positions, lines, mode, {}, Select[pairs, MemberQ[c, #[[1]]] &]]]]];
@@ -4899,15 +5016,20 @@ polylineCrossings[p_, q_, n_] := Module[{out = {}, d1, d2, den, s, t, cross2, mi
 tikzCross[q_, h_] := coordinateString[q + h {1, 1}] <> " -- " <> coordinateString[q - h {1, 1}] <> " " <>
    coordinateString[q + h {1, -1}] <> " -- " <> coordinateString[q - h {1, -1}];
 
+$waveAmplitude = 1.;
 tikzLine[{"E", path_, style_}, t_, scale_, lw_ : 0.7, crossings_List : {}] := Module[{physical = 10 scale pathLength[path], wl = Max[1.3, Min[1.6, 2.3 scale]], nw,
     options},
    (* waves 1.6 mm long at the default scale, down to 1.3 mm in small pictures (shorter ones look like noise), and an
       amplitude in proportion *)
    nw = Max[1, Floor[physical/wl]];
    Which[
-    (* a dressed interaction: two parallel waves; gluons: a coil, on segments and arcs alike; wavy and zigzag arcs (on
-       arcs the decorations of TikZ can fail, Dimension too large): curves through computed points *)
-    style === "DoubleWavy", tikzWaves[path, nw, 0.24 wl/(10 scale), {0.032, -0.032}, crossings],
+    (* gluons: a coil, on segments and arcs alike; wavy and zigzag arcs (on arcs the decorations of TikZ can fail,
+       Dimension too large): curves through computed points. The dressed interaction: the wavy line drawn double, its
+       two strokes 1.2 line widths apart along the normal of the wave itself (two waves shifted along the line would
+       close up on the slopes), in proportion to the line width wherever the picture is copied with heavier lines; its
+       waves flatter than those of a plain wavy line, so that the inner stroke keeps clear of itself at the crests *)
+    style === "DoubleWavy", StringReplace[Block[{$waveAmplitude = 0.7}, tikzLine[{"E", path, "Wavy"}, t, scale, lw, crossings]],
+     "\\draw plot" -> "\\draw[double, double distance=1.2\\pgflinewidth] plot"],
     style === "Curly", "  \\draw plot[smooth, tension=0.6] coordinates {" <>
      joinStrings[coordinateStrings[coilPoints[path, Max[2, nw], 0.36 wl/(10 scale), 0.4 wl/(10 scale)]], " "] <> "};\n",
     (* a wavy arc: a half-integer number of waves, so that it is mirror symmetric about its middle (it leaves both ends
@@ -4917,11 +5039,11 @@ tikzLine[{"E", path_, style_}, t_, scale_, lw_ : 0.7, crossings_List : {}] := Mo
     path[[1]] =!= "segment" && style === "Wavy", Module[{h = 10 scale If[path[[1]] === "arc", Min[path[[3]], path[[3]] (1 - Cos[path[[5]]/2])], $bosonLoopRadius],
        wa, na},
       wa = Min[wl, Max[0.95, 0.6 h]]; na = Max[1.5, Round[physical/wa - 0.5] + 0.5];
-      tikzWaves[path, na, 0.26 (physical/na)/(10 scale), {0.}, crossings]],
+      tikzWaves[path, na, 0.26 $waveAmplitude (physical/na)/(10 scale), {0.}, crossings]],
     (* a straight wavy line: the same explicit curve, a half-integer number of waves, mirror symmetric about its middle
        (the snake decoration of TikZ ends in a straight remainder at one end) *)
     style === "Wavy", Module[{na = Max[1.5, Round[physical/wl - 0.5] + 0.5]},
-      tikzWaves[path, na, 0.27 (physical/na)/(10 scale), {0.}, crossings]],
+      tikzWaves[path, na, 0.27 $waveAmplitude (physical/na)/(10 scale), {0.}, crossings]],
     path[[1]] =!= "segment" && style === "Zigzag", "  \\draw " <> joinStrings[coordinateString /@ pathPoints[path, N[Range[0, 2 nw]]/(2 nw),
        0.25 wl/(10 scale) Table[If[i == 0 || i == 2 nw, 0., (-1.)^i], {i, 0, 2 nw}]], " -- "] <> ";\n",
     True,
@@ -4945,7 +5067,7 @@ tikzLine[{"E", path_, style_}, t_, scale_, lw_ : 0.7, crossings_List : {}] := Mo
    hatch line runs through or touches them; the clearing is clipped to the blob and the outline drawn over it, so that a
    wide label never cuts the outline *)
 tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := Module[{shapeString, hatches = blobHatchesOf[p, spec],
-    at = coordinateString[blobLabelPoint[p, shape, h]]},
+    at = coordinateString[blobLabelPoint[p, spec]]},
    shapeString = Switch[shape,
      "Box", coordinateString[p - {h, h}] <> " rectangle " <> coordinateString[p + {h, h}],
      "Triangle" | "TriangleUp" | "Diamond", joinStrings[coordinateString /@ triangleCorners[p, h, shape], " -- "] <> " -- cycle",

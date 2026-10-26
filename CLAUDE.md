@@ -200,8 +200,14 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
 - Of two crossing interaction arcs one is drawn above and one below the axis; two arcs on one side that overlap over less
   than half of one of them are round, so that they cross high above the axis at a wide angle; an arc over another one
   stays above it. Closed fermion loops are circles.
-- Blobs (`DeclareBlob`): circles, squares, and triangles for three-point vertices (two fermion legs on the left); a dressed
-  interaction (W) is `"DoubleWavy"`. A source at the end of a single line (Z[J] at a non-zero source) is drawn at the point.
+- Blobs (`DeclareBlob`): circles, squares, equilateral triangles for three-point vertices (two fermion legs on the left;
+  `"TriangleUp"` is the same triangle turned) and diamonds (hatched vertically, never along their edges). A blob is as
+  large as its label needs (`declaredBlobSize`, from `blobLabelExtent`, an estimate of the LaTeX box, with the label font
+  taken as `$blobLabelEm` = 0.6 units): the label, in a white clearing on a hatched blob, lies inside the blob with a band
+  of hatching (0.1 units) all around it, at the centre or on the axis of a triangle near its incentre
+  (`blobLabelPlacement`); a blob grows (0.6 up), its label never shrinks; in one picture the blobs of one shape have one
+  size (`pictureBlobSize`). A dressed interaction (W) is `"DoubleWavy"`: one flatter wavy line drawn
+  `double, double distance=1.2\pgflinewidth`, so that its two strokes stay apart along the wave and with heavier lines. A source at the end of a single line (Z[J] at a non-zero source) is drawn at the point.
 - A mean (source insertion on a stub) and a tadpole go to the largest free sector at their vertex that leads outside
   the loops and bubbles drawn (`outsideGapDirection`): a mean on a vertex of a bubble on the axis sticks out of it, a
   tadpole on a side of a triangle hangs outside it. With four means, the corners of the two rails between them are

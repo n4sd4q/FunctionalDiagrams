@@ -129,15 +129,20 @@ polylineCrossings[p_, q_, n_] := Module[{out = {}, d1, d2, den, s, t, cross2, mi
 tikzCross[q_, h_] := coordinateString[q + h {1, 1}] <> " -- " <> coordinateString[q - h {1, 1}] <> " " <>
    coordinateString[q + h {1, -1}] <> " -- " <> coordinateString[q - h {1, -1}];
 
+$waveAmplitude = 1.;
 tikzLine[{"E", path_, style_}, t_, scale_, lw_ : 0.7, crossings_List : {}] := Module[{physical = 10 scale pathLength[path], wl = Max[1.3, Min[1.6, 2.3 scale]], nw,
     options},
    (* waves 1.6 mm long at the default scale, down to 1.3 mm in small pictures (shorter ones look like noise), and an
       amplitude in proportion *)
    nw = Max[1, Floor[physical/wl]];
    Which[
-    (* a dressed interaction: two parallel waves; gluons: a coil, on segments and arcs alike; wavy and zigzag arcs (on
-       arcs the decorations of TikZ can fail, Dimension too large): curves through computed points *)
-    style === "DoubleWavy", tikzWaves[path, nw, 0.24 wl/(10 scale), {0.032, -0.032}, crossings],
+    (* gluons: a coil, on segments and arcs alike; wavy and zigzag arcs (on arcs the decorations of TikZ can fail,
+       Dimension too large): curves through computed points. The dressed interaction: the wavy line drawn double, its
+       two strokes 1.2 line widths apart along the normal of the wave itself (two waves shifted along the line would
+       close up on the slopes), in proportion to the line width wherever the picture is copied with heavier lines; its
+       waves flatter than those of a plain wavy line, so that the inner stroke keeps clear of itself at the crests *)
+    style === "DoubleWavy", StringReplace[Block[{$waveAmplitude = 0.7}, tikzLine[{"E", path, "Wavy"}, t, scale, lw, crossings]],
+     "\\draw plot" -> "\\draw[double, double distance=1.2\\pgflinewidth] plot"],
     style === "Curly", "  \\draw plot[smooth, tension=0.6] coordinates {" <>
      joinStrings[coordinateStrings[coilPoints[path, Max[2, nw], 0.36 wl/(10 scale), 0.4 wl/(10 scale)]], " "] <> "};\n",
     (* a wavy arc: a half-integer number of waves, so that it is mirror symmetric about its middle (it leaves both ends
@@ -147,11 +152,11 @@ tikzLine[{"E", path_, style_}, t_, scale_, lw_ : 0.7, crossings_List : {}] := Mo
     path[[1]] =!= "segment" && style === "Wavy", Module[{h = 10 scale If[path[[1]] === "arc", Min[path[[3]], path[[3]] (1 - Cos[path[[5]]/2])], $bosonLoopRadius],
        wa, na},
       wa = Min[wl, Max[0.95, 0.6 h]]; na = Max[1.5, Round[physical/wa - 0.5] + 0.5];
-      tikzWaves[path, na, 0.26 (physical/na)/(10 scale), {0.}, crossings]],
+      tikzWaves[path, na, 0.26 $waveAmplitude (physical/na)/(10 scale), {0.}, crossings]],
     (* a straight wavy line: the same explicit curve, a half-integer number of waves, mirror symmetric about its middle
        (the snake decoration of TikZ ends in a straight remainder at one end) *)
     style === "Wavy", Module[{na = Max[1.5, Round[physical/wl - 0.5] + 0.5]},
-      tikzWaves[path, na, 0.27 (physical/na)/(10 scale), {0.}, crossings]],
+      tikzWaves[path, na, 0.27 $waveAmplitude (physical/na)/(10 scale), {0.}, crossings]],
     path[[1]] =!= "segment" && style === "Zigzag", "  \\draw " <> joinStrings[coordinateString /@ pathPoints[path, N[Range[0, 2 nw]]/(2 nw),
        0.25 wl/(10 scale) Table[If[i == 0 || i == 2 nw, 0., (-1.)^i], {i, 0, 2 nw}]], " -- "] <> ";\n",
     True,
@@ -175,7 +180,7 @@ tikzLine[{"E", path_, style_}, t_, scale_, lw_ : 0.7, crossings_List : {}] := Mo
    hatch line runs through or touches them; the clearing is clipped to the blob and the outline drawn over it, so that a
    wide label never cuts the outline *)
 tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := Module[{shapeString, hatches = blobHatchesOf[p, spec],
-    at = coordinateString[blobLabelPoint[p, shape, h]]},
+    at = coordinateString[blobLabelPoint[p, spec]]},
    shapeString = Switch[shape,
      "Box", coordinateString[p - {h, h}] <> " rectangle " <> coordinateString[p + {h, h}],
      "Triangle" | "TriangleUp" | "Diamond", joinStrings[coordinateString /@ triangleCorners[p, h, shape], " -- "] <> " -- cycle",
