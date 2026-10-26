@@ -153,15 +153,14 @@ def elements():
     e["about"] = r"{\color{muted}\fontsize{12}{15}\selectfont a Mathematica package for perturbation theory, effective actions and many-body physics}"
     e["url"] = r"{\color{accent}\fontsize{15}{19}\selectfont\ttfamily github.com/n4sd4q/FunctionalDiagrams}"
     # the outputs of the first example of README.md
-    w = "13.8cm"
+    w = "13.4cm"
     e["nb_green"] = (r"\begin{tabular}{@{}l@{}}" + r"\band{bandA}{%s}{V^0}{%s}\\[-1pt]" % (w, fig("green_function_0", **nb)) +
                      r"\band{bandB}{%s}{V}{%s}\\[-1pt]" % (w, fig("green_function_1", **nb)) +
                      r"\band{bandA}{%s}{V^2}{%s}" % (w, fig("green_function_2", **nb)) + r"\end{tabular}")
     lhs, rhs = "2.2cm", "11.4cm"
     small = r"\fontsize{9}{11}\selectfont\renewcommand{\channelmark}[1]{}\def\break{\diagramgap}"
-    # the last cell draws Sigma and Gamma0 to third order: shown, like the README, as a summary to second order
-    e["nb_caption"] = r"{\color{muted}\fontsize{8}{10}\selectfont\itshape the result, up to second order}"
-    e["nb_phi"] = r"{%s\eqrow{%s}{$\Phi[G]={}$}{%s}{%s\diagramgap%s\rest}}" % (small, lhs, rhs, fig("luttinger_ward_1", **nb), fig("luttinger_ward_2", **nb))
+    # the last cell has two outputs, Sigma and Gamma0 to third order (Out[4] and Out[5]): shown, like the README, up to
+    # second order, the rest as +...
     e["nb_sigma"] = r"{%s\eqrow{%s}{$\Sigma=\dfrac{\delta\Phi}{\delta G}={}$}{%s}{%s\diagramgap%s\rest}}" % (
         small, lhs, rhs, fig("self_energy_1", **nb), fig("self_energy_2", **nb))
     e["nb_gamma"] = r"{%s\eqrow{%s}{$\Gamma^0=\dfrac{\delta\Sigma}{\delta G}={}$}{%s}{%s\diagramgap%s\rest}}" % (
@@ -449,9 +448,14 @@ class Turn:
         return smootherstep((t - self.start + 0.25) / 0.4) * (1 - smootherstep((t - self.start - self.end) / 0.7))
 
 
+# the geometry of the badge of Development/make_logo.py, in units of its 128 x 128 picture
+LOGO_R, LOGO_LOOP, LOGO_WAVE, LOGO_DOT, LOGO_AMPLITUDE = 38.0, 6.5, 6.0, 7.0, 7.5
+LOGO_HEAD, LOGO_HEAD_LENGTH, LOGO_HEAD_WIDTH = 13.0, 0.58, 0.72     # arrowhead(r, angle, size, length, width)
+
+
 def logo_image(size, tau, turn=None):
-    """The badge of Development/make_logo.py (a 128 x 128 picture: a fermion loop of radius 38, an interaction line across
-    it, six half waves) drawn at `size` px at the time tau (s), from its geometry: the phase of the wavy line runs, so that
+    """The badge of Development/make_logo.py (a 128 x 128 picture: a fermion loop of radius 38, slim lines, large arrow
+    heads, an interaction line across it, six half waves) drawn at `size` px at the time tau (s), from its geometry: the phase of the wavy line runs, so that
     it ripples between its two fixed ends, and the loop breathes. With a Turn, the arrow heads travel around the loop in
     the direction they point, tangent to it: the ripple is driven by the turn (its phase advances with the angle and its
     waves rise with the speed), the breathing pauses and gives way to a slight swell of the loop at speed, and behind each
@@ -469,30 +473,32 @@ def logo_image(size, tau, turn=None):
     theta = turn(tau) if turn else 0.0
     speed = turn.speed(tau) if turn else 0.0
     rest = 1 - turn.active(tau) if turn else 1.0
-    r = 38.0 * (1 + 0.035 * rest * math.sin(2 * math.pi * tau / 2.2) + 0.03 * speed ** 2)
+    r = LOGO_R * (1 + 0.035 * rest * math.sin(2 * math.pi * tau / 2.2) + 0.03 * speed ** 2)
     phase = 2 * math.pi * tau / 1.2 + math.radians(theta)
-    amplitude = 7.5 * (1 + 0.15 * rest * math.sin(2 * math.pi * tau / 1.7 + 1.0) + 0.22 * speed ** 2)
+    amplitude = LOGO_AMPLITUDE * (1 + 0.15 * rest * math.sin(2 * math.pi * tau / 1.7 + 1.0) + 0.22 * speed ** 2)
     n = 700
     wave = []
     for i in range(n + 1):
         u = i / n
         s = amplitude * min(1.0, 6 * u, 6 * (1 - u)) * math.sin(math.pi * 6 * u - phase)
         wave.append(((c - r + 2 * r * u) * f, (c + s) * f))
-    half = 3.5 * f    # the wavy line, 7 wide with round ends: discs along it (PIL's wide polylines have gaps)
+    half = LOGO_WAVE / 2 * f    # the wavy line, with round ends: discs along it (PIL's wide polylines have gaps)
     for x, y in wave:
         d.ellipse([x - half, y - half, x + half, y + half], fill=LOGO_LIGHT + (255,))
-    # the loop, 8 wide and centred on the radius r (PIL draws the outline inside the box)
-    d.ellipse([(c - r - 4) * f, (c - r - 4) * f, (c + r + 4) * f, (c + r + 4) * f], outline=(255, 255, 255, 255), width=int(8 * f))
+    # the loop, centred on the radius r (PIL draws the outline inside the box)
+    hw = LOGO_LOOP / 2
+    d.ellipse([(c - r - hw) * f, (c - r - hw) * f, (c + r + hw) * f, (c + r + hw) * f], outline=(255, 255, 255, 255),
+              width=int(round(LOGO_LOOP * f)))
 
     def head(angle):
         """The arrow head centred on the loop at `angle` (degrees, y down), pointing towards smaller angles."""
-        a, length = math.radians(angle), 11
+        a, ln, wd = math.radians(angle), LOGO_HEAD * LOGO_HEAD_LENGTH, LOGO_HEAD * LOGO_HEAD_WIDTH
         px, py = c + r * math.cos(a), c + r * math.sin(a)
         tx, ty = math.sin(a), -math.cos(a)
         nx, ny = -ty, tx
-        pts = ((px + tx * length * 0.6, py + ty * length * 0.6),
-               (px - tx * length * 0.6 + nx * length * 0.62, py - ty * length * 0.6 + ny * length * 0.62),
-               (px - tx * length * 0.6 - nx * length * 0.62, py - ty * length * 0.6 - ny * length * 0.62))
+        pts = ((px + tx * ln, py + ty * ln),
+               (px - tx * ln + nx * wd, py - ty * ln + ny * wd),
+               (px - tx * ln - nx * wd, py - ty * ln - ny * wd))
         return [(x * f, y * f) for x, y in pts]
 
     if turn and speed > 0.05:
@@ -500,7 +506,7 @@ def logo_image(size, tau, turn=None):
         # the head tapering into the loop, the more transparent the older (layers of growing length, added up), and
         # the fainter the slower the turn
         travelled = math.radians(theta - turn(tau - 0.12))
-        base = 0.6 * 11 / r                                 # from the middle of a head to its base, in radians
+        base = LOGO_HEAD * LOGO_HEAD_LENGTH / r                                 # from the middle of a head to its base, in radians
         mask, layers = Image.new("L", (big, big), 0), 6
         for j in range(1, layers + 1):
             layer = Image.new("L", (big, big), 0)
@@ -510,7 +516,7 @@ def logo_image(size, tau, turn=None):
                 outer, inner = [], []
                 for i in range(25):
                     u = i / 24 * j / layers
-                    a, w = start + u * travelled, 4 + 0.9 * (0.62 * 11 - 4) * (1 - u) ** 1.4
+                    a, w = start + u * travelled, LOGO_LOOP / 2 + 0.9 * (LOGO_HEAD * LOGO_HEAD_WIDTH - LOGO_LOOP / 2) * (1 - u) ** 1.4
                     outer.append(((c + (r + w) * math.cos(a)) * f, (c + (r + w) * math.sin(a)) * f))
                     inner.append(((c + (r - w) * math.cos(a)) * f, (c + (r - w) * math.sin(a)) * f))
                 ld.polygon(outer + inner[::-1], fill=int(255 * 0.55 * speed ** 2 / layers))
@@ -519,7 +525,7 @@ def logo_image(size, tau, turn=None):
     for rest_angle in (-90, 90):
         d.polygon(head(rest_angle - theta), fill=(255, 255, 255, 255))
     for x in (c - r, c + r):
-        d.ellipse([(x - 7.5) * f, (c - 7.5) * f, (x + 7.5) * f, (c + 7.5) * f], fill=(255, 255, 255, 255))
+        d.ellipse([(x - LOGO_DOT) * f, (c - LOGO_DOT) * f, (x + LOGO_DOT) * f, (c + LOGO_DOT) * f], fill=(255, 255, 255, 255))
     return img.resize((size, size), Image.LANCZOS)
 
 
@@ -663,32 +669,39 @@ def arrow_image(width=60):
 
 
 class Notebook:
-    """The cells of the first example typed one after the other, each evaluated (In[n]:= appears) and followed by its
-    output; the page scrolls to keep the newest line in view."""
-    X_CODE, LH, CELL_GAP = 122, 30, 22
+    """The cells of the first example typed one after the other, each evaluated and followed by its outputs, as in a
+    notebook: In[n]:= on the left of an input cell, Out[n]= on the left of each output cell (a cell of several lines
+    without a semicolon has one output for each, numbered on), and on the right a bracket for each cell and one around
+    the group of an input with its outputs. The page scrolls to keep the newest line in view."""
+    X_CODE, LH, CELL_GAP, OUT_GAP = 122, 30, 26, 14
+    X_BRACKET, X_GROUP = W - 36, W - 27     # the cell brackets, and those of the groups
 
     def __init__(self, el, start=0.25):
         self.codefont = font("SourceCodePro-Medium.otf", 19)
         self.labelfont = font("SourceCodePro-Regular.otf", 14)
         cells = readme_cells()
-        outputs = {2: [el["nb_green"]], 3: [el["nb_caption"], el["nb_phi"], el["nb_sigma"], el["nb_gamma"]]}
-        unlabelled = {3}    # a summary, not the literal output: no Out[n]=
+        # the outputs, and the height of their Out[n]= (from their top): the first band of the Green function, the
+        # middle of the left-hand side of an equation (Out[n]= level with its = sign)
+        outputs = {2: [(el["nb_green"], 6)], 3: [(el[k], self.lhs_middle(el[k]) - 9) for k in ("nb_sigma", "nb_gamma")]}
         speeds = [70, 260, 170, 240]    # characters per second
-        self.cells, t, y = [], start, 34
+        self.cells, t, y, line = [], start, 34, 1
         for i, code in enumerate(cells):
             cell = CodeCell(code, self.codefont, self.X_CODE, y, self.LH)
             cps = speeds[min(i, len(speeds) - 1)]
             typing = len(code) / cps
-            c = dict(cell=cell, n=i + 1, t0=t, cps=cps, t_eval=t + typing + 0.15, top=y - 6, outs=[], label=i not in unlabelled)
+            c = dict(cell=cell, n=line, t0=t, cps=cps, t_eval=t + typing + 0.15, top=y - 8, outs=[])
             y += cell.height
+            c["input_bottom"] = y + 2
             t = c["t_eval"] + 0.15
-            for k, img in enumerate(outputs.get(i, [])):
-                y += 12 if k == 0 else 4
-                c["outs"].append(Item(img, self.X_CODE - 12, y, t + 0.32 * k + 0.1, fade=0.3))
+            outs = outputs.get(i, [])
+            for k, (img, at) in enumerate(outs):
+                y += self.OUT_GAP
+                c["outs"].append((Item(img, self.X_CODE - 12, y, t + 0.32 * k + 0.1, fade=0.3), line + k, at))
                 y += img.height
+            line += max(1, len(outs))
             c["bottom"] = y + 4
-            hold = {0: 0.1, 1: 0.2, 2: 1.5, 3: 2.3}.get(i, 1.0)
-            t += 0.32 * max(0, len(c["outs"]) - 1) + (0.3 if c["outs"] else 0) + hold
+            hold = {0: 0.1, 1: 0.2, 2: 1.5, 3: 2.6}.get(i, 1.0)
+            t += 0.32 * max(0, len(outs) - 1) + (0.3 if outs else 0) + hold
             y += self.CELL_GAP
             self.cells.append(c)
         self.duration = t
@@ -704,7 +717,7 @@ class Notebook:
             n = int((t - c["t0"]) * c["cps"])
             rows = c["cell"].code[:n].count("\n") + 1
             bottom = cell.y + rows * cell.lh
-            for item in c["outs"]:
+            for item, _, _ in c["outs"]:
                 if t >= item.t0 - 0.25:
                     bottom = item.y + item.img.height
         return bottom
@@ -719,7 +732,10 @@ class Notebook:
         return track
 
     def draw(self, frame, t):
-        dy = self.scroll_track[min(int(t * FPS), len(self.scroll_track) - 1)]
+        # the scroll at this time, interpolated (the frames of the preview are more frequent than the track)
+        u = min(t * FPS, len(self.scroll_track) - 1.001)
+        k = int(u)
+        dy = self.scroll_track[k] + (u - k) * (self.scroll_track[k + 1] - self.scroll_track[k])
         d = ImageDraw.Draw(frame)
         for c in self.cells:
             if t < c["t0"]:
@@ -729,27 +745,38 @@ class Notebook:
             typing = t < c["t_eval"]
             blink = n < len(cell.code) or int(t * 2.2) % 2 == 0
             cell.draw(d, n, dy, cursor=typing and blink)
-            bottom = cell.y + cell.height
             if t >= c["t_eval"]:
-                label = "In[%d]:=" % c["n"]
-                d.text((cell.x - 12 - self.labelfont.getlength(label), cell.y + 4 - dy), label, font=self.labelfont, fill=LABEL)
-            for k, item in enumerate(c["outs"]):
-                if t >= item.t0:
-                    item.draw(frame, t, dy)
-                    if k == 0 and c["label"]:
-                        label = "Out[%d]=" % c["n"]
-                        a = ease((t - item.t0) / 0.3)
-                        colour = tuple(int(255 - (255 - v) * a) for v in LABEL)
-                        d.text((cell.x - 12 - self.labelfont.getlength(label), item.y + 6 - dy), label, font=self.labelfont, fill=colour)
-                    bottom = item.y + item.img.height
-            self.bracket(d, c["top"] - dy, bottom + 4 - dy)
+                self.label(d, "In[%d]:=" % c["n"], cell.y + 4 - dy, LABEL)
+            self.bracket(d, self.X_BRACKET, c["top"] - dy, c["input_bottom"] - dy)
+            bottom = None
+            for item, number, at in c["outs"]:
+                if t < item.t0:
+                    continue
+                item.draw(frame, t, dy)
+                a = ease((t - item.t0) / 0.3)
+                colour = tuple(int(255 - (255 - v) * a) for v in LABEL)
+                self.label(d, "Out[%d]=" % number, item.y + at - dy, colour)
+                bottom = item.y + item.img.height + 4
+                self.bracket(d, self.X_BRACKET, item.y - 6 - dy, bottom - dy, colour=tuple(
+                    int(255 - (255 - v) * a) for v in BRACKET))
+            if bottom is not None:
+                self.bracket(d, self.X_GROUP, c["top"] - dy, bottom - dy)
 
     @staticmethod
-    def bracket(d, top, bottom):
-        x = W - 30
-        d.line([x, top, x, bottom], fill=BRACKET, width=1)
-        d.line([x - 5, top, x, top], fill=BRACKET, width=1)
-        d.line([x - 5, bottom, x, bottom], fill=BRACKET, width=1)
+    def lhs_middle(img, width=2.2 / 2.54 * DPI):
+        """The middle of the left-hand side of a row of \\eqrow (its first 2.2 cm), from the top of the image."""
+        top, bottom = img.getchannel("A").crop((0, 0, int(width), img.height)).getbbox()[1::2]
+        return (top + bottom) / 2
+
+    def label(self, d, text, y, colour):
+        """In[n]:= or Out[n]=, right-aligned before the cells."""
+        d.text((self.X_CODE - 12 - self.labelfont.getlength(text), y), text, font=self.labelfont, fill=colour)
+
+    @staticmethod
+    def bracket(d, x, top, bottom, colour=BRACKET):
+        d.line([x, top, x, bottom], fill=colour, width=1)
+        d.line([x - 5, top, x, top], fill=colour, width=1)
+        d.line([x - 5, bottom, x, bottom], fill=colour, width=1)
 
 
 # ---------------------------------------------------------------------------------------------------------------------
