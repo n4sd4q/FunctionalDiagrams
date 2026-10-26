@@ -57,7 +57,8 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   the one the README shows) and the self-contained interactive `function_map.html` (the same layout, light and dark,
   every dependency drawn for the selected name).
 - `Development/TODO.md` — things worth doing sooner or later; keep it up to date.
-- `.nojekyll` (empty) — GitHub Pages serves the main branch as it is, so that the README can link the interactive map
+- `index.html` — the landing page of GitHub Pages (logo, links to the repository, the release, the PDFs, the map and the
+  video). `.nojekyll` (empty) — GitHub Pages serves the main branch as it is, so that the README can link the interactive map
   (`https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html`) and the video (`.../Media/demo.mp4`).
 - `PacletInfo.wl` — the repository is a paclet (``Needs["FunctionalDiagrams`"]`` after `PacletDirectoryLoad` or
   `PacletInstall`); `Development/build_paclet.wl` builds `build/FunctionalDiagrams-<version>.paclet` for a GitHub release.
