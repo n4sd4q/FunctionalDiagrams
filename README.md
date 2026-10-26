@@ -128,7 +128,7 @@ calculations.
 **Pictures and formulas**
 - diagrams in the usual style of many-body papers (fermion lines straight, loops as circles, ladders as ladders,
   symmetric diagrams drawn symmetric), exact equations with blobs, and formulas as LaTeX (`DiagramPlot`,
-  `DiagramToTikZ`, `ExpressionToLaTeX`)
+  `DiagramToTikZ`, `ExpressionToLaTeX`); in a notebook the pictures follow its light or dark appearance
 
 The theories are written in condensed notation, so the same functions work for real and complex bosons, fermions,
 phonons, disorder and QCD (quarks, gluons, ghosts).

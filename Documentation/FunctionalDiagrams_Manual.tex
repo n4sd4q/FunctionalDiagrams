@@ -1833,6 +1833,15 @@ Draws every canonical term of \pkg{expr} with its weight, in a grid (\pkg{Graphi
 pictures with \pkg{"Output" -> "Grid"}. The terms are in canonical order, those with fewer integration variables first.
 The weights are those of section~\ref{sec:weights}.
 
+In a notebook the pictures follow its appearance. With Mathematica 14.3 or later, through \pkg{LightDarkSwitched}, the
+lines and the text are dark on a light notebook and light on a dark one; what hides the lines under it (the inside of a blob, of an
+external point or of a source insertion, the clearing behind the label of a hatched blob) has the colour of the
+background of the notebook, and the grey fills are a darker grey there. Before 14.3 the pictures have the colours of a
+light notebook. \pkg{"Appearance" -> "Light"} or \pkg{"Dark"} forces one of them, on a background of its own (white, or
+the dark grey of a dark notebook), for a picture exported for a page of the other kind;
+\pkg{SetOptions[\{DiagramPlot, DrawDiagram\}, "Appearance" -> "Dark"]} does it for a session. The TikZ code of
+\fnref{DiagramToTikZ}, for white pages, ignores the option.
+
 \begin{function}{DiagramToTikZ}
 \syntax{DiagramToTikZ[expr, \{x1, \dots, xn\}, options]}
 \end{function}
@@ -1929,6 +1938,8 @@ defaults, for instance \pkg{SetOptions[DiagramToTikZ, "Scale" -> 0.5]}, and an u
 "Weights" & True & \pkg{DiagramPlot}: show the weights (section~\ref{sec:weights}); \texttt{"Coefficients"}: the
   coefficients of the terms, every line and vertex standing for its kernel (also \pkg{DiagramToTikZ})\\
 ImageSize & Automatic & Mathematica: the width of the picture in pixels (\pkg{Automatic}: 46 pixels per unit)\\
+"Appearance" & Automatic & Mathematica: the colours of a light or a dark notebook, as the notebook is (14.3 or later);
+  \texttt{"Light"}, \texttt{"Dark"}: forced, on a background (section~\ref{sec:pictures}); ignored by \pkg{DiagramToTikZ}\\
 \bottomrule
 \end{tabularx}
 \end{center}

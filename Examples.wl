@@ -1016,6 +1016,12 @@ DiagramPlot[selfEnergy, {x, y}, "VertexLabels" -> All]
 (* the skeleton self-energy, every line a full G, with the internal points z1, z2, ... labelled *)
 
 (* ::Text:: *)
+(*In a notebook the pictures follow its appearance (Mathematica 14.3 or later; before, the colours of a light notebook): dark lines and text on a light notebook, light ones on a dark notebook, the inside of the blobs and of the points of the colour of its background. "Appearance" -> "Light" or "Dark" forces one of them, on a background of its own, for a picture exported for a page of the other kind; DiagramToTikZ ignores it, its code is for white pages:*)
+
+DiagramPlot[selfEnergy, {x, y}, "Appearance" -> "Dark"]
+(* the same pictures, light lines on a dark grey background, in any notebook *)
+
+(* ::Text:: *)
 (*DiagramToTikZ writes the same pictures as TikZ code, with the weights in LaTeX, ready to be pasted into an equation (it needs \usetikzlibrary{decorations.pathmorphing}). "Scale" (cm per unit), "LineWidth" (pt) and "LabelFont" make the pictures smaller:*)
 
 SetOptions[DiagramToTikZ, "Scale" -> 0.5, "LineWidth" -> 0.5,
