@@ -2758,8 +2758,9 @@ section~\ref{sec:qed}) has the diagrams that do not fall apart when
 an interaction line is cut, \val{CountsProperVertex1}, \val{CountsProperVertex2} and \val{CountsProperVertex3} of them at
 orders $V$, $V^2$, $V^3$ --- gives the polarization $P$, the proper part of $\chi$ of section~\ref{sec:response} (the irreducible polarizability, the proper polarization insertion
 $\Pi^*$ of~\cite{FetterWalecka}, the polarization operator of~\cite{AbrikosovGorkovDzyaloshinski}; for photons the vacuum
-polarization), and the screened, or effective, interaction $W$, the double wavy line, the interaction screened by
-the full response, $W=V+V\chi V$, drawn with each wavy line standing for $-V$ and the double one for $-W$:
+polarization), and the screened, or effective, interaction $W$, the interaction screened by
+the full response, $W=V+V\chi V$, drawn with each wavy line standing for $-V$ and the double one for $-W$ (the double wavy
+line marks $W$ where $V$ appears too, as the double arrow marks $G$ in the Dyson equation):
 \figuresum{\inputfigure{hedin_w_lhs}}{hedin_w_chi}
 The self-energy becomes a functional of $G$ and $W$~\cite{Hedin1965,AryasetiawanGunnarsson1998,GiulianiVignale}, and the
 kernel of the proper vertex is $\Gamma_{\rm xc}=\delta\Sigma_{\rm xc}/\delta G$, the irreducible vertex $\Gamma^0$ without
@@ -2840,7 +2841,10 @@ right.
 independent variables, and the functional $\Phi[G,W]$ is minus the sum of the vacuum diagrams that are two-particle irreducible
 in both kinds of lines~\cite{AlmbladhVonBarthVanLeeuwen1999,Berges2004}: \pkg{LuttingerWardFunctional} with two
 replacement rules. Its derivatives are the self-energy $\Sigma=\delta\Phi/\delta G$ and the polarization $P=-2\,\delta\Phi/\delta W$, both
-functionals of $G$ and $W$:
+functionals of $G$ and $W$. In $\Phi$ and its derivatives every line is a full one, as in any skeleton expansion: the
+plain arrows are $G$ and the wavy lines the screened interaction $W$, each standing for $-W$ (the double wavy line of
+section~\ref{sec:hedin} is needed only where $V$ and $W$ appear together; here \pkg{"Interactions" -> \{ScreenedW\}}
+draws $W$ as an ordinary wavy line):
 \begin{code}
 phiGW = LuttingerWardFunctional[hs["FreeGeneratingFunctional"], hs["Interaction"], 6,
     {BareGreenFunction -> DressedGreenFunction, HSPropagator -> ScreenedW}];
@@ -2902,7 +2906,8 @@ $\sigma$ integrated out (\pkg{IntegrateOutField}), minus $\frac\lambda{4!}\phi^4
 (\pkg{HubbardStratonovich} with the operator \pkg{phi[\#]\^{}2 \&} reads the kernel $\frac\lambda{12}\,\delta$ off
 $\frac\lambda{4!}\phi^4=\frac12\cdot\frac\lambda{12}(\phi^2)^2$ and couples $-i\int\sigma\phi^2$, the same theory with $\sigma$
 rescaled by 2.)
-The 2PI functional of $G$ and of the full propagator $D_\sigma$ of $\sigma$ (the double wavy line) has
+The 2PI functional of $G$ and of the full propagator $D_\sigma$ of $\sigma$ (the wavy line: as for $W$, every line is a full
+one) has
 \val{CountsPhi4Gamma2GD1}, \val{CountsPhi4Gamma2GD2} and \val{CountsPhi4Gamma2GD3} diagrams of orders $D_\sigma$,
 $D_\sigma^2$, $D_\sigma^3$, and its first diagram gives $\Sigma=-G\,D_\sigma$, the $GW$ approximation of $\phi^4$ theory:
 \begin{ordersum}{\Gamma_2[G,D_\sigma]}

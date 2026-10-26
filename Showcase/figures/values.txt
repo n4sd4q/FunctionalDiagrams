@@ -43,7 +43,7 @@ check full vertex shortcut :: 0
 counts F :: {2, 10, 82}
 check Bethe-Salpeter ph :: 0
 check Gamma0 = F - R_ph :: 0
-seconds parquet check :: 0.3
+seconds parquet check :: 0.2
 check Schwinger-Dyson :: {0, 0}
 check crossing :: {0, 0, 0}
 parquet residuals :: <|"ParticleHole" -> {0, 0, 0}, "TransverseParticleHole" -> {0, 0, 0}, "ParticleParticle" -> {0, 0, 0}|>
@@ -107,7 +107,7 @@ counts phi4 vacuum :: {1, 3, 7}
 counts phi4 log vacuum :: {1, 2, 4}
 check phi4 linked cluster :: 0
 check phi4 exponential of the connected diagrams :: 0
-seconds phi4 log vacuum :: 0.1
+seconds phi4 log vacuum :: 0.
 check phi4 connected vacuum shortcut :: 0
 check phi4 numerator factorizes :: {0, 0, 0, 0}
 check phi4 propagator shortcut :: 0
@@ -116,7 +116,7 @@ check phi4 cumulant connected :: 0
 check phi4 moments from cumulants :: 0
 check phi4 cumulant shortcut :: 0
 check phi4 moment shortcut :: 0
-seconds phi4 moments and cumulants :: 6.3
+seconds phi4 moments and cumulants :: 6.4
 counts phi4 four-point connected :: {1, 7, 42}
 check phi4 Dyson :: 0
 seconds EA Gamma[phibar] :: 0.1
@@ -162,11 +162,11 @@ check dimreg massive mass counterterm :: 0
 check dimreg RG functions :: {0, 0, 0}
 check dimreg Wilson-Fisher :: {0, 0, 0}
 dimreg exponents in three dimensions :: "0.019, 0.627, 0.37"
-seconds dimreg :: 0.7
+seconds dimreg :: 0.8
 seconds QED vertex diagrams :: 0.
 counts QED :: {1, 1, 6, 1}
 check QED tree vertex :: 0
-seconds QED one loop :: 3.2
+seconds QED one loop :: 3.4
 check QED Sigma pole :: {0, 0}
 check QED delta2 and Zm :: {0, 0}
 check QED on shell :: {0, 0}
@@ -183,7 +183,7 @@ QED F2 at -m2 :: "0.01090238584"
 check QED F2(-m2) :: 0
 check QED F2 independent of xi :: 0
 QED Schwinger value :: "0.0011614"
-seconds QED :: 4.
+seconds QED :: 4.3
 seconds QCD gluon self-energy :: 0.2
 check QCD gluon self-energy symmetric :: 0
 seconds QCD quark-gluon vertex :: 0.1
@@ -207,7 +207,7 @@ seconds electron six-point :: 0.1
 counts electron six-point :: 36
 check fermion line trees :: 0
 check EA stationarity :: {0, 0}
-seconds EA value at the perturbative G :: 0.9
+seconds EA value at the perturbative G :: 1.
 check EA value :: {{0, 0, 0}, {0, 0, 0}}
 check EA dPhi dG :: {0, 0, 0}
 seconds EA second derivatives :: 0.1
@@ -229,8 +229,8 @@ check 2PI means electron gas :: {0, {0, 0}}
 seconds EA Lambda phi^4 :: 0.1
 seconds EA parquet phi^4 :: 0.1
 check EA Lambda phi4 :: {0, 0, 0, 0}
-seconds EA Lambda electron gas :: 0.8
-seconds EA full vertex electron gas :: 15.6
+seconds EA Lambda electron gas :: 0.9
+seconds EA full vertex electron gas :: 19.6
 check EA Lambda electron gas :: {0, 0}
 counts EA Lambda :: {1, 64}
 seconds EA Gamma[phibar] with lines D0 :: 0.
@@ -283,7 +283,7 @@ check Bethe-Salpeter pp :: 0
 check Thouless :: {0, 0, 0}
 counts Thouless :: {1, 4, 32}
 seconds Nambu Gamma[X, calG] :: 0.3
-seconds Nambu Gamma[X, calG*] :: 0.7
+seconds Nambu Gamma[X, calG*] :: 0.8
 seconds Nambu Gamma[X] :: 2.1
 counts Nambu 1PI :: {3, 5, 13}
 check Nambu stationary means :: {0, 0, 0, 0}
@@ -292,7 +292,7 @@ check Nambu 1PI components :: {0, 0, 0, 0}
 check Nambu mean derivatives :: {{0, 0, 0, 0}, 0}
 seconds Nambu one site :: 0.1
 check Nambu zero dimensions :: {0, {0, 0, 0, 0}, {0, 0, 0}, 0}
-seconds Nambu :: 16.6
+seconds Nambu :: 16.8
 check EA TDHF kernel shortcut :: 0
 check EA TDHF dynamic limit :: {0, 0, 0}
 check EA Hartree kernel shortcut :: 0
@@ -311,6 +311,6 @@ check EA 0d charge vertex :: 0
 check EA 0d branch point :: 0
 check EA 0d wrong branch :: {0, 0}
 check EA 0d no solution :: 0
-seconds effective actions :: 50.2
-seconds total :: 115.6
+seconds effective actions :: 55.1
+seconds total :: 121.5
 

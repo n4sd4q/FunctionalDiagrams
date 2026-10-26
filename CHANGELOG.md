@@ -25,6 +25,10 @@
   two of their edges.
 - **The double wavy line** (a dressed interaction W) is one wavy line drawn double, its strokes 1.2 line widths apart along
   the wave: the two waves shifted along the line closed up on their slopes and read as one thick line in small pictures.
+- **Skeleton expansions drawn with plain lines.** As in the textbooks, every line of Φ[G, W], Σ[G, W], P[G, W] and of
+  Γ₂[G, D_σ] of φ⁴ theory is a dressed one, and is drawn in the plain style of its kind: the screened interaction W is an
+  ordinary wavy line there (`"Interactions" -> {ScreenedW}` in one picture). The double wavy line marks W only where the
+  bare V appears too, as in Hedin's equations, like the double arrow in the Dyson equation.
 
 ## 2.3.0 (2026-10-26)
 

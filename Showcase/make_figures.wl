@@ -478,15 +478,18 @@ writeValue["check HubbardStratonovich", {SimplifyDiagrams[hsTheory["Interaction"
 phiGW = timed["Phi[G,W]", LuttingerWardFunctional[FreeHSGeneratingFunctional, HSVertex, 2 maximumOrder,
      {BareGreenFunction -> DressedGreenFunction, HSPropagator -> ScreenedW}]];
 writeValue["counts Phi[G,W]", orderCounts[phiGW, ScreenedW, orders]];
-writeOrders["phi_gw", phiGW, {}, ScreenedW, orders];
+(* in Phi[G, W] and its derivatives every line is a full one: W, alone, is drawn with the plain wavy line, as G with the
+   plain arrow; the double wavy line is kept for the equations in which V and W appear together (Hedin's) *)
+skeletonW = "Interactions" -> {ScreenedW};
+writeOrders["phi_gw", phiGW, {}, ScreenedW, orders, skeletonW];
 sigmaGW = SimplifyDiagrams[FunctionalDerivative[phiGW, DressedGreenFunction[y, x]]];
 polarizationGW = SimplifyDiagrams[-2 FunctionalDerivative[phiGW, ScreenedW[a, b]]];
 writeValue["check GW derivatives", {SimplifyDiagrams[sigmaGW - SelfEnergy[phiGW, DressedGreenFunction, {x, y}]],
    SimplifyDiagrams[polarizationGW - SelfEnergy[phiGW, ScreenedW, {a, b}, "Statistics" -> "Boson"]]}];
 writeValue["counts Sigma[G,W]", orderCounts[sigmaGW, ScreenedW, orders]];
 writeValue["counts P[G,W]", orderCounts[polarizationGW, ScreenedW, Range[0, maximumOrder - 1]]];
-writeOrders["sigma_gw", sigmaGW, {x, y}, ScreenedW, {1, 2}, "LegDirections" -> {"Out", "In"}];
-writeOrders["polarization_gw", polarizationGW, {a, b}, ScreenedW, {0, 1}];
+writeOrders["sigma_gw", sigmaGW, {x, y}, ScreenedW, {1, 2}, "LegDirections" -> {"Out", "In"}, skeletonW];
+writeOrders["polarization_gw", polarizationGW, {a, b}, ScreenedW, {0, 1}, skeletonW];
 (* W expressed by G (W = V - V <rho rho>_c V) substituted, each term of order W^k with W only to the order needed *)
 substituteToOrder[e_, w_, replacement_, x_, n_] := SimplifyDiagrams[OrderPart[Total[Table[
       With[{f = LabelFunction[OrderPart[replacement, x, Range[1, n - k + 1]], {a, b}]}, OrderPart[e, w, k] /. w[p_, q_] :> f[p, q]],
@@ -862,9 +865,10 @@ writeValue["check phi4 sigma integrated out", SimplifyDiagrams[localSigma[Integr
 gamma2GD = timed["phi4 Gamma2[G,D]", LuttingerWardFunctional[FreeSigmaGeneratingFunctional, SigmaVertex, 6,
      {FreePropagator -> DressedPropagator, SigmaPropagator -> FullSigmaPropagator}]];
 writeValue["counts phi4 Gamma2[G,D]", orderCounts[gamma2GD, FullSigmaPropagator, {1, 2, 3}]];
-writeOrders["phi4_gamma2_gd", gamma2GD, {}, FullSigmaPropagator, {1, 2, 3}];
+(* only the full D_sigma appears: the plain wavy line, as for W in Phi[G, W] *)
+writeOrders["phi4_gamma2_gd", gamma2GD, {}, FullSigmaPropagator, {1, 2, 3}, "Interactions" -> {FullSigmaPropagator}];
 sigmaGD = SimplifyDiagrams[-2 FunctionalDerivative[gamma2GD, DressedPropagator[a, b]]];
-writeOrders["phi4_sigma_gd", sigmaGD, {a, b}, FullSigmaPropagator, {1, 2}];
+writeOrders["phi4_sigma_gd", sigmaGD, {a, b}, FullSigmaPropagator, {1, 2}, "Interactions" -> {FullSigmaPropagator}];
 (* D[G] = D0 - D0 <phi^2/2 phi^2/2>_c D0 with dressed lines; the mean field of sigma gives a third of the tadpole *)
 phi2CorrelationSkeleton = SimplifyDiagrams[SkeletonDiagrams[1/4 ConnectedCorrelationFunction[FreeBosonGeneratingFunctional,
       {phi[a], phi[a], phi[b], phi[b]}, Phi4Vertex, 2], {a, b}, {FreePropagator}] /. FreePropagator -> DressedPropagator];

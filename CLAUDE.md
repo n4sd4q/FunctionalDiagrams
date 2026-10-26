@@ -213,7 +213,12 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   that blob's spacing if the circle is wide enough, else 45 degrees off the line), and a box so joined takes the circle's
   spacing on its side (in `blobLayoutWithExternals`). A line from a port of a blob that leaves it outwards, 30 degrees or
   more from its outline, is bent only to avoid crossing it (`leavesBlobClearQ` in `blobAvoidingKind`).
-  A dressed interaction (W) is `"DoubleWavy"`: one flatter wavy line drawn
+  Dressed lines follow the textbooks: in a skeleton expansion (Φ[G], Φ[G, W], Γ₂[G, D_σ] and their derivatives) every
+  line is a dressed one and is drawn in the plain style of its kind, and the text says so; a double line marks the dressed
+  propagator only where the bare one appears in the same picture or equation (a Dyson equation, Hedin's W = V + VPW next
+  to V). A dressed interaction (W) declared `"DoubleWavy"` for those equations is drawn as an ordinary wavy line in a
+  skeleton expansion with the per-picture option `"Interactions" -> {W}` (`skeletonW` in `make_figures.wl`).
+  `"DoubleWavy"` is one flatter wavy line drawn
   `double, double distance=1.2\pgflinewidth`, so that its two strokes stay apart along the wave and with heavier lines. A source at the end of a single line (Z[J] at a non-zero source) is drawn at the point.
 - A mean (source insertion on a stub) and a tadpole go to the largest free sector at their vertex that leads outside
   the loops and bubbles drawn (`outsideGapDirection`): a mean on a vertex of a bubble on the axis sticks out of it, a

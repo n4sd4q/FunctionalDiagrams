@@ -776,11 +776,11 @@ SimplifyDiagrams[(IntegrateOutField[{FreeHSGeneratingFunctional, HSVertex}, hsFi
 (* 0: IntegrateOutField integrates the boson out, and the interaction comes back *)
 
 (* ::Text:: *)
-(*The full boson propagator is the screened interaction W. A Legendre transform in both propagators gives the 2PI functional Φ[G, W]: LuttingerWardFunctional with two replacement rules. Its first diagram gives the GW self-energy, and the next one the first vertex correction:*)
+(*The full boson propagator is the screened interaction W. A Legendre transform in both propagators gives the 2PI functional Φ[G, W]: LuttingerWardFunctional with two replacement rules. Its first diagram gives the GW self-energy, and the next one the first vertex correction. In Φ every line is a full one: the plain arrows are G and the wavy lines are W, drawn as an ordinary wavy line in this picture ("Interactions" -> {ScreenedW}; the double wavy line is for the equations in which V and W appear together):*)
 
 phiGW = LuttingerWardFunctional[FreeHSGeneratingFunctional, HSVertex, 4,
     {BareGreenFunction -> DressedGreenFunction, HSPropagator -> ScreenedW}];
-DiagramPlot[phiGW]
+DiagramPlot[phiGW, "Interactions" -> {ScreenedW}]
 (* -1/2 G W G (drawn with the weight 1/2), and the diagram with two crossed W lines *)
 
 FunctionalDerivative[OrderPart[phiGW, ScreenedW, 1], DressedGreenFunction[y, x]]
@@ -1010,11 +1010,10 @@ DiagramPlot[gluonSelfEnergy, {x, y}]
 (*12. Pictures and formulas for a paper*)
 
 (* ::Text:: *)
-(*DiagramPlot, DrawDiagram (one term) and DiagramToTikZ take the same options, among them "VertexLabels" (Automatic, All, None), "LegDirections", "ExternalOrder", "Columns" and "Weights" ("Coefficients": the coefficients of the terms, instead of the weights of the pictures, in which an interaction line stands for −V and a vertex for minus its coupling); SetOptions changes their defaults. Line styles are declared once with DeclareLineStyle: "Plain", "Arrow", "DoubleArrow", "DottedArrow", "Double", "Wavy", "DoubleWavy", "Curly", "Dashed", "Dotted", "Zigzag", "Impurity", "DivergingArrows", "ConvergingArrows". A dressed propagator is usually drawn as a double line:*)
+(*DiagramPlot, DrawDiagram (one term) and DiagramToTikZ take the same options, among them "VertexLabels" (Automatic, All, None), "LegDirections", "ExternalOrder", "Columns" and "Weights" ("Coefficients": the coefficients of the terms, instead of the weights of the pictures, in which an interaction line stands for −V and a vertex for minus its coupling); SetOptions changes their defaults. Line styles are declared once with DeclareLineStyle: "Plain", "Arrow", "DoubleArrow", "DottedArrow", "Double", "Wavy", "DoubleWavy", "Curly", "Dashed", "Dotted", "Zigzag", "Impurity", "DivergingArrows", "ConvergingArrows". In a skeleton expansion every line is the dressed one, drawn plain; a double line ("DoubleArrow", "DoubleWavy") marks the dressed propagator only where the bare one appears too, as in the Dyson equation and in Hedin's W = V + V P W of section 10. The options "Directed" -> {G, ...}, "Interactions" -> {V, ...} and "InteractionStyle" change the style of some lines in one picture only, as for W in Φ[G, W] (section 10). The skeleton self-energy, with every internal point labelled:*)
 
-DeclareLineStyle[DressedGreenFunction, "DoubleArrow"];
 DiagramPlot[selfEnergy, {x, y}, "VertexLabels" -> All]
-(* the skeleton self-energy, with the internal points z1, z2, ... labelled *)
+(* the skeleton self-energy, every line a full G, with the internal points z1, z2, ... labelled *)
 
 (* ::Text:: *)
 (*DiagramToTikZ writes the same pictures as TikZ code, with the weights in LaTeX, ready to be pasted into an equation (it needs \usetikzlibrary{decorations.pathmorphing}). "Scale" (cm per unit), "LineWidth" (pt) and "LabelFont" make the pictures smaller:*)
