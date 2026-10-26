@@ -190,7 +190,9 @@ def elements():
     # on two lines
     pq = dict(cd, unit=PARQUET_UNIT)
     e["eq_parquet"] = r"{%s\eqrow{%s}{%s\,${}={}$}{%s}{%s}}" % (big, "3.3cm", fig("exact_vertex_lhs", **pq), rhs, fig("exact_parquet", **pq))
-    lhs, ex = "2.7cm", dict(cd, unit=0.45)
+    # Hedin: four rows, the last one (the vertex, an equilateral triangle with its legs as long as those of the bare
+    # vertex) tall: drawn a little smaller, so that its x2 keeps clear of the bottom band
+    lhs, ex = "2.7cm", dict(cd, unit=0.43)
     e["hedin_sigma"] = r"{%s\eqrow{%s}{$\Sigma={}$}{%s}{%s}}" % (big, lhs, rhs, fig("hedin_sigma", **ex))
     for name in ("w", "p", "lambda"):
         e["hedin_" + name] = eq("hedin_%s_lhs" % name, "hedin_" + name)
@@ -756,8 +758,8 @@ def timeline(el, preview=False):
     d = (lambda video, gif: gif if preview else video)     # the preview is shorter
     twoparticle = card_scene(el, "twoparticle", ["eq_bethe_salpeter", "bs_rpa", "bs_ladder"], d(3.9, 3.4), gap=8)
     parquet = card_scene(el, "parquet", ["eq_parquet"], d(3.9, 3.4))
-    # four rows, the last one (the vertex, an equilateral triangle with its legs) tall: closer together, to fit the frame
-    hedin = card_scene(el, "hedin", ["hedin_sigma", "hedin_w", "hedin_p", "hedin_lambda"], d(3.4, 3.0), gap=4, stagger=0.22)
+    # four rows, the last one tall: close together, to fit the frame
+    hedin = card_scene(el, "hedin", ["hedin_sigma", "hedin_w", "hedin_p", "hedin_lambda"], d(3.4, 3.0), gap=0, stagger=0.22)
     # the end card of the preview fades out like the others, and the first card builds up again (a fade redraws the
     # whole card in every frame of the GIF: kept as short as those of the other cards); the GIF starts inside that
     # first card, in full view (PREVIEW_START)
