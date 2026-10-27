@@ -142,13 +142,14 @@ free energy.
     meet there, or changes every gluon picture;
   - the Γ⁰ ph̄ V³ vertical chain of two bubbles sits, tall, on a last row with one other term: a matter of the line
     breaking of the order sums (`assemble.py`), not of the picture.
-- **Trees with free leaves.** The shapes of the trees W^(n) of the showcase (the labels integrated over, the leaves free
-  ends) are drawn by the general layout, the vertices in a row; the tree layout (`treeLayoutWithExternals`) would draw
-  them as the trees with labelled leaves are.
 - **Leg directions at a blob.** A label at a port of a blob gets no vote in `legDirectionsFor` (`fermionImbalance` counts
   lines), so that in δΣ/δU = Γ⁰L the legs x1, x2, which in some terms end at the box L, are drawn without arrows when the
   whole sum is drawn; the showcase passes `"LegDirections" -> "Alternating"`. The directed ports of fermion blobs could
   vote.
+- **Declared blobs in trees with free leaves.** The tree layout takes the free ends of trees of vertex functions and bare
+  vertices (`freeEndTreeLayout`), but a tree of blobs declared with `DeclareBlob` (their ports are points of their own)
+  whose leaves are free ends is still drawn by the general layout, the blobs in a row with the leaves sticking up; with
+  labelled leaves `blobLayoutWithExternals` draws it, and could take the free ends as its external points.
 
 ## Documents
 

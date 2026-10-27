@@ -1694,22 +1694,48 @@ unitLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
    its leaves (the tree expansion of ConnectedFunctionFromVertices). The central blob, or the two central blobs, in the
    middle; a chain of blobs is straight, the legs of a blob at the end of a chain are fanned outwards and those of a blob
    along it are perpendicular to it; a blob with three or more blob neighbours has them all around. The external points
-   follow each other counterclockwise, in the order of their labels. {positions, mode, circles}, or None if the part is not such a tree. *)
+   follow each other counterclockwise, in the order of their labels. {positions, mode, circles}, or None if the part is not such a tree.
+   The same tree with free ends at its leaves (the labels integrated over: dummy points ending one propagator and nothing
+   else; freeEnds -> True) is drawn alike, the free ends where the external points would be; its inner nodes may also be
+   bare vertices (points of three or more propagators). Its leaves have no order: the children of a node are arranged
+   by the shapes of their subtrees, as a palindrome when they can be (the smaller subtree first, a lone one in the
+   middle), the legs along a chain on its upper side, so that a symmetric tree is drawn symmetric about the vertical axis. *)
 $treeSpine = 1.; $treeLeg = 0.72;
 treeFanOffsets[k_Integer] := Which[k == 1, {0.}, k == 2, {-45., 45.} Degree, k == 3, {-60., 0., 60.} Degree,
    k == 4, {-72., -24., 24., 72.} Degree, True, Table[(j - (k - 1)/2.) 150. Degree/(k - 1), {j, 0, k - 1}]];
-treeLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_List, lines_List, blobs_List] := Module[
+(* the members of xs, sorted by key, as a palindrome of keys when they can be: the pairs of equal keys at both ends,
+   the lone ones in the middle. Around a star, whose mirror axis goes through its first member and, for an even number,
+   the one opposite: "Top" puts a lone one first, "TopBottom" the two lone ones first and opposite *)
+loneCount[xs_List, key_] := Count[Length /@ GatherBy[xs, key], _?OddQ];
+palindromicArrangement[xs_List, key_, mode_ : None] := Module[{groups = GatherBy[SortBy[xs, key], key], outer = {}, inner = {},
+    middle = {}},
+   Do[With[{h = Floor[Length[g]/2]}, outer = Join[outer, Take[g, h]]; inner = Join[Take[g, {h + 1, 2 h}], inner];
+     If[OddQ[Length[g]], AppendTo[middle, Last[g]]]], {g, groups}];
+   Which[
+    mode === "Top" && middle =!= {}, Join[{First[middle]}, outer, Rest[middle], inner],
+    mode === "TopBottom" && Length[middle] == 2, Join[{First[middle]}, outer, {Last[middle]}, inner],
+    True, Join[outer, middle, inner]]];
+(* the free ends of a part without external labels: the points of degree one that are not blobs and carry no source.
+   {positions, mode, circles} of the tree layout, or None *)
+freeEndTreeLayout[component_List, lines_List, blobs_List, stubs_List, pairs_List] := With[
+   {leaves = Select[component, Head[#] =!= blob && Count[Flatten[Select[pairs, MemberQ[component, #[[1]]] &]], #] == 1 &]},
+   If[Length[leaves] < 2 || Intersection[component, Cases[stubs, {u_, _} :> u]] =!= {}, None,
+    treeLayoutWithExternals[leaves, leaves, Table[False, {Length[leaves]}], component, lines, blobs, True]]];
+treeLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_List, lines_List, blobs_List, freeEnds_ : False] := Module[
    {treeLines, blobNodes, nbrs, blobNbrs, distances, ecc, centres, pos = {}, place, labelRank, subtreeRank, sortChildren,
-    perpendicular},
+    perpendicular, innerQ, shapeKey, upperFirst},
    If[Or @@ amputated || Length[labels] < 2 || Length[DeleteDuplicates[labelNodes]] < Length[labelNodes], Return[None]];
    treeLines = Select[lines, MemberQ[mainNodes, #[[1]]] &];
-   blobNodes = Select[mainNodes, Head[#] === blob &];
-   If[blobNodes === {} || Complement[mainNodes, Join[labelNodes, blobNodes]] =!= {} ||
+   nbrs[v_] := Join[Cases[treeLines, {v, u_, _, _} :> u], Cases[treeLines, {u_, v, _, _} :> u]];
+   (* the inner nodes: the blobs, and with free ends also the bare vertices (three or more propagators, no source) *)
+   blobNodes = Select[mainNodes, Head[#] === blob || (freeEnds && ! MemberQ[labelNodes, #] && Length[nbrs[#]] >= 3) &];
+   If[Select[blobNodes, Head[#] === blob &] === {} && ! freeEnds || blobNodes === {} ||
+     Complement[mainNodes, Join[labelNodes, blobNodes]] =!= {} ||
      AnyTrue[treeLines, #[[1]] === #[[2]] || interactionStyleQ[#[[4]]] &] || Length[treeLines] =!= Length[mainNodes] - 1 ||
      AnyTrue[Select[blobs, MemberQ[blobNodes, #[[1]]] &], #[[2]] =!= {} &], Return[None]];
-   nbrs[v_] := Join[Cases[treeLines, {v, u_, _, _} :> u], Cases[treeLines, {u_, v, _, _} :> u]];
    If[AnyTrue[labelNodes, Length[nbrs[#]] =!= 1 &], Return[None]];
-   blobNbrs[v_] := Select[nbrs[v], Head[#] === blob &];
+   innerQ[v_] := MemberQ[blobNodes, v];
+   blobNbrs[v_] := Select[nbrs[v], innerQ];
    (* the distances from the blob s to the other blobs, along the blobs *)
    distances[s_] := Module[{seen = {s}, frontier = {s}, k = 0, next, out = {0}},
      While[frontier =!= {}, k++;
@@ -1718,46 +1744,57 @@ treeLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
      out];
    ecc = Table[Max[distances[b]], {b, blobNodes}];
    centres = Pick[blobNodes, Thread[ecc == Min[ecc]]];
-   (* the children of a node in the order of the first label of their subtrees *)
+   (* the children of a node in the order of the first label of their subtrees; with free ends, by the shapes of their
+      subtrees (number of leaves, kind of node, shapes of the children), as a palindrome *)
    labelRank[v_] := First[First[Position[labelNodes, v, {1}]]];
-   subtreeRank[v_, parent_] := If[Head[v] =!= blob, labelRank[v],
+   subtreeRank[v_, parent_] := If[! innerQ[v], labelRank[v],
      Min[Join[{Infinity}, Table[subtreeRank[u, v], {u, DeleteCases[nbrs[v], parent]}]]]];
-   sortChildren[cs_, v_] := SortBy[cs, subtreeRank[#, v] &];
+   shapeKey[v_, parent_] := If[! innerQ[v], {1, "", {}},
+     With[{ks = Sort[Table[shapeKey[u, v], {u, DeleteCases[nbrs[v], parent]}]]},
+      {Total[ks[[All, 1]]], If[Head[v] === blob, ToString[blobHeadOf[v, blobs]], "*"], ks}]];
+   sortChildren[cs_, v_, mode_ : None] := If[freeEnds, palindromicArrangement[cs, shapeKey[#, v] &, mode], SortBy[cs, subtreeRank[#, v] &]];
    (* directions of m legs on the side a, fanned *)
    perpendicular[a_, m_] := If[m == 0, {}, a + If[m == 1, {0.}, Table[(j - (m - 1)/2.) 40. Degree, {j, 0, m - 1}]]];
+   (* the side of a chain in the direction phi that takes the first legs: on the right, counterclockwise after the
+      next blob; with free ends the upper side, so that the two halves of a chain are mirror images *)
+   upperFirst[phi_] := freeEnds && Cos[phi] > 10.^-9;
    (* place v at p, reached from its parent in the direction phi, and its subtree *)
-   place[v_, p_, phi_, parent_] := Module[{children = sortChildren[DeleteCases[nbrs[v], parent], v], bs, ls, angles, k, up},
+   place[v_, p_, phi_, parent_] := Module[{children = sortChildren[DeleteCases[nbrs[v], parent], v], bs, ls, angles, k, up, sides},
      AppendTo[pos, {v, p}];
-     If[Head[v] === blob,
-      bs = Select[children, Head[#] === blob &]; ls = Select[children, Head[#] =!= blob &];
+     If[innerQ[v],
+      bs = Select[children, innerQ]; ls = Select[children, ! innerQ[#] &];
       k = Length[children];
       Which[
        k == 0, angles = {},
        (* the end of a chain: the legs fanned outwards, counterclockwise *)
        bs === {}, angles = phi + treeFanOffsets[k],
        (* along a chain: the next blob straight on, the legs perpendicular, the first ones on the right *)
-       Length[bs] == 1, up = Ceiling[Length[ls]/2];
-       children = Join[bs, ls]; angles = Join[{phi}, perpendicular[phi - Pi/2, up], perpendicular[phi + Pi/2, Length[ls] - up]],
+       Length[bs] == 1, up = Ceiling[Length[ls]/2]; sides = If[upperFirst[phi], {phi + Pi/2, phi - Pi/2}, {phi - Pi/2, phi + Pi/2}];
+       children = Join[bs, ls]; angles = Join[{phi}, perpendicular[sides[[1]], up], perpendicular[sides[[2]], Length[ls] - up]],
        (* a branching: all the children fanned outwards *)
        True, angles = phi + Table[(j - (k - 1)/2.) Min[60. Degree, 150. Degree/(k - 1)], {j, 0, k - 1}]];
       Do[With[{c = children[[j]], a = angles[[j]]},
-        place[c, p + If[Head[c] === blob, $treeSpine, $treeLeg] directionAt[a], a, v]], {j, k}]]];
+        place[c, p + If[innerQ[c], $treeSpine, $treeLeg] directionAt[a], a, v]], {j, k}]]];
    If[Length[centres] == 2,
-    (* two central blobs side by side, the one with the first label on the left *)
-    With[{cs = SortBy[centres, subtreeRank[#, First[DeleteCases[centres, #]]] &]},
+    (* two central blobs side by side, the one with the first label on the left (with free ends, the smaller subtree) *)
+    With[{cs = If[freeEnds, SortBy[centres, shapeKey[#, First[DeleteCases[centres, #]]] &],
+        SortBy[centres, subtreeRank[#, First[DeleteCases[centres, #]]] &]]},
      place[cs[[1]], {-$treeSpine/2, 0.}, Pi, cs[[2]]];
      place[cs[[2]], {$treeSpine/2, 0.}, 0., cs[[1]]]],
-    With[{c = First[centres]}, Module[{children = sortChildren[nbrs[c], c], bs, ls, k, angles, up},
-      bs = Select[children, Head[#] === blob &]; ls = Select[children, Head[#] =!= blob &]; k = Length[children];
+    With[{c = First[centres]}, Module[{children, bs, ls, k, angles, up, top},
+      (* with free ends, a star of an even number with two lone subtrees has them at the top and at the bottom *)
+      top = freeEnds && Length[blobNbrs[c]] =!= 2 && EvenQ[Length[nbrs[c]]] && loneCount[nbrs[c], shapeKey[#, c] &] == 2;
+      children = sortChildren[nbrs[c], c, Which[Length[blobNbrs[c]] === 2, None, OddQ[Length[nbrs[c]]], "Top", top, "TopBottom", True, None]];
+      bs = Select[children, innerQ]; ls = Select[children, ! innerQ[#] &]; k = Length[children];
       AppendTo[pos, {c, {0., 0.}}];
       If[Length[bs] == 2,
        (* the middle of a chain: the two blobs left and right, the legs above and below *)
        up = Ceiling[Length[ls]/2]; children = Join[bs, ls];
        angles = Join[{Pi, 0.}, perpendicular[Pi/2, up], perpendicular[-Pi/2, Length[ls] - up]],
        (* a star: all around, counterclockwise from the top (from the top left for an even number) *)
-       angles = Table[Pi/2 + If[OddQ[k], 0., Pi/k] + 2. Pi (j - 1)/k, {j, k}]];
+       angles = Table[Pi/2 + If[OddQ[k] || top, 0., Pi/k] + 2. Pi (j - 1)/k, {j, k}]];
       Do[With[{ch = children[[j]], a = angles[[j]]},
-        place[ch, If[Head[ch] === blob, $treeSpine, $treeLeg] directionAt[a], a, c]], {j, k}]]]];
+        place[ch, If[innerQ[ch], $treeSpine, $treeLeg] directionAt[a], a, c]], {j, k}]]]];
    {pos, {"circle", {}, {0., 0.}}, {}}];
 
 (* ---------------------------------------------------------------- declared blobs *)
@@ -2773,6 +2810,10 @@ diagramGeometryOfPicture[t_diagramTerm, elements_List, ext0_List, opts_List, leg
         Select[c, ! MemberQ[sourcePoints, #] &], Select[pairs, MemberQ[c, #[[1]]] &], Select[propagatorPairs, MemberQ[c, #[[1]]] &],
         Automatic];
       {positions, circles} = roundFermionLoops[positions, lines, mode, sourcePoints, Select[pairs, MemberQ[c, #[[1]]] &]]; straighten = sourcePoints,
+      (* a tree of vertex functions or bare vertices whose leaves are free ends (its labels integrated over): drawn as
+         the trees with labelled leaves are, the free ends where the external points would be, its centre on the axis *)
+      (sourceLayout = freeEndTreeLayout[c, lines, blobs, stubs, pairs]) =!= None,
+      {positions, mode, circles} = sourceLayout; unitQ = True; axisFrame = True,
       unitLayout =!= None, {positions, mode, circles} = unitLayout; unitQ = True,
       True,
       {positions, mode} = Block[{$blobRadii = Table[b[[1]] -> If[blobSpecOf[b[[3]]] =!= None, blobSizeOfHead[b[[3]]], $blobRadius], {b, blobs}]},

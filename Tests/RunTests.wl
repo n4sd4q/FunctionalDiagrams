@@ -255,6 +255,16 @@ treeBlobs = Cases[geometryItems[IntegralOver[treeLine[a, z1] treeLine[b, z2] tre
       treeVertex[z4, z5, z6] treeLine[c, z5] treeLine[d, z6], {z1, z2, z3, z4, z5, z6}], {a, b, c, d}], {"N", p_, "blob"} :> p];
 check["a tree of two vertex functions: the vertices side by side", {Round[100 treeBlobs[[All, 2]]], Round[100 Abs[treeBlobs[[1, 1]] - treeBlobs[[2, 1]]]]},
   {{0, 0}, 100}];
+(* the same tree with its labels integrated over: the leaves are free ends, where the external points were *)
+treeFreeNodes = Cases[geometryItems[IntegralOver[treeLine[a, z1] treeLine[b, z2] treeVertex[z1, z2, z3] treeLine[z3, z4] *
+      treeVertex[z4, z5, z6] treeLine[c, z5] treeLine[d, z6], {a, b, c, d, z1, z2, z3, z4, z5, z6}], {}], {"N", p_, k_} :> {k, Round[100 p]}];
+check["a tree whose leaves are free ends: drawn by the tree layout, mirror symmetric",
+  {Sort[Cases[treeFreeNodes, {"blob", p_} :> p]], Sort[treeFreeNodes] === Sort[{#[[1]], {-#[[2, 1]], #[[2, 2]]}} & /@ treeFreeNodes],
+   Length[treeFreeNodes]}, {{{-50, 0}, {50, 0}}, True, 6}];
+(* a bare vertex with free ends is an inner node of the tree layout too: symmetric about the vertical axis *)
+treeStar = Cases[geometryItems[IntegralOver[D0[a, z] D0[b, z] D0[c, z] D0[d, z] D0[e, z], {a, b, c, d, e, z}], {}], {"N", p_, _} :> Round[100 p]];
+check["a vertex with five free ends: a star, one end at the top, mirror symmetric",
+  {Length[treeStar], MemberQ[treeStar, {0, 72}], Sort[treeStar] === Sort[{-#[[1]], #[[2]]} & /@ treeStar]}, {6, True, True}];
 threeDiameters = geometryItems[IntegralOver[G[z1, z2] G[z2, z3] G[z3, z4] G[z4, z5] G[z5, z6] G[z6, z1] V[z1, z4] V[z2, z5] V[z3, z6],
     {z1, z2, z3, z4, z5, z6}], {}];
 check["three diameters of a fermion loop of six: one outside, the other two straight, crossing at 70 degrees",

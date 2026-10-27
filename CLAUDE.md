@@ -194,7 +194,11 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   vertex, its lines leaving almost sideways, and a unit of one node joined to several points is raised so that its
   lines are steep (a circle on a V, not an X).
 - Trees of vertex functions with the external points at the leaves (the tree expansion of `ConnectedFunctionFromVertices`):
-  `treeLayoutWithExternals`.
+  `treeLayoutWithExternals`. So are trees whose leaves are free ends (the labels integrated over: the shapes of W^(n)),
+  their inner nodes vertex functions or bare vertices of three or more propagators (`freeEndTreeLayout`, before the unit
+  layouts of vacuum parts): the free ends where the external points would be, the centre on the axis, the branches of a
+  node arranged as a palindrome of their shapes (`palindromicArrangement`), so that a symmetric tree is symmetric about
+  the vertical axis, and the legs along a chain on its upper side (a comb).
   Everything else uses the general layout (`layoutWithExternals`, `layoutVacuumComponent`).
 - TikZ: arrow heads are polygons (`tikzArrowHead`) and wavy lines (straight or arcs) and zigzag arcs explicit curves with a
   half-integer number of waves, never decorations on arcs; where two wavy lines cross, the waves are flattened

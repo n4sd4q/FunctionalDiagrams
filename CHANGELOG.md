@@ -21,6 +21,14 @@
   turned), its label stays upright, its hatching is the box's turned with it (vertical, never along an edge), and it is
   as large as the square, or larger when the label needs it. The showcase draws Γ⁽⁴⁾ there as the plain box of the
   Bethe–Salpeter equation, and the manual shows the term under `DeclareBlob`.
+- **Trees with free leaves are drawn as trees.** A tree whose leaves are free ends (its labels integrated over: points
+  that end one propagator and nothing else), its inner nodes vertex functions or bare vertices of three or more
+  propagators, was drawn by the general layout, its vertices in a row with the leaves sticking up (the shapes of the
+  trees W⁽ⁿ⁾ in the showcase). It is now drawn as the same tree with labelled leaves is, its centre on the axis and the
+  free ends where the external points would be: a star around one vertex, a chain straight with its end legs fanned
+  outwards. Its leaves have no order, so the branches of a node are arranged by their shapes, a symmetric tree is drawn
+  symmetric about the vertical axis, and the legs along a chain are on its upper side (the chain of four vertices of
+  W⁽⁶⁾ is a comb, before drawn with its middle legs one up and one down). A vertex of φ⁴ with four free ends is an X.
 
 ### Documents
 
