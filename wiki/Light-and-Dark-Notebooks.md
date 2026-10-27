@@ -1,5 +1,3 @@
-# Light and dark notebooks
-
 `DiagramPlot` and `DrawDiagram` draw with black, white and greys only, and follow the appearance of the notebook:
 
 - **Mathematica 14.3 or later**: lines and text are dark on a light notebook and light on a dark one (through

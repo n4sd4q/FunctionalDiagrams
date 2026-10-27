@@ -1,5 +1,3 @@
-# Working in scripts
-
 Long computations (high orders, many checks) are easier to run as scripts than in a notebook. A script is a file of
 Wolfram Language code, `run.wl`, run from a shell:
 

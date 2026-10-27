@@ -1,5 +1,3 @@
-# Pictures in LaTeX
-
 `DiagramToTikZ` gives the pictures of `DiagramPlot` as TikZ code for a paper: a sum of `tikzpicture`s, each with its
 weight, to be used in math mode. `ExpressionToLaTeX` gives the formula of the same expression.
 

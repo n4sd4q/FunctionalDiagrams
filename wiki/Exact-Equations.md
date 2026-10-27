@@ -1,5 +1,3 @@
-# Exact equations
-
 `ExactEquation` writes the exact equations of many-body theory (Dyson, Bethe–Salpeter, parquet, Schwinger–Dyson, the
 vertex of the density, Hedin's equations, the response) between full objects. The same equation can be **drawn**, with
 the objects as blobs, or **checked**, with the objects as perturbative series, order by order.

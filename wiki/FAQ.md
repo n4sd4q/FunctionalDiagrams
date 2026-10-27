@@ -1,5 +1,3 @@
-# FAQ
-
 Short answers to the questions that come up in the first days with the package, with links to the pages and to the
 sections of the [manual](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf) that say
 more. The code on this page runs in one session, from the top: the second answer declares the electron gas, which the

@@ -1,5 +1,3 @@
-# Conventions
-
 The conventions of the package in one place, as a user meets them. The manual gives each one with its derivation:
 the sections are named in *italics* below.
 

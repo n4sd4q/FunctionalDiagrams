@@ -62,7 +62,8 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   every dependency drawn for the selected name).
 - `wiki/` — the GitHub wiki (practical guides and a FAQ: what the README, the showcase and the manual do not already
   give, linking the manual for the details), as Markdown with GitHub's conventions: `Home.md`, `_Sidebar.md` (every page
-  listed), `_Footer.md`, `Page-Name.md`, links `[text](Page-Name)`, pictures in `wiki/images/`. The Action
+  listed), `_Footer.md`, `Page-Name.md` (GitHub writes the title from the file name: no `#` title on a page but Home), links
+  `[text](Page-Name)`, pictures in `wiki/images/`. The Action
   `.github/workflows/wiki.yml` mirrors the folder into the wiki repository (`FunctionalDiagrams.wiki.git`, branch master)
   on every push to main that touches it: edit the pages here, never on GitHub. `Development/check_wiki.wl` runs the code
   of every page (one fresh kernel per page, the pages at the same time): each ```` ```mathematica ```` block must give

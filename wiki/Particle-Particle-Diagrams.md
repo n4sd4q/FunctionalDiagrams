@@ -1,5 +1,3 @@
-# Particle–particle diagrams
-
 A four-point function is drawn with its external points at the corners of a rectangle, **counterclockwise from the top
 left** in the order of the labels given to `DiagramPlot`. For the fermion vertex Γ⁰(x₁, x₂; x₃, x₄) the fermions leave
 at x₁, x₃ and enter at x₂, x₄, so the default order puts an incoming and an outgoing leg on each side. That suits the

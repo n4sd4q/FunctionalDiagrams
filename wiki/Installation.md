@@ -1,5 +1,3 @@
-# Installation
-
 The package needs Mathematica 12.1 or later (for the paclet manager that loads it). It is written in the Wolfram
 Language alone: nothing to compile, no other package needed.
 

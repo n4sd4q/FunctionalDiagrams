@@ -1,5 +1,3 @@
-# Declaring a theory
-
 A theory is three things: the **sources** and the **fields** that are derivatives with respect to them, a free
 generating functional **Z0** written with the propagators, and an **interaction** written with the fields. The
 declarations tell the package which symbols are which, and how to draw them. As an example, electrons coupled to

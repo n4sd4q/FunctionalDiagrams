@@ -1,5 +1,3 @@
-# Reading the weights
-
 `DiagramPlot` writes a number in front of every picture: its **weight**. The rule is the one of the textbooks: the
 weight, times the values of the elements of the picture, integrated over the internal points, is the term.
 
