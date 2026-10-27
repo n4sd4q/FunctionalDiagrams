@@ -3275,17 +3275,16 @@ the brute-force frequency sums, error \val{ErrorBruteForceMigdal} & \val{CheckBr
 % ------------------------------------------------------------------ 18
 \section{Disorder}\label{sec:disorder}
 
-Electrons in a metal scatter elastically off impurities at random positions. Their potential $u$ is modelled as a
-static Gaussian random field, with $\overline{u(x)u(y)}=\Delta_{\rm imp}(x,y)$ ($\Delta_{\rm imp}(x,y)=n_iu_0^2\,\delta(\mathbf r_x-\mathbf r_y)$
-for impurities of density $n_i$ and short range): just one more Gaussian field, so that the disorder average is given by
-Wick's theorem again~\cite{Edwards1958,AbrikosovGorkovDzyaloshinski,AltlandSimons}, and the orders are those in
-$\Delta_{\rm imp}$; the correlator is independent of the imaginary times, so that impurity lines transfer no frequency. The
-impurities do not move, and the average is \emph{quenched}: what is averaged is $G[u]$, computed for each realization of
-$u$, not the numerator and $Z[u]$ separately, as for a field in equilibrium with the electrons (an \emph{annealed}
-average). For non-interacting electrons $G[u]=(G_0^{-1}-u)^{-1}$ is a single open line with insertions of $u$, so the
-diagrams with closed fermion loops, which come from $Z[u]$, are dropped (\pkg{DropClosedLoops}); with $n$ replicas of the
-electrons every closed loop carries a factor $n$, and the replica limit $n\to0$ removes them in the same way. Impurity
-lines are dashed with a cross.
+Electrons in a metal scatter elastically off impurities at random positions, whose potential $u$ is a static Gaussian
+random field, $\overline{u(x)u(y)}=\Delta_{\rm imp}(x,y)$ ($n_iu_0^2\,\delta(\mathbf r_x-\mathbf r_y)$ for impurities of
+density $n_i$ and short range): one more Gaussian field, so that the disorder average is given by Wick's theorem
+again~\cite{Edwards1958,AbrikosovGorkovDzyaloshinski,AltlandSimons}, order by order in $\Delta_{\rm imp}$; the correlator
+does not depend on the imaginary times, and impurity lines transfer no frequency. The impurities do not move, and the
+average is \emph{quenched}: what is averaged is $G[u]$, not its numerator and $Z[u]$ separately (the \emph{annealed}
+average of a field in equilibrium with the electrons). For non-interacting electrons $G[u]=(G_0^{-1}-u)^{-1}$ is a single
+open line with insertions of $u$, so the diagrams with closed fermion loops, which come from $Z[u]$, are dropped
+(\pkg{DropClosedLoops}), as in the replica limit $n\to0$, where each closed loop of $n$ replicas carries a factor $n$.
+Impurity lines are dashed with a cross.
 \begin{code}
 DeclareSource[Jimpurity]; DeclareField[impurityPotential, Jimpurity];
 DeclareSymmetric[DisorderCorrelator];
@@ -3329,13 +3328,12 @@ DropClosedLoops[FunctionalDerivative[phiDisorder, DressedGreenFunction[y, x]],
 \orderrow{\Delta_{\rm imp}^2}{disorder_sigma_g_2}
 \end{ordersum}
 The first diagram of $\Phi$ gives the self-consistent Born approximation (SCBA), the Born diagram with the averaged
-propagator, which keeps all the rainbows (the non-crossing diagrams): a $\Phi$-derivable, and therefore conserving,
-approximation. The second adds the crossed diagram. The crossed diagrams are smaller by a factor
-$1/k_F\ell$, of the order of the Fermi wavelength over the mean free path, small in a weakly disordered
-metal~\cite{AbrikosovGorkovDzyaloshinski,AltlandSimons}. In the two-particle function, which gives the conductivity, the
-sum of the maximally crossed diagrams, the Cooperon, is instead singular at small total momentum: it describes the
-interference of an electron path with its time reverse, which lowers the conductivity (weak
-localization)~\cite{AltlandSimons,BruusFlensberg}; the same generating functional produces these diagrams.
+propagator, which keeps all the rainbows (the non-crossing diagrams): a $\Phi$-derivable, hence conserving,
+approximation. The second adds the crossed diagram, smaller by a factor $1/k_F\ell$ (the Fermi wavelength over the mean
+free path, small in a weakly disordered metal)~\cite{AbrikosovGorkovDzyaloshinski,AltlandSimons}. In the conductivity, a
+two-particle function, the sum of the maximally crossed diagrams, the Cooperon, is instead singular at small total
+momentum: the interference of an electron path with its time reverse lowers the conductivity (weak
+localization)~\cite{AltlandSimons,BruusFlensberg}; the same generating functional gives them.
 
 \paragraph{The check} The perturbative self-energy, cut out of the diagrams of $\overline G$ above, is
 \begin{ordersum}{\Sigma_{\rm dis}(x,y)}
@@ -3436,7 +3434,10 @@ integrals~\cite{Smirnov2012}; the package uses the Feynman form, only for the ma
 integrals of QED (section~\ref{sec:qed}). Integration by parts and general massive two-loop integrals are not used.
 \end{methodbox}
 
-\paragraph{One loop} The tadpole of $\Sigma$, with massive lines, and the massless bubble of $\Gamma^{(4)}$:
+\paragraph{One loop} The tadpole of $\Sigma$, with massive lines, and the massless bubble of $\Gamma^{(4)}$. Their
+expansions in $\varepsilon$ are written with the symbol \pkg{kappa} for $\kappa=1/(16\pi^2)$: the rule \pkg{toKappa} puts
+it in before the expansion, so that the $\pi^2$ that the expansion brings (from $\zeta(2)$) stays, and \pkg{Collect}
+takes the factors out:
 \begin{code}
 massive = {FreePropagator -> {"Scalar", m}};
 massless = {FreePropagator -> {"Scalar", 0}};
@@ -3444,14 +3445,16 @@ tadpoleSigma = IntegrateLoops[DiagramLoopIntegral[
     OrderPart[sigma1PI, lambda, 1], {a -> p, b -> -p}, massive], eps]
 bubble = IntegrateLoops[LoopIntegral[
     ScalarPropagator[k, 0] ScalarPropagator[k + p, 0], {k}], eps]
-{EpsilonExpand[tadpoleSigma, eps, 0], EpsilonExpand[bubble, eps, 1]}
+toKappa = Pi -> 1/(4 Sqrt[kappa]);
+Collect[{EpsilonExpand[tadpoleSigma /. toKappa, eps, 0],
+    EpsilonExpand[bubble /. toKappa, eps, 1]}, {kappa, lambda, m, eps}]
 \end{code}
 \begin{outputbox}
 \vspace{-6pt}
 \begin{gather*}
-\Sigma^{(1)}=\formula{dimreg_tadpole}=\frac{\kappa\lambda m^2}{2}\Bigl(\formula{dimreg_tadpole_expanded}\Bigr)+O(\varepsilon)\\
+\Sigma^{(1)}=\formula{dimreg_tadpole}=\formula{dimreg_tadpole_expanded}+O(\varepsilon)\\
 \int_k\frac{1}{k^2\,(k+p)^2}=\formula{dimreg_bubble}\\
-=\kappa\,\Bigl(\formula{dimreg_bubble_expanded}\Bigr)+O(\varepsilon^2)
+=\formula{dimreg_bubble_expanded}+O(\varepsilon^2)
 \end{gather*}
 \end{outputbox}
 \begin{result}
@@ -3467,13 +3470,13 @@ $\lambda^2$, the double tadpole, vanishes: its inner loop is a massless tadpole,
 \begin{code}
 sunset = IntegrateLoops[DiagramLoopIntegral[OrderPart[sigma1PI, lambda, 2],
     {a -> p, b -> -p}, massless], eps]
-EpsilonExpand[sunset, eps, 0]
+Collect[EpsilonExpand[sunset /. toKappa, eps, 0], {kappa, lambda, p, eps}]
 \end{code}
 \begin{outputbox}
 \vspace{-6pt}
 \begin{gather*}
 \Sigma^{(2)}=\formula{dimreg_sunset}\\
-=\frac{\kappa^2\lambda^2p^2}{6}\Bigl(\formula{dimreg_sunset_expanded}\Bigr)+O(\varepsilon)
+=\formula{dimreg_sunset_expanded}+O(\varepsilon)
 \end{gather*}
 \end{outputbox}
 \begin{result}
@@ -3524,12 +3527,12 @@ Tally[Simplify[(16 Pi^2)^2 PolePart[#[[3]], eps]/lambda^3] & /@ routed4]
 The \val{CountsDimregGamma4Topologies1} diagrams with a bubble in a vertex (the first six above) are routed from the vertex
 with two external legs to a vertex with one, the \val{CountsDimregGamma4Topologies2} chains of two bubbles (the next three)
 through both bubbles, and the \val{CountsDimregGamma4Topologies3} bubbles with a tadpole on a line (the last three) vanish
-(the tadpole is massless). In units of
-$\lambda^3\kappa^2$ their pole parts are
+(the tadpole is massless). \pkg{Tally} gives their pole parts in units of $\lambda^3\kappa^2$, in this order, each with
+the number of diagrams that have it:
 \begin{outputbox}
-\vspace{-6pt}
 \[
-\text{bubble in a vertex: }\formula{dimreg_eye},\qquad \text{chain: }\formula{dimreg_chain}
+\left\{\left\{\formula{dimreg_eye},\ \val{CountsDimregGamma4Topologies1}\right\},\
+\left\{\formula{dimreg_chain},\ \val{CountsDimregGamma4Topologies2}\right\},\ \{0,\ \val{CountsDimregGamma4Topologies3}\}\right\}
 \]
 \end{outputbox}
 \begin{result}
@@ -3553,7 +3556,8 @@ sigma21 = -MassInsertion[OrderPart[sigma1PI, lambda, {1, 2}],
     FreePropagator, u]
 \end{code}
 \figuresum{\frac{\partial\Sigma}{\partial m^2}}{dimreg_mass_insertion}
-With unknown coefficients of the poles (in units of $\kappa$ per loop), the poles of the three functions must vanish for
+With unknown coefficients of the poles (in units of $\kappa$ per loop: the symbol \pkg{kappa} stays in the $Z$'s and is
+given its value in the functions that must be finite), the poles of the three functions must vanish for
 every value of $\log(p^2/\mu^2)$, since a pole multiplied by a logarithm of the momentum would need a non-local
 counterterm; this gives equations for the coefficients, order by order (\pkg{upTo[e, n]} keeps the orders up to
 $\lambda^n$):
@@ -3568,7 +3572,8 @@ z[c_] := 1 + c[1] lambda kappa/eps +
 upTo[e_, n_] := Sum[Coefficient[e, lambda, j] lambda^j, {j, 0, n}];
 finite = {upTo[zPhi (p^2 - (sigmaB /. lambda -> lambda zLambda)), 2],
     upTo[zPhi^2 (gamma4B /. lambda -> lambda zLambda), 3],
-    upTo[zM2 (1 - (sigma21B /. lambda -> lambda zLambda)), 2]};
+    upTo[zM2 (1 - (sigma21B /. lambda -> lambda zLambda)), 2]} /.
+    kappa -> 1/(16 Pi^2);
 equations = Flatten[CoefficientList[Expand[eps^4 PolePart[#, eps]] /.
       Log[p^2/RenormalizationScale^2] -> L, {lambda, eps, L, p}] & /@ finite];
 solution = First[Solve[Thread[DeleteCases[equations, 0] == 0],
@@ -3580,8 +3585,8 @@ $X=\phi,\lambda,m$ (the \pkg{c[i]} of \pkg{zf}, \pkg{zl}, \pkg{zm}), the solutio
 \begin{outputbox}
 \vspace{-6pt}
 \begin{gather*}
-Z_\phi=\formula{dimreg_z_phi},\qquad Z_{m^2}=\formula{dimreg_z_m2}\\
-Z_\lambda=\formula{dimreg_z_lambda}
+Z_\phi=\formula{dimreg_z_phi},\qquad Z_\lambda=\formula{dimreg_z_lambda}\\
+Z_{m^2}=\formula{dimreg_z_m2}
 \end{gather*}
 \end{outputbox}
 \begin{result}
@@ -3645,11 +3650,18 @@ $G(p)\propto1/p^{2-\eta}$, and the corrections to this scaling vanish as $\xi^{-
 $\beta$ drops out of the renormalization-group equation, whose solutions are then power laws, and the critical exponents
 are the anomalous dimensions there: $\eta=2\gamma_\phi(\lambda_*)$, $1/\nu=2-\gamma_{m^2}(\lambda_*)$, and
 $\omega=\partial_\lambda(-\epsilon\lambda+\beta)$ at $\lambda_*$. Since $\lambda_*$ is of order $\epsilon$, the series in
-$\lambda$ become series in $\epsilon$, the $\epsilon$ expansion:
+$\lambda$ become series in $\epsilon$, the $\epsilon$ expansion. The fixed point solves $\epsilon=\beta(\lambda)/\lambda$, which
+\pkg{InverseSeries} inverts order by order (\pkg{epsilon} is $\epsilon$):
+\begin{code}
+lambdaStar = Normal[InverseSeries[Series[beta/lambda, {lambda, 0, 2}],
+    epsilon]]
+Normal[Series[{2 gammaPhi, 1/(2 - gammaM2), D[-epsilon lambda + beta, lambda]} /.
+    lambda -> lambdaStar, {epsilon, 0, 2}]]
+\end{code}
 \begin{outputbox}
 \vspace{-6pt}
 \[
-\kappa\lambda_*=\formula{dimreg_fixed_point},\qquad \eta=\formula{dimreg_eta},\qquad \nu=\formula{dimreg_nu},\qquad
+\lambda_*=\formula{dimreg_fixed_point},\qquad \eta=\formula{dimreg_eta},\qquad \nu=\formula{dimreg_nu},\qquad
 \omega=\formula{dimreg_omega}
 \]
 \end{outputbox}
@@ -3764,10 +3776,11 @@ sigmaInt = QEDIntegrand[sigmaDiagrams, {y -> p, x -> -p}, qedRules[xi],
 piInt = QEDIntegrand[piDiagrams, {y -> q, x -> -q}, qedRules[xi],
     "Indices" -> {x -> mu, y -> nu}, "LoopMomentum" -> k]
 vertexInt = QEDIntegrand[vertexDiagrams, {x2 -> p1, x3 -> p2 - p1, x1 -> -p2},
-    qedRules[xi], "Indices" -> {x3 -> mu}, "LoopMomentum" -> k]
+    qedRules[xi], "Indices" -> {x3 -> mu}, "LoopMomentum" -> k];
+vertexInt /. xi -> 1
 \end{code}
 The contracted indices of the photon line are called $\rho$ and $\sigma$ here (all indices are written upper; a repeated
-index is contracted), and the vertex is shown in the Feynman gauge:
+index is contracted), and the vertex is shown in the Feynman gauge, $\xi=1$:
 \begin{outputbox}
 \vspace{-6pt}
 \begin{gather*}
@@ -3847,23 +3860,24 @@ $\delta Z_2=d\Sigma/d\slashed{p}$ at $\slashed{p}=m$ to this order; and $e$ is t
 renormalized $\hat\Pi(0)=0$ and $\alpha=1/137.036$~\cite[sections~7.1 and 7.5]{PeskinSchroeder}~\cite{Grozin2005}.
 
 \paragraph{The self-energy} $\Sigma_2=mA+\slashed{p}\,B$, in a general gauge (\pkg{Coefficient} takes the coefficient of
-a Dirac structure):
+a Dirac structure), written with $\alpha$ by the rule \pkg{toAlpha}:
 \begin{code}
-electronSelfEnergy = DiracSimplify[I IntegrateOneLoop[sigmaInt, eps]];
+toAlpha = e -> Sqrt[4 Pi alpha];
+electronSelfEnergy = DiracSimplify[I IntegrateOneLoop[sigmaInt, eps]] /. toAlpha;
 {a, b} = {Coefficient[electronSelfEnergy, DiracProduct[]]/m,
     Coefficient[electronSelfEnergy, DiracProduct[SlashedMomentum[p]]]};
-pole = ExpandParameterIntegrals[{a, b}, eps, -1]
+pole = Simplify[ExpandParameterIntegrals[{a, b}, eps, -1]]
 delta2 = pole[[2]]
-Zm = 1 - pole[[1]] - pole[[2]]
+Zm = Expand[1 - pole[[1]] - pole[[2]]]
 ExpandParameterIntegrals[a + b /. ScalarProduct[p, p] -> m^2, eps, 0]
 \end{code}
 \begin{outputbox}
 \vspace{-6pt}
 \begin{gather*}
-\Sigma_2=\formula{qed_sigma_pole}+O(\varepsilon^0),\qquad
+A=\formula{qed_sigma_pole_a}+O(\varepsilon^0),\qquad B=\formula{qed_sigma_pole_b}+O(\varepsilon^0)\\
 \delta_2=\formula{qed_delta2},\qquad Z_m=\formula{qed_zm}\\
 \frac{m-m_0}{m}=\frac{\Sigma_2(\slashed{p}=m)}{m}=-\delta Z_2=-\frac{d\Sigma_2}{d\slashed{p}}\Big|_{\slashed{p}=m}
-=\frac{\alpha}{4\pi}\Bigl(\formula{qed_mass_shift}\Bigr)
+=\formula{qed_mass_shift}
 \end{gather*}
 \end{outputbox}
 \begin{result}
@@ -3891,10 +3905,10 @@ is a Ward identity, and it keeps the photon massless. It does not depend on $\xi
 \begin{code}
 piMuNu = DiracSimplify[-I IntegrateOneLoop[piInt, eps]];
 pi2 = -Coefficient[piMuNu, FourVector[q, mu] FourVector[q, nu]];
-ExpandParameterIntegrals[pi2, eps, 0]
+ExpandParameterIntegrals[pi2, eps, 0] /. toAlpha
 delta3 = ExpandParameterIntegrals[pi2, eps, -1]
 BetaFunctionFromZ[1 - delta3/2, e, eps, 3, "ScalePower" -> 1]
-ExpandParameterIntegrals[pi2 - (pi2 /. ScalarProduct[q, q] -> 0), eps, 0]
+ExpandParameterIntegrals[pi2 - (pi2 /. ScalarProduct[q, q] -> 0), eps, 0] /. toAlpha
 \end{code}
 \begin{outputbox}
 \vspace{-6pt}
@@ -3942,7 +3956,7 @@ $\slashed{p}{}_1$ to the right and $\slashed{p}{}_2$ to the left of the spinor c
 leaves $A\gamma^\mu+B_1p_1^\mu+B_2p_2^\mu$; \pkg{VertexFormFactors} separates them by the Gordon identity,
 $F_1=A+m(B_1+B_2)$, $F_2=-m(B_1+B_2)$, $F_3=(B_2-B_1)/2$:
 \begin{code}
-dGamma = -I/e IntegrateOneLoop[vertexInt, eps];
+dGamma = -I/e IntegrateOneLoop[vertexInt, eps] /. toAlpha;
 chain = DiracSimplify[SpinorChain[{p2, m}, dGamma, {p1, m}]] /.
     ScalarProduct[p1, p2] -> m^2 - q2/2;
 {f1, f2, f3} = VertexFormFactors[chain, mu, {p1, p2, m}];
@@ -3950,7 +3964,8 @@ ExpandParameterIntegrals[f2 /. xi -> 1, eps, 0]
 ExpandParameterIntegrals[f2 /. q2 -> 0, eps, 0]
 (* a photon mass lambda separates the ultraviolet pole of F1 from the infrared *)
 vertexLambda = -I/e IntegrateOneLoop[QEDIntegrand[vertexDiagrams, {x2 -> p1,
-    x3 -> p2 - p1, x1 -> -p2}, qedRules[xi, lambda], "Indices" -> {x3 -> mu}], eps];
+    x3 -> p2 - p1, x1 -> -p2}, qedRules[xi, lambda], "Indices" -> {x3 -> mu}], eps] /.
+    toAlpha;
 f1Lambda = First[VertexFormFactors[DiracSimplify[SpinorChain[{p2, m}, vertexLambda,
     {p1, m}]] /. ScalarProduct[p1, p2] -> m^2 - q2/2, mu, {p1, p2, m}]];
 ExpandParameterIntegrals[f1Lambda /. q2 -> 0, eps, -1]
@@ -3961,10 +3976,12 @@ ExpandParameterIntegrals[f1 /. q2 -> 0, eps, 0]
 \begin{gather*}
 F_2(q^2)=\formula{qed_F2}\\
 F_2(0)=\formula{qed_F2_zero},\qquad F_1\big|_{\rm UV\ pole}=\formula{qed_F1_pole}=-\delta_2\\
-F_1(0)-1=\frac{\alpha}{4\pi}\Bigl(\formula{qed_F1_zero}\Bigr)=-\delta Z_2
+F_1(0)-1=\formula{qed_F1_zero}=-\delta Z_2
 \end{gather*}
 \end{outputbox}
-$F_2(q^2)$ is shown in the Feynman gauge, with $x_1$ the parameter of the photon line, and is finite; the pole of $F_1$ is
+$F_2(q^2)$ is shown in the Feynman gauge, with $x_1$ the parameter of the photon line ($x_2$, $x_3$ those of the
+electrons); on the simplex, $x_2+x_3=1-x_1$, its integrand is that of the textbooks~\cite[section~6.3]{PeskinSchroeder},
+\mbox{$m^2x_1(1-x_1)/\bigl(m^2(1-x_1)^2-q^2x_2x_3\bigr)$}, and it is finite. The pole of $F_1$ is
 taken with a photon mass, which separates it from the infrared divergence, and $F_1(0)$ with the infrared regulated
 dimensionally, as $\delta Z_2$ above. With $\varepsilon_{\rm UV}=\varepsilon_{\rm IR}$ the pole $3\alpha/4\pi\varepsilon$ of
 $F_1(0)-1$ (and of $-\delta Z_2$) is the ultraviolet one, $\xi\alpha/4\pi\varepsilon$, plus an infrared one,
@@ -3979,20 +3996,19 @@ $F_3$ at $q^2=0$ and its integrand, odd under $x_2\leftrightarrow x_3$, symmetri
 Once the legs are renormalized (a factor $Z_2=1+\delta Z_2$), $F_1(0)-1+\delta Z_2=0$ above says that $F_1(0)=1$: the
 Ward--Takahashi identity~\cite{Ward1950,Takahashi1957} appears twice, as $Z_1=Z_2$ in $\overline{\rm MS}$ and on shell as
 $F_1(0)=1$. The magnetic moment of the
-electron is then given by $g=2\,(F_1(0)+F_2(0))=2+\alpha/\pi$: the anomalous moment $a=(g-2)/2=F_2(0)=\alpha/2\pi$ is Schwinger's
+electron is then $g=2\,(F_1(0)+F_2(0))=2+\alpha/\pi$: the anomalous moment $a=(g-2)/2=F_2(0)=\alpha/2\pi$ is Schwinger's
 result~\cite{Schwinger1948}, the same in every gauge. With $\alpha=1/137.036$ it is $a=\val{QEDSchwingerValue}$; the
 measured value, $0.00115965218$~\cite{FanMyersSukraGabrielse2023}, agrees with the higher orders (with $\alpha$ measured
 independently), now known to the tenth order in $e$~\cite{AoyamaKinoshitaNio2019}. The section is computed in
 \val{SecondsQED}\,s.
 
-\paragraph{Limits} The evaluation is limited to one loop (one loop momentum: \pkg{QEDIntegrand} and
-\pkg{IntegrateOneLoop} refuse more), to at most one open fermion line (no four-fermion amplitudes such as M{\o}ller or
-Bhabha scattering), and to the Dirac algebra without $\gamma_5$ (\pkg{GammaMatrix[5]} is refused: no anomalies, no chiral
-couplings). The momentum-space form of the lines is given by the rules, not derived; closed forms are obtained only where
-the Feynman-parameter integrals are products of Gamma functions, and the others are evaluated numerically (with
-$\Delta-i0$ above thresholds). An infrared divergence is subtracted when it sits at one face of the Feynman-parameter
-region (as in the one-loop vertex), otherwise \pkg{ExpandParameterIntegrals} gives a message; the closed forms with
-symbolic coefficients hold below thresholds.
+\paragraph{Limits} One loop (\pkg{QEDIntegrand} and \pkg{IntegrateOneLoop} refuse more loop momenta), at most one
+open fermion line (no four-fermion amplitudes such as M{\o}ller or Bhabha scattering), and the Dirac algebra without
+$\gamma_5$ (\pkg{GammaMatrix[5]} is refused: no anomalies, no chiral couplings). The lines in momentum space are given by
+the rules, not derived; closed forms (with symbolic coefficients, valid below thresholds) are obtained where the
+Feynman-parameter integrals are products of Gamma functions, and the others are evaluated numerically (with $\Delta-i0$
+above thresholds). An infrared divergence is subtracted when it sits at one face of the Feynman-parameter region (as in
+the one-loop vertex); otherwise \pkg{ExpandParameterIntegrals} gives a message.
 
 % ------------------------------------------------------------------ 21
 \section{Gauge theories: the vertices of QCD}\label{sec:qcd}
@@ -4012,29 +4028,27 @@ whose kernels contain the colour factors, the Dirac matrices and the derivatives
 are totally symmetric~\cite{PeskinSchroeder,Muta2010}. The ghosts $c$, $\bar c$ are Grassmann fields with a propagator of their
 own~\cite{FaddeevPopov1967}: in a covariant gauge the Faddeev--Popov determinant, which in QED does not depend on the
 field, here depends on the gluons, and is written as an integral over these scalar Grassmann fields, coupled to the
-gluons through $f^{abc}$; in loops they cancel the contributions of the unphysical, timelike and longitudinal, gluon
+gluons through $f^{abc}$; in loops they cancel the unphysical, timelike and longitudinal, gluon
 polarizations~\cite[sections~16.2 and 16.3]{PeskinSchroeder}. The package does not do the colour algebra: the colour
 factors stay in the kernels, to be evaluated with $t^at^a=C_F\,\mathbf 1$, $f^{acd}f^{bcd}=C_A\,\delta^{ab}$ and
 $\operatorname{tr}t^at^b=T_F\,\delta^{ab}$, where $C_F=\frac43$, $C_A=3$ and $T_F=\frac12$. The propagators
 are $D_0=\langle AA\rangle_0$, $S_0=\langle q\bar q\rangle_0$ and $\langle c\bar c\rangle_0$; \pkg{DeclareLocalVertex} draws the
-kernels as points, gluons are coils (\pkg{"Curly"}) and ghosts dotted lines with an arrow (\pkg{"DottedArrow"}):
+kernels as points, gluons as coils (\pkg{"Curly"}) and ghosts as dotted arrows (\pkg{"DottedArrow"}):
 \begin{code}
 DeclareSource[Jgluon]; DeclareGrassmannSource[chi, chibar, sigma, sigmabar];
 DeclareField[gluon, Jgluon]; DeclareField[quark, chibar];
 DeclareField[quarkbar, chi, -1]; DeclareField[ghost, sigmabar];
-DeclareField[ghostbar, sigma, -1];
+DeclareField[ghostbar, sigma, -1]; DeclareDirectedPropagator[QuarkPropagator];
 DeclareSymmetric[GluonPropagator, ThreeGluonVertex, FourGluonVertex];
 DeclareLocalVertex[QuarkGluonVertex, ThreeGluonVertex, FourGluonVertex,
     GhostGluonVertex];
 DeclareLineStyle[GluonPropagator, "Curly"]; DeclareLineStyle[GhostPropagator, "DottedArrow"];
-DeclareDirectedPropagator[QuarkPropagator];
 FreeQCDGeneratingFunctional = Exp[
     1/2 IntegralOver[Jgluon[x] GluonPropagator[x, y] Jgluon[y], {x, y}] +
     IntegralOver[QuarkPropagator[x, y] chibar[x] ** chi[y], {x, y}] +
     IntegralOver[GhostPropagator[x, y] sigmabar[x] ** sigma[y], {x, y}]];
-QCDVertices =
-    g IntegralOver[QuarkGluonVertex[x, y, z] quarkbar[x] ** quark[y] gluon[z],
-      {x, y, z}] +
+QCDVertices = g IntegralOver[QuarkGluonVertex[x, y, z] quarkbar[x] ** quark[y]
+      gluon[z], {x, y, z}] +
     g/6 IntegralOver[ThreeGluonVertex[x, y, z] gluon[x] gluon[y] gluon[z],
       {x, y, z}] +
     g^2/24 IntegralOver[FourGluonVertex[w, x, y, z] gluon[w] gluon[x] gluon[y]
@@ -4042,9 +4056,9 @@ QCDVertices =
     g IntegralOver[GhostGluonVertex[x, y, z] ghostbar[x] ** ghost[y] gluon[z],
       {x, y, z}];
 \end{code}
-A vertex function, a derivative of the 1PI action $\Gamma[\bar A,\bar C,C,\Psi,\bar\Psi]$ at zero means (of the gluon, ghost and quark fields), is computed as in QED, from
-the derivatives of $W$: the one-particle-irreducible part of a connected function, with its legs removed; at one loop the
-gluon self-energy, with $\langle AA\rangle=D+D\,\Pi\,D+\dots$, is
+A vertex function, a derivative of the 1PI action $\Gamma[\bar A,\bar C,C,\Psi,\bar\Psi]$ at zero means, is computed as in
+QED, from the derivatives of $W$: the one-particle-irreducible part of a connected function, with its legs removed; at one
+loop the gluon self-energy, with $\langle AA\rangle=D+D\,\Pi\,D+\dots$, is
 \begin{code}
 lines = {GluonPropagator, QuarkPropagator, GhostPropagator};
 gluonSelfEnergy = ParticleIrreducibleDiagrams[AmputateExternalLegs[OrderPart[
@@ -4057,8 +4071,7 @@ symmetry factor $\frac12$; each vertex stands for minus its kernel, the sign of 
 quark and of the ghost, and the two corrections of the quark--gluon vertex: the abelian one, a gluon exchanged across the
 vertex as in QED, with the colour factor $t^bt^at^b=(C_F-\frac12C_A)\,t^a$, and the non-abelian one, through the
 three-gluon vertex, with $f^{abc}t^bt^c=\frac i2C_A\,t^a$:
-\figuresum{\Sigma_q(x,y)}{qcd_quark_self_energy}
-\figuresum{\Sigma_c(x,y)}{qcd_ghost_self_energy}
+\figuresum[\qquad\qquad\mbox{$\displaystyle\Sigma_c(x,y)={}$}\inputfigure{qcd_ghost_self_energy}]{\Sigma_q(x,y)}{qcd_quark_self_energy}
 \figuresum{\Gamma_{q\bar qA}(x_1,x_2,x_3)}{qcd_quark_gluon_vertex}
 The three-gluon vertex at one loop: three diagrams with a four-gluon vertex, the gluon triangle, and the ghost and the
 quark triangles, each with both orientations of its loop:

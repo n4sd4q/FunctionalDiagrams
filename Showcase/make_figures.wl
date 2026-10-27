@@ -892,31 +892,35 @@ writeOrders["phi4_phi2_correlation", phi2Correlation, {a, b}, lambda, {0, 1, 2}]
 writeValue["counts phi2 correlation", orderCounts[phi2Correlation, lambda, {0, 1, 2}]];
 
 (* ---------------- phi^4 theory in dimensional regularization ---------------- *)
-(* the diagrams of the phi^4 section in d = 4 - 2 eps (Euclidean, MS-bar measure); kappa = 1/(16 pi^2) per loop, written
-   as the symbol kappa in the formulas; the textbook values (Peskin-Schroeder, Zinn-Justin, Kleinert-Schulte-Frohlinde)
-   are checked *)
+(* the diagrams of the phi^4 section in d = 4 - 2 eps (Euclidean, MS-bar measure), with the code of the showcase: the
+   expansions and the Z factors are written with the symbol kappa for 1/(16 pi^2), the factor of each loop (toKappa,
+   put in before the expansion, and Collect); the textbook values (Peskin-Schroeder, Zinn-Justin,
+   Kleinert-Schulte-Frohlinde) are checked *)
 dimregStart = AbsoluteTime[];
 dimregNames = {eps -> "\\varepsilon"};
-inKappa[e_] := Expand[e /. Pi -> 1/(4 Sqrt[kappa])];
+kappaValue = {kappa -> 1/(16 Pi^2)};
 massive = {FreePropagator -> {"Scalar", m}}; massless = {FreePropagator -> {"Scalar", 0}};
 (* one loop: the tadpole of Sigma (massive) and the bubble of Gamma4 (massless, the momentum p through it) *)
 tadpoleSigma = IntegrateLoops[DiagramLoopIntegral[OrderPart[sigma1PI, lambda, 1], {a -> p, b -> -p}, massive], eps];
 writeFormula["dimreg_tadpole", tadpoleSigma, "Names" -> dimregNames];
-(* in units of lambda kappa m^2/2 *)
-writeFormula["dimreg_tadpole_expanded", Expand[EpsilonExpand[tadpoleSigma, eps, 0]/(lambda m^2/(32 Pi^2))], "Names" -> dimregNames];
-writeValue["check dimreg tadpole", Simplify[EpsilonExpand[tadpoleSigma, eps, 0] - lambda m^2/(32 Pi^2) (1/eps + 1 - Log[m^2/RenormalizationScale^2])]];
 bubbleLoop = IntegrateLoops[LoopIntegral[ScalarPropagator[k, 0] ScalarPropagator[k + p, 0], {k}], eps];
 writeFormula["dimreg_bubble", bubbleLoop, "Names" -> dimregNames];
-(* in units of kappa *)
-writeFormula["dimreg_bubble_expanded", EpsilonExpand[16 Pi^2 bubbleLoop, eps, 1], "Names" -> dimregNames];
-writeValue["check dimreg bubble", Simplify[EpsilonExpand[bubbleLoop, eps, 1] - (1/eps + 2 - Log[p^2/RenormalizationScale^2] +
-      eps (4 - Pi^2/12 - 2 Log[p^2/RenormalizationScale^2] + Log[p^2/RenormalizationScale^2]^2/2))/(16 Pi^2)]];
+toKappa = Pi -> 1/(4 Sqrt[kappa]);
+oneLoopExpanded = Collect[{EpsilonExpand[tadpoleSigma /. toKappa, eps, 0], EpsilonExpand[bubbleLoop /. toKappa, eps, 1]},
+   {kappa, lambda, m, eps}];
+writeFormula["dimreg_tadpole_expanded", oneLoopExpanded[[1]], "Names" -> dimregNames];
+writeFormula["dimreg_bubble_expanded", oneLoopExpanded[[2]], "Names" -> dimregNames];
+writeValue["check dimreg tadpole", Simplify[(oneLoopExpanded[[1]] /. kappaValue) -
+    lambda m^2/(32 Pi^2) (1/eps + 1 - Log[m^2/RenormalizationScale^2])]];
+writeValue["check dimreg bubble", Simplify[(oneLoopExpanded[[2]] /. kappaValue) -
+    (1/eps + 2 - Log[p^2/RenormalizationScale^2] + eps (4 - Pi^2/12 - 2 Log[p^2/RenormalizationScale^2] +
+       Log[p^2/RenormalizationScale^2]^2/2))/(16 Pi^2)]];
 (* two loops: the massless sunset, nested G-functions *)
 sunsetSigma = IntegrateLoops[DiagramLoopIntegral[OrderPart[sigma1PI, lambda, 2], {a -> p, b -> -p}, massless], eps];
 writeFormula["dimreg_sunset", sunsetSigma, "Names" -> dimregNames];
-(* in units of lambda^2 kappa^2 p^2/6 *)
-writeFormula["dimreg_sunset_expanded", Expand[EpsilonExpand[sunsetSigma, eps, 0]/(lambda^2 p^2/(6 (16 Pi^2)^2))], "Names" -> dimregNames];
-writeValue["check dimreg sunset", Simplify[EpsilonExpand[sunsetSigma, eps, 0] -
+sunsetExpanded = Collect[EpsilonExpand[sunsetSigma /. toKappa, eps, 0], {kappa, lambda, p, eps}];
+writeFormula["dimreg_sunset_expanded", sunsetExpanded, "Names" -> dimregNames];
+writeValue["check dimreg sunset", Simplify[(sunsetExpanded /. kappaValue) -
     lambda^2/6 p^2/(16 Pi^2)^2 (-1/(4 eps) - 13/8 + Log[p^2/RenormalizationScale^2]/2)]];
 (* Gamma4 = d^4 Gamma/dphibar^4 at phibar = 0 (gamma4, computed in the phi^4 section), to lambda^3, with the infrared rearrangement *)
 writeOrders["dimreg_gamma4", gamma4, {a, b, c, d}, lambda, {3}];
@@ -935,74 +939,60 @@ writeTerms["dimreg_mass_insertion", sigma21, {a, b, u}];
 sigmaB = InfraredRearrangedIntegral[OrderPart[sigma1PI, lambda, {1, 2}], {a, b}, p, massless, eps];
 gamma4B = InfraredRearrangedIntegral[gamma4, {a, b, c, d}, p, massless, eps];
 sigma21B = InfraredRearrangedIntegral[sigma21, {a, b, u}, p, massless, eps];
-(* Z_phi (p^2 - Sigma), Z_phi^2 Gamma4 and Z_m2 (1 - dSigma/dm^2) finite, at lambda_B = mu^(2 eps) (e^gammaE/4 pi)^eps Z_lambda lambda *)
-z[c_] := 1 + c[1] lambda kappaValue/eps + lambda^2 kappaValue^2 (c[2]/eps^2 + c[3]/eps);
-kappaValue = 1/(16 Pi^2);
+(* Z_phi (p^2 - Sigma), Z_phi^2 Gamma4 and Z_m2 (1 - dSigma/dm^2) finite, at lambda_B = mu^(2 eps) (e^gammaE/4 pi)^eps Z_lambda lambda;
+   kappa stays a symbol in the Z's and has its value in the functions that must be finite *)
+z[c_] := 1 + c[1] lambda kappa/eps + lambda^2 kappa^2 (c[2]/eps^2 + c[3]/eps);
 {zPhi, zLambda, zM2} = {z[zf], z[zl], z[zm]};
 upTo[e_, n_] := Sum[Coefficient[e, lambda, j] lambda^j, {j, 0, n}];
 finite = {upTo[zPhi (p^2 - (sigmaB /. lambda -> lambda zLambda)), 2], upTo[zPhi^2 (gamma4B /. lambda -> lambda zLambda), 3],
-   upTo[zM2 (1 - (sigma21B /. lambda -> lambda zLambda)), 2]};
+    upTo[zM2 (1 - (sigma21B /. lambda -> lambda zLambda)), 2]} /. kappaValue;
 equations = Flatten[CoefficientList[Expand[eps^4 PolePart[#, eps]] /. Log[p^2/RenormalizationScale^2] -> L, {lambda, eps, L, p}] & /@ finite];
 solution = First[Solve[Thread[DeleteCases[equations, 0] == 0], Flatten[Table[c[i], {c, {zf, zl, zm}}, {i, 3}]]]];
 {zPhi, zLambda, zM2} = {zPhi, zLambda, zM2} /. solution;
 writeValue["check dimreg residual poles", Simplify[PolePart[# /. solution, eps]] & /@ finite];
-writeFormula["dimreg_z_phi", inKappa[zPhi], "Names" -> dimregNames];
-writeFormula["dimreg_z_lambda", inKappa[zLambda], "Names" -> dimregNames];
-writeFormula["dimreg_z_m2", inKappa[zM2], "Names" -> dimregNames];
-writeValue["check dimreg Z factors", Simplify[{zPhi - (1 - lambda^2 kappaValue^2/(24 eps)),
-     zLambda - (1 + 3 lambda kappaValue/(2 eps) + lambda^2 kappaValue^2 (9/(4 eps^2) - 17/(12 eps))),
-     zM2 - (1 + lambda kappaValue/(2 eps) + lambda^2 kappaValue^2 (1/(2 eps^2) - 1/(4 eps)))}]];
+writeFormula["dimreg_z_phi", zPhi, "Names" -> dimregNames];
+writeFormula["dimreg_z_lambda", zLambda, "Names" -> dimregNames];
+writeFormula["dimreg_z_m2", zM2, "Names" -> dimregNames];
+writeValue["check dimreg Z factors", Simplify[{zPhi - (1 - lambda^2 kappa^2/(24 eps)),
+     zLambda - (1 + 3 lambda kappa/(2 eps) + lambda^2 kappa^2 (9/(4 eps^2) - 17/(12 eps))),
+     zM2 - (1 + lambda kappa/(2 eps) + lambda^2 kappa^2 (1/(2 eps^2) - 1/(4 eps)))}]];
 writeValue["check dimreg double poles", {zl[2] - zl[1]^2, zm[2] - zm[1] (zm[1] + zl[1])/2} /. solution];
 (* the one-loop mass counterterm against the massive tadpole: Z_m2 m^2 - Sigma finite *)
-writeValue["check dimreg massive mass counterterm", Simplify[PolePart[Expand[(zM2 - 1) m^2 /. lambda^2 -> 0] - tadpoleSigma, eps]]];
-(* the renormalization-group functions *)
+writeValue["check dimreg massive mass counterterm", Simplify[PolePart[(Expand[(zM2 - 1) m^2] /. lambda^2 -> 0 /. kappaValue) - tadpoleSigma, eps]]];
+(* the renormalization-group functions, in kappa as the Z's *)
 beta = BetaFunctionFromZ[zLambda, lambda, eps, 3];
-gammaPhi = 1/2 AnomalousDimensionFromZ[zPhi, lambda, eps, -2 eps lambda + beta, 2];
-gammaM2 = -AnomalousDimensionFromZ[zM2/zPhi, lambda, eps, -2 eps lambda + beta, 2];
-writeFormula["dimreg_beta", inKappa[beta]];
-writeFormula["dimreg_gamma_phi", inKappa[gammaPhi]];
-writeFormula["dimreg_gamma_m2", inKappa[gammaM2]];
-writeValue["check dimreg RG functions", Simplify[{beta - (3 lambda^2 kappaValue - 17/3 lambda^3 kappaValue^2), gammaPhi - lambda^2 kappaValue^2/12,
-     gammaM2 - (lambda kappaValue - 5/6 lambda^2 kappaValue^2)}]];
-(* the Wilson-Fisher fixed point in d = 4 - e (e = 2 eps, written \epsilon): -e lambda + beta = 0 at u = kappa lambda, then
-   eta = 2 gamma_phi, nu = 1/(2 - gamma_m2), omega = d(-e lambda + beta)/d lambda there, each to e^2 *)
-series2[f_] := Sum[Coefficient[Expand[f], e, j] e^j, {j, 0, 2}];
-fixedPoint = (a1 e + a2 e^2)/kappaValue;
-fixedPoint = fixedPoint /. First[Select[Solve[Thread[Table[Coefficient[Expand[(-e lambda + beta) /. lambda -> fixedPoint], e, j], {j, 2, 3}] == 0],
-      {a1, a2}], (a1 /. #) =!= 0 &]];
-gammaM2Star = series2[gammaM2 /. lambda -> fixedPoint];
-exponents = {series2[2 gammaPhi /. lambda -> fixedPoint], series2[1/2 + Coefficient[gammaM2Star, e, 1] e/4 +
-      (Coefficient[gammaM2Star, e, 1]^2/8 + Coefficient[gammaM2Star, e, 2]/4) e^2], series2[D[-e lambda + beta, lambda] /. lambda -> fixedPoint]};
-writeFormula["dimreg_fixed_point", Expand[kappaValue fixedPoint], "Names" -> {e -> "\\epsilon"}];
-writeFormula["dimreg_eta", exponents[[1]], "Names" -> {e -> "\\epsilon"}];
-writeFormula["dimreg_nu", exponents[[2]], "Names" -> {e -> "\\epsilon"}];
-writeFormula["dimreg_omega", exponents[[3]], "Names" -> {e -> "\\epsilon"}];
-writeValue["check dimreg Wilson-Fisher", Expand[exponents - {e^2/54, 1/2 + e/12 + 7 e^2/162, e - 17 e^2/27}]];
-(* at e = 1, as text with three decimals *)
-writeValue["dimreg exponents in three dimensions", StringJoin[Riffle[ToString[N[Round[1000 #]/1000]] & /@ (exponents /. e -> 1), ", "]]];
+betaEps = -2 eps lambda + beta;
+gammaPhi = 1/2 AnomalousDimensionFromZ[zPhi, lambda, eps, betaEps, 2];
+gammaM2 = -AnomalousDimensionFromZ[zM2/zPhi, lambda, eps, betaEps, 2];
+writeFormula["dimreg_beta", beta];
+writeFormula["dimreg_gamma_phi", gammaPhi];
+writeFormula["dimreg_gamma_m2", gammaM2];
+writeValue["check dimreg RG functions", Simplify[{beta - (3 lambda^2 kappa - 17/3 lambda^3 kappa^2), gammaPhi - lambda^2 kappa^2/12,
+     gammaM2 - (lambda kappa - 5/6 lambda^2 kappa^2)}]];
+(* the Wilson-Fisher fixed point in d = 4 - epsilon (epsilon = 2 eps, written \epsilon): epsilon = beta/lambda, inverted
+   by InverseSeries; eta = 2 gamma_phi, nu = 1/(2 - gamma_m2), omega = d(-epsilon lambda + beta)/d lambda there, to
+   epsilon^2 *)
+lambdaStar = Normal[InverseSeries[Series[beta/lambda, {lambda, 0, 2}], epsilon]];
+exponents = Normal[Series[{2 gammaPhi, 1/(2 - gammaM2), D[-epsilon lambda + beta, lambda]} /. lambda -> lambdaStar, {epsilon, 0, 2}]];
+writeFormula["dimreg_fixed_point", lambdaStar];
+writeFormula["dimreg_eta", exponents[[1]]];
+writeFormula["dimreg_nu", exponents[[2]]];
+writeFormula["dimreg_omega", exponents[[3]]];
+writeValue["check dimreg Wilson-Fisher", Expand[exponents - {epsilon^2/54, 1/2 + epsilon/12 + 7 epsilon^2/162, epsilon - 17 epsilon^2/27}]];
+(* at epsilon = 1, as text with three decimals *)
+writeValue["dimreg exponents in three dimensions", StringJoin[Riffle[ToString[N[Round[1000 #]/1000]] & /@ (exponents /. epsilon -> 1), ", "]]];
 writeValue["seconds dimreg", N[Round[10 (AbsoluteTime[] - dimregStart)]/10]];
 
 (* ---------------- QED at one loop in dimensional regularization ---------------- *)
 (* the worked example Tests/QEDOneLoop.wl (Peskin-Schroeder conventions with e > 0, d = 4 - 2 eps, the MS-bar measure): the theory in
    condensed notation (qedZ0, qedInteraction, qedRules, qedVertexFunction) and qedOneLoop[], whose results are rules; the
-   values of the textbooks are checked. QEDOneLoop.wl sets alpha = e^2/(4 pi); in the formulas e^2 is written 4 pi alpha
-   with the symbol fineStructure *)
+   values of the textbooks are checked. The formulas are written by the code of the showcase (below) *)
 qedStart = AbsoluteTime[];
 $qedReport = False;
 Get[FileNameJoin[{ParentDirectory[Directory[]], "Tests", "QEDOneLoop.wl"}]];
-(* eps is written veps in the formulas, so that it comes after pi *)
-qedNames = {veps -> "\\varepsilon", fineStructure -> "\\alpha", q2 -> "q^{2}"};
-inAlpha[x_] := Expand[x /. {e -> Sqrt[4 Pi fineStructure], eps -> veps}];
-(* ln(mu^2/m^2), as in the textbooks *)
-qedLog = Log[m^2/RenormalizationScale^2] -> -Log[RenormalizationScale^2/m^2];
-(* in units of alpha/(4 pi): the bracket only (the .tex writes the prefactor) *)
-inAlphaUnits[x_] := Expand[inAlpha[x] 4 Pi/fineStructure /. qedLog];
-(* the integrands of the Feynman-parameter integrals simplified, a factor -1 + x of parameters written -(1 - x) *)
-qedFlipped[x_] := (x /. p : Plus[-1, r__] /; MatchQ[{r}, {FeynmanParameter[_] ..}] :> -qedFlip[Expand[-p]]) /. qedFlip[a_] :> a;
-simplifiedIntegrands[x_] := qedFlipped[x /. (h : ParameterIntegral | SimplexIntegral)[f_, v_] :> h[Simplify[f], v]];
-(* on the simplex of the vertex: x2 + x3 = 1 - x1 (x1 the parameter of the photon) *)
-onSimplex[x_] := qedFlipped[x /. SimplexIntegral[f_, v : {a_, b_, c_}] :> With[{g = Simplify[f]}, SimplexIntegral[(Factor[Numerator[g]] /. b + c -> 1 - a)/
-      (Denominator[g] /. b + c -> 1 - a), v]]];
+(* eps is written veps in the formulas only, so that it comes after pi *)
+qedNames = {veps -> "\\varepsilon", q2 -> "q^{2}"};
+qedFormula[name_String, x_] := writeFormula[name, x /. eps -> veps, "Names" -> qedNames];
 (* the photon waves need the size of the pictures of QCD *)
 qedOptions = Sequence["Scale" -> 0.5, "LineWidth" -> 0.45];
 (* the 1PI functions: -i Sigma_2, i Pi_2, i e delta Gamma^mu (and the tree vertex i e gamma^mu; e > 0, the electron has charge -e) *)
@@ -1027,44 +1017,86 @@ writeFormula["qed_sigma_integrand", qedIndexNames[QEDIntegrand[qedSigmaDiagrams,
   "Names" -> qedNames];
 writeFormula["qed_pi_integrand", QEDIntegrand[qedPiDiagrams, {y -> q, x -> -q}, qedRules[xi], "Indices" -> {x -> mu, y -> nu}, "LoopMomentum" -> k],
   "Names" -> qedNames];
-writeFormula["qed_vertex_integrand", qedIndexNames[QEDIntegrand[qedVertexDiagrams, {x2 -> p1, x3 -> p2 - p1, x1 -> -p2}, qedRules[1],
-    "Indices" -> {x3 -> mu}, "LoopMomentum" -> k]], "Names" -> qedNames];
+(* the vertex in the Feynman gauge, xi -> 1 *)
+writeFormula["qed_vertex_integrand", qedIndexNames[QEDIntegrand[qedVertexDiagrams, {x2 -> p1, x3 -> p2 - p1, x1 -> -p2}, qedRules[xi],
+    "Indices" -> {x3 -> mu}, "LoopMomentum" -> k] /. xi -> 1], "Names" -> qedNames];
 (* the computation: Sigma_2, Pi_2 and the vertex exactly in d, their expansions, the counterterms, the form factors *)
+(* qedOneLoop[] repeats the computation of the showcase (below) for the checks: its time is not counted in "seconds QED" *)
+qedChecksStart = AbsoluteTime[];
 qedResults = timed["QED one loop", qedOneLoop[]];
+qedChecksSeconds = AbsoluteTime[] - qedChecksStart;
 qv[key_String] := key /. qedResults;
-(* the self-energy: Sigma_2 = m A + pslash B; MS-bar delta2 and Zm; on shell (IR in dim. reg.) (m - m0)/m = -delta Z2 *)
-writeFormula["qed_sigma_pole", Simplify[inAlpha[m qv["SigmaPole"][[1]] + qv["SigmaPole"][[2]] SlashedMomentum[p]]], "Names" -> qedNames];
-writeValue["check QED Sigma pole", Simplify[qv["SigmaPole"] - alpha/(4 Pi eps) {3 + xi, -xi}]];
-writeFormula["qed_delta2", inAlpha[qv["delta2MS"]], "Names" -> qedNames];
-writeFormula["qed_zm", 1 + inAlpha[qv["ZmMinus1"]], "Names" -> qedNames];
-writeValue["check QED delta2 and Zm", Simplify[{qv["delta2MS"] + xi alpha/(4 Pi eps), qv["ZmMinus1"] + 3 alpha/(4 Pi eps)}]];
-writeFormula["qed_mass_shift", inAlphaUnits[qv["massShiftOS"]], "Names" -> qedNames];
-writeValue["check QED on shell", Simplify[{qv["massShiftOS"] - alpha/(4 Pi) (3/eps + 4 + 3 L), qv["deltaZ2OS"] + qv["massShiftOS"]}]];
+(* the formulas: the code of the showcase, as shown, with the symbol alpha (toAlpha), which has the value e^2/(4 pi) here
+   (QEDOneLoop.wl): hence the Block. qedShown keeps the results with alpha -> e^2/(4 pi), for the checks *)
+Block[{alpha, toAlpha, electronSelfEnergy, sa, sb, pole, piMuNu, pi2, delta3, dGamma, chain, f1, f2, f3, vertexLambda, f1Lambda, shown},
+  toAlpha = e -> Sqrt[4 Pi alpha];
+  (* the self-energy: Sigma_2 = m A + pslash B; the poles of {A, B}, MS-bar delta2 and Zm; on shell (IR in dim. reg.) (m - m0)/m *)
+  electronSelfEnergy = DiracSimplify[I IntegrateOneLoop[QEDIntegrand[qedSigmaDiagrams, {y -> p, x -> -p}, qedRules[xi],
+       "LoopMomentum" -> k], eps]] /. toAlpha;
+  {sa, sb} = {Coefficient[electronSelfEnergy, DiracProduct[]]/m, Coefficient[electronSelfEnergy, DiracProduct[SlashedMomentum[p]]]};
+  pole = Simplify[ExpandParameterIntegrals[{sa, sb}, eps, -1]];
+  shown["pole"] = pole; shown["delta2"] = pole[[2]]; shown["Zm"] = Expand[1 - pole[[1]] - pole[[2]]];
+  shown["massShift"] = ExpandParameterIntegrals[sa + sb /. ScalarProduct[p, p] -> m^2, eps, 0];
+  (* the vacuum polarization: Pi_2 and Pi-hat_2 in alpha, delta3 and beta(e) in e *)
+  piMuNu = DiracSimplify[-I IntegrateOneLoop[QEDIntegrand[qedPiDiagrams, {y -> q, x -> -q}, qedRules[xi], "Indices" -> {x -> mu, y -> nu},
+       "LoopMomentum" -> k], eps]];
+  pi2 = -Coefficient[piMuNu, FourVector[q, mu] FourVector[q, nu]];
+  shown["Pi"] = ExpandParameterIntegrals[pi2, eps, 0] /. toAlpha;
+  shown["delta3"] = delta3 = ExpandParameterIntegrals[pi2, eps, -1];
+  shown["beta"] = BetaFunctionFromZ[1 - delta3/2, e, eps, 3, "ScalePower" -> 1];
+  shown["PiHat"] = ExpandParameterIntegrals[pi2 - (pi2 /. ScalarProduct[q, q] -> 0), eps, 0] /. toAlpha;
+  (* the vertex: F2 in the Feynman gauge, F2(0), the UV pole of F1 (photon mass), F1(0) - 1 (IR in dim. reg.) *)
+  dGamma = -I/e IntegrateOneLoop[QEDIntegrand[qedVertexDiagrams, {x2 -> p1, x3 -> p2 - p1, x1 -> -p2}, qedRules[xi], "Indices" -> {x3 -> mu},
+       "LoopMomentum" -> k], eps] /. toAlpha;
+  chain = DiracSimplify[SpinorChain[{p2, m}, dGamma, {p1, m}]] /. ScalarProduct[p1, p2] -> m^2 - q2/2;
+  {f1, f2, f3} = VertexFormFactors[chain, mu, {p1, p2, m}];
+  shown["F2"] = ExpandParameterIntegrals[f2 /. xi -> 1, eps, 0];
+  shown["F2zero"] = ExpandParameterIntegrals[f2 /. q2 -> 0, eps, 0];
+  vertexLambda = -I/e IntegrateOneLoop[QEDIntegrand[qedVertexDiagrams, {x2 -> p1, x3 -> p2 - p1, x1 -> -p2}, qedRules[xi, lambda],
+       "Indices" -> {x3 -> mu}], eps] /. toAlpha;
+  f1Lambda = First[VertexFormFactors[DiracSimplify[SpinorChain[{p2, m}, vertexLambda, {p1, m}]] /. ScalarProduct[p1, p2] -> m^2 - q2/2,
+      mu, {p1, p2, m}]];
+  shown["F1pole"] = ExpandParameterIntegrals[f1Lambda /. q2 -> 0, eps, -1];
+  shown["F1zero"] = ExpandParameterIntegrals[f1 /. q2 -> 0, eps, 0];
+  qedFormula["qed_sigma_pole_a", shown["pole"][[1]]];
+  qedFormula["qed_sigma_pole_b", shown["pole"][[2]]];
+  (* the pole of Sigma_2 = m A + pslash B, assembled for the demo video (Development/make_demo_video.py) *)
+  qedFormula["qed_sigma_pole", Simplify[m shown["pole"][[1]] + shown["pole"][[2]] SlashedMomentum[p]]];
+  qedFormula["qed_delta2", shown["delta2"]];
+  qedFormula["qed_zm", shown["Zm"]];
+  qedFormula["qed_mass_shift", shown["massShift"]];
+  qedFormula["qed_pi", shown["Pi"]];
+  qedFormula["qed_delta3", shown["delta3"]];
+  qedFormula["qed_beta", shown["beta"]];
+  qedFormula["qed_pi_hat", shown["PiHat"]];
+  qedFormula["qed_F2", shown["F2"]];
+  qedFormula["qed_F2_zero", shown["F2zero"]];
+  qedFormula["qed_F1_pole", shown["F1pole"]];
+  qedFormula["qed_F1_zero", shown["F1zero"]];
+  qedShown = Association[Table[key -> (shown[key] /. alpha -> e^2/(4 Pi)), {key, {"pole", "delta2", "Zm", "massShift", "Pi", "delta3", "beta",
+       "PiHat", "F2", "F2zero", "F1pole", "F1zero"}}]]];
+qs[key_String] := qedShown[key];
+(* the self-energy: the poles of {A, B}; MS-bar delta2 and Zm; on shell (IR in dim. reg.) (m - m0)/m = -delta Z2 *)
+writeValue["check QED Sigma pole", Simplify[qs["pole"] - alpha/(4 Pi eps) {3 + xi, -xi}]];
+writeValue["check QED delta2 and Zm", Simplify[{qs["delta2"] + xi alpha/(4 Pi eps), qs["Zm"] - 1 + 3 alpha/(4 Pi eps)}]];
+writeValue["check QED on shell", Simplify[{qs["massShift"] - alpha/(4 Pi) (3/eps + 4 + 3 L), qv["deltaZ2OS"] + qs["massShift"]}]];
 (* the vacuum polarization: transverse exactly in d (the integrand of A + q^2 B is 0), independent of xi; delta3, beta *)
 qedPiMuNu = qv["PiMuNu"];
 writeValue["check QED transversality", Simplify[ReduceParameterIntegrals[coefficientOf[qedPiMuNu, LorentzMetric[mu, nu]] +
        ScalarProduct[q, q] coefficientOf[qedPiMuNu, FourVector[q, mu] FourVector[q, nu]]] /. (h : ParameterIntegral | SimplexIntegral)[f_, v_] :>
       h[FullSimplify[f], v]]];
 writeValue["check QED Pi independent of xi", Simplify[DifferentiateUnderIntegral[qedPiMuNu, xi]]];
-writeFormula["qed_pi", simplifiedIntegrands[inAlpha[ExpandParameterIntegrals[qv["Pi"], eps, 0]]], "Names" -> qedNames];
-writeFormula["qed_delta3", inAlpha[qv["PiPole"]], "Names" -> qedNames];
-writeFormula["qed_beta", qv["beta"]];
-writeValue["check QED delta3 and beta", Simplify[{qv["PiPole"] + alpha/(3 Pi eps), qv["beta"] - e^3/(12 Pi^2)}]];
-writeFormula["qed_pi_hat", simplifiedIntegrands[inAlpha[qv["PiHat"]] /. qedLog], "Names" -> qedNames];
+writeValue["check QED delta3 and beta", Simplify[{qs["delta3"] + alpha/(3 Pi eps), qs["beta"] - e^3/(12 Pi^2)}]];
 (* Pi-hat_2(q^2) at q^2 = -3 m^2 against Peskin-Schroeder's -(2 alpha/pi) Int x(1 - x) log(m^2/(m^2 - x(1 - x) q^2)) *)
-qedPiHatValue = N[qv["PiHat"] /. {ScalarProduct[q, q] -> -3, m -> 1, RenormalizationScale -> 1}]/e^2;
+qedPiHatValue = N[qs["PiHat"] /. {ScalarProduct[q, q] -> -3, m -> 1, RenormalizationScale -> 1}]/e^2;
 writeValue["QED Pi-hat at -3 m2", ToString[NumberForm[qedPiHatValue, 10]]];
 writeValue["check QED Pi-hat", Chop[qedPiHatValue + 1/(2 Pi^2) NIntegrate[x (1 - x) Log[1/(1 + 3 x (1 - x))], {x, 0, 1}], 10^-12]];
 (* the vertex: F1, F2, F3 in a general gauge; F2(0) = alpha/(2 pi) (Schwinger), the UV pole of F1 = -delta2 (Z1 = Z2),
    F1(0) - 1 = -delta Z2 on shell, F3 = 0; F2(-m^2) against Peskin-Schroeder *)
 {qedF1, qedF2, qedF3} = qv["FormFactors"];
-writeFormula["qed_F2_zero", inAlpha[qv["F2zero"]], "Names" -> qedNames];
-writeValue["check QED F2(0)", Simplify[qv["F2zero"] - alpha/(2 Pi)]];
-writeFormula["qed_F2", onSimplex[inAlpha[ExpandParameterIntegrals[qedF2 /. xi -> 1, eps, 0]]], "Names" -> qedNames];
-writeFormula["qed_F1_pole", inAlpha[qv["F1pole"]], "Names" -> qedNames];
-writeValue["check QED Z1 = Z2", Simplify[{qv["F1pole"] - xi alpha/(4 Pi eps), qv["F1pole"] + qv["delta2MS"]}]];
-writeFormula["qed_F1_zero", inAlphaUnits[qv["F1zero"]], "Names" -> qedNames];
-writeValue["check QED Ward identity on shell", Simplify[qv["F1zero"] + qv["deltaZ2OS"]]];
+writeValue["check QED F2(0)", Simplify[qs["F2zero"] - alpha/(2 Pi)]];
+writeValue["check QED Z1 = Z2", Simplify[{qs["F1pole"] - xi alpha/(4 Pi eps), qs["F1pole"] + qs["delta2"]}]];
+writeValue["check QED Ward identity on shell", Simplify[qs["F1zero"] + qv["deltaZ2OS"]]];
 (* F3 = 0: at q^2 = 0 in closed form; at any q^2 its integrand is odd under the exchange of the parameters of the two
    electron lines, x2 <-> x3 (F3 = (F3 + F3 with x2 <-> x3)/2 = 0) *)
 writeValue["check QED F3", Simplify[{ReduceParameterIntegrals[qedF3 /. q2 -> 0], ReduceParameterIntegrals[qedF3] /. SimplexIntegral[f_, v_] :>
@@ -1078,7 +1110,7 @@ writeValue["check QED F2 independent of xi", Chop[Quiet[N[ReduceParameterIntegra
        {q2 -> -1, m -> 1, lambda -> 1/10, RenormalizationScale -> 1, eps -> -3/10}], {NIntegrate::slwcon, NIntegrate::ncvb, NIntegrate::izero}], 10^-10]];
 (* Schwinger's a = (g - 2)/2 = alpha/(2 pi), with alpha = 1/137.035999177 *)
 writeValue["QED Schwinger value", ToString[NumberForm[N[1/(2 Pi 137.035999177)], 5]]];
-writeValue["seconds QED", N[Round[10 (AbsoluteTime[] - qedStart)]/10]];
+writeValue["seconds QED", N[Round[10 (AbsoluteTime[] - qedStart - qedChecksSeconds)]/10]];
 
 (* ---------------- QCD ---------------- *)
 (* gluons, quarks and ghosts in condensed notation: a label stands for a point, a Lorentz index and a colour index (and a

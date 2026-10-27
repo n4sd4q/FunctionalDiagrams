@@ -412,18 +412,17 @@ example["dimreg_bare", "sigmaB = InfraredRearrangedIntegral[sigmaPhi4, {a, b}, p
 gamma4B = InfraredRearrangedIntegral[gamma4, {a, b, c, d}, p, massless, eps];
 sigma21B = InfraredRearrangedIntegral[sigma21, {a, b, u}, p, massless, eps];
 Expand[PolePart[sigma21B, eps] /. lambda -> 16 Pi^2 lambda]", "Formula", {}, "Names" -> epsName];
-example["dimreg_z_solution", "kappa = 1/(16 Pi^2);
-z[c_] := 1 + c[1] lambda kappa/eps + lambda^2 kappa^2 (c[2]/eps^2 + c[3]/eps);
+example["dimreg_z_solution", "z[c_] := 1 + c[1] lambda kappa/eps + lambda^2 kappa^2 (c[2]/eps^2 + c[3]/eps);
 {zPhi, zLambda, zM2} = {z[zf], z[zl], z[zm]};
 upTo[e_, n_] := Sum[Coefficient[e, lambda, j] lambda^j, {j, 0, n}];
 finite = {upTo[zPhi (p^2 - (sigmaB /. lambda -> lambda zLambda)), 2],
    upTo[zPhi^2 (gamma4B /. lambda -> lambda zLambda), 3],
-   upTo[zM2 (1 - (sigma21B /. lambda -> lambda zLambda)), 2]};
+   upTo[zM2 (1 - (sigma21B /. lambda -> lambda zLambda)), 2]} /. kappa -> 1/(16 Pi^2);
 equations = Flatten[CoefficientList[Expand[eps^4 PolePart[#, eps]] /.
       Log[p^2/RenormalizationScale^2] -> L, {lambda, eps, L, p}] & /@ finite];
 solution = First[Solve[Thread[DeleteCases[equations, 0] == 0],
    Flatten[Table[c[i], {c, {zf, zl, zm}}, {i, 3}]]]]", "Text"];
-example["dimreg_z_lambda", "Expand[zLambda /. solution]", "Formula", {}, "Names" -> epsName];
+example["dimreg_z_lambda", "zLambda /. solution", "Formula", {}, "Names" -> epsName];
 example["dimreg_beta", "beta = BetaFunctionFromZ[zLambda /. solution, lambda, eps, 3]", "Formula"];
 example["dimreg_gamma_phi", "1/2 AnomalousDimensionFromZ[zPhi /. solution, lambda, eps, -2 eps lambda + beta, 2]",
   "Formula"];

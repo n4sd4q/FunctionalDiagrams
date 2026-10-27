@@ -1,1 +1,1 @@
-Expand[zLambda /. solution]
+zLambda /. solution

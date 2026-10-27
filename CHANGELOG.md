@@ -50,7 +50,13 @@
   disorder and of the field σ were written over two lines that Mathematica reads as two inputs (the boson part was
   lost), `upTo` and the coefficient of a Dirac structure were functions of the script (now defined in the code, and
   the built-in `Coefficient`), the trees reused the name `W` of section 1 (now `connectedW`), and the check of Hedin's
-  equations used objects that the code did not define.
+  equations used objects that the code did not define. The sections on dimensional regularization and QED show their
+  results as their code writes them, no longer rewritten: the code puts in κ = 1/16π² and α = e²/4π (the rules
+  `toKappa` and `toAlpha`, κ a symbol in the Z factors) and collects or simplifies; the self-energy is the list {A, B} of
+  its poles, Σ₂ = mA + p̸B; the pole parts of the rearranged Γ⁽⁴⁾ are the list that `Tally` gives, with the numbers of
+  diagrams; the integrands of Π₂ and F₂ are printed as computed (that of F₂ is written on the simplex in the text); and
+  the fixed point and the exponents of the ε expansion are computed by code shown (`InverseSeries`). The averaged
+  propagator of disorder, written order by order, no longer carries its last order to the next page.
 - **Every example of the manual gives what follows it.** The introduction of the manual says how the outputs are
   written: a sum of diagrams as `DiagramPlot` draws it, with the free labels of the output as the external labels and
   only the sizing options left out of the code; a formula with the usual names, which the text now gives where they
@@ -60,7 +66,8 @@
   are drawn as their commands give them; the examples of `"VertexLabels"` and `"InteractionStyle"` show the
   `DiagramPlot` commands that draw them. `make_examples.wl` takes no drawing option outside the code: a code that ends
   with `DiagramPlot[...]` is drawn with its arguments, and the external labels of every picture are checked to be the
-  free labels of the output.
+  free labels of the output. The Z factors and the renormalization-group functions of φ⁴ are printed in κ, a symbol in
+  the code (before, with powers of π, and in κ only in the text).
 - **The 2PI action with means in the form of the textbooks.** Γ[Ψ̄, Ψ, G] is now written as Γ[φ̄, G] is,
   S[Ψ̄, Ψ] − Tr ln(−G⁻¹) − Tr(D⁻¹[Ψ̄, Ψ] G − 1) + Γ₂, with D⁻¹(x, y) = δ²S/δΨ̄(x)δΨ(y) = G₀⁻¹ − Σ_HF[−ΨΨ̄] the inverse
   propagator in the presence of the means: Σ_HF[−ΨΨ̄], the first-order self-energy Σ_HF[G] with −Ψ(x)Ψ̄(y) in place of
