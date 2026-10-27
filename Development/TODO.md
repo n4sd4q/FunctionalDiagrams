@@ -142,9 +142,19 @@ free energy.
     meet there, or changes every gluon picture;
   - the Γ⁰ ph̄ V³ vertical chain of two bubbles sits, tall, on a last row with one other term: a matter of the line
     breaking of the order sums (`assemble.py`), not of the picture.
+- **Trees with free leaves.** The shapes of the trees W^(n) of the showcase (the labels integrated over, the leaves free
+  ends) are drawn by the general layout, the vertices in a row; the tree layout (`treeLayoutWithExternals`) would draw
+  them as the trees with labelled leaves are.
+- **Leg directions at a blob.** A label at a port of a blob gets no vote in `legDirectionsFor` (`fermionImbalance` counts
+  lines), so that in δΣ/δU = Γ⁰L the legs x1, x2, which in some terms end at the box L, are drawn without arrows when the
+  whole sum is drawn; the showcase passes `"LegDirections" -> "Alternating"`. The directed ports of fermion blobs could
+  vote.
 
 ## Documents
 
+- **The examples of the manual.** `Documentation/make_examples.wl` passes drawing options that the code strings shown in
+  the manual do not contain (for instance `"LegDirections" -> "Alternating"` for the irreducible vertex at first order);
+  audit them as the showcase was, so that every command shown gives exactly what follows it (the rule in `CLAUDE.md`).
 - Usage messages: those of `EffectiveAction2PI` (about 7800 characters) and `EffectiveAction1PI` (3700) are long; the
   details could move to the manual.
 

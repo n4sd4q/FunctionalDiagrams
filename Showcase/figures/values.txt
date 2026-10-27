@@ -30,12 +30,12 @@ counts Gamma0 channels :: <|"FullyIrreducible" -> {2, 0, 0}, "ParticleHole" -> {
 check Gamma0 symmetry :: 0
 check Gamma0 G = (2m-1) Sigma :: {0, 0, 0}
 check Ward identity :: 0
-seconds two-particle connected :: 0.3
+seconds two-particle connected :: 0.4
 counts two-particle connected :: {2, 26, 330}
 check two-particle cumulant connected :: 0
 check two-particle moments from cumulants :: 0
 check two-particle cumulant shortcut :: 0
-seconds EA Gamma[Psibar, Psi] :: 0.6
+seconds EA Gamma[Psibar, Psi] :: 0.7
 seconds F :: 0.8
 check full vertex shortcut :: 0
 counts F :: {2, 10, 82}
@@ -98,7 +98,7 @@ error brute force Migdal :: "$2\\times10^{-9}$"
 check brute force Migdal :: 0
 seconds Phi disorder :: 0.
 check SCBA :: 0
-seconds phi4 third order :: 1.7
+seconds phi4 third order :: 1.6
 counts phi4 Z and W at a source :: {3, 14, 8}
 check phi4 W at a source connected :: 0
 counts phi4 vacuum :: {1, 3, 7}
@@ -114,7 +114,7 @@ check phi4 cumulant connected :: 0
 check phi4 moments from cumulants :: 0
 check phi4 cumulant shortcut :: 0
 check phi4 moment shortcut :: 0
-seconds phi4 moments and cumulants :: 5.8
+seconds phi4 moments and cumulants :: 5.7
 counts phi4 four-point connected :: {1, 7, 42}
 check phi4 Dyson :: 0
 seconds EA Gamma[phibar] :: 0.1
@@ -125,7 +125,7 @@ counts phi4 vertex :: {1, 3, 9}
 check parquet phi4 :: <|"s" -> {0, 0, 0}, "t" -> {0, 0, 0}, "u" -> {0, 0, 0}|>
 counts phi4 R_s :: {1, 3}
 counts phi4 fully irreducible :: {1, 0, 0}
-seconds phi4 vertex fourth order :: 1.6
+seconds phi4 vertex fourth order :: 1.5
 counts phi4 vertex 4 :: 37
 counts phi4 fully irreducible 4 :: 1
 check phi4 crossing :: {0, 0, 0}
@@ -164,7 +164,7 @@ seconds dimreg :: 0.7
 seconds QED vertex diagrams :: 0.
 counts QED :: {1, 1, 6, 1}
 check QED tree vertex :: 0
-seconds QED one loop :: 2.9
+seconds QED one loop :: 3.
 check QED Sigma pole :: {0, 0}
 check QED delta2 and Zm :: {0, 0}
 check QED on shell :: {0, 0}
@@ -228,7 +228,7 @@ seconds EA Lambda phi^4 :: 0.1
 seconds EA parquet phi^4 :: 0.1
 check EA Lambda phi4 :: {0, 0, 0, 0}
 seconds EA Lambda electron gas :: 0.7
-seconds EA full vertex electron gas :: 14.4
+seconds EA full vertex electron gas :: 14.2
 check EA Lambda electron gas :: {0, 0}
 counts EA Lambda :: {1, 64}
 seconds EA Gamma[phibar] with lines D0 :: 0.
@@ -247,7 +247,7 @@ counts 1PI psi two loops :: {2, 6, 35}
 counts 1PI psi three loops :: {0, 5, 42}
 counts 1PI psi four loops :: {0, 0, 20}
 counts 1PI psi orders :: {5, 15, 103}
-seconds EA Gamma[Psibar, Psi] checks :: 0.8
+seconds EA Gamma[Psibar, Psi] checks :: 0.9
 check 1PI psi :: {0, 0, {0, 0, 0, 0}, {0, 0}}
 seconds EA Gamma[Psibar, Psi, G*] :: 0.7
 check 2PI psi at stationary G :: {0, 0, 0, 0}
@@ -258,7 +258,7 @@ counts Nambu Sigma :: {1, 1, 1}
 check Nambu stationarity :: 0
 seconds Nambu Phi components :: 0.4
 counts Nambu Phi components :: {3, 7, 52}
-seconds Phi with pairing terms :: 1.5
+seconds Phi with pairing terms :: 1.4
 check Nambu Phi components :: {{0, 0, 0}, 0}
 check Nambu first order :: {0, 0, 0}
 check Gorkov :: {0, 0}
@@ -290,7 +290,7 @@ check Nambu 1PI components :: {0, 0, 0, 0}
 check Nambu mean derivatives :: {{0, 0, 0, 0}, 0}
 seconds Nambu one site :: 0.1
 check Nambu zero dimensions :: {0, {0, 0, 0, 0}, {0, 0, 0}, 0}
-seconds Nambu :: 15.9
+seconds Nambu :: 15.8
 check EA TDHF kernel shortcut :: 0
 check EA TDHF dynamic limit :: {0, 0, 0}
 check EA Hartree kernel shortcut :: 0
@@ -309,6 +309,6 @@ check EA 0d charge vertex :: 0
 check EA 0d branch point :: 0
 check EA 0d wrong branch :: {0, 0}
 check EA 0d no solution :: 0
-seconds effective actions :: 47.3
-seconds total :: 137.2
+seconds effective actions :: 48.4
+seconds total :: 141.
 

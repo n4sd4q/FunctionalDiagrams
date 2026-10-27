@@ -11,6 +11,19 @@
   these are the pictures by channel that followed the first command before. A sum written order by order is drawn as
   one sum and then split, so that every order looks as in `DiagramPlot` of the whole output. The first example of the
   README plots Φ[G] too (`DiagramPlot[Phi]`), and its picture shows Γ⁰ as `DiagramPlot` draws it, without channel marks.
+- **Every code block of the showcase gives what follows it.** The introduction says once that the sizing options of the
+  script are left out; every other option is now in the code: `"Interactions"` for W in Φ[G, W] and for D_σ, `"Couplings"
+  -> {g}` for the phonons, `"LegDirections"` for δΣ/δU. The particle–particle kernel and the averaged propagator of
+  disorder are drawn as their commands give them (no channel marks; the plain arrow of a skeleton expansion, not a double
+  line), and the shapes of the trees W⁽ⁿ⁾ as the integrated sums are (their leaves free ends). The code computes what is
+  shown: the four sums of tree shapes, the four- and six-point fermion trees, Z/Z₀ of the electron gas, the pieces of
+  Γ[φ̄] and Γ[Ψ̄, Ψ] grouped by loops, R_ph, the pole parts of the rearranged Γ⁽⁴⁾, the checks of Hubbard–Stratonovich and
+  each Hedin equation to its order, and in QED δ₂, Z_m, the mass shift, Π₂, δ₃, β(e), Π̂₂ and the form factors
+  (δΓ^μ = −(i/e)·(ieδΓ^μ): the sign of the code shown is corrected). Assignments whose value is drawn no longer end with
+  a semicolon, declarations used by the pictures are shown (`DeclareSymmetric[DressedPropagator]`, the anomalous
+  propagators, the dashed full phonon line), a code block that checks comes after the pictures it does not draw
+  (Hedin), the Nambu kernel follows its derivative, and the orders left out of a picture are said. The left-hand side
+  of a sum written order by order no longer stays alone at the foot of a page.
 
 ## 2.4.0 (2026-10-26)
 

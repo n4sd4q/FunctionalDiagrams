@@ -157,8 +157,6 @@
   \hangindent=\orderlabelwidth \hangafter=1 \diagramparagraph
   \noindent\makebox[\orderlabelwidth][l]{\small\color{accent}$#1$}\inputfigure{#2}\par
   \end{tcolorbox}}
-% the channel of the diagrams that follow, in a sum of vertex diagrams
-\newcommand{\channelmark}[1]{\mbox{\scriptsize\sffamily\color{comment}[#1]}}
 % the parts of the document: a banner before their first section
 \newcommand{\partheading}[2]{\par\Needspace{6\baselineskip}\bigskip\noindent
   {\sffamily\color{accent}\small\bfseries PART #1\quad\normalsize #2}\par\nobreak\vspace{2pt}
@@ -186,8 +184,10 @@ differentiates them with respect to bosonic and Grassmann sources and brings eve
 equal diagrams are recognized. Generating functionals, Wick's theorem and perturbation theory are built on it:
 Feynman diagrams are derived as on paper, with the signs and symmetry factors that come out of the algebra, and then
 classified, differentiated with respect to the propagator, compared and drawn, in Mathematica or as TikZ code. Every
-formula, picture and number in this document was produced by the package; the code shown is the core of the script that
-made them.
+formula, picture and number in this document was produced by the package, and every command shown gives what follows it:
+a sum of diagrams as \pkg{DiagramPlot} draws it, its orders in coloured bands, at the size of this page (the options
+\pkg{"Scale"}, \pkg{"LineWidth"} and \pkg{"LabelFont"}, which only set the size, are left out of the code), and a
+formula as \pkg{ExpressionToLaTeX} writes it, with the usual names of the functions.
 
 \medskip
 \noindent
@@ -728,7 +728,7 @@ $1+z_1+z_2+z_3$, expanded to $\lambda^3$, is the sum of the connected diagrams a
 \begin{code}
 {vacuum1, vacuum2, vacuum3} = {SetSourcesToZero[firstOrder],
     SetSourcesToZero[secondOrder]/2, SetSourcesToZero[thirdOrder]/6};
-connectedVacuum = ConnectedDiagrams[vacuum1 + vacuum2 + vacuum3, {}];
+connectedVacuum = ConnectedDiagrams[vacuum1 + vacuum2 + vacuum3, {}]
 SimplifyDiagrams[vacuum1 + vacuum2 + vacuum3 - vacuum1^2/2 - vacuum1 vacuum2
     + vacuum1^3/3 - connectedVacuum]
 \end{code}
@@ -767,10 +767,10 @@ e^{-S_{\rm int}}\rangle_0$ is the sum of the diagrams without vacuum bubbles. Th
 \begin{code}
 numerator = SetSourcesToZero[FunctionalDerivative[FreeBosonGeneratingFunctional +
     firstOrder + secondOrder/2 + thirdOrder/6, J[a], J[b]]];
-SimplifyDiagrams[numerator - DropVacuumBubbles[numerator, {a, b}]
-    (1 + vacuum1 + vacuum2 + vacuum3)]
 phi4Propagator = PerturbativeCorrelationFunction[FreeBosonGeneratingFunctional,
     {phi[a], phi[b]}, Phi4Vertex, 3]
+SimplifyDiagrams[numerator - DropVacuumBubbles[numerator, {a, b}]
+    (1 + vacuum1 + vacuum2 + vacuum3)]
 \end{code}
 \begin{ordersum}{\langle\phi_a\phi_b\rangle}
 \orderrow{\lambda^0}{phi4_propagator_0}
@@ -799,6 +799,10 @@ CoulombVertex = 1/2 IntegralOver[InteractionPotential[x, y]
     psibar[x] ** psibar[y] ** psi[y] ** psi[x], {x, y}];   (* S_int, used below *)
 applyInteraction[F_] := SimplifyDiagrams[-1/2 IntegralOver[InteractionPotential[u, v]
     FunctionalDerivative[F, eta[u], eta[v], etabar[v], etabar[u]], {u, v}]];
+firstOrder = applyInteraction[FreeFermionGeneratingFunctional];
+secondOrder = applyInteraction[firstOrder]; thirdOrder = applyInteraction[secondOrder];
+SetSourcesToZero[FreeFermionGeneratingFunctional + firstOrder + secondOrder/2 +
+    thirdOrder/6]
 \end{code}
 \begin{ordersum}{\frac{Z}{Z_0}}
 \orderrow{V^0}{electron_vacuum_full_0}
@@ -827,7 +831,7 @@ $Z=\operatorname{tr}e^{-\beta(H-\mu N)}$ and $\Omega=-\beta^{-1}\log Z$ is the g
 $\phi^4$ theory:
 \begin{code}
 connectedVacuum = ConnectedDiagrams[vacuum1 + vacuum2 + vacuum3, {}];
-vacuum = ConnectedVacuumDiagrams[FreeFermionGeneratingFunctional, CoulombVertex, 3];
+vacuum = ConnectedVacuumDiagrams[FreeFermionGeneratingFunctional, CoulombVertex, 3]
 \end{code}
 \begin{ordersum}{\log\frac{Z}{Z_0}}
 \orderrow{V}{vacuum_1}
@@ -928,7 +932,8 @@ connected four-point function $W^{(4)}$ plus the three pairings of full propagat
 lines); the package draws it from the derivatives of $e^W$:
 \begin{code}
 DeclareSymmetric[ConnectedTwoPoint, ConnectedFourPoint];
-DeclareLineStyle[ConnectedTwoPoint, "Double"]; DeclareBlob[ConnectedFourPoint, "W^{(4)}"];
+DeclareLineStyle[ConnectedTwoPoint, "Double"];
+DeclareBlob[ConnectedFourPoint, "\\scriptstyle W^{(4)}", "Fill" -> "White"];
 expW = Exp[1/2 IntegralOver[ConnectedTwoPoint[x, y] J[x] J[y], {x, y}] +
     1/24 IntegralOver[ConnectedFourPoint[x, y, u, v] J[x] J[y] J[u] J[v],
         {x, y, u, v}]];
@@ -978,7 +983,7 @@ phi4FourPointConnected = ConnectedCorrelationFunction[FreeBosonGeneratingFunctio
 self-energy insertion, and the connected part.
 \begin{code}
 twoParticle = PerturbativeCorrelationFunction[FreeFermionGeneratingFunctional,
-    {psi[x1], psibar[x2], psibar[x4], psi[x3]}, CoulombVertex, 1];
+    {psi[x1], psibar[x2], psibar[x4], psi[x3]}, CoulombVertex, 1]
 \end{code}
 \begin{ordersum}{\langle\psi_1\bar\psi_2\bar\psi_4\psi_3\rangle}
 \orderrow{V^0}{two_particle_0}
@@ -1052,7 +1057,7 @@ at $x$, and the Hartree term, proportional to $\delta(x,y)$, sits on the single 
 \begin{code}
 selfEnergyPerturbative = AmputateExternalLegs[
     ParticleIrreducibleDiagrams[greenFunction, 1, {x, y}, {BareGreenFunction}],
-    {x, y}, {BareGreenFunction}];
+    {x, y}, {BareGreenFunction}]
 \end{code}
 \begin{ordersum}{\Sigma(x,y)}
 \orderrow{V}{self_energy_perturbative_1}
@@ -1094,7 +1099,7 @@ DeclareSource[LocalPotential];   (* U(z), coupled to the density *)
 DeclareFunctionalDerivative[BareGreenFunction[p_, q_], LocalPotential[z_],
     BareGreenFunction[p, z] BareGreenFunction[z, q]];
 densityCorrelation = -FunctionalDerivative[OrderPart[greenFunction,
-    InteractionPotential, {0, 1}] /. {x -> a, y -> a}, LocalPotential[b]];
+    InteractionPotential, {0, 1}] /. {x -> a, y -> a}, LocalPotential[b]]
 (* the same: ConnectedCorrelationFunction[FreeFermionGeneratingFunctional,
     {psibar[a], psi[a], psibar[b], psi[b]}, CoulombVertex, 1] *)
 properPart = IrreducibleDiagrams[densityCorrelation, {{a}, {b}}, 1,
@@ -1395,7 +1400,7 @@ $f'(\xi)\,n_F(\xi)+f(\xi)\,n_F'(\xi)$. The diagrams of the perturbative self-ene
 skeletons, Hartree and Fock insertions on the lines of the Hartree and Fock diagrams,
 \begin{code}
 insertions2 = SimplifyDiagrams[OrderPart[selfEnergyPerturbative - sigmaSkeleton,
-    InteractionPotential, 2]];
+    InteractionPotential, 2]]
 EvaluateMatsubara[insertions2, twoPoint, gasRules, "SpinDegeneracy" -> 2,
     "LoopMomenta" -> {p1, p2}]
 \end{code}
@@ -1417,7 +1422,8 @@ gives the integrand before the sums, a function of the loop frequencies, which i
 frequencies ($800\times16000$ for two frequency sums), with the convergence factors and a Richardson extrapolation in their
 number (a sum truncated at $N$ frequencies has an error of order $1/N$, which $2S(2N)-S(N)$ removes), at $T=0.37$, for $\xi_p=p^2/2-0.35$, $v_q=1/(q^2+0.6)$ and given momenta:
 \begin{code}
-DiagramIntegrand[OrderPart[sigmaSkeleton, InteractionPotential, 2], twoPoint, gasRules]
+integrand = DiagramIntegrand[OrderPart[sigmaSkeleton, InteractionPotential, 2],
+    twoPoint, gasRules];
 \end{code}
 \begin{result}
 relative errors: Lindhard \val{ErrorsBruteForce1}, $\Sigma^{(2)}$ (two frequency sums) \val{ErrorsBruteForce2}, insertions
@@ -1466,7 +1472,7 @@ with the lines $D[\bar\phi]$ (double lines), whose derivative $\delta D/\delta\b
 that the vertex functions follow by differentiation; for $\phi^4$ (computed to third order, shown here to the second):
 \begin{code}
 gamma1PI = EffectiveAction1PI[FreeBosonGeneratingFunctional, Phi4Vertex, 3,
-    phi -> phiMean, FreePropagator -> BackgroundPropagator];
+    phi -> phiMean, FreePropagator -> BackgroundPropagator]
 \end{code}
 \begin{gather*}
 \Gamma[\bar\phi]=\formulalines{ea_gamma_1pi}
@@ -1478,17 +1484,19 @@ In $\phi^4$ theory the shift turns $S_{\rm int}=\frac{\lambda}{24}\int\phi^4$ in
 $\lambda\bar\phi^2\phi^2/4$ in the background, $D^{-1}[\bar\phi]=D_0^{-1}+\lambda\bar\phi^2/2$, and the vertices $\lambda\bar\phi\,\phi^3/6$ and
 $\lambda\phi^4/24$. In the pictures the mean field is a crossed circle at the end of a short line, and every vertex stands
 for $-\lambda$. Expanded in the bare propagator $D_0$, the logarithm is a series of rings and every line $D[\bar\phi]$ a chain of
-mass insertions:
+mass insertions. The same series comes directly with bare lines, \pkg{FreePropagator -> FreePropagator}: the mass insertion
+then stays a vertex of degree two. At the orders $\lambda$, $\lambda^2$ and $\lambda^3$ there are \val{Counts1PIBare}
+diagrams. A mass insertion does not change the number of loops $L$ (lines minus vertices plus one), so that grouping the
+diagrams by $L$ gives the pieces: the tree, $S[\bar\phi]=\frac12\int\bar\phi\,D_0^{-1}\bar\phi+S_{\rm int}[\bar\phi]$, the one
+loop, the rings of insertions $\bar\phi^2$, and the 1PI vacuum diagrams with two, three and four loops in the background:
 \begin{code}
-ExpandTrace[gamma1PI /. BackgroundPropagator -> Power[Power[FreePropagator, -1] -
-    LabelFunction[-lambda/2 phiMean[a]^2 DeltaFunction[a, b], {a, b}], -1],
-    FreePropagator, 3, "MaximumOrder" -> {lambda, 3}]
+gamma1PIBare = ExpandTrace[gamma1PI /. BackgroundPropagator -> Power[
+    Power[FreePropagator, -1] - LabelFunction[-lambda/2 phiMean[a]^2 DeltaFunction[a, b],
+    {a, b}], -1], FreePropagator, 3, "MaximumOrder" -> {lambda, 3}];
+loops[t_] := Total[Cases[{t}, IntegralOver[f_, v_List] :>
+    Exponent[f /. p_FreePropagator :> mark p, mark] - Length[v], Infinity]] + 1;
+KeySort[GroupBy[DiagramTerms[OrderPart[gamma1PIBare, lambda, {1, 2, 3}]], loops, Total]]
 \end{code}
-The same series comes directly with bare lines, \pkg{FreePropagator -> FreePropagator}: the mass insertion then stays a
-vertex of degree two. At the orders $\lambda$, $\lambda^2$ and $\lambda^3$ there are \val{Counts1PIBare} diagrams. A mass insertion
-does not change the number of loops, so that grouping the diagrams by $L$ gives the pieces: the tree, $S[\bar\phi]=\frac12\int
-\bar\phi\,D_0^{-1}\bar\phi+S_{\rm int}[\bar\phi]$, the one loop, the rings of insertions $\bar\phi^2$, and the 1PI vacuum diagrams with
-two, three and four loops in the background:
 \figuresum{S_{\rm int}[\bar\phi]}{onepi_tree}
 \figuresum{\tfrac12{\rm Tr}\ln D^{-1}[\bar\phi]-\tfrac12{\rm Tr}\ln D_0^{-1}}{onepi_rings}
 \begin{ordersum}{\Gamma^{[2]}}
@@ -1532,17 +1540,23 @@ lines and the vertices of degree two:
 \Gamma[\bar\Psi,\Psi]=-\bar\Psi G_0^{-1}\Psi+S_{\rm int}[\bar\Psi,\Psi]-{\rm Tr}\ln(-G_0^{-1})-(\text{1PI vacuum diagrams}),
 \]
 with the lines $G_0$ and the vertices of degree two or more: the form of the $\phi^4$ series with bare lines.
-\begin{code}
-gammaPsi1PI = EffectiveAction1PI[FreeFermionGeneratingFunctional, CoulombVertex, 3,
-    {psi -> MeanPsi, psibar -> MeanPsibar}, BareGreenFunction -> BareGreenFunction];
-\end{code}
 The pieces are again the orders in the loops, $\ell=(\text{fermion lines})-(\text{interaction lines})+1$: the tree $-\bar\Psi G_0^{-1}\Psi
 +S_{\rm int}[\bar\Psi,\Psi]$; the one loop, the logarithm of the fluctuation operator in the background (a supertrace over its
 Nambu components), which expanded in $G_0$ is $-{\rm Tr}\ln(-G_0^{-1})$ and the rings of the vertices of degree two, normal and
 anomalous; and the 1PI vacuum diagrams with two or more loops. A mean is a crossed circle at the end of a short fermion
 line, the means taken in the canonical order of section~\ref{sec:engine}, every $\Psi$ before every $\bar\Psi$
 (so that $S_{\rm int}[\bar\Psi,\Psi]=\frac12\int_{x,y}V(x,y)\bar\Psi(x)\bar\Psi(y)\Psi(y)\Psi(x)$ is
-$-\frac12\int_{x,y}V(x,y)\Psi(x)\Psi(y)\bar\Psi(x)\bar\Psi(y)$), and every interaction line stands for $-V$:
+$-\frac12\int_{x,y}V(x,y)\Psi(x)\Psi(y)\bar\Psi(x)\bar\Psi(y)$), and every interaction line stands for $-V$ (the pieces with
+two and three loops drawn to $V^2$):
+\begin{code}
+gammaPsi1PI = EffectiveAction1PI[FreeFermionGeneratingFunctional, CoulombVertex, 3,
+    {psi -> MeanPsi, psibar -> MeanPsibar}, BareGreenFunction -> BareGreenFunction];
+loopsPsi[t_] := Total[Cases[{t}, IntegralOver[f_, _List] :>
+    Exponent[f /. p_BareGreenFunction :> mark p, mark] -
+    Exponent[f /. p_InteractionPotential :> mark p, mark], Infinity]] + 1;
+KeySort[GroupBy[DiagramTerms[OrderPart[gammaPsi1PI, InteractionPotential, {1, 2, 3}]],
+    loopsPsi, Total]]
+\end{code}
 \figuresum{S_{\rm int}[\bar\Psi,\Psi]}{onepi_psi_tree}
 \begin{ordersum}{\Gamma^{[1]}+{\rm Tr}\ln(-G_0^{-1})}
 \orderrow{V}{onepi_psi_rings_1}
@@ -1582,14 +1596,15 @@ the equation of the mean field; differentiating the lines $D[\bar\phi]$ through 
 \end{ordersum}
 At $\bar\phi=0$, where the lines $D[\bar\phi]$ are $D_0$, the second derivative is $\Gamma^{(2)}=D_0^{-1}-\Sigma$, and the
 fourth the 1PI four-point vertex; to $\lambda^3$ (a derivative of the lines brings a coupling, so that the derivatives hold
-terms of higher orders, not all of them complete):
+terms of higher orders, not all of them complete), drawn here to $\lambda^2$ (section~\ref{sec:dimreg} draws the
+third order):
 \begin{code}
 atZero[e_] := ExpandTrace[SetSourcesToZero[e]] /.
     BackgroundPropagator -> FreePropagator;
 sigma1PI = OrderPart[OperatorKernel[Power[FreePropagator, -1]][a, b] - atZero[
     FunctionalDerivative[gamma1PI, phiMean[a], phiMean[b]]], lambda, {1, 2, 3}];
 gamma4 = atZero[OrderPart[FunctionalDerivative[gamma1PI, phiMean[a], phiMean[b],
-    phiMean[c], phiMean[d]], lambda, {1, 2, 3}]];
+    phiMean[c], phiMean[d]], lambda, {1, 2, 3}]]
 \end{code}
 \begin{ordersum}{\Gamma^{(4)}}
 \orderrow{\lambda}{ea_gamma4_1pi_1}
@@ -1643,12 +1658,13 @@ weights are $\pm1$, the sign being $(-1)^{\text{number of vertices}}$, and there
 \paragraph{All the trees up to six points} Integrating over the external labels identifies the trees that differ only
 by their labels, and the canonical form counts them:
 \begin{code}
-W6 = FunctionalDerivative[FullPropagator[x5, x6], ExternalSource[x1], ExternalSource[x2],
-    ExternalSource[x3], ExternalSource[x4]];
-SimplifyDiagrams[IntegralOver[W6, {x1, x2, x3, x4, x5, x6}]]
+W[n_] := FunctionalDerivative[FullPropagator[x5, x6],
+    Sequence @@ (ExternalSource /@ Take[{x1, x2, x3, x4}, n - 2])];
+Table[SimplifyDiagrams[IntegralOver[W[n],
+    Join[Take[{x1, x2, x3, x4}, n - 2], {x5, x6}]]], {n, 3, 6}]
 \end{code}
-Each picture stands for the sum over the inequivalent ways of attaching the labels to its legs, and the number in front
-counts them:
+Each picture, whose leaves are free ends, stands for the sum over the inequivalent ways of attaching the labels to its
+legs, and the number in front counts them:
 \begin{ordersum}{W^{(n)}}
 \orderrow{n=3}{tree_shapes_3}
 \orderrow{n=4}{tree_shapes_4}
@@ -1689,9 +1705,11 @@ $\sfield=(\psi,\bar\psi)$~\cite{SchuetzBartoschKopietz2005,KopietzBartoschSchuet
 propagator and vertices, \pkg{"Fermion"} --- by projecting every line and every vertex on the components $\psi$ and
 $\bar\psi$, with the signs of the permutations:
 \begin{code}
+ConnectedFunctionFromVertices[{x1, x2, x3, x4}, "FermionLines"]
 ConnectedFunctionFromVertices[{x1, x2, x3, x4, x5, x6}, "FermionLines"]
 \end{code}
-gives $\langle\psi_1\bar\psi_2\psi_3\bar\psi_4\psi_5\bar\psi_6\rangle_c$. $W^{(4)}$ is one tree and $W^{(6)}$ has
+gives $\langle\psi_1\bar\psi_2\psi_3\bar\psi_4\rangle_c$ and $\langle\psi_1\bar\psi_2\psi_3\bar\psi_4\psi_5\bar\psi_6\rangle_c$.
+$W^{(4)}$ is one tree and $W^{(6)}$ has
 \val{CountsFermionLineTrees2}: $\Gamma^{(6)}$, and nine trees of two $\Gamma^{(4)}$ joined by a fermion line, each with the
 sign of the permutation of its legs:
 \figuresum{W^{(4)}}{tree_fermion_lines_four}
@@ -1726,8 +1744,9 @@ of the skeleton diagrams of these derivatives, with $G_0\to G$ (\pkg{SkeletonDia
 $\Gamma^{(4)}$ has one bubble in each of the channels $s$, $t$ and $u$ at one loop and \val{CountsPhi4Vertex3} diagrams at
 two loops:
 \begin{code}
+DeclareSymmetric[DressedPropagator];
 vertexPhi4 = SkeletonDiagrams[gamma4, {a, b, c, d}, {FreePropagator}] /.
-    FreePropagator -> DressedPropagator;
+    FreePropagator -> DressedPropagator
 (* the same: PerturbativeFullVertex[FreeBosonGeneratingFunctional, Phi4Vertex, 3,
     {phi}, {a, b, c, d}, FreePropagator -> DressedPropagator] *)
 \end{code}
@@ -1743,7 +1762,7 @@ here to second order (section~\ref{sec:twoparticle} checks the Bethe--Salpeter e
 \begin{code}
 fullVertex = SkeletonDiagrams[SetSourcesToZero[FunctionalDerivative[gammaPsi1PI,
     MeanPsibar[x1], MeanPsi[x2], MeanPsibar[x3], MeanPsi[x4]]], {x1, x2, x3, x4},
-    {BareGreenFunction}] /. BareGreenFunction -> DressedGreenFunction;
+    {BareGreenFunction}] /. BareGreenFunction -> DressedGreenFunction
 (* the same: PerturbativeFullVertex[FreeFermionGeneratingFunctional, CoulombVertex, 3,
     {psi, psibar}, {x1, x2, x3, x4}, BareGreenFunction -> DressedGreenFunction] *)
 \end{code}
@@ -1807,7 +1826,7 @@ line, and $\lambda\phi^4/24$:
 \begin{code}
 gammaPhiG = EffectiveAction2PI[FreeBosonGeneratingFunctional, Phi4Vertex, 3,
     FreePropagator -> DressedPropagator, "Statistics" -> "Boson",
-    "MeanFields" -> {phi -> phiMean}];
+    "MeanFields" -> {phi -> phiMean}]
 \end{code}
 To first order, with the traces as inert objects (\pkg{TraceLog}, \pkg{OperatorTrace}),
 \begin{gather*}
@@ -1841,7 +1860,7 @@ $\Lambda_2^{\rm int}+\frac{\lambda}{24}\int\bar\phi^4+\frac{\lambda}{4}\int\bar\
 DeclareDirectedPropagator[DressedGreenFunction];
 gammaPsiG = EffectiveAction2PI[FreeFermionGeneratingFunctional, CoulombVertex, 3,
     BareGreenFunction -> DressedGreenFunction,
-    "MeanFields" -> {psi -> MeanPsi, psibar -> MeanPsibar}];
+    "MeanFields" -> {psi -> MeanPsi, psibar -> MeanPsibar}]
 \end{code}
 To first order,
 \begin{gather*}
@@ -1929,7 +1948,7 @@ For $\phi^4$ theory, $\Gamma_2[G]$ and its self-energy to third order, $\Sigma=-
 is a shortcut for this derivative:
 \begin{code}
 gamma2 = LuttingerWardFunctional[FreeBosonGeneratingFunctional, Phi4Vertex, 3,
-    FreePropagator -> DressedPropagator];
+    FreePropagator -> DressedPropagator]
 -2 FunctionalDerivative[gamma2, DressedPropagator[a, b]]
 (* the same: SelfEnergy[gamma2, DressedPropagator, {a, b}, "Statistics" -> "Boson"] *)
 \end{code}
@@ -1946,7 +1965,8 @@ gamma2 = LuttingerWardFunctional[FreeBosonGeneratingFunctional, Phi4Vertex, 3,
 For the electron gas, $\Phi[G]$ and $\Sigma(x,y)=\delta\Phi/\delta G(y,x)$; every line in these pictures, and in those of
 the vertices below, is a dressed propagator:
 \begin{code}
-selfEnergy = FunctionalDerivative[luttingerWard, DressedGreenFunction[y, x]];
+luttingerWard
+selfEnergy = FunctionalDerivative[luttingerWard, DressedGreenFunction[y, x]]
 (* the same: SelfEnergy[luttingerWard, DressedGreenFunction, {x, y}] *)
 \end{code}
 \begin{ordersum}{\Phi[G]}
@@ -2123,13 +2143,13 @@ L(x_1,x_2;x_3,x_4)=\frac{\delta G(x_1,x_2)}{\delta U(x_4,x_3)},
 Schwinger's functional derivative with respect to a bilocal field~\cite{MartinSchwinger1959}, which the package computes
 as it stands. In perturbation theory $G$ depends on $U$ through its lines: $G_0^{-1}\to G_0^{-1}-U$ gives
 $\delta G_0(x_1,x_2)/\delta U(x_4,x_3)=G_0(x_1,x_4)\,G_0(x_3,x_2)$, a rule declared once (section~\ref{sec:engine}), and
-\pkg{FunctionalDerivative} opens every line of every diagram of $G$:
+\pkg{FunctionalDerivative} opens every line of every diagram of $G$ (drawn here to first order):
 \begin{code}
 DeclareSource[PotentialU];
 DeclareFunctionalDerivative[BareGreenFunction[p_, q_], PotentialU[r_, s_],
     BareGreenFunction[p, r] BareGreenFunction[s, q]];
 responseL = FunctionalDerivative[greenFunction /. {x -> x1, y -> x2},
-    PotentialU[x4, x3]];
+    PotentialU[x4, x3]]
 \end{code}
 \begin{ordersum}{L(x_1,x_2;x_3,x_4)}
 \orderrow{V^0}{response_dg_du_0}
@@ -2149,7 +2169,8 @@ $\Gamma^0=\delta\Sigma/\delta G$ of section~\ref{sec:vertex} joined to $L$:
 DeclareBlob[LBox, "L", "Shape" -> "Box", "Fill" -> "White"];   (* L, a box *)
 DeclareFunctionalDerivative[DressedGreenFunction[p_, q_], PotentialU[r_, s_],
     LBox[p, q, s, r]];
-FunctionalDerivative[selfEnergy /. {x -> x1, y -> x2}, PotentialU[x4, x3]]
+DiagramPlot[FunctionalDerivative[selfEnergy /. {x -> x1, y -> x2}, PotentialU[x4, x3]],
+    {x1, x2, x3, x4}, "LegDirections" -> "Alternating"]
 \end{code}
 \figuresum{\frac{\delta\Sigma^{(1)}(x_1,x_2)}{\delta U(x_4,x_3)}}{sigma_chain_1}
 to first order, and to $V^3$ \val{CheckChainRule} for $\delta\Sigma/\delta U-\Gamma^0L$. Differentiating the Dyson equation,
@@ -2232,7 +2253,7 @@ with the density at $z$,
 densityVertex = DeltaFunction[x1, z] DeltaFunction[x2, z] + (SkeletonDiagrams[
     FunctionalDerivative[selfEnergyPerturbative /. {x -> x1, y -> x2},
       LocalPotential[z]], {x1, x2, z}, {BareGreenFunction}] /.
-    BareGreenFunction -> DressedGreenFunction);
+    BareGreenFunction -> DressedGreenFunction)
 (* the same: PerturbativeDensityVertex[FreeFermionGeneratingFunctional, CoulombVertex,
     3, {psi, psibar}, {x1, x2, z}, BareGreenFunction -> DressedGreenFunction] *)
 \end{code}
@@ -2248,7 +2269,7 @@ above, or as functions of their labels, to check them against the perturbative s
 (\pkg{CheckEquation}):
 \begin{code}
 objects = {"G" -> DressedGreenFunction, "Lambda" -> LabelFunction[densityVertex,
-    {x1, x2, z}], "Gamma0" -> LabelFunction[irreducibleVertex, {x1, x2, x3, x4}], ...};
+    {x1, x2, z}], "Gamma0" -> LabelFunction[irreducibleVertex, {x1, x2, x3, x4}]};
 CheckEquation[ExactEquation["Vertex", objects, {x1, x2, z}], InteractionPotential, 3]
 \end{code}
 \begin{result}
@@ -2445,14 +2466,14 @@ diagrams, of the envelope type, appear at the fourth.
 
 
 \paragraph{The check} The package also classifies the diagrams by cutting their lines, and checks every equation order by
-order:
+order. The particle--hole irreducible part $F-R_{\ph}=\Gamma_{\rm irr}+R_{\phbar}+R_{\pp}$ is the vertex $\Gamma^0$ of
+section~\ref{sec:vertex}, whose parts $R_{\phbar}$ and $R_{\pp}$ are drawn there. The diagrams reducible in the particle--hole
+channel are
 \begin{code}
 decomposition = ParquetDecomposition[fullVertex, {x1, x2, x3, x4},
     {DressedGreenFunction}];
+decomposition["ParticleHole"]
 \end{code}
-The particle--hole irreducible part $F-R_{\ph}=\Gamma_{\rm irr}+R_{\phbar}+R_{\pp}$ is the vertex $\Gamma^0$ of
-section~\ref{sec:vertex}, whose diagrams are grouped there by channel. The diagrams reducible in the particle--hole
-channel are
 \begin{ordersum}{R_{\ph}}
 \orderrow{V^2}{vertex_ph_2}
 \orderrow{V^3}{vertex_ph_3}
@@ -2489,8 +2510,6 @@ $(ad|bc)$ of section~\ref{sec:fourpoint}. In $\phi^4$ theory, up to third order,
 \begin{code}
 ParquetDecomposition[vertexPhi4, {a, b, c, d}, {DressedPropagator},
     "Statistics" -> "Boson"]["s"]
-CheckParquetEquations[vertexPhi4, {a, b, c, d}, DressedPropagator, lambda, 3,
-    "Statistics" -> "Boson"]["Residuals"]
 \end{code}
 \begin{ordersum}{R_s}
 \orderrow{\lambda^2}{phi4_vertex_s_2}
@@ -2509,7 +2528,7 @@ as $F$ in the equation of the electron gas; every line is the full propagator $G
 \figuresum{\inputfigure{exact_sigma_lhs_phi4}}{exact_schwinger_dyson_phi4}
 \begin{result}
 \begin{tabular}{@{}l@{\quad}l@{}}
-parquet residuals of $\phi^4$ theory, orders $\lambda$ to $\lambda^3$ & \val{CheckParquetPhi4}\\
+\pkg{CheckParquetEquations}, orders $\lambda$ to $\lambda^3$ & \val{CheckParquetPhi4}\\
 $\Gamma^{(4)}-R_r-\Gamma_r$, the kernels $\Gamma_r$ of $s$, $t$, $u$ from $\Gamma_2[G]$, to $\lambda^3$ & \val{CheckPhi4Channels}\\
 Schwinger--Dyson equation, $\lambda^2$ and $\lambda^3$ & residuals \val{CheckPhi4SchwingerDyson}\\
 crossing $\Gamma^{(4)}_{abcd}=\Gamma^{(4)}_{bacd}=\Gamma^{(4)}_{acbd}$, $R_s(a,b,c,d)=R_t(a,c,b,d)$ & residuals \val{CheckPhi4Crossing}
@@ -2579,7 +2598,7 @@ nothing found there changes.
 theory, one diagram at each order:
 \begin{code}
 nambuPhi = LuttingerWardFunctional[nambuZ0, nambuInteraction, 3,
-    BareNambuPropagator -> NambuPropagator];
+    BareNambuPropagator -> NambuPropagator]
 \end{code}
 \begin{ordersum}{\Phi[\mathcal G]}
 \orderrow{\mathcal V}{nambu_phi_1}
@@ -2591,6 +2610,9 @@ fixes: to first order $\Phi=\formula{nambu_phi_first_order}$. \pkg{SuperfieldCom
 components: the rules give the components of the superfield, the blocks of each propagator, and for the vertex the
 component interaction, whose derivatives are its components.
 \begin{code}
+DeclareAntisymmetric[AnomalousGreenFunction, AnomalousGreenFunctionBar];
+DeclareLineStyle[AnomalousGreenFunction, "DivergingArrows"];
+DeclareLineStyle[AnomalousGreenFunctionBar, "ConvergingArrows"];
 nambuRules = {NambuField -> {psi, psibar}, NambuPropagator -> {DressedGreenFunction,
     AnomalousGreenFunction, AnomalousGreenFunctionBar}, NambuVertex -> CoulombVertex};
 SuperfieldComponents[nambuPhi, {}, nambuRules]
@@ -2666,6 +2688,10 @@ $-2\,\delta\Gamma/\delta\mathcal G-\bigl(\sfieldSigma[\mathcal G]+\mathcal G^{-1
 \paragraph{The kernels of the three channels} The kernel is $\Gamma^0_{abcd}=-2\,\delta\sfieldSigma_{ab}/\delta\mathcal G_{cd}=4\,\delta^2\Phi/
 \delta\mathcal G_{ab}\,\delta\mathcal G_{cd}$, irreducible in the channel $s$ $(ab|cd)$ as for real bosons: the point vertex at first
 order, then \val{CountsNambuKernel2} and \val{CountsNambuKernel3} diagrams,
+\begin{code}
+gammaS = 4 FunctionalDerivative[nambuPhi, NambuPropagator[a, b],
+    NambuPropagator[c, d]]
+\end{code}
 \begin{ordersum}{\Gamma^0(a,b,c,d)}
 \orderrow{\mathcal V}{nambu_kernel_1}
 \orderrow{\mathcal V^2}{nambu_kernel_2}
@@ -2677,9 +2703,10 @@ and in $u$ $(ad|bc)$ are the same function with its labels exchanged, with the s
 \Gamma_s(a,b,c,d)=\Gamma^0(a,b,c,d),\qquad\Gamma_t(a,b,c,d)=-\Gamma^0(a,c,b,d),\qquad\Gamma_u(a,b,c,d)=\Gamma^0(a,d,b,c),
 \]
 \begin{code}
-gammaS = 4 FunctionalDerivative[nambuPhi, NambuPropagator[a, b], NambuPropagator[c, d]];
-gammaT = -4 FunctionalDerivative[nambuPhi, NambuPropagator[a, c], NambuPropagator[b, d]];
-gammaU = 4 FunctionalDerivative[nambuPhi, NambuPropagator[a, d], NambuPropagator[b, c]];
+gammaT = -4 FunctionalDerivative[nambuPhi, NambuPropagator[a, c],
+    NambuPropagator[b, d]];
+gammaU = 4 FunctionalDerivative[nambuPhi, NambuPropagator[a, d],
+    NambuPropagator[b, c]];
 (* the same: IrreducibleVertex[nambuPhi, NambuPropagator, {a, b, c, d},
    "Statistics" -> "Superfield", "Channel" -> All] *)
 \end{code}
@@ -2696,12 +2723,12 @@ propagators
 the first two the kernels of section~\ref{sec:vertex}, from $G$ alone, and the third the particle--particle kernel, the
 derivative of the gap function with respect to the pair propagator (in a superconductor the blocks mix, and $\Gamma^0$ itself
 is the kernel). The package takes the derivative of the components of $\Phi$ with respect to the anomalous blocks; it has
-\val{CountsPpKernel} diagrams at $V$, $V^2$, $V^3$, grouped here by channel as $\Gamma^0$ in section~\ref{sec:vertex}:
+\val{CountsPpKernel} diagrams at $V$, $V^2$, $V^3$: the bare vertex and the diagrams reducible in $\ph$ and in $\phbar$,
 \begin{code}
 phiComponents = SuperfieldComponents[nambuPhi, {}, nambuRules];
 ppKernel = -4 FunctionalDerivative[phiComponents, AnomalousGreenFunction[x2, x4],
     AnomalousGreenFunctionBar[x1, x3]] /. {AnomalousGreenFunction[__] -> 0,
-    AnomalousGreenFunctionBar[__] -> 0};
+    AnomalousGreenFunctionBar[__] -> 0}
 (* the same: the components of gammaT, SuperfieldComponents[gammaT, {a -> psibar[x1],
     b -> psi[x2], c -> psibar[x3], d -> psi[x4]}, {NambuField -> {psi, psibar},
     NambuPropagator -> {DressedGreenFunction, 0, 0}, NambuVertex -> CoulombVertex}] *)
@@ -2738,7 +2765,7 @@ The gap equation linear in the pairing minus the homogeneous $\pp$ ladder, $V$ t
 \begin{code}
 gammaNambu = EffectiveAction2PI[nambuZ0, nambuInteraction, 3,
     BareNambuPropagator -> NambuPropagator, "Statistics" -> "Superfield",
-    "MeanFields" -> {NambuField -> NambuMean}];
+    "MeanFields" -> {NambuField -> NambuMean}]
 \end{code}
 is the form of section~\ref{sec:twopifermions} with one field,
 \[
@@ -2792,18 +2819,7 @@ $P=\delta\langle\rho\rangle/\delta U_{\rm tot}$, and $W=(\delta U_{\rm tot}/\del
 respect to $U_{\rm tot}$ instead of $U$ removes exactly the chains joined by single interaction lines; the package selects
 the same diagrams by cutting one interaction line (\pkg{IrreducibleDiagrams}), from the vertex $\Lambda=-\delta G^{-1}/\delta U$
 and the density correlation, both derivatives, and section~\ref{sec:hs} obtains $\Sigma$ and $P$ as derivatives of a
-functional of $G$ and $W$:
-\begin{code}
-properVertex = IrreducibleDiagrams[densityVertex, {{x1, x2}, {z}}, 1,
-    {InteractionPotential}];        (* densityVertex: Lambda = -dG^-1/dU *)
-polarization = -IrreducibleDiagrams[densityCorrelationSkeleton, {{a}, {b}}, 1,
-    {InteractionPotential}];        (* <rho rho>_c, skeletons with G0 -> G *)
-hedin = ExactEquation["Hedin", {"G" -> DressedGreenFunction, "V" -> InteractionPotential,
-    "Sigma" -> sigma, "W" -> w, "P" -> p, "Lambda" -> lambdaTilde,
-    "GammaXC" -> gammaXC}, {x, y, z}];   (* the objects as LabelFunction *)
-CheckEquation[#, InteractionPotential, 3] & /@ hedin
-\end{code}
-Hedin's equations are
+functional of $G$ and $W$. Hedin's equations are
 \figuresum{\Sigma(x,y)}{hedin_sigma}
 \figuresum{\inputfigure{hedin_p_lhs}}{hedin_p}
 \figuresum{\inputfigure{hedin_w_lhs}}{hedin_w}
@@ -2811,6 +2827,16 @@ Hedin's equations are
 that is, $\Sigma=\Sigma_{\rm H}-GW\tilde\Lambda$, $P=\gamma L_0\tilde\Lambda$, $W=V+VPW$ and $\tilde\Lambda=\gamma+\Gamma_{\rm
 xc}L_0\tilde\Lambda$. The package checks the four equations with the perturbative $\Sigma$, $\Gamma^0$, $\tilde\Lambda$,
 $P$ and $W$:
+\begin{code}
+properVertex = IrreducibleDiagrams[densityVertex, {{x1, x2}, {z}}, 1,
+    {InteractionPotential}];        (* densityVertex: Lambda = -dG^-1/dU *)
+polarization = -IrreducibleDiagrams[densityCorrelationSkeleton, {{a}, {b}}, 1,
+    {InteractionPotential}];        (* <rho rho>_c, skeletons with G0 -> G *)
+hedin = ExactEquation["Hedin", {"G" -> DressedGreenFunction,
+    "V" -> InteractionPotential, "Sigma" -> sigma, "W" -> w, "P" -> p, "Lambda" -> lambdaTilde,
+    "GammaXC" -> gammaXC}, {x, y, z}];   (* the objects as LabelFunction *)
+MapThread[CheckEquation[#1, InteractionPotential, #2] &, {hedin, {3, 2, 3, 3}}]
+\end{code}
 \begin{result}
 Hedin's equations for $\Sigma$, $W$ and $\tilde\Lambda$ to $V^3$, for $P$ to $V^2$; residuals:\\ \val{CheckHedin}
 \end{result}
@@ -2841,9 +2867,12 @@ returns the new free generating functional and the coupling;
 hs = HubbardStratonovich[{FreeFermionGeneratingFunctional, CoulombVertex},
     psibar[#] ** psi[#] &, {hsField, Jhs}, HSPropagator];
 (* hs["Interaction"] = -I IntegralOver[hsField[z] psibar[z] ** psi[z], {z}] *)
--PerturbativeCorrelationFunction[hs["FreeGeneratingFunctional"], {psi[x], psibar[y]},
-    hs["Interaction"], 6]
-IntegrateOutField[{hs["FreeGeneratingFunctional"], hs["Interaction"]}, hsField, Jhs]
+SimplifyDiagrams[-PerturbativeCorrelationFunction[hs["FreeGeneratingFunctional"],
+    {psi[x], psibar[y]}, hs["Interaction"], 6] -
+    (greenFunction /. InteractionPotential -> HSPropagator)]
+SimplifyDiagrams[(IntegrateOutField[{hs["FreeGeneratingFunctional"], hs["Interaction"]},
+    hsField, Jhs]["Interaction"] /. HSPropagator -> InteractionPotential) -
+    CoulombVertex]
 \end{code}
 \begin{result}
 $G$ of the fermion--boson theory minus $G$ of the electron gas, $\langle\phi\phi\rangle_0=V$, orders $V^0$ to $V^3$:
@@ -2864,12 +2893,16 @@ plain arrows are $G$ and the wavy lines the screened interaction $W$, each stand
 section~\ref{sec:hedin} is needed only where $V$ and $W$ appear together; here \pkg{"Interactions" -> \{ScreenedW\}}
 draws $W$ as an ordinary wavy line):
 \begin{code}
+DeclareSymmetric[ScreenedW];
 phiGW = LuttingerWardFunctional[hs["FreeGeneratingFunctional"], hs["Interaction"], 6,
     {BareGreenFunction -> DressedGreenFunction, HSPropagator -> ScreenedW}];
-FunctionalDerivative[phiGW, DressedGreenFunction[y, x]]
--2 FunctionalDerivative[phiGW, ScreenedW[a, b]]
+sigmaGW = FunctionalDerivative[phiGW, DressedGreenFunction[y, x]];
+polarizationGW = -2 FunctionalDerivative[phiGW, ScreenedW[a, b]];
 (* the same: SelfEnergy[phiGW, DressedGreenFunction, {x, y}],
    SelfEnergy[phiGW, ScreenedW, {a, b}, "Statistics" -> "Boson"] *)
+DiagramPlot[phiGW, "Interactions" -> {ScreenedW}]
+DiagramPlot[sigmaGW, {x, y}, "Interactions" -> {ScreenedW}]
+DiagramPlot[polarizationGW, {a, b}, "Interactions" -> {ScreenedW}]
 \end{code}
 $\Phi[G,W]$ has \val{CountsPhiGW1}, \val{CountsPhiGW2} and \val{CountsPhiGW3} diagrams of orders $W$, $W^2$, $W^3$:
 \begin{ordersum}{\Phi[G,W]}
@@ -2877,7 +2910,7 @@ $\Phi[G,W]$ has \val{CountsPhiGW1}, \val{CountsPhiGW2} and \val{CountsPhiGW3} di
 \orderrow{W^2}{phi_gw_2}
 \orderrow{W^3}{phi_gw_3}
 \end{ordersum}
-and $\Sigma$ has \val{CountsSigmaGW2} diagrams at $W^2$ and $P$ \val{CountsPGW2} at $W$:
+and $\Sigma$ has \val{CountsSigmaGW2} diagrams at $W^2$ and $P$ \val{CountsPGW2} at $W$ (drawn to these orders):
 \begin{ordersum}{\Sigma[G,W]}
 \orderrow{W}{sigma_gw_1}
 \orderrow{W^2}{sigma_gw_2}
@@ -2913,9 +2946,6 @@ DeclareSymmetric[SigmaPropagator, FullSigmaPropagator];
 FreeSigmaGeneratingFunctional = FreeBosonGeneratingFunctional
     Exp[1/2 IntegralOver[Jsigma[x] SigmaPropagator[x, y] Jsigma[y], {x, y}]];
 SigmaVertex = -I/2 IntegralOver[sigmaField[w] phi[w]^2, {w}];
-gamma2GD = LuttingerWardFunctional[FreeSigmaGeneratingFunctional, SigmaVertex, 6,
-    {FreePropagator -> DressedPropagator, SigmaPropagator -> FullSigmaPropagator}];
-sigmaGD = -2 FunctionalDerivative[gamma2GD, DressedPropagator[a, b]]
 \end{code}
 \begin{result}
 $G$ of the theory with $\sigma$ minus $G$ of $\phi^4$ theory, orders $\lambda^0$ to $\lambda^3$: \val{CheckPhi4HSG};
@@ -2927,7 +2957,15 @@ rescaled by 2.)
 The 2PI functional of $G$ and of the full propagator $D_\sigma$ of $\sigma$ (the wavy line: as for $W$, every line is a full
 one) has
 \val{CountsPhi4Gamma2GD1}, \val{CountsPhi4Gamma2GD2} and \val{CountsPhi4Gamma2GD3} diagrams of orders $D_\sigma$,
-$D_\sigma^2$, $D_\sigma^3$, and its first diagram gives $\Sigma=-G\,D_\sigma$, the $GW$ approximation of $\phi^4$ theory:
+$D_\sigma^2$, $D_\sigma^3$, and its first diagram gives $\Sigma=-G\,D_\sigma$, the $GW$ approximation of $\phi^4$ theory ($\Sigma$
+drawn to $D_\sigma^2$):
+\begin{code}
+gamma2GD = LuttingerWardFunctional[FreeSigmaGeneratingFunctional, SigmaVertex, 6,
+    {FreePropagator -> DressedPropagator, SigmaPropagator -> FullSigmaPropagator}];
+sigmaGD = -2 FunctionalDerivative[gamma2GD, DressedPropagator[a, b]];
+DiagramPlot[gamma2GD, "Interactions" -> {FullSigmaPropagator}]
+DiagramPlot[sigmaGD, {a, b}, "Interactions" -> {FullSigmaPropagator}]
+\end{code}
 \begin{ordersum}{\Gamma_2[G,D_\sigma]}
 \orderrow{D_\sigma}{phi4_gamma2_gd_1}
 \orderrow{D_\sigma^2}{phi4_gamma2_gd_2}
@@ -2965,7 +3003,7 @@ $\Omega_{G_0}[\Sigma]=\mathcal F[\Sigma]-{\rm Tr}\ln(-(G_0^{-1}-\Sigma))$~\cite{
 one-body part):
 \begin{code}
 omega = SelfEnergyFunctional[luttingerWard, BareGreenFunction -> TrialSelfEnergy,
-    DressedGreenFunction];
+    DressedGreenFunction]
 FunctionalDerivative[omega, TrialSelfEnergy[x, y]]
 \end{code}
 \[
@@ -3087,13 +3125,14 @@ ElectronPhononVertex = g IntegralOver[phonon[z] psibar[z] ** psi[z], {z}];
 electronPhononGreen = -PerturbativeCorrelationFunction[
     FreeElectronPhononGeneratingFunctional, {psi[x], psibar[y]},
     ElectronPhononVertex, 2];
+DiagramPlot[electronPhononGreen, {x, y}, "Couplings" -> {g}]
 \end{code}
 \begin{ordersum}{G(x,y)}
 \orderrow{g^0}{electron_phonon_green_0}
 \orderrow{g^2}{electron_phonon_green_2}
 \end{ordersum}
-Here $D_0=\langle\varphi\varphi\rangle_0$, without the minus sign of $G_0$, and each vertex stands for $-g$ (the
-pictures are drawn with \pkg{"Couplings" -> \{g\}}). The electron Green function to order $g^2$ is
+Here $D_0=\langle\varphi\varphi\rangle_0$, without the minus sign of $G_0$, and each vertex stands for $-g$ (option
+\pkg{"Couplings" -> \{g\}}, in all the pictures of this section). The electron Green function to order $g^2$ is
 that of the two-body interaction to first order with $V\to-g^2D_0$: phonon exchange is an effective, retarded
 attraction, and its two vertices $(-g)^2$ and the dashed line $D_0$ give the wavy line $-V$. The phonon two-point function $D(x,y)=\langle\varphi(x)\varphi(y)\rangle$ (not connected) gets the polarization bubble
 and, since the phonon field acquires an expectation value at order $g$, the product of two tadpoles
@@ -3126,10 +3165,13 @@ irreducible in both kinds of lines, and the electron self-energy is its derivati
 these pictures a full propagator):
 \begin{code}
 DeclareSymmetric[DressedPhononPropagator];
+DeclareLineStyle[DressedPhononPropagator, "Dashed"];
 phiGD = LuttingerWardFunctional[FreeElectronPhononGeneratingFunctional,
     ElectronPhononVertex, 4, {BareGreenFunction -> DressedGreenFunction,
     PhononPropagator -> DressedPhononPropagator}];
-FunctionalDerivative[phiGD, DressedGreenFunction[y, x]]
+DiagramPlot[phiGD, "Couplings" -> {g}]
+DiagramPlot[FunctionalDerivative[phiGD, DressedGreenFunction[y, x]], {x, y},
+    "Couplings" -> {g}]
 \end{code}
 \begin{ordersum}{\Phi[G,D]}
 \orderrow{g^2}{phi_gd_2}
@@ -3162,6 +3204,7 @@ spin $\frac12$, with \pkg{"SpinDegeneracy" -> 2}:
 phononSelfEnergy = AmputateExternalLegs[ParticleIrreducibleDiagrams[
     OrderPart[electronPhononGreen, g, 2], 1, {x, y}, {BareGreenFunction}],
     {x, y}, {BareGreenFunction}];
+DiagramPlot[phononSelfEnergy, {x, y}, "Couplings" -> {g}]
 phononRules = {BareGreenFunction -> {"Fermion", xi},
     PhononPropagator -> {"Boson", Function[{q, z}, 2 Om[q]/(Om[q]^2 - z^2)]}};
 migdal = EvaluateMatsubara[phononSelfEnergy, twoPoint, phononRules,
@@ -3212,7 +3255,7 @@ FreeDisorderGeneratingFunctional = FreeFermionGeneratingFunctional
 ImpurityVertex = IntegralOver[impurityPotential[z] psibar[z] ** psi[z], {z}];
 disorderGreen = DropClosedLoops[-PerturbativeCorrelationFunction[
     FreeDisorderGeneratingFunctional, {psi[x], psibar[y]}, ImpurityVertex, 4],
-    {BareGreenFunction}];
+    {BareGreenFunction}]
 \end{code}
 \begin{ordersum}{\overline{G}(x,y)}
 \orderrow{\Delta_{\rm imp}^0}{disorder_green_0}
@@ -3227,14 +3270,13 @@ $\operatorname{Im}\Sigma^R=-1/2\tau$, with the elastic scattering rate of Fermi'
 \paragraph{The functional of the averaged propagator} As for the interaction, self-consistent approximations come from a
 functional of the averaged propagator $\overline G$: $\Phi[\overline G]$, minus the vacuum diagrams two-particle irreducible
 in the fermion and in the impurity lines, with the impurity line not dressed (its self-energy would be a closed loop), and
-$\Sigma=\delta\Phi/\delta\overline G$ without the diagrams with closed fermion loops (none to $\Delta_{\rm imp}^2$). The averaged
-propagator is a double line, as in the Dyson equation, since the check below compares it with the perturbative
-self-energy in $G_0$:
+$\Sigma=\delta\Phi/\delta\overline G$ without the diagrams with closed fermion loops (none to $\Delta_{\rm imp}^2$). Every fermion line
+in these pictures is the averaged propagator $\overline G$:
 \begin{code}
 DeclareSymmetric[FullDisorderCorrelator];
 phiDisorder = LuttingerWardFunctional[FreeDisorderGeneratingFunctional, ImpurityVertex,
     4, {BareGreenFunction -> DressedGreenFunction, DisorderCorrelator ->
-    FullDisorderCorrelator}] /. FullDisorderCorrelator -> DisorderCorrelator;
+    FullDisorderCorrelator}] /. FullDisorderCorrelator -> DisorderCorrelator
 DropClosedLoops[FunctionalDerivative[phiDisorder, DressedGreenFunction[y, x]],
     {DressedGreenFunction}]
 \end{code}
@@ -3359,9 +3401,9 @@ integrals of QED (section~\ref{sec:qed}). Integration by parts and general massi
 massive = {FreePropagator -> {"Scalar", m}};
 massless = {FreePropagator -> {"Scalar", 0}};
 tadpoleSigma = IntegrateLoops[DiagramLoopIntegral[
-    OrderPart[sigma1PI, lambda, 1], {a -> p, b -> -p}, massive], eps];
+    OrderPart[sigma1PI, lambda, 1], {a -> p, b -> -p}, massive], eps]
 bubble = IntegrateLoops[LoopIntegral[
-    ScalarPropagator[k, 0] ScalarPropagator[k + p, 0], {k}], eps];
+    ScalarPropagator[k, 0] ScalarPropagator[k + p, 0], {k}], eps]
 {EpsilonExpand[tadpoleSigma, eps, 0], EpsilonExpand[bubble, eps, 1]}
 \end{code}
 \begin{outputbox}
@@ -3384,7 +3426,7 @@ leaves a line $1/(q^2)^\varepsilon$, and the outer one is the massless bubble $G
 $\lambda^2$, the double tadpole, vanishes: its inner loop is a massless tadpole, an integral without a scale.
 \begin{code}
 sunset = IntegrateLoops[DiagramLoopIntegral[OrderPart[sigma1PI, lambda, 2],
-    {a -> p, b -> -p}, massless], eps];
+    {a -> p, b -> -p}, massless], eps]
 EpsilonExpand[sunset, eps, 0]
 \end{code}
 \begin{outputbox}
@@ -3437,6 +3479,7 @@ divergences or logarithmically divergent scaleless integrals. The vertex $\Gamma
 \begin{code}
 routed4 = InfraredRearrangedIntegral[OrderPart[gamma4, lambda, 3],
     {a, b, c, d}, p, massless, eps, "Routing" -> True];
+Tally[Simplify[(16 Pi^2)^2 PolePart[#[[3]], eps]/lambda^3] & /@ routed4]
 \end{code}
 The \val{CountsDimregGamma4Topologies1} diagrams with a bubble in a vertex (the first six above) are routed from the vertex
 with two external legs to a vertex with one, the \val{CountsDimregGamma4Topologies2} chains of two bubbles (the next three)
@@ -3467,7 +3510,7 @@ $-\partial_{m^2}(k^2+m^2)^{-1}=(k^2+m^2)^{-2}$ is a line with an insertion; at $
 $u$ makes it infrared safe:
 \begin{code}
 sigma21 = -MassInsertion[OrderPart[sigma1PI, lambda, {1, 2}],
-    FreePropagator, u];
+    FreePropagator, u]
 \end{code}
 \figuresum{\frac{\partial\Sigma}{\partial m^2}}{dimreg_mass_insertion}
 With unknown coefficients of the poles (in units of $\kappa$ per loop), the poles of the three functions must vanish for
@@ -3656,10 +3699,10 @@ $\Gamma^\mu=\gamma^\mu+\delta\Gamma^\mu$.
 
 \paragraph{The diagrams} At one loop the electron self-energy, the vacuum polarization and the vertex correction are
 \begin{code}
-sigmaDiagrams = qedVertexFunction[{electron[x], electronbar[y]}, {x, y}, 2];
-piDiagrams = qedVertexFunction[{photon[x], photon[y]}, {x, y}, 2];
+sigmaDiagrams = qedVertexFunction[{electron[x], electronbar[y]}, {x, y}, 2]
+piDiagrams = qedVertexFunction[{photon[x], photon[y]}, {x, y}, 2]
 vertexDiagrams = qedVertexFunction[{electron[x1], electronbar[x2], photon[x3]},
-    {x1, x2, x3}, 3];
+    {x1, x2, x3}, 3]
 \end{code}
 \begin{center}
 $-i\Sigma_2={}$\inputfigure{qed_self_energy}\qquad
@@ -3676,11 +3719,11 @@ Dirac matrices, from its $\psi$ end to its $\bar\psi$ end (\pkg{DiracProduct}), 
 whose minus sign is the one in the weight of the package:
 \begin{code}
 sigmaInt = QEDIntegrand[sigmaDiagrams, {y -> p, x -> -p}, qedRules[xi],
-    "LoopMomentum" -> k];
+    "LoopMomentum" -> k]
 piInt = QEDIntegrand[piDiagrams, {y -> q, x -> -q}, qedRules[xi],
-    "Indices" -> {x -> mu, y -> nu}, "LoopMomentum" -> k];
+    "Indices" -> {x -> mu, y -> nu}, "LoopMomentum" -> k]
 vertexInt = QEDIntegrand[vertexDiagrams, {x2 -> p1, x3 -> p2 - p1, x1 -> -p2},
-    qedRules[xi], "Indices" -> {x3 -> mu}, "LoopMomentum" -> k];
+    qedRules[xi], "Indices" -> {x3 -> mu}, "LoopMomentum" -> k]
 \end{code}
 The contracted indices of the photon line are called $\rho$ and $\sigma$ here (all indices are written upper; a repeated
 index is contracted), and the vertex is shown in the Feynman gauge:
@@ -3768,7 +3811,10 @@ takes the coefficient of a Dirac structure):
 electronSelfEnergy = DiracSimplify[I IntegrateOneLoop[sigmaInt, eps]];
 {a, b} = {coefficientOf[electronSelfEnergy, DiracProduct[]]/m,
     coefficientOf[electronSelfEnergy, DiracProduct[SlashedMomentum[p]]]};
-ExpandParameterIntegrals[{a, b}, eps, -1]
+pole = ExpandParameterIntegrals[{a, b}, eps, -1]
+delta2 = pole[[2]]
+Zm = 1 - pole[[1]] - pole[[2]]
+ExpandParameterIntegrals[a + b /. ScalarProduct[p, p] -> m^2, eps, 0]
 \end{code}
 \begin{outputbox}
 \vspace{-6pt}
@@ -3803,6 +3849,11 @@ scaleless integral, which vanishes, and $(m-m_0)/m=-\delta Z_2$ in every gauge.
 is a Ward identity, and it keeps the photon massless. It does not depend on $\xi$, since there is no internal photon. With $\Pi^{\mu\nu}=(q^2g^{\mu\nu}-q^\mu q^\nu)\,\Pi_2(q^2)$:
 \begin{code}
 piMuNu = DiracSimplify[-I IntegrateOneLoop[piInt, eps]];
+pi2 = -coefficientOf[piMuNu, FourVector[q, mu] FourVector[q, nu]];
+ExpandParameterIntegrals[pi2, eps, 0]
+delta3 = ExpandParameterIntegrals[pi2, eps, -1]
+BetaFunctionFromZ[1 - delta3/2, e, eps, 3, "ScalePower" -> 1]
+ExpandParameterIntegrals[pi2 - (pi2 /. ScalarProduct[q, q] -> 0), eps, 0]
 \end{code}
 \begin{outputbox}
 \vspace{-6pt}
@@ -3850,11 +3901,19 @@ $\slashed{p}{}_1$ to the right and $\slashed{p}{}_2$ to the left of the spinor c
 leaves $A\gamma^\mu+B_1p_1^\mu+B_2p_2^\mu$; \pkg{VertexFormFactors} separates them by the Gordon identity,
 $F_1=A+m(B_1+B_2)$, $F_2=-m(B_1+B_2)$, $F_3=(B_2-B_1)/2$:
 \begin{code}
-dGamma = I/e IntegrateOneLoop[vertexInt, eps];
+dGamma = -I/e IntegrateOneLoop[vertexInt, eps];
 chain = DiracSimplify[SpinorChain[{p2, m}, dGamma, {p1, m}]] /.
     ScalarProduct[p1, p2] -> m^2 - q2/2;
 {f1, f2, f3} = VertexFormFactors[chain, mu, {p1, p2, m}];
+ExpandParameterIntegrals[f2 /. xi -> 1, eps, 0]
 ExpandParameterIntegrals[f2 /. q2 -> 0, eps, 0]
+(* a photon mass lambda separates the ultraviolet pole of F1 from the infrared *)
+vertexLambda = -I/e IntegrateOneLoop[QEDIntegrand[vertexDiagrams, {x2 -> p1,
+    x3 -> p2 - p1, x1 -> -p2}, qedRules[xi, lambda], "Indices" -> {x3 -> mu}], eps];
+f1Lambda = First[VertexFormFactors[DiracSimplify[SpinorChain[{p2, m}, vertexLambda,
+    {p1, m}]] /. ScalarProduct[p1, p2] -> m^2 - q2/2, mu, {p1, p2, m}]];
+ExpandParameterIntegrals[f1Lambda /. q2 -> 0, eps, -1]
+ExpandParameterIntegrals[f1 /. q2 -> 0, eps, 0]
 \end{code}
 \begin{outputbox}
 \vspace{-6pt}
@@ -3987,7 +4046,7 @@ and the whole string typesets as
 \[
 \Sigma^{(1)}(x_1,x_2)=\inputfigure{tikz_example}
 \]
-at the default size. The pictures in the rest of this document are smaller: they were made with the options
+at the default size. The other pictures of this document are smaller: most of them were made with the options
 \pkg{"Scale" -> 0.34, "LineWidth" -> 0.42, "LabelFont" -> "\textbackslash\textbackslash tiny"}.
 \pkg{ExpressionToLaTeX} does the same for formulas, as in section~\ref{sec:engine}.
 

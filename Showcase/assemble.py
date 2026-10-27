@@ -6,9 +6,6 @@ includes. Run from the Showcase folder: python3 assemble.py (build_pdf.sh does i
   m of a sum written order by order: its first term gets an explicit sign unless m is the lowest order of the sum;
   figures/NAME_m_alone.tex, without that sign, only for the orders that the pictures of the README show on their own
   (\\fig{NAME_m_alone} in Development/readme_*.tex).
-  The parts of the irreducible vertex by channel, irreducible_vertex_m_CHANNEL.terms, are joined into
-  irreducible_vertex_m.tex, each channel on its own line, marked by a small label; so are those of the kernel of the
-  particle-particle channel, pp_kernel_m_CHANNEL.terms.
 * figures/line_styles.terms (the weight is the name of the style) -> figures/line_styles.tex, a table.
 * figures/tikz_example.tex -> figures/tikz_example_first.tex, its first picture.
 * figures/formula_NAME.tex (written by ExpressionToLaTeX) -> figures/formula_NAME_split.tex, with a line break, when it
@@ -22,7 +19,6 @@ import glob, os, re, sys
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join('..', 'Development'))
 from latex_lines import visible_length, split_formula, broken
-channel_order = ['FullyIrreducible', 'ParticleHole', 'TransverseParticleHole', 'ParticleParticle', 'SeveralChannels']
 channel_short = {'FullyIrreducible': r'\Gamma_{\rm irr}', 'ParticleHole': r'\mathrm{ph}', 'TransverseParticleHole': r'\overline{\mathrm{ph}}',
                  'ParticleParticle': r'\mathrm{pp}', 'SeveralChannels': r'\text{several}'}
 
@@ -54,13 +50,8 @@ def sum_latex(terms, first=True):
 
 names = sorted(os.path.basename(p)[:-6] for p in glob.glob('figures/*.terms'))
 ordered = {}      # base name -> {order: terms}
-channels = {}     # (base, order) -> [(channel, terms)] of the irreducible vertex and of the pp kernel
 for name in names:
     terms = terms_of('figures/%s.terms' % name)
-    m = re.match(r'(irreducible_vertex|pp_kernel)_(\d+)_([A-Za-z]+)$', name)
-    if m:
-        channels.setdefault((m.group(1), int(m.group(2))), []).append((m.group(3), terms))
-        continue
     m = re.match(r'(.*)_(\d+)$', name)
     if m:
         ordered.setdefault(m.group(1), {})[int(m.group(2))] = terms
@@ -87,19 +78,6 @@ for base, rows in ordered.items():
             # the same order on its own (no sign before a positive first term), for a formula of its own
             open('figures/%s_%d_alone.tex' % (base, m), 'w').write(sum_latex(terms) + '\n')
         print('figures/%s_%d: %d terms' % (base, m, len(terms)))
-
-for (base, m), parts in channels.items():
-    lowest = min(k for b, k in channels if b == base)
-    parts = sorted(parts, key=lambda p: channel_order.index(p[0]))
-    # the channels are marked when the order has diagrams reducible in some channel
-    marked = any(channel != 'FullyIrreducible' for channel, _ in parts)
-    pieces = []
-    for k, (channel, terms) in enumerate(parts):
-        piece = sum_latex(terms, m == lowest and k == 0)
-        pieces.append((r'\channelmark{$%s$}' % channel_short[channel] + '\n' if marked else '') + piece)
-    # each channel on its own line
-    open('figures/%s_%d.tex' % (base, m), 'w').write('\n\\break\n'.join(pieces) + '\n')
-    print('figures/%s_%d: %s' % (base, m, ', '.join('%s %d' % (c, len(t)) for c, t in parts)))
 
 # the first picture of the TikZ example, for the listing
 if os.path.exists('figures/tikz_example.tex'):

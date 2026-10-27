@@ -33,7 +33,7 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   check (`RECOMPUTE_REFERENCES=1` rebuilds them).
 - `Showcase/` — the presentation of the package. `make_figures.wl` (Mathematica, about two minutes) computes and draws
   everything into `figures/`: `NAME.terms` (one term per block: weight, `%%PICTURE%%`, tikzpicture; a sum written
-  order by order is split into `NAME_m.terms`), `formula_NAME.tex` (formulas, by `ExpressionToLaTeX`) and `values.txt`
+  order by order is drawn whole, as `DiagramPlot` draws it, and split into `NAME_m.terms`), `formula_NAME.tex` (formulas, by `ExpressionToLaTeX`) and `values.txt`
   (checks, numbers of diagrams, timings). `build_pdf.sh` runs `assemble.py` (→ `figures/*.tex`, `figures/values.tex`,
   `figures/parquet_table.tex`, long formulas split) and pdflatex. In the `.tex`, `\begin{ordersum}{lhs}
   \orderrow{V^2}{name_2} ... \end{ordersum}` draws a sum with one coloured band per order, `\figuresum{lhs}{name}` a
@@ -273,3 +273,9 @@ when it exists, with a fallback (as `LightDarkSwitched`, from 14.3, for the pict
 ## Rules
 
 - Keep commits small and their messages clear.
+- In the documents every command shown gives as output exactly what is shown right after it: a sum of diagrams as
+  `DiagramPlot` draws the whole output (its orders in bands; the sizing options `"Scale"`, `"LineWidth"`, `"LabelFont"`
+  are the only ones left out, as the introduction of the showcase says), so that every other option (`"ExternalOrder"`,
+  `"LegDirections"`, `"Interactions"`, `"Couplings"`, ...), declaration, channel split, grouping or selection is in the
+  code shown or, for a selection of orders, said in the text. A rearrangement of an output comes after the plain output,
+  with its own code. Pictures that follow text and no command (exact equations with blobs, left-hand sides) are free.

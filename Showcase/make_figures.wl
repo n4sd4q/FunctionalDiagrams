@@ -262,7 +262,7 @@ fullVertex = timed["F", SimplifyDiagrams[SkeletonDiagrams[SetSourcesToZero[Funct
 writeValue["check full vertex shortcut", SimplifyDiagrams[PerturbativeFullVertex[FreeFermionGeneratingFunctional, CoulombVertex, maximumOrder,
      {psi, psibar}, {x1, x2, x3, x4}, BareGreenFunction -> DressedGreenFunction] - fullVertex]];
 writeValue["counts F", orderCounts[fullVertex, InteractionPotential, orders]];
-writeOrders["full_vertex", fullVertex, {x1, x2, x3, x4}, InteractionPotential, {1, 2}, "LegDirections" -> "Alternating"];
+writeOrders["full_vertex", fullVertex, {x1, x2, x3, x4}, InteractionPotential, {1, 2}];
 writeValue["check Bethe-Salpeter ph", SimplifyDiagrams[fullVertex - irreducibleVertex - BetheSalpeterLadder[irreducibleVertex, fullVertex,
      {x1, x2, x3, x4}, "ParticleHole", DressedGreenFunction, "MaximumOrder" -> {InteractionPotential, maximumOrder}]]];
 directKernel = DeltaFunction[x1, x2] DeltaFunction[x3, x4] InteractionPotential[x1, x3];
@@ -274,7 +274,7 @@ writeTerms["pp_ladder", BetheSalpeterLadder[bareVertex, bareVertex, {x1, x2, x3,
   "LegDirections" -> "Alternating", "ExternalOrder" -> {x4, x2, x3, x1}];
 fullVertexChannels = ParquetDecomposition[fullVertex, {x1, x2, x3, x4}, {DressedGreenFunction}];
 writeValue["check Gamma0 = F - R_ph", SimplifyDiagrams[fullVertex - fullVertexChannels["ParticleHole"] - irreducibleVertex]];
-writeOrders["vertex_ph", fullVertexChannels["ParticleHole"], {x1, x2, x3, x4}, InteractionPotential, orders, "LegDirections" -> "Alternating"];
+writeOrders["vertex_ph", fullVertexChannels["ParticleHole"], {x1, x2, x3, x4}, InteractionPotential, orders];
 parquetCheck = timed["parquet check", CheckParquetEquations[fullVertex, {x1, x2, x3, x4}, DressedGreenFunction, InteractionPotential, maximumOrder]];
 (* the Schwinger-Dyson equation Sigma = Sigma_HF - V G G G F, from the second order on; Sigma at order m + 1 has as many
    diagrams as F at order m *)
@@ -352,7 +352,7 @@ densityVertex = timed["Lambda", SimplifyDiagrams[DeltaFunction[x1, z] DeltaFunct
 writeValue["check density vertex shortcut", SimplifyDiagrams[PerturbativeDensityVertex[FreeFermionGeneratingFunctional, CoulombVertex,
      maximumOrder, {psi, psibar}, {x1, x2, z}, BareGreenFunction -> DressedGreenFunction] - densityVertex]];
 writeValue["counts Lambda", orderCounts[densityVertex, InteractionPotential, Range[0, maximumOrder]]];
-writeOrders["density_vertex", densityVertex, {x1, x2, z}, InteractionPotential, {0, 1, 2}, "LegDirections" -> {"Out", "In", None}];
+writeOrders["density_vertex", densityVertex, {x1, x2, z}, InteractionPotential, {0, 1, 2}];
 exactObjects = {"G" -> DressedGreenFunction, "V" -> InteractionPotential, "Sigma" -> LabelFunction[selfEnergy, {x, y}],
    "Gamma0" -> LabelFunction[irreducibleVertex, {x1, x2, x3, x4}], "F" -> LabelFunction[fullVertex, {x1, x2, x3, x4}],
    "Lambda" -> LabelFunction[densityVertex, {x1, x2, z}]};
@@ -435,7 +435,7 @@ DeclareSource[PotentialU];
 DeclareFunctionalDerivative[BareGreenFunction[p_, q_], PotentialU[r_, s_], BareGreenFunction[p, r] BareGreenFunction[s, q]];
 responseL = timed["L = dG/dU", SimplifyDiagrams[FunctionalDerivative[greenFunction /. {x -> x1, y -> x2}, PotentialU[x4, x3]]]];
 writeValue["counts L", orderCounts[responseL, InteractionPotential, Range[0, maximumOrder]]];
-writeOrders["response_dg_du", responseL, fourLabels, InteractionPotential, {0, 1}, "LegDirections" -> "Alternating"];
+writeOrders["response_dg_du", responseL, fourLabels, InteractionPotential, {0, 1}];
 (* order by order: the part of order m of G G is the sum of the products of the parts of G of orders k and m - k *)
 writeValue["check L = G G - C", Table[SimplifyDiagrams[orderPart[responseL, InteractionPotential, m] -
      Sum[Expand[(orderPart[greenFunction, InteractionPotential, k] /. {x -> x1, y -> x4}) (orderPart[greenFunction, InteractionPotential, m - k] /.
@@ -444,7 +444,9 @@ writeValue["check L = G G - C", Table[SimplifyDiagrams[orderPart[responseL, Inte
 DeclareFunctionalDerivative[DressedGreenFunction[p_, q_], PotentialU[r_, s_], LBox[p, q, s, r]];
 sigmaChain = timed["chain rule", SimplifyDiagrams[FunctionalDerivative[selfEnergy /. {x -> x1, y -> x2}, PotentialU[x4, x3]]]];
 writeValue["check chain rule", SimplifyDiagrams[sigmaChain - IntegralOver[(irreducibleVertex /. {x3 -> s3, x4 -> s4}) LBox[s4, s3, x3, x4], {s3, s4}]]];
-writeTerms["sigma_chain_1", OrderPart[sigmaChain, InteractionPotential, 1], fourLabels, "LegDirections" -> "Alternating", blobOptions];
+(* with the legs out, in, out, in, as the showcase draws it (DiagramPlot of the whole sum leaves the legs x1 and x2,
+   which in some terms end at the box L, without arrows) *)
+writeOrders["sigma_chain", sigmaChain, fourLabels, InteractionPotential, {1}, "LegDirections" -> "Alternating", blobOptions];
 writeTerms["response_chi_f", DressedGreenFunction[x, y] DressedGreenFunction[y, x] + IntegralOver[DressedGreenFunction[x, a] DressedGreenFunction[b, x] *
     FBox[a, b, c, d] DressedGreenFunction[y, c] DressedGreenFunction[d, y], {a, b, c, d}], {x, y}, blobOptions];
 writeTerms["response_l_lhs", LBox @@ fourLabels, fourLabels, "LegDirections" -> "Alternating", blobOptions];
@@ -495,7 +497,7 @@ writeValue["check GW derivatives", {SimplifyDiagrams[sigmaGW - SelfEnergy[phiGW,
    SimplifyDiagrams[polarizationGW - SelfEnergy[phiGW, ScreenedW, {a, b}, "Statistics" -> "Boson"]]}];
 writeValue["counts Sigma[G,W]", orderCounts[sigmaGW, ScreenedW, orders]];
 writeValue["counts P[G,W]", orderCounts[polarizationGW, ScreenedW, Range[0, maximumOrder - 1]]];
-writeOrders["sigma_gw", sigmaGW, {x, y}, ScreenedW, {1, 2}, "LegDirections" -> {"Out", "In"}, skeletonW];
+writeOrders["sigma_gw", sigmaGW, {x, y}, ScreenedW, {1, 2}, skeletonW];
 writeOrders["polarization_gw", polarizationGW, {a, b}, ScreenedW, {0, 1}, skeletonW];
 (* W expressed by G (W = V - V <rho rho>_c V) substituted, each term of order W^k with W only to the order needed *)
 substituteToOrder[e_, w_, replacement_, x_, n_] := SimplifyDiagrams[OrderPart[Total[Table[
@@ -624,7 +626,7 @@ phiGD = timed["Phi[G,D]", LuttingerWardFunctional[FreeElectronPhononGeneratingFu
     {BareGreenFunction -> DressedGreenFunction, PhononPropagator -> DressedPhononPropagator}]];
 sigmaGD = SimplifyDiagrams[FunctionalDerivative[phiGD, DressedGreenFunction[y, x]]];
 writeOrders["phi_gd", phiGD, {}, g, {2, 4}, "Couplings" -> {g}];
-writeOrders["sigma_gd", sigmaGD, {x, y}, g, {2, 4}, "Couplings" -> {g}, "LegDirections" -> {"Out", "In"}];
+writeOrders["sigma_gd", sigmaGD, {x, y}, g, {2, 4}, "Couplings" -> {g}];
 writeValue["check Migdal from Phi", SimplifyDiagrams[phononSelfEnergy - (OrderPart[sigmaGD, g, 2] /. {DressedGreenFunction -> BareGreenFunction,
       DressedPhononPropagator -> PhononPropagator}) + g^2 DeltaFunction[x, y] IntegralOver[PhononPropagator[x, u] BareGreenFunction[u, u], {u}]]];
 phononRules = {BareGreenFunction -> {"Fermion", xi}, PhononPropagator -> {"Boson", Function[{q, z}, 2 Om[q]/(Om[q]^2 - z^2)]}};
@@ -649,14 +651,14 @@ disorderSelfEnergy = AmputateExternalLegs[ParticleIrreducibleDiagrams[disorderGr
 writeOrders["disorder_self_energy", disorderSelfEnergy, {x, y}, DisorderCorrelator, {1, 2}];
 (* the functional of the averaged propagator: 2PI in the fermion and in the impurity lines; the impurity line is not dressed
    (its self-energy is a closed loop), and Sigma = dPhi/dG without the diagrams with closed loops (none to Delta^2); its first
-   diagram gives the self-consistent Born approximation, its second the crossed diagram. The averaged propagator is drawn as
-   a double line, as in the Dyson equation *)
+   diagram gives the self-consistent Born approximation, its second the crossed diagram. As in every skeleton expansion,
+   the averaged propagator is drawn as a plain line *)
 DeclareSymmetric[FullDisorderCorrelator];
 phiDisorder = timed["Phi disorder", LuttingerWardFunctional[FreeDisorderGeneratingFunctional, ImpurityVertex, 4,
      {BareGreenFunction -> DressedGreenFunction, DisorderCorrelator -> FullDisorderCorrelator}] /. FullDisorderCorrelator -> DisorderCorrelator];
 sigmaDisorder = DropClosedLoops[SimplifyDiagrams[FunctionalDerivative[phiDisorder, DressedGreenFunction[y, x]]], {DressedGreenFunction}];
-writeOrders["disorder_phi", phiDisorder /. DressedGreenFunction -> FullG, {}, DisorderCorrelator, {1, 2}];
-writeOrders["disorder_sigma_g", sigmaDisorder /. DressedGreenFunction -> FullG, {x, y}, DisorderCorrelator, {1, 2}, "LegDirections" -> {"Out", "In"}];
+writeOrders["disorder_phi", phiDisorder, {}, DisorderCorrelator, {1, 2}];
+writeOrders["disorder_sigma_g", sigmaDisorder, {x, y}, DisorderCorrelator, {1, 2}];
 (* the check by cutting: Sigma[G] at G = G0 + G0 Sigma_Born G0 (the rainbow) gives Sigma_dis to Delta^2 *)
 disorderBornG[a_, b_] := BareGreenFunction[a, b] + IntegralOver[BareGreenFunction[a, u] DisorderCorrelator[u, v] BareGreenFunction[u, v] *
     BareGreenFunction[v, b], {u, v}];
@@ -1137,13 +1139,9 @@ treeOptions = Sequence["Scale" -> 0.5, "LineWidth" -> 0.45];
 writeTerms["tree_rule_line_lhs", FullPropagator[a, b], {a, b}, treeOptions];
 writeTerms["tree_rule_line", FunctionalDerivative[FullPropagator[a, b], ExternalSource[c]], {a, b, c}, treeOptions];
 writeTerms["tree_four_point", vertexTrees[[2]] /. Thread[Take[treeLabels, 4] -> {a, b, c, d}], {a, b, c, d}, treeOptions];
-(* the trees of the same shape: the labels are integrated over, and the canonical form adds them up; one tree of each
-   shape is drawn, without labels, with the number of trees of that shape *)
-leafLabelled[t_] := t /. IntegralOver[f_, vars_] :> With[{leaves = Select[vars, Count[f, #, Infinity] == 1 &]},
-    IntegralOver[f /. Thread[leaves -> Take[treeLabels, Length[leaves]]], Complement[vars, leaves]]];
-Do[With[{shapes = SimplifyDiagrams[IntegralOver[vertexTrees[[n - 2]], Take[treeLabels, n]]]},
-   writeTerms["tree_shapes_" <> ToString[n], Total[leafLabelled /@ DiagramTerms[shapes]], Take[treeLabels, n], "VertexLabels" -> None,
-    treeOptions]],
+(* the trees of the same shape: the labels are integrated over, and the canonical form adds them up; each picture, its
+   leaves free ends, has the number of trees of its shape in front *)
+Do[writeTerms["tree_shapes_" <> ToString[n], SimplifyDiagrams[IntegralOver[vertexTrees[[n - 2]], Take[treeLabels, n]]], {}, treeOptions],
   {n, 3, 6}];
 (* zero dimensions: W^(n) = (G d/dPhi)^(n-2) G with G = 1/Gamma2(Phi), dG/dPhi = -G^2 Gamma3, dGamma_k/dPhi = Gamma_(k+1) *)
 zeroDimensional[w_] := Expand[Total[(DiagramTerms[w] /. IntegralOver[f_, _] :> f) /.
@@ -1263,7 +1261,6 @@ writeValue["check EA mean field second derivative", byOrder[SetSourcesToZero[
 (* the electron gas with Grassmann-odd means, to first order *)
 gammaPsiG = EffectiveAction2PI[FreeFermionGeneratingFunctional, CoulombVertex, 1, BareGreenFunction -> DressedGreenFunction,
    "MeanFields" -> {psi -> MeanPsi, psibar -> MeanPsibar}];
-writeFormula["ea_gamma_psi", gammaPsiG, "Names" -> eaNames];
 (* d^2 Gamma/dPsibar(a) dPsi(b), the rightmost derivative first: G0^-1 - Sigma *)
 writeValue["check EA fermion means", SimplifyDiagrams[SetSourcesToZero[FunctionalDerivative[gammaPsiG, MeanPsibar[a], MeanPsi[b]]] -
     OperatorKernel[Power[BareGreenFunction, -1]][a, b] +
@@ -1274,6 +1271,8 @@ writeValue["check EA fermion means", SimplifyDiagrams[SetSourcesToZero[Functiona
    is in the trace term); for phi^4 the same two checks of Gamma2[phibar, G] *)
 gammaPsiG2 = timed["EA Gamma[Psibar, Psi, G]", EffectiveAction2PI[FreeFermionGeneratingFunctional, CoulombVertex, maximumOrder,
     BareGreenFunction -> DressedGreenFunction, "MeanFields" -> {psi -> MeanPsi, psibar -> MeanPsibar}]];
+(* the showcase shows it to first order *)
+writeFormula["ea_gamma_psi", OrderPart[gammaPsiG2, InteractionPotential, {0, 1}], "Names" -> eaNames];
 eaPsiClassical = CoulombVertex /. {psi -> MeanPsi, psibar -> MeanPsibar};
 eaPsiMass = SimplifyDiagrams[OrderPart[gammaPsiG2, InteractionPotential, 1] - SetSourcesToZero[OrderPart[gammaPsiG2, InteractionPotential, 1]] - eaPsiClassical];
 writeTerms["ea_piece_psi_classical", eaPsiClassical, {}];
@@ -1321,13 +1320,14 @@ writeFormula["ea_gamma_1pi", OrderPart[gamma1PI, lambda, {0, 1, 2}], "Names" -> 
    series of rings; the diagrams grouped by the number of loops L (lines - vertices + 1, unchanged by a mass insertion) *)
 gamma1PIBare = timed["EA Gamma[phibar] with lines D0", ExpandTrace[gamma1PI /. BackgroundPropagator -> Power[Power[FreePropagator, -1] -
        LabelFunction[-lambda/2 phiMean[a]^2 DeltaFunction[a, b], {a, b}], -1], FreePropagator, 3, "MaximumOrder" -> {lambda, 3}]];
-loopNumber[t_] := Total[Cases[{t}, IntegralOver[i_, l_List] :> Exponent[i /. f_FreePropagator :> loopMark f, loopMark] - Length[l], Infinity]] + 1;
-gamma1PILoops[l_] := Total[Select[DiagramTerms[OrderPart[gamma1PIBare, lambda, {1, 2, 3}]], loopNumber[#] == l &]];
-writeTerms["onepi_tree", gamma1PILoops[0], {}];
-writeTerms["onepi_rings", gamma1PILoops[1], {}];
-writeOrders["onepi_two_loops", gamma1PILoops[2], {}, lambda, {1, 2, 3}];
-writeOrders["onepi_three_loops", gamma1PILoops[3], {}, lambda, {2, 3}];
-writeOrders["onepi_four_loops", gamma1PILoops[4], {}, lambda, {3}];
+(* as in the showcase: the number of loops, lines - vertices + 1, and the diagrams grouped by it *)
+loops[t_] := Total[Cases[{t}, IntegralOver[f_, v_List] :> Exponent[f /. p_FreePropagator :> mark p, mark] - Length[v], Infinity]] + 1;
+gamma1PIPieces = KeySort[GroupBy[DiagramTerms[OrderPart[gamma1PIBare, lambda, {1, 2, 3}]], loops, Total]];
+writeTerms["onepi_tree", gamma1PIPieces[0], {}];
+writeTerms["onepi_rings", gamma1PIPieces[1], {}];
+writeOrders["onepi_two_loops", gamma1PIPieces[2], {}, lambda, {1, 2, 3}];
+writeOrders["onepi_three_loops", gamma1PIPieces[3], {}, lambda, {2, 3}];
+writeOrders["onepi_four_loops", gamma1PIPieces[4], {}, lambda, {3}];
 writeValue["counts 1PI bare", orderCounts[gamma1PIBare, lambda, {1, 2, 3}]];
 (* checks: in zero dimensions (D0 = 1) the Legendre transform of log Z(J), Z(J) = Integral dphi exp(-phi^2/2 - lambda phi^4/24 + J phi)/Sqrt[2 Pi],
    computed as a series in lambda at fixed phibar; the diagrams 1PI with respect to D0; the one loop the rings of the logarithm *)
@@ -1339,7 +1339,7 @@ writeValue["check 1PI zero dimensions", Module[{w, js, cc, sol, jj, pp, moment},
    Expand[ZeroDimensionalValue[gamma1PIBare /. phiMean[_] -> pp, {FreePropagator -> 1}] - Normal[Series[(-w + jj pp) /. jj -> (js /. sol), {lambda, 0, 3}]]]]];
 writeValue["check 1PI pieces", {SimplifyDiagrams[OrderPart[gamma1PIBare, lambda, {1, 2, 3}] -
      ParticleIrreducibleDiagrams[OrderPart[gamma1PIBare, lambda, {1, 2, 3}], 1, {}, {FreePropagator}]],
-   SimplifyDiagrams[gamma1PILoops[1] - ExpandTrace[1/2 TraceLog[Power[FreePropagator, -1] - LabelFunction[-lambda/2 phiMean[a]^2 DeltaFunction[a, b], {a, b}]],
+   SimplifyDiagrams[gamma1PIPieces[1] - ExpandTrace[1/2 TraceLog[Power[FreePropagator, -1] - LabelFunction[-lambda/2 phiMean[a]^2 DeltaFunction[a, b], {a, b}]],
        FreePropagator, 3] + 1/2 TraceLog[Power[FreePropagator, -1]]]}];
 (* Gamma[phibar] = Gamma[phibar, G[phibar]] at the stationary G[phibar] = (d^2 Gamma[phibar]/d phibar d phibar)^-1 = (D0^-1 - Sigma[phibar])^-1,
    the full propagator in the background, expanded in D0 (the 2PI section) *)
@@ -1363,18 +1363,18 @@ writeValue["check 1PI bare route", byOrder[gamma1PIDirect - gamma1PIBare, lambda
 
 (* the 1PI effective action of the electron gas, Gamma[Psibar, Psi] (the 1PI section), with bare lines: -Psibar G0^-1 Psi + S_int[Psibar, Psi]
    - Tr ln(-G0^-1) - (connected 1PI vacuum diagrams with the vertices of S_int[Psibar + psibar, Psi + psi] of degree two or more);
-   grouped by the number of loops, L = lines - interaction lines + 1 *)
+   grouped by the number of loops, L = lines - interaction lines + 1, as in the showcase *)
 (* gammaPsi1PI is computed in the section of the two-particle function above *)
-fermionLoopNumber[t_] := Total[Cases[{t}, IntegralOver[i_, _List] :> (Exponent[i /. g_BareGreenFunction :> loopMark g, loopMark] -
-       Exponent[i /. v_InteractionPotential :> lineMark v, lineMark]), Infinity]] + 1;
-gammaPsi1PILoops[l_, m_] := Total[Select[DiagramTerms[orderPart[gammaPsi1PI, InteractionPotential, m]], fermionLoopNumber[#] == l &]];
-writeTerms["onepi_psi_tree", gammaPsi1PILoops[0, 1], {}];
-Do[writeTerms["onepi_psi_rings_" <> ToString[m], gammaPsi1PILoops[1, m], {}], {m, 1, Min[3, maximumOrder]}];
-Do[writeTerms["onepi_psi_two_loops_" <> ToString[m], gammaPsi1PILoops[2, m], {}], {m, 1, 2}];
-writeTerms["onepi_psi_three_loops_2", gammaPsi1PILoops[3, 2], {}];
+loopsPsi[t_] := Total[Cases[{t}, IntegralOver[f_, _List] :> Exponent[f /. p_BareGreenFunction :> mark p, mark] -
+       Exponent[f /. p_InteractionPotential :> mark p, mark], Infinity]] + 1;
+gammaPsi1PIPieces = KeySort[GroupBy[DiagramTerms[OrderPart[gammaPsi1PI, InteractionPotential, orders]], loopsPsi, Total]];
+writeTerms["onepi_psi_tree", gammaPsi1PIPieces[0], {}];
+writeOrders["onepi_psi_rings", gammaPsi1PIPieces[1], {}, InteractionPotential, orders];
+writeOrders["onepi_psi_two_loops", gammaPsi1PIPieces[2], {}, InteractionPotential, {1, 2}];
+writeOrders["onepi_psi_three_loops", gammaPsi1PIPieces[3], {}, InteractionPotential, {2}];
 (* the numbers of diagrams of each piece (L loops) order by order, V to V^maximumOrder *)
 Do[writeValue["counts 1PI psi " <> {"tree", "rings", "two loops", "three loops", "four loops"}[[l + 1]],
-    Table[Length[DiagramTerms[gammaPsi1PILoops[l, m]]], {m, orders}]], {l, 0, 4}];
+    orderCounts[Lookup[gammaPsi1PIPieces, l, 0], InteractionPotential, orders]], {l, 0, 4}];
 writeValue["counts 1PI psi orders", orderCounts[gammaPsi1PI, InteractionPotential, orders]];
 (* checks: 1PI; at zero means -log Z; the vertex functions: d^2 Gamma/dPsibar dPsi = G0^-1 - Sigma (perturbative) and F with bare lines *)
 gammaPsi1PIFour = SetSourcesToZero[FunctionalDerivative[FunctionalDerivative[FunctionalDerivative[FunctionalDerivative[
@@ -1529,10 +1529,8 @@ writeValue["check Nambu kernel components", {SimplifyDiagrams[SuperfieldComponen
 writeValue["check pp kernel from Phi", SimplifyDiagrams[SuperfieldComponents[nambuChannels["t"], nambuLegs, nambuNormalRules] - ppKernel]];
 writeValue["check Bethe-Salpeter pp", SimplifyDiagrams[fullVertex - ppKernel - BetheSalpeterLadder[ppKernel, fullVertex, {x1, x2, x3, x4},
      "ParticleParticle", DressedGreenFunction, "MaximumOrder" -> {InteractionPotential, maximumOrder}]]];
-(* the pp kernel by channel, as Gamma0 in the section on the irreducible vertex: the bare vertex, the diagrams reducible in ph and in phbar *)
-ppKernelChannels = Table[ParquetDecomposition[OrderPart[ppKernel, InteractionPotential, m], {x1, x2, x3, x4}, {DressedGreenFunction}], {m, orders}];
-Do[Do[With[{name = "pp_kernel_" <> ToString[m] <> "_" <> k, part = ppKernelChannels[[m]][k]},
-    If[part =!= 0, writeTerms[name, part, {x1, x2, x3, x4}, "LegDirections" -> "Alternating"]]], {k, Keys[ppKernelChannels[[m]]]}], {m, orders}];
+(* the pp kernel: the bare vertex, the diagrams reducible in ph and in phbar *)
+writeOrders["pp_kernel", ppKernel, {x1, x2, x3, x4}, InteractionPotential, orders];
 (* the linearized gap equation (Thouless): Delta(x1, x3) = -2 dPhi/dcalG_psibarpsibar(x1, x3), linear in calG_psipsi = -G Delta G^T, is
    the homogeneous Bethe-Salpeter equation of the pp channel, Delta = -1/2 Gamma_pp G G Delta *)
 thoulessLinear = With[{p = Unique["p"], q = Unique["p"], s = Unique["p"], t = Unique["p"]},
@@ -1631,7 +1629,7 @@ eaNextL[l_] := ExactEquation["Response", {"L" -> LabelFunction[l, fourLabels], "
 eaLTDHF = NestList[eaNextL, DressedGreenFunction[x1, x4] DressedGreenFunction[x3, x2], 2];
 eaChiTDHF = Table[ExactEquation["Susceptibility", {"Chi" -> ChiBlob, "L" -> LabelFunction[l, fourLabels]}, {z1, z2}][[2]], {l, eaLTDHF}];
 eaChiTDHFOrders = Prepend[Table[SimplifyDiagrams[eaChiTDHF[[i + 1]] - eaChiTDHF[[i]]], {i, 2}], eaChiTDHF[[1]]];
-Do[writeTerms["ea_chi_tdhf_" <> ToString[m], eaChiTDHFOrders[[m + 1]], {z1, z2}], {m, 0, 2}];
+writeOrders["ea_chi_tdhf", Last[eaChiTDHF], {z1, z2}, InteractionPotential, {0, 1, 2}];
 eaBubble = {z2 -> {q, I nu}, z1 -> {-q, -I nu}};
 writeFormula["ea_chi_tdhf_static", EvaluateMatsubara[eaChiTDHFOrders[[1]] + eaChiTDHFOrders[[2]], eaBubble, eaHFRules, "SpinDegeneracy" -> 2,
    "LoopMomenta" -> {p1, p2}, "Limit" -> "Static"], "Subscripts" -> {epsHF, v}, "Names" -> {epsHF -> "\\epsilon"}];
