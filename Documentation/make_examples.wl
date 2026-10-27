@@ -74,6 +74,9 @@ DeclareBlob[Kb, \"\\\\Gamma^0\", \"Shape\" -> \"Box\", \"Fill\" -> \"CrossHatche
 DeclareBlob[Fb, \"F\", \"Shape\" -> \"Box\"];
 Kb[x1, x2, x3, x4] + BetheSalpeterLadder[Kb[x1, x2, x3, x4], Fb[x1, x2, x3, x4],
   {x1, x2, x3, x4}, \"ParticleHole\", Gb]", "Pictures", {x1, x2, x3, x4}, "LegDirections" -> "Alternating"];
+example["blobs_turned", "DeclareSymmetric[Gs];
+DeclareBlob[Vertex4, \"\\\\Gamma^{(4)}\", \"Shape\" -> \"Box\"];
+lambda/6 IntegralOver[Gs[a, u] Gs[a, v] Gs[a, w] Vertex4[u, v, w, b], {u, v, w}]", "Pictures", {a, b}];
 
 (* ---------------------------------------------------------------- derivatives *)
 example["derivative_source", "FunctionalDerivative[J[x], J[y]]", "Formula"];

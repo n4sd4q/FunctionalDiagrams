@@ -360,6 +360,30 @@ check["DeclareBlob: a point twice a port of a box (chi = L(z1, z1; z2, z2)) is j
 chainItems = geometryItems[IntegralOver[V[a, w] LBx[w, w, c, d] DeltaFunction[a, b], {w}], {a, b, c, d}];
 check["DeclareBlob: an interaction line ending on two ports of a box: a dot at each end, the two legs of its vertex fanned, a above b",
   {Count[chainItems, {"N", _, "dot"}], Round[Cases[chainItems, {"L", q_, e_, _} :> ArcTan @@ (e - q)/Degree][[{1, 2}]]]}, {2, {135, -135}}];
+(* a box joined by three corners to one vertex (Sigma = lambda/6 G G G Gamma4 in phi^4 theory): turned by 45 degrees *)
+turnedBox[items_] := First[Cases[items, {"B", p_, sp_} :> {p, sp}]];
+turnedItems = geometryItems[IntegralOver[D0[a, u] D0[a, v] D0[a, w] FBx[v, u, b, w], {u, v, w}], {a, b}];
+check["DeclareBlob: a box joined by three corners to one vertex is turned by 45 degrees (a diamond as large as the square), b at its right corner, the vertex on the diagonal through it, the lines to the top and bottom corners arcs mirror to each other",
+  With[{bl = turnedBox[turnedItems], dot = First[Cases[turnedItems, {"N", p_, "dot"} :> p]],
+    arcs = Cases[turnedItems, {"E", {"arc", c_, r_, __}, _} :> {c, r}]},
+   With[{corners = FunctionalDiagrams`Private`triangleCorners[bl[[1]], bl[[2, 4]], "Diamond"]},
+    {bl[[2, 2]], Abs[1.3 bl[[2, 4]] - Sqrt[2.] FunctionalDiagrams`Private`blobSizeOfHead[FBx]] < 0.01,
+     Abs[dot[[2]] - bl[[1, 2]]] < 10.^-6 && dot[[1]] < corners[[1, 1]] - 0.5,
+     Sort[Round[Cases[turnedItems, {"L", q_, e_, _} :> ArcTan @@ (e - q)/Degree]]],
+     Length[arcs], AllTrue[arcs, Abs[#[[1, 2]] - bl[[1, 2]]] < 10.^-6 &], Abs[arcs[[1, 2]] - arcs[[2, 2]]] < 10.^-6,
+     Count[Cases[turnedItems, {"E", path_, st_} /; st =!= "Spoke" :> FunctionalDiagrams`Private`pathPoints[path, {0., 1.}, 0.]],
+      ends_ /; AnyTrue[corners[[{2, 4}]], Min[Norm[# - ends[[1]]], Norm[# - ends[[2]]]] < 0.01 &]]}]],
+  {"Diamond", True, True, {0, 180}, 2, True, True, 2}];
+check["DeclareBlob: a turned box: its fourth corner on the left when its label comes first; the label of a turned box makes it larger, upright",
+  {With[{items = geometryItems[IntegralOver[D0[a, u] D0[a, v] D0[a, w] FBx[v, u, b, w], {u, v, w}], {b, a}]},
+     With[{bl = turnedBox[items]}, First[Cases[items, {"N", p_, "dot"} :> p]][[1]] > bl[[1, 1]]]],
+   With[{bl = turnedBox[geometryItems[IntegralOver[D0[a, u] D0[a, v] D0[a, w] WideBox[v, u, b, w], {u, v, w}], {a, b}]]},
+    {bl[[2, 4]] > Sqrt[2.] FunctionalDiagrams`Private`blobSizeOfHead[WideBox]/1.3 + 0.05,
+     FunctionalDiagrams`Private`blobBoxMargin["Diamond", bl[[2, 4]], FunctionalDiagrams`Private`blobLabelBox[bl[[2, 1]], bl[[2, 3]], "Box"], {0., 0.}] >= 0.099}]},
+  {True, {True, True}}];
+check["DeclareBlob: a box joined by two corners to one point, or by three corners to three points, keeps its sides upright",
+  {turnedBox[geometryItems[IntegralOver[D0[a, u] D0[a, v] FBx[u, v, c, d], {u, v}], {a, c, d}]][[2, 2]],
+   turnedBox[geometryItems[IntegralOver[D0[a, u] D0[c, v] D0[d, w] FBx[u, v, b, w], {u, v, w}], {a, b, c, d}]][[2, 2]]}, {"Box", "Box"}];
 check["DeclareBlob: in one picture the blobs of one shape have one size (F beside a wider label)",
   Union[Cases[geometryItems[IntegralOver[WideBox[a, b, u, v] FBx[v, u, c, d], {u, v}], {a, b, c, d}], {"B", _, sp_} :> sp[[4]]]] // Length, 1];
 check["DeclareBlob: in a sum drawn together a blob has one size in every term (F alone as large as beside the wider label)",

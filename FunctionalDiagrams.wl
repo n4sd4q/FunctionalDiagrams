@@ -61,7 +61,7 @@ DeclareInteractionLine::usage = "DeclareInteractionLine[V, ...] declares interac
 DeclareCoupling::usage = "DeclareCoupling[lambda, ...] declares couplings of local interactions, such as lambda in S_int = lambda/4! \[Integral] phi^4 or g in g \[Integral] phi psibar psi. In the weight written with a picture they are absorbed into the vertices, each of which stands for minus its coupling: lambda^n in the coefficient of a term becomes (-1)^n, so that the tadpole -lambda/2 G(a, z) G(z, z) G(z, b) has the weight 1/2. The expressions are not changed.";
 DeclareLocalVertex::usage = "DeclareLocalVertex[h, ...] declares heads of local vertices: kernels such as the quark-gluon vertex h[x, y, z] or the three-gluon vertex, whose labels carry different indices (Lorentz, colour, spinor) at one point of space-time. The pictures draw h[x, y, ...] as one point, at which its lines meet, instead of a grey blob; in the weight written with a picture the vertex stands for minus its kernel, -h (the sign of exp(-S_int)).";
 DeclareDisplayName::usage = "DeclareDisplayName[h, name] displays h[x, y, ...] as name with the subscript x y ..., for example DeclareDisplayName[BareGreenFunction, \"G0\"]: input keeps the explicit name, output is compact.";
-DeclareBlob::usage = "DeclareBlob[h, label] draws a factor h[x1, ..., xn] (n >= 2, a self-energy h[x, y] included) as a blob with label (a LaTeX string, e.g. \"\\\\Sigma\") written inside; its legs leave it counterclockwise from the top left, at the corners of a square for n = 4, and its lines leave from these corners, as from those of a triangle (a point that is twice an argument, h[z, z, w, w], stands outside two corners, joined to each). Options: \"Shape\" -> \"Circle\" (default), \"Box\" or \"Triangle\" (equilateral, three legs at its corners, two on the left and one on the right: the vertex of a one-body operator), or \"TriangleUp\" (the same triangle with two legs at the bottom and one at the top), \"Diamond\" (a square turned by 45 degrees, legs at the left, bottom, right and top corners); \"AxialPorts\" -> {k1, ...}: the lines and legs of these ports leave horizontally, so that a self-energy can be drawn with its fermion line on an axis (the default for \"TriangleUp\" is {1, 2}); \"Fill\" -> \"Hatched\" (default), \"CrossHatched\", \"Grey\" or \"White\". A blob is as large as its label needs: the label (on a hatched blob in a white clearing, with a band of hatching left around it) sits at the centre, or near the incentre of a triangle, and a label with an accent, a subscript or a superscript makes the blob a little larger, never the label smaller; in one picture, and in all the terms of a sum drawn together, the blobs of one shape have one size. Blobs joined by lines are drawn side by side, as in the exact equations of many-body theory (Dyson, Schwinger-Dyson, Bethe-Salpeter, parquet).";
+DeclareBlob::usage = "DeclareBlob[h, label] draws a factor h[x1, ..., xn] (n >= 2, a self-energy h[x, y] included) as a blob with label (a LaTeX string, e.g. \"\\\\Sigma\") written inside; its legs leave it counterclockwise from the top left, at the corners of a square for n = 4, and its lines leave from these corners, as from those of a triangle (a point that is twice an argument, h[z, z, w, w], stands outside two corners, joined to each); a box joined by single lines from three of its corners to one vertex (the four-point vertex in the Schwinger-Dyson equation of phi^4 theory) is turned by 45 degrees, the vertex on the diagonal through the fourth corner, the lines to the two other corners arcs symmetric about it, the label upright. Options: \"Shape\" -> \"Circle\" (default), \"Box\" or \"Triangle\" (equilateral, three legs at its corners, two on the left and one on the right: the vertex of a one-body operator), or \"TriangleUp\" (the same triangle with two legs at the bottom and one at the top), \"Diamond\" (a square turned by 45 degrees, legs at the left, bottom, right and top corners); \"AxialPorts\" -> {k1, ...}: the lines and legs of these ports leave horizontally, so that a self-energy can be drawn with its fermion line on an axis (the default for \"TriangleUp\" is {1, 2}); \"Fill\" -> \"Hatched\" (default), \"CrossHatched\", \"Grey\" or \"White\". A blob is as large as its label needs: the label (on a hatched blob in a white clearing, with a band of hatching left around it) sits at the centre, or near the incentre of a triangle, and a label with an accent, a subscript or a superscript makes the blob a little larger, never the label smaller; in one picture, and in all the terms of a sum drawn together, the blobs of one shape have one size. Blobs joined by lines are drawn side by side, as in the exact equations of many-body theory (Dyson, Schwinger-Dyson, Bethe-Salpeter, parquet).";
 ResetDeclarations::usage = "ResetDeclarations[] removes all declarations (sources, fields, symmetries, derivative rules, line styles, interaction lines, couplings, local vertices, blobs, Matsubara frequencies): symmetric heads lose the attribute Orderless and antisymmetric ones their sign rules; display formats remain.";
 
 (* ---------------------------------------------------------------- calculus *)
@@ -3807,7 +3807,8 @@ treeLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
    left (the corners of a square for four legs, of the triangle for three). Blobs joined
    by lines are placed side by side, on the side of the ports that join them (Bethe-Salpeter ladders); the other points
    outside the ports they are joined to; the legs of external labels at ports point outwards, or along the side of the
-   blob when they would meet a neighbouring blob. {positions, {"blob", blobs, centre}, {}}, or None. *)
+   blob when they would meet a neighbouring blob. {positions, {"blob", blobs, bends, centre}, {}}, or None: blobs {centre,
+   shape, size} (a turned box a "Diamond"), bends {point, port, centre, radius}, the lines bent along circles. *)
 $declaredBlobSize = 0.6; $hatchSpacing = 0.1; $blobGap = 0.95; $blobPointDistance = 0.9; $circlePortAngle = 55. Degree;
 blobHeadOf[v_, blobs_] := First[Cases[blobs, {v, _, h_} :> h], None];
 (* the spec {label, shape, fill, size} of a declared blob: its size is $declaredBlobSize, or larger when its label needs it
@@ -4023,9 +4024,31 @@ orderSymmetricBlobPorts[blobs0_List, labelNodes_List, frameLines_List] := Module
      Do[slot[[free[[kk]]]] = rest[[kk]], {kk, Length[rest]}];
      blobs[[i, 2]] = slot], {m, Length[order]}];
    blobs];
+(* a box joined by single lines from three of its corners to one point v (not a port), its fourth corner q elsewhere
+   (Gamma4 in the Schwinger-Dyson equation of phi^4 theory, Sigma = lambda/6 G G G Gamma4): symmetric when turned by 45
+   degrees, a diamond with q at one end of its horizontal diagonal and v on that diagonal, outside the opposite corner.
+   {v, q, the arguments in the order of the corners of the diamond (left, bottom, right, top: those of the box turned, a
+   rotation, so that the ports keep their order round it), its size}, or None. q is at the right corner, at the left one
+   when it comes before v among the external labels (or joined to one that does); the diamond is the square turned, or
+   larger when its upright label needs it *)
+$turnedBoxPointDistance = 0.8;
+turnedBoxJoin[b_, blobs_, lines_, labelNodes_] := Module[{args = b[[2]], sp = blobSpecOf[b[[3]]], ends, vs, v, m, q, rank, s},
+   If[sp === None || sp[[2]] =!= "Box" || Length[args] =!= 4 || ! DuplicateFreeQ[args], Return[None]];
+   (* the other end of the single line at each port that is not an external point, else None *)
+   ends = Table[With[{ls = Select[lines, MemberQ[#[[{1, 2}]], x] &]},
+      If[Length[ls] == 1 && ! MemberQ[labelNodes, x], If[ls[[1, 1]] === x, ls[[1, 2]], ls[[1, 1]]], None]], {x, args}];
+   vs = Select[DeleteDuplicates[DeleteCases[ends, None]], Count[ends, #] == 3 &];
+   If[Length[vs] =!= 1 || MemberQ[Flatten[blobs[[All, 2]]], First[vs]], Return[None]];
+   v = First[vs]; m = First[Select[Range[4], ends[[#]] =!= v &]]; q = args[[m]];
+   If[AnyTrue[lines, Sort[#[[{1, 2}]]] === Sort[{q, v}] &], Return[None]];
+   rank[x_] := With[{ks = Flatten[Table[Position[labelNodes, w, {1}], {w, Join[{x}, Cases[lines, {x, w_, _, _} :> w], Cases[lines, {w_, x, _, _} :> w]]}]]},
+     If[ks === {}, Infinity, Min[ks]]];
+   s = If[rank[q] < rank[v], 1, 3] - m;
+   {v, q, Table[args[[Mod[j - s - 1, 4] + 1]], {j, 4}],
+    Max[Sqrt[2.] blobSizeOfHead[b[[3]]]/1.3, pictureBlobSize[sp[[1]], "Diamond", sp[[3]]]]}];
 blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_List, lines_List, blobs_List] := Module[
    {frameBlobs, ports, portNodes, portIndex, portOffsetIn, frameLines, centres, links, shared, progress, others, pos = {}, placedQ, posOf,
-    nb, pn, dir, centroid, legPositions = {}, discs, nbrsOf, axialPoints = {}, sidePortsQ, legAngles},
+    nb, pn, dir, centroid, legPositions = {}, discs, nbrsOf, axialPoints = {}, sidePortsQ, legAngles, turned, shapeOf, sizeOf, reachOf, arcs = {}},
    frameBlobs = Select[blobs, MemberQ[mainNodes, #[[1]]] &];
    If[frameBlobs === {} || ! AllTrue[frameBlobs, declaredBlobHeadQ[#[[3]]] &], Return[None]];
    (* the blob with the first external label first: on the left when the ports do not decide *)
@@ -4041,6 +4064,13 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
    If[AnyTrue[Tally[Flatten[frameBlobs[[All, 2]]]], #[[2]] > 2 &] ||
      AnyTrue[frameBlobs, hasDuplicatesQ[#[[2]]] && (freelyOrderedHeadQ[#[[3]]] || ! sidePortsQ[#]) &], Return[None]];
    frameBlobs = orderSymmetricBlobPorts[frameBlobs, labelNodes, frameLines];
+   (* a box joined by three corners to one point: turned by 45 degrees (turnedBoxJoin), a diamond *)
+   turned = Table[turnedBoxJoin[frameBlobs[[i]], frameBlobs, frameLines, labelNodes], {i, Length[frameBlobs]}];
+   Do[If[turned[[i]] =!= None, frameBlobs[[i, 2]] = turned[[i, 3]]], {i, Length[frameBlobs]}];
+   shapeOf[i_] := If[turned[[i]] =!= None, "Diamond", blobSpecOf[frameBlobs[[i, 3]]][[2]]];
+   sizeOf[i_] := If[turned[[i]] =!= None, turned[[i, 4]], blobSizeOfHead[frameBlobs[[i, 3]]]];
+   (* how far a blob reaches along the line to a neighbouring one: the corners of a diamond *)
+   reachOf[i_] := If[shapeOf[i] === "Diamond", 1.3, 1.] sizeOf[i];
    (* a point twice a port of one blob (the density of L, chi(z, z') = L(z, z; z', z'), or the end of an interaction line
       on it): the two ports (two corners of one side of a box) are points of their own (blobPortCorner), each joined to
       it by a line, and it is placed outside them as any other point, as the end of two propagators at two corners of a
@@ -4050,7 +4080,8 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
    frameLines = Join[frameLines, Flatten[Table[Cases[b[[2]], c : blobPortCorner[_, x_, _] :> {c, x, None, "Spoke"}], {b, frameBlobs}], 1]];
    (* ports: {node, blob, offset from the centre of the blob} *)
    ports = Flatten[Table[With[{b = frameBlobs[[i]], n = Length[frameBlobs[[i, 2]]]},
-       Table[{b[[2, k]], i, blobPortOffset[blobSpecOf[b[[3]]][[2]], k, n, blobSizeOfHead[b[[3]]]], portDirection[b[[3]], blobSpecOf[b[[3]]][[2]], k, n]}, {k, n}]],
+       Table[{b[[2, k]], i, blobPortOffset[shapeOf[i], k, n, sizeOf[i]],
+         If[turned[[i]] =!= None, unitVectorOf[blobPortOffset[shapeOf[i], k, n]], portDirection[b[[3]], shapeOf[i], k, n]]}, {k, n}]],
       {i, Length[frameBlobs]}], 1];
    portNodes = ports[[All, 1]];
    portIndex[v_] := First[First[Position[portNodes, v, {1}]]];
@@ -4067,7 +4098,7 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
       triangle: the lines of a box, as those of a triangle, always leave from its corners), at their spacing if the
       circle is wide enough, and the lines are parallel; else $circlePortAngle off that line, and the lines spread
       slightly towards the corners (a port further round the circle would leave its line nearly along the outline) *)
-   Do[If[i != j && blobSpecOf[frameBlobs[[i, 3]]][[2]] === "Circle" && Length[frameBlobs[[i, 2]]] == 2 && Length[links[i, j]] == 2,
+   Do[If[i != j && shapeOf[i] === "Circle" && Length[frameBlobs[[i, 2]]] == 2 && Length[links[i, j]] == 2,
      Module[{ends, cp, op, a, u, w, r, th},
       ends = Table[SortBy[l[[{1, 2}]], ports[[portIndex[#], 2]] == j &], {l, links[i, j]}];
       cp = ends[[All, 1]]; op = ends[[All, 2]];
@@ -4075,7 +4106,7 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
         vectorNorm[Total[Table[ports[[portIndex[q], 3]], {q, op}]]] > 0.1,
        a = Table[ports[[portIndex[q], 3]], {q, op}];
        (* u: from the other blob towards the circle, the side its two ports face; w across it *)
-       u = unitVectorOf[Total[a]]; w = rotate90[u]; r = blobSizeOfHead[frameBlobs[[i, 3]]];
+       u = unitVectorOf[Total[a]]; w = rotate90[u]; r = sizeOf[i];
        th = ArcSin[Min[vectorNorm[a[[1]] - a[[2]]]/(2 r), Sin[$circlePortAngle]]];
        Do[With[{o = r (-Cos[th] u + Sign[(a[[k]] - Mean[a]) . w] Sin[th] w)},
          ports[[portIndex[cp[[k]]], 3]] = o; ports[[portIndex[cp[[k]]], 4]] = unitVectorOf[o]], {k, 2}]]]],
@@ -4087,7 +4118,7 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
          With[{d = Total[Join[Table[If[ports[[portIndex[e], 2]] == i, 1, -1] ports[[portIndex[e], 3]], {e, ends}],
               Table[portOffsetIn[s, i] - portOffsetIn[s, j], {s, shared[i, j]}]]]},
           (* ports on opposite corners (the particle-particle ladder): side by side, further apart, as the lines cross *)
-          centres[[j]] = centres[[i]] + With[{hh = blobSizeOfHead[frameBlobs[[i, 3]]] + blobSizeOfHead[frameBlobs[[j, 3]]]},
+          centres[[j]] = centres[[i]] + With[{hh = reachOf[i] + reachOf[j]},
              If[vectorNorm[d] < 0.1, (hh + gap + 0.65) {1., 0.}, (hh + gap) unitVectorOf[d]]];
           progress = True]]], {i, Length[frameBlobs]}]], {j, Length[frameBlobs]}]];
    If[MemberQ[centres, None], Return[None]];
@@ -4098,6 +4129,15 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
        {p, ports}]];
    placedQ[v_] := MemberQ[pos[[All, 1]], v];
    posOf[v_] := First[Cases[pos, {v, p_} :> p]];
+   (* the point joined to three corners of a turned box: on its horizontal diagonal, $turnedBoxPointDistance outside the
+      corner opposite the fourth; its lines to the top and bottom corners follow the circle through the three points
+      (they leave it vertically, the line to the near corner horizontally), passed on to frameItems as bends *)
+   Do[If[turned[[i]] =!= None && ! placedQ[turned[[i, 1]]],
+     With[{v = turned[[i, 1]], q = turned[[i, 2]]}, With[{o = -portOffsetIn[q, i]},
+       AppendTo[pos, {v, centres[[i]] + o + $turnedBoxPointDistance unitVectorOf[o]}];
+       With[{tb = Select[frameBlobs[[i, 2]], # =!= q && vectorNorm[portOffsetIn[#, i] - o] > 10.^-6 &]},
+        With[{circ = circleThrough[posOf[v], posOf[tb[[1]]], posOf[tb[[2]]]]},
+         If[circ =!= None, arcs = Join[arcs, Table[{v, t, circ[[1]], circ[[2]]}, {t, tb}]]]]]]]], {i, Length[frameBlobs]}];
    (* the other points: outside the ports they are joined to, or next to a point already placed *)
    others = Select[mainNodes, Head[#] =!= blob && ! MemberQ[portNodes, #] &];
    progress = True;
@@ -4147,8 +4187,9 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
     {k, Length[labels]}];
    (* the blobs centred on the axis of the formula *)
    With[{m = Mean[centres]},
-    discs = Table[{centres[[i]] - m, blobSpecOf[frameBlobs[[i, 3]]][[2]], blobSizeOfHead[frameBlobs[[i, 3]]]}, {i, Length[frameBlobs]}];
-    {Table[{q[[1]], q[[2]] - m}, {q, Join[pos, legPositions]}], {"blob", discs, centroid - m}, {}}]];
+    discs = Table[{centres[[i]] - m, shapeOf[i], sizeOf[i]}, {i, Length[frameBlobs]}];
+    {Table[{q[[1]], q[[2]] - m}, {q, Join[pos, legPositions]}],
+     {"blob", discs, Table[{a[[1]], a[[2]], a[[3]] - m, a[[4]]}, {a, arcs}], centroid - m}, {}}]];
 
 (* the chords that hatch a blob, at 45 degrees (sense 1) or at -45 degrees (sense -1); for a triangle, the parts of the
    lines t n + s e inside it. A diamond, whose edges are at 45 degrees, is hatched vertically (sense 1) and horizontally
@@ -4425,7 +4466,7 @@ frameItems[frameNodes_, positions_, lines_, blobs_, stubs_, ext_, amputatedExt_,
    legs = Select[amputatedExt, MemberQ[frameNodes, #[[2]]] &];
    Do[With[{q = point[l[[2]]], e = point[leg[l[[1]]]]},
       AppendTo[items, {"L", q, e, l[[1]] /. legDirections}]; add[l[[2]], angleOf[e - q]]], {l, legs}];
-   bends = bubbleBends[frameLines, point, Table[{l[[2]], point[leg[l[[1]]]]}, {l, legs}]];
+   bends = Join[bubbleBends[frameLines, point, Table[{l[[2]], point[leg[l[[1]]]]}, {l, legs}]], If[mode[[1]] === "blob", mode[[3]], {}]];
    groups = GatherBy[Join[nonLoops, spokes], Sort[#[[{1, 2}]]] &];
    (* lines joining non-adjacent vertices of the axis: arcs above it, higher for later ones *)
    skips = If[mode[[1]] === "backbone",
@@ -4643,7 +4684,9 @@ frameItems[frameNodes_, positions_, lines_, blobs_, stubs_, ext_, amputatedExt_,
      Which[
       MemberQ[$densityNodes, v], AppendTo[items, {"S", {p, p}}],
       MemberQ[ext, v] && ! MemberQ[amputatedExt[[All, 2]], v], AppendTo[items, {"N", p, "ext"}],
-      Head[v] === blob && declaredBlobHeadQ[blobHeadOf[v, blobs]], AppendTo[items, {"B", p, blobSpecOf[blobHeadOf[v, blobs]]}],
+      (* the shape and size of the blob as laid out: a turned box is a diamond *)
+      Head[v] === blob && declaredBlobHeadQ[blobHeadOf[v, blobs]], AppendTo[items, {"B", p, With[{sp = blobSpecOf[blobHeadOf[v, blobs]],
+          dk = If[mode[[1]] === "blob", Select[mode[[2]], vectorNorm[#[[1]] - p] < 10.^-6 &, 1], {}]}, If[dk === {}, sp, ReplacePart[sp, {2 -> dk[[1, 2]], 4 -> dk[[1, 3]]}]]]}],
       Head[v] === blob, AppendTo[items, {"N", p, "blob"}],
       (* a port of a declared blob, on its boundary, joined to at most one line: no dot (a point twice a port of a blob is
          outside it, joined to two of its corners) *)

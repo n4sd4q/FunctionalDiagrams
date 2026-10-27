@@ -218,7 +218,12 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   with it (`boxFloorOf`, `$pictureBoxFloor`, `$sumBoxFloor`); a circle with two ports joined to one blob has them
   facing it, on either side of the line of the centres, at that blob's spacing if the circle is wide enough (parallel
   lines), else 55 degrees off the line (`$circlePortAngle`), the lines spreading slightly to the corners of a box (the
-  Thouless criterion, Δ joined to Γ_pp; in `blobLayoutWithExternals`). A point twice a port of one blob (χ = γLγ =
+  Thouless criterion, Δ joined to Γ_pp; in `blobLayoutWithExternals`). A box joined by single lines from three corners to
+  one vertex, its fourth corner elsewhere (Γ⁽⁴⁾ in the Schwinger–Dyson equation of φ⁴), is turned by 45 degrees
+  (`turnedBoxJoin`): a diamond as large as the square (larger when its upright label needs it), its ports in the same
+  order round it, the fourth corner on the right (on the left when its label comes first), the vertex on the horizontal
+  diagonal 0.8 outside the opposite corner (`$turnedBoxPointDistance`), the lines to the top and bottom corners arcs of
+  the circle through the three points, mirror images (bends passed from the layout to `frameItems`). A point twice a port of one blob (χ = γLγ =
   L(z₁, z₁; z₂, z₂), an interaction line ending on L) stands outside the two corners of a side, joined to each by a line
   (`blobPortCorner[blob, point, k]`), as the end of two propagators at the corners of F (x◁F▷y): a density point if it
   is an external label and nothing else, a vertex (a dot) otherwise; two legs at a point of the blob layout are fanned

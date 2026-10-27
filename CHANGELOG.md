@@ -12,6 +12,15 @@
   line ending on L in δΣ/δU), now stands outside the two corners of that side, joined to each by a line, as x◁F▷y in
   χ = χ₀ + γL₀FL₀γ: a density point when it is an external label and nothing else, otherwise a vertex with a dot; the
   two legs of the vertex at the other end of that interaction line are fanned 90 degrees apart.
+- **A box joined by three corners to one vertex is turned by 45 degrees.** In the Schwinger–Dyson equation of φ⁴
+  theory, Σ = ½ (tadpole) − ⅙ G G G Γ⁽⁴⁾, the box Γ⁽⁴⁾ was drawn upright on the axis, with a straight line and an arc
+  from the vertex to two of its corners (a plain box, without `"AxialPorts"`, was drawn askew). Any box joined by single
+  lines from three of its corners to one vertex, its fourth corner elsewhere, is now a diamond, symmetric about the axis:
+  the fourth corner on the right (b, or the line to b), the vertex on the diagonal through it, joined straight to the left
+  corner and by two arcs of one circle to the top and bottom corners. Its ports keep their order round it (the box
+  turned), its label stays upright, its hatching is the box's turned with it (vertical, never along an edge), and it is
+  as large as the square, or larger when the label needs it. The showcase draws Γ⁽⁴⁾ there as the plain box of the
+  Bethe–Salpeter equation, and the manual shows the term under `DeclareBlob`.
 
 ### Documents
 

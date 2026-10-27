@@ -822,16 +822,15 @@ writeValue["check phi4 Gamma0", {SimplifyDiagrams[phi4Gamma0 - (phi4Gamma0 /. {a
 (* the Schwinger-Dyson equation of phi^4 theory: Sigma = the tadpole + lambda/6 G G G Gamma4, drawn with blobs *)
 writeValue["check phi4 Schwinger-Dyson", byOrder[phi4SelfEnergyG - lambda/6 IntegralOver[DressedPropagator[a, u] *
         DressedPropagator[a, v] DressedPropagator[a, w] (vertexPhi4 /. {a -> u, b -> v, c -> w, d -> b}), {u, v, w}], lambda, Range[2, 3]]];
-(* Gamma4 a box, as in the Bethe-Salpeter equation below, sitting on the axis as F in the Schwinger-Dyson equation of the
-   electron gas: its ports in the order (v, u, b, w), u and b at the bottom (axial ports), v and w at the top *)
-DeclareBlob[Gamma4Axis, "\\Gamma^{(4)}", "Shape" -> "Box", "AxialPorts" -> {2, 3}];
+(* Gamma4 the box of the Bethe-Salpeter equation below: joined by three corners to the vertex at a, it is drawn turned by
+   45 degrees, b at its right corner, a on the diagonal through it, the lines to the top and bottom corners arcs *)
+DeclareBlob[Gamma4Square, "\\Gamma^{(4)}", "Shape" -> "Box"];
 writeTerms["exact_schwinger_dyson_phi4", OrderPart[phi4SelfEnergyG, lambda, 1] +
-   lambda/6 IntegralOver[DressedPropagator[a, u] DressedPropagator[a, v] DressedPropagator[a, w] Gamma4Axis[v, u, b, w], {u, v, w}], {a, b},
+   lambda/6 IntegralOver[DressedPropagator[a, u] DressedPropagator[a, v] DressedPropagator[a, w] Gamma4Square[v, u, b, w], {u, v, w}], {a, b},
   blobOptions];
 writeTerms["exact_sigma_lhs_phi4", SigmaBlob[a, b], {a, b}, blobOptions];
 (* the Bethe-Salpeter equation of the channel s, Gamma4 = Gamma0 - 1/2 Gamma0 L0 Gamma4, with Gamma4 a square, the lines
    of the pair drawn parallel (the vertices are symmetric) *)
-DeclareBlob[Gamma4Square, "\\Gamma^{(4)}", "Shape" -> "Box"];
 writeTerms["exact_bethe_salpeter_phi4_lhs", Gamma4Square[a, b, c, d], {a, b, c, d}, blobOptions];
 writeTerms["exact_bethe_salpeter_phi4", KernelBox[a, b, c, d] - 1/2 IntegralOver[KernelBox[a, b, u1, u2] DressedPropagator[u2, u3] DressedPropagator[u1, u4] *
      Gamma4Square[u3, u4, c, d], {u1, u2, u3, u4}], {a, b, c, d}, blobOptions];
