@@ -1659,9 +1659,9 @@ weights are $\pm1$, the sign being $(-1)^{\text{number of vertices}}$, and there
 \paragraph{All the trees up to six points} Integrating over the external labels identifies the trees that differ only
 by their labels, and the canonical form counts them:
 \begin{code}
-W[n_] := FunctionalDerivative[FullPropagator[x5, x6],
+connectedW[n_] := FunctionalDerivative[FullPropagator[x5, x6],
     Sequence @@ (ExternalSource /@ Take[{x1, x2, x3, x4}, n - 2])];
-Table[SimplifyDiagrams[IntegralOver[W[n],
+Table[SimplifyDiagrams[IntegralOver[connectedW[n],
     Join[Take[{x1, x2, x3, x4}, n - 2], {x5, x6}]]], {n, 3, 6}]
 \end{code}
 Each picture, whose leaves are free ends, stands for the sum over the inequivalent ways of attaching the labels to its
@@ -2858,11 +2858,23 @@ $P$ and $W$:
 \begin{code}
 properVertex = IrreducibleDiagrams[densityVertex, {{x1, x2}, {z}}, 1,
     {InteractionPotential}];        (* densityVertex: Lambda = -dG^-1/dU *)
+densityCorrelationSkeleton = SkeletonDiagrams[ConnectedCorrelationFunction[
+    FreeFermionGeneratingFunctional, {psibar[a], psi[a], psibar[b], psi[b]},
+    CoulombVertex, 2], {a, b}, {BareGreenFunction}] /.
+    BareGreenFunction -> DressedGreenFunction;      (* <rho rho>_c, G0 -> G *)
 polarization = -IrreducibleDiagrams[densityCorrelationSkeleton, {{a}, {b}}, 1,
-    {InteractionPotential}];        (* <rho rho>_c, skeletons with G0 -> G *)
+    {InteractionPotential}];
+screenedW = InteractionPotential[a, b] - IntegralOver[InteractionPotential[a, c]
+    (densityCorrelationSkeleton /. {a -> c, b -> d}) InteractionPotential[d, b],
+    {c, d}];
 hedin = ExactEquation["Hedin", {"G" -> DressedGreenFunction,
-    "V" -> InteractionPotential, "Sigma" -> sigma, "W" -> w, "P" -> p, "Lambda" -> lambdaTilde,
-    "GammaXC" -> gammaXC}, {x, y, z}];   (* the objects as LabelFunction *)
+    "V" -> InteractionPotential, "Sigma" -> LabelFunction[selfEnergy, {x, y}],
+    "W" -> LabelFunction[screenedW, {a, b}],
+    "P" -> LabelFunction[polarization, {a, b}],
+    "Lambda" -> LabelFunction[properVertex, {x1, x2, z}],
+    "GammaXC" -> LabelFunction[irreducibleVertex - DeltaFunction[x1, x2]
+      DeltaFunction[x3, x4] InteractionPotential[x1, x3], {x1, x2, x3, x4}]},
+    {x, y, z}, "MaximumOrder" -> {InteractionPotential, 3}];
 MapThread[CheckEquation[#1, InteractionPotential, #2] &, {hedin, {3, 2, 3, 3}}]
 \end{code}
 \begin{result}
@@ -2971,8 +2983,8 @@ to $\lambda^3$:
 DeclareSource[Jsigma]; DeclareField[sigmaField, Jsigma];
 DeclareSymmetric[SigmaPropagator, FullSigmaPropagator];
 (* <sigma sigma>_0 = SigmaPropagator, set to lambda/3 delta in the checks *)
-FreeSigmaGeneratingFunctional = FreeBosonGeneratingFunctional
-    Exp[1/2 IntegralOver[Jsigma[x] SigmaPropagator[x, y] Jsigma[y], {x, y}]];
+FreeSigmaGeneratingFunctional = FreeBosonGeneratingFunctional Exp[
+    1/2 IntegralOver[Jsigma[x] SigmaPropagator[x, y] Jsigma[y], {x, y}]];
 SigmaVertex = -I/2 IntegralOver[sigmaField[w] phi[w]^2, {w}];
 \end{code}
 \begin{result}
@@ -3147,8 +3159,8 @@ product of the fermionic and bosonic ones, and the phonon lines are dashed.
 DeclareSource[Jphonon]; DeclareField[phonon, Jphonon];
 DeclareSymmetric[PhononPropagator];
 DeclareLineStyle[PhononPropagator, "Dashed"];
-FreeElectronPhononGeneratingFunctional = FreeFermionGeneratingFunctional
-    Exp[1/2 IntegralOver[Jphonon[x] PhononPropagator[x, y] Jphonon[y], {x, y}]];
+FreeElectronPhononGeneratingFunctional = FreeFermionGeneratingFunctional Exp[
+    1/2 IntegralOver[Jphonon[x] PhononPropagator[x, y] Jphonon[y], {x, y}]];
 ElectronPhononVertex = g IntegralOver[phonon[z] psibar[z] ** psi[z], {z}];
 electronPhononGreen = -PerturbativeCorrelationFunction[
     FreeElectronPhononGeneratingFunctional, {psi[x], psibar[y]},
@@ -3278,8 +3290,8 @@ lines are dashed with a cross.
 DeclareSource[Jimpurity]; DeclareField[impurityPotential, Jimpurity];
 DeclareSymmetric[DisorderCorrelator];
 DeclareLineStyle[DisorderCorrelator, "Impurity"];
-FreeDisorderGeneratingFunctional = FreeFermionGeneratingFunctional
-    Exp[1/2 IntegralOver[Jimpurity[x] DisorderCorrelator[x, y] Jimpurity[y], {x, y}]];
+FreeDisorderGeneratingFunctional = FreeFermionGeneratingFunctional Exp[
+    1/2 IntegralOver[Jimpurity[x] DisorderCorrelator[x, y] Jimpurity[y], {x, y}]];
 ImpurityVertex = IntegralOver[impurityPotential[z] psibar[z] ** psi[z], {z}];
 disorderGreen = DropClosedLoops[-PerturbativeCorrelationFunction[
     FreeDisorderGeneratingFunctional, {psi[x], psibar[y]}, ImpurityVertex, 4],
@@ -3553,6 +3565,7 @@ sigma21B = InfraredRearrangedIntegral[sigma21, {a, b, u}, p, massless, eps];
 z[c_] := 1 + c[1] lambda kappa/eps +
     lambda^2 kappa^2 (c[2]/eps^2 + c[3]/eps);
 {zPhi, zLambda, zM2} = {z[zf], z[zl], z[zm]};
+upTo[e_, n_] := Sum[Coefficient[e, lambda, j] lambda^j, {j, 0, n}];
 finite = {upTo[zPhi (p^2 - (sigmaB /. lambda -> lambda zLambda)), 2],
     upTo[zPhi^2 (gamma4B /. lambda -> lambda zLambda), 3],
     upTo[zM2 (1 - (sigma21B /. lambda -> lambda zLambda)), 2]};
@@ -3833,12 +3846,12 @@ physical mass, the pole of the full propagator, $m=m_0+\Sigma(\slashed{p}=m)$; $
 $\delta Z_2=d\Sigma/d\slashed{p}$ at $\slashed{p}=m$ to this order; and $e$ is the charge measured at $q^2\to0$, where the
 renormalized $\hat\Pi(0)=0$ and $\alpha=1/137.036$~\cite[sections~7.1 and 7.5]{PeskinSchroeder}~\cite{Grozin2005}.
 
-\paragraph{The self-energy} $\Sigma_2=mA+\slashed{p}\,B$, in a general gauge (\pkg{coefficientOf}, a function of the script,
-takes the coefficient of a Dirac structure):
+\paragraph{The self-energy} $\Sigma_2=mA+\slashed{p}\,B$, in a general gauge (\pkg{Coefficient} takes the coefficient of
+a Dirac structure):
 \begin{code}
 electronSelfEnergy = DiracSimplify[I IntegrateOneLoop[sigmaInt, eps]];
-{a, b} = {coefficientOf[electronSelfEnergy, DiracProduct[]]/m,
-    coefficientOf[electronSelfEnergy, DiracProduct[SlashedMomentum[p]]]};
+{a, b} = {Coefficient[electronSelfEnergy, DiracProduct[]]/m,
+    Coefficient[electronSelfEnergy, DiracProduct[SlashedMomentum[p]]]};
 pole = ExpandParameterIntegrals[{a, b}, eps, -1]
 delta2 = pole[[2]]
 Zm = 1 - pole[[1]] - pole[[2]]
@@ -3877,7 +3890,7 @@ scaleless integral, which vanishes, and $(m-m_0)/m=-\delta Z_2$ in every gauge.
 is a Ward identity, and it keeps the photon massless. It does not depend on $\xi$, since there is no internal photon. With $\Pi^{\mu\nu}=(q^2g^{\mu\nu}-q^\mu q^\nu)\,\Pi_2(q^2)$:
 \begin{code}
 piMuNu = DiracSimplify[-I IntegrateOneLoop[piInt, eps]];
-pi2 = -coefficientOf[piMuNu, FourVector[q, mu] FourVector[q, nu]];
+pi2 = -Coefficient[piMuNu, FourVector[q, mu] FourVector[q, nu]];
 ExpandParameterIntegrals[pi2, eps, 0]
 delta3 = ExpandParameterIntegrals[pi2, eps, -1]
 BetaFunctionFromZ[1 - delta3/2, e, eps, 3, "ScalePower" -> 1]

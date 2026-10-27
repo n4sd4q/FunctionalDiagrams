@@ -45,7 +45,12 @@
   propagators, the dashed full phonon line), a code block that checks comes after the pictures it does not draw
   (Hedin), the Nambu kernel follows its derivative, and the orders left out of a picture are said. The left-hand side
   of a sum written order by order no longer stays alone at the foot of a page, and a plain sum of pictures, like a
-  displayed formula, no longer starts a page apart from the line that introduces it.
+  displayed formula, no longer starts a page apart from the line that introduces it. Run as printed, in order and in
+  one session, every code block now runs and gives what follows it: the free generating functionals of the phonons, of
+  disorder and of the field σ were written over two lines that Mathematica reads as two inputs (the boson part was
+  lost), `upTo` and the coefficient of a Dirac structure were functions of the script (now defined in the code, and
+  the built-in `Coefficient`), the trees reused the name `W` of section 1 (now `connectedW`), and the check of Hedin's
+  equations used objects that the code did not define.
 - **Every example of the manual gives what follows it.** The introduction of the manual says how the outputs are
   written: a sum of diagrams as `DiagramPlot` draws it, with the free labels of the output as the external labels and
   only the sizing options left out of the code; a formula with the usual names, which the text now gives where they
