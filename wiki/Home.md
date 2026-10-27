@@ -60,5 +60,6 @@ Every block of Mathematica code on these pages is run, in a fresh kernel for eac
 [`Development/check_wiki.wl`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Development/check_wiki.wl), and
 gives exactly what is shown after it. Outputs are shown as a terminal session prints them (OutputForm: strings without
 quotes, fractions over two lines); a notebook shows the same in its compact form, with the integrals as ∫ and the delta
-functions as δ. Pictures are what `DiagramPlot` draws, typeset from the TikZ code of the same call. Blocks that download or name a
-path of your machine are marked as not run. The pages describe version 2.4.0.
+functions as δ. Pictures are what `DiagramPlot` draws, typeset from the TikZ code of the same call. The few blocks that
+cannot run as they stand (they download, install or remove the paclet, open a file, depend on your machine, or show a
+fragment) are only checked to be valid code. The pages describe version 2.4.0.

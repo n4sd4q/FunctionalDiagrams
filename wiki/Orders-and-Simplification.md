@@ -89,8 +89,10 @@ SimplifyDiagrams[a + b]
 2 IntegralOver[G[x, z2] G[z1, y] V[z1, z2], {z1, z2}]
 ```
 
-A substitution that changes the symmetry of a head needs the declaration first: `G0 -> G` with `G0` symmetric and `G`
-not gives the message `FunctionalDiagrams::rulesymmetry`.
+A substitution needs the new head declared like the old one: with `G0` symmetric and `G` not, the terms of `G` with
+their labels exchanged are not recognized as equal. The rule `G0 -> G` of `LuttingerWardFunctional` and
+`PerturbativeFullVertex` gives the message `FunctionalDiagrams::rulesymmetry` then; a substitution of your own,
+`expr /. G0 -> G`, is not checked.
 
 ## Classes of diagrams
 

@@ -26,9 +26,10 @@ sigma = AmputateExternalLegs[ParticleIrreducibleDiagrams[green, 1, {x, y}, {G0}]
 DiagramPlot[sigma, {x, y}]
 ```
 
-![The electron self-energy at order g squared: the phonon tadpole and the Migdal diagram, with dashed phonon lines](images/declaring_phonon_self_energy.svg)
+![The electron self-energy at order g squared: the Migdal diagram and the phonon tadpole, with dashed phonon lines](images/declaring_phonon_self_energy.svg)
 
-The tadpole is the mean field of the phonon; the second diagram is Migdal's self-energy.
+The first diagram is Migdal's self-energy, the exchange of a phonon; the second, the tadpole, is the mean field of the
+phonon, with the weight −1 of its closed fermion loop.
 
 ## The declarations
 
@@ -47,7 +48,7 @@ The tadpole is the mean field of the phonon; the second diagram is Migdal's self
 | `DeclareDiscreteIndexValues[{up, down}]` | discrete labels: `DeltaFunction[up, down]` is 0 (spin) |
 | `DeclareFunctionalDerivative[...]` | the derivative of an object that depends on a source implicitly (a line in an external potential) |
 | `DeclareMatsubaraFrequency[w, "Fermion"]` | `w` is a fermionic Matsubara frequency |
-| `ResetDeclarations[]` | forget all of the above |
+| `ResetDeclarations[]` | forget all of the above (the display formats of `DeclareDisplayName` remain) |
 
 The manual, section *Declarations*, has every option; the showcase declares phonons, disorder, QED and QCD.
 

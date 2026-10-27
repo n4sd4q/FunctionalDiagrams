@@ -117,6 +117,9 @@ PacletUninstall["FunctionalDiagrams"]
   context (a function of a newer Mathematica, for example), and the package's own versions are not used. Load
   FunctionalDiagrams in a fresh kernel; if the message remains, please report it in an
   [issue](https://github.com/n4sd4q/FunctionalDiagrams/issues).
+- **`DiagramPlot::shdw`** (or another name of the package) when the package is loaded: the name was typed in the
+  session before `Needs`, which made a symbol of its own in ``Global` ``. The package's function is the one used from
+  then on; ``Remove["Global`DiagramPlot"]`` removes the other, and loading the package first avoids the message.
 - **The pictures are black on a dark notebook.** Before Mathematica 14.3 the pictures have the colours of a light
   notebook: see [Light and dark notebooks](Light-and-Dark-Notebooks).
 - **Results show `DummyVariable[1, 1]`** in a script: see [Working in scripts](Working-in-Scripts).

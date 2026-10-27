@@ -12,7 +12,7 @@ that give the same results. For the electron gas of the README (`Z0`, `interacti
 
 | object | what it is | function |
 |---|---|---|
-| Green function G(x, y) = −⟨ψ(x) ψ̄(y)⟩ | a derivative of Z with respect to η̄(x) and η(y) | `-PerturbativeCorrelationFunction[Z0, {psi[x], psibar[y]}, interaction, n]` |
+| Green function G(x, y) = −⟨T ψ(x) ψ̄(y)⟩ | a derivative of Z with respect to η̄(x) and η(y) | `-PerturbativeCorrelationFunction[Z0, {psi[x], psibar[y]}, interaction, n]` |
 | connected functions | derivatives of log Z | `ConnectedCorrelationFunction[Z0, {psi[x1], psibar[x2], ...}, interaction, n]` |
 | connected vacuum diagrams | log(Z/Z₀) | `ConnectedVacuumDiagrams[Z0, interaction, n]` |
 | Luttinger–Ward functional Φ[G] | minus the 2PI vacuum diagrams, with G₀ → G | `LuttingerWardFunctional[Z0, interaction, n, G0 -> G]` |
@@ -170,9 +170,8 @@ Length[DiagramTerms[green4]]
 706
 ```
 
-This takes a few seconds on a laptop; the fifth order (8162 diagrams) takes under a minute. The showcase writes the time
-of each of its steps in
-[`Showcase/figures/values.txt`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Showcase/figures/values.txt).
+This takes a few seconds; the fifth order (8162 diagrams) takes a few minutes. The showcase writes the time of each
+of its steps in [`Showcase/figures/values.txt`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Showcase/figures/values.txt).
 Compute only the orders you need: [Orders and simplification](Orders-and-Simplification#selecting-and-counting-orders).
 
 ## Does the package do the momentum integrals?

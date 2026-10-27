@@ -33,7 +33,7 @@ EvaluateMatsubara[sigma, {y -> {k, I w}, x -> {-k, -I w}}, rules,
 -MomentumSum[FermiFunction[xi[p]] v[k - p], {p}] + 2 MomentumSum[FermiFunction[xi[p]], {p}] v[0]
 ```
 
-The Hartree term, with the factor 2 of the spin of its closed loop, and the Fock term: the frequency sums are done (by
+The Fock term, and the Hartree term with the factor 2 of the spin of its closed loop: the frequency sums are done (by
 residues), the momentum integrals stay as `MomentumSum`. The density correlation function at zero order is the bubble:
 
 ```mathematica

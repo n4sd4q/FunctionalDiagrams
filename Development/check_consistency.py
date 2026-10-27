@@ -7,7 +7,7 @@ the install line of the README, the title of the manual and the check of the tes
 that version, use only names of the package that exist, and link pages, images and files that exist (their code is run
 by Development/check_wiki.wl, which needs Mathematica). Run from any folder:
 python3 Development/check_consistency.py"""
-import json, os, re, subprocess, sys, tempfile
+import json, os, re, subprocess, sys, tempfile, unicodedata
 
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 problems = []
@@ -117,8 +117,11 @@ def code_symbols(text):
     return [s for s in code_tokens(text) if re.match(r'\$?[A-Za-z]', s)]
 
 def slug(heading):
-    """the anchor GitHub gives a heading"""
-    return re.sub(r'\s', '-', re.sub(r'[^\w\- ]', '', heading.strip().lower()))
+    """the anchor GitHub gives a heading: lower case, the letters, marks, decimal digits, hyphens, underscores and spaces
+    kept (a superscript ⁴ is dropped), the spaces made hyphens"""
+    kept = ''.join(c for c in heading.strip().lower()
+                   if c in '-_ ' or unicodedata.category(c)[0] in 'LM' or unicodedata.category(c) == 'Nd')
+    return kept.replace(' ', '-')
 
 wiki = os.path.join(root, 'wiki')
 if os.path.isdir(wiki):
@@ -132,7 +135,7 @@ if os.path.isdir(wiki):
     known = set(public) | set(code_symbols(package)) | {
         'FunctionalDiagrams', 'Needs', 'Get', 'Put', 'Export', 'Print', 'ToString', 'AbsoluteTiming', 'SetOptions',
         'Options', 'SystemOpen', 'FindFile', 'PacletInstall', 'PacletFind', 'PacletObject', 'PacletUninstall',
-        'PacletDirectoryLoad', '$UserBaseDirectory', '$Version', 'Times', 'LightDarkSwitched',
+        'PacletDirectoryLoad', '$UserBaseDirectory', '$Version', 'Times', 'LightDarkSwitched', 'Remove',
         'C', 'D', 'E', 'I', 'K', 'N', 'O', 'Beta', 'Gamma', 'GreenFunction'}
     code = {name: re.findall(r'```mathematica\n(.*?)```', text, re.S) for name, text in pages.items()}
     # inline code, except paths and file names

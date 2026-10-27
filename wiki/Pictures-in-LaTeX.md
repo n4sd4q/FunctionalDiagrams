@@ -61,7 +61,7 @@ look on the page:
 | option | value by default | |
 |---|---|---|
 | `"Scale"` | `0.7` | centimetres per unit of the drawing |
-| `"LineWidth"` | `0.7` | the width of the lines in pt; arrow heads, dashes, waves and double lines follow it |
+| `"LineWidth"` | `Automatic`: 0.7 | the width of the lines in pt; arrow heads, dashes, waves and double lines follow it |
 | `"LabelFont"` | `"\\small"` | the font command of the labels |
 | `"Labels"` | `{}` | rules from labels to LaTeX, `{a -> "x_1"}`; by default `x12` is written x₁₂, `lambda` λ, `etabar` η̄ |
 
