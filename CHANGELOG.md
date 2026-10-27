@@ -85,6 +85,20 @@
   Hartree–Fock self-energy of the whole −⟨Tψψ̄⟩ = G − ΨΨ̄ (for φ⁴ the tadpole of ⟨φφ⟩ = G + φ̄φ̄), and it vanishes at zero means. The
   superfield is written with the whole second derivative S''[𝚿], anomalous vertices included. The showcase and the tests
   check D⁻¹ against the first-order self-energy for φ⁴, the electron gas and the superfield.
+- **The 1PI action in one form for bosons and fermions.** Γ[φ̄] = S[φ̄] + ½Tr ln S''[φ̄] + Γ₁[φ̄] and
+  Γ[Ψ̄, Ψ] = S[Ψ̄, Ψ] − ½Tr ln(−S''[Ψ̄, Ψ]) + Γ₁[Ψ̄, Ψ], the superfield as the fermions: the classical action whole, the one
+  loop of the fluctuation operator in the background, and Γ₁, defined by this equation as Γ₂ is by the 2PI action, minus
+  the 1PI vacuum diagrams with two or more loops, with the lines S''⁻¹ and the vertices of degree three or more. For
+  fermions S'' is the Nambu matrix of the second derivatives in (Ψ, Ψ̄), the trace running over its components: its normal
+  block is the D⁻¹[Ψ̄, Ψ] of the 2PI action, its anomalous blocks VΨΨ and VΨ̄Ψ̄ come from the anomalous vertices of degree
+  two (before, Γ[Ψ̄, Ψ] was written −Ψ̄G₀⁻¹Ψ + S_int − Tr ln(−G₀⁻¹) − (1PI vacuum diagrams), and Γ[φ̄] with an unnamed
+  sum of diagrams). `EffectiveAction1PI` expands fermions and superfields in G₀, which its usage message, the manual and
+  the showcase now say: grouped by loops, its diagrams are S_int, the rings of the one loop and Γ₁ with its lines expanded.
+  The showcase, the manual, `Examples.wl` and CLAUDE.md use these names (the one loop is no longer called Γ^[1]); at
+  G = S''⁻¹, the Γ₂ of the 2PI action is the part of Γ₁ 2PI in these lines. The tests and the showcase check every piece
+  order by order: Γ₁ against the 1PI vacuum diagrams of `ConnectedVacuumDiagrams` (φ⁴), the diagrams with one loop and
+  with two or more against the expanded one loop and Γ₁ (φ⁴, the superfield, the electron gas through the components of
+  the superfield), Γ₂ at G = S''⁻¹ against Γ₁ (φ⁴, the superfield).
 - **A wiki.** The [wiki](https://github.com/n4sd4q/FunctionalDiagrams/wiki) of the repository has practical guides
   and a FAQ, beside the README, the showcase and the manual: installing and updating, the conventions in one place,
   declaring a theory, reading the weights, orders and simplification, exact equations, particle–particle diagrams,

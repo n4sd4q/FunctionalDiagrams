@@ -1335,7 +1335,7 @@ Options:
   $\Gamma[\bar\Psi,\Psi,G]=S[\bar\Psi,\Psi]-{\rm Tr}\ln(-G^{-1})-{\rm Tr}(D^{-1}[\bar\Psi,\Psi]G-1)+\Gamma_2[\bar\Psi,\Psi,G]$, with
   $S[\bar\Psi,\Psi]=-\bar\Psi G_0^{-1}\Psi+S_{\rm int}[\bar\Psi,\Psi]$ and $D^{-1}[\bar\Psi,\Psi](x,y)=\delta^2S/\delta\bar\Psi(x)\,\delta\Psi(y)
   =G_0^{-1}(x,y)-\Sigma_{\rm HF}[-\Psi\bar\Psi](x,y)$ (\pkg{FunctionalDerivative[S, Psibar[x], Psi[y]]}, the normal block of the
-  second derivative): $\Sigma_{\rm HF}[-\Psi\bar\Psi]$ is the first-order self-energy $\Sigma_{\rm HF}[G]$ with $-\Psi(x)\bar\Psi(y)$ in
+  Nambu matrix $S''[\bar\Psi,\Psi]$ of the second derivatives, \fnref{EffectiveAction1PI}): $\Sigma_{\rm HF}[-\Psi\bar\Psi]$ is the first-order self-energy $\Sigma_{\rm HF}[G]$ with $-\Psi(x)\bar\Psi(y)$ in
   place of $G(x,y)$, the Hartree and Fock potentials of the means, which ${\rm Tr}(\Sigma_{\rm HF}[-\Psi\bar\Psi]\,G)$ closes with one
   line $G$; the Dyson equation $G^{-1}=D^{-1}[\bar\Psi,\Psi]-\Sigma[\bar\Psi,\Psi,G]$ has at first order $\Sigma_{\rm HF}[G-\Psi\bar\Psi]$,
   the Hartree and Fock potentials of the whole $-\langle T\psi\bar\psi\rangle=G-\Psi\bar\Psi$. For an interaction
@@ -1381,13 +1381,17 @@ $G$ in $\frac12{\rm Tr}(S_{\rm int}''[\bar\phi]G)$, and the figure eight:
 The one-particle-irreducible effective action $\Gamma[\bar\phi]$ of a real boson to order $n$, the Legendre transform of
 $-\log Z$ with respect to the source of $\phi$: the quantum effective action of Jona-Lasinio~\cite{JonaLasinio1964}, the
 generating functional of the 1PI vertex functions; at constant $\bar\phi$ it is the volume times the effective potential
-(Coleman and Weinberg at one loop~\cite{ColemanWeinberg1973}). It is $S[\bar\phi]+\frac12{\rm Tr}\ln D^{-1}$ minus the connected
-1PI vacuum diagrams with the vertices of $S_{\rm int}[\bar\phi+\phi]$ of degree three or more and lines $D$, with
-$D=(D_0^{-1}+S_{\rm int}''[\bar\phi])^{-1}$ the propagator in the background, written with the head \pkg{Dm}, whose derivative
-with respect to $\bar\phi$ is declared ($\delta D/\delta\bar\phi=-D\,S_{\rm int}^{(3)}D$). Its derivatives at $\bar\phi=0$ are the
+(Coleman and Weinberg at one loop~\cite{ColemanWeinberg1973}):
+\[
+\Gamma[\bar\phi]=S[\bar\phi]+\tfrac12{\rm Tr}\ln S''[\bar\phi]+\Gamma_1[\bar\phi],
+\]
+with $S''[\bar\phi]=D^{-1}[\bar\phi]=D_0^{-1}+S_{\rm int}''[\bar\phi]$ the fluctuation operator in the background and $\Gamma_1$, defined by
+this equation as $\Gamma_2$ is by the 2PI action, minus the connected 1PI vacuum diagrams with two or more loops, with the
+vertices of $S_{\rm int}[\bar\phi+\phi]$ of degree three or more and the lines $D=S''[\bar\phi]^{-1}$, the propagator in the background,
+written with the head \pkg{Dm}, whose derivative with respect to $\bar\phi$ is declared ($\delta D/\delta\bar\phi=-D\,S_{\rm int}^{(3)}D$). Its derivatives at $\bar\phi=0$ are the
 vertex functions of \fnref{ConnectedFunctionFromVertices}: $\Gamma^{(2)}=D_0^{-1}-\Sigma$, and $\Gamma^{(n)}$ is minus the
 amputated 1PI $n$-point function, whose skeletons are \fnref{PerturbativeFullVertex}. It is \fnref{EffectiveAction2PI} with
-its mean field at the stationary $G[\bar\phi]$.
+its mean field at the stationary $G[\bar\phi]$; at $G=D$, $\Gamma_2[\bar\phi,D]$ is the part of $\Gamma_1$ 2PI in the lines $D$.
 \excode{effective_action_1pi}
 \exformula{effective_action_1pi}
 The vertex functions are its derivatives at $\bar\phi=0$, where $D=D_0$ (replace \pkg{Dm} by \pkg{D0}, and contract
@@ -1400,12 +1404,22 @@ To first order, $\Gamma^{(2)}=D_0^{-1}-\Sigma$ with the tadpole:
 \exformula{effective_action_1pi_vertex}
 With bare lines, \pkg{D0 -> D0}, the vertices of degree two in the fluctuation stay vertices: $\Gamma[\bar\phi]=S[\bar\phi]+
 \frac12{\rm Tr}\ln D_0^{-1}$ minus the connected 1PI vacuum diagrams with lines $D_0$ and the vertices of degree two or more, the
-same series written in $D_0$, the rings of the vertices of degree two being the one loop. For fermions this is the only form:
-with the Grassmann-odd means $\Psi=\langle\psi\rangle$, $\bar\Psi=\langle\bar\psi\rangle$ (declared as Grassmann sources),
-$\Gamma[\bar\Psi,\Psi]=-\bar\Psi G_0^{-1}\Psi+S_{\rm int}[\bar\Psi,\Psi]-{\rm Tr}\ln(-G_0^{-1})$ minus the connected 1PI vacuum diagrams with
-lines $G_0$ and the vertices of $S_{\rm int}[\bar\Psi+\bar\psi,\Psi+\psi]$ of degree two or more. These include the anomalous
-vertices $V\Psi\Psi\bar\psi\bar\psi$ and $V\bar\Psi\bar\Psi\psi\psi$: the propagator in a Grassmann background has anomalous parts,
-as in the Nambu--Gor'kov formalism, and cannot be written as one line. At zero means
+same series written in $D_0$: its diagrams with one loop are the rings of $\frac12{\rm Tr}\ln S''[\bar\phi]-\frac12{\rm Tr}\ln D_0^{-1}$,
+those with two or more $\Gamma_1$ with its lines $D$ expanded in $D_0$. For fermions, with the Grassmann-odd means
+$\Psi=\langle\psi\rangle$, $\bar\Psi=\langle\bar\psi\rangle$ (declared as Grassmann sources), the action has the same form, with the
+signs of a Grassmann integral:
+\[
+\Gamma[\bar\Psi,\Psi]=S[\bar\Psi,\Psi]-\tfrac12{\rm Tr}\ln\bigl(-S''[\bar\Psi,\Psi]\bigr)+\Gamma_1[\bar\Psi,\Psi].
+\]
+$S''$ is the Nambu matrix of the second derivatives with respect to $(\Psi,\bar\Psi)$, the trace running over its components: its
+normal block is $D^{-1}[\bar\Psi,\Psi](x,y)=\delta^2S/\delta\bar\Psi(x)\,\delta\Psi(y)$, and its anomalous blocks,
+$\delta^2S/\delta\bar\Psi(x)\,\delta\bar\Psi(y)=V(x,y)\Psi(x)\Psi(y)$ and $\delta^2S/\delta\Psi(x)\,\delta\Psi(y)=V(x,y)\bar\Psi(x)\bar\Psi(y)$,
+come from the vertices $V\Psi\Psi\bar\psi\bar\psi$ and $V\bar\Psi\bar\Psi\psi\psi$; the lines of $\Gamma_1$ are $S''[\bar\Psi,\Psi]^{-1}$, the
+propagator in the background, with anomalous blocks as in the Nambu--Gor'kov formalism. Such a line is not one directed line,
+and for fermions the action is written with bare lines, its only form: $S[\bar\Psi,\Psi]-{\rm Tr}\ln(-G_0^{-1})$ minus the connected
+1PI vacuum diagrams with lines $G_0$ and the vertices of $S_{\rm int}[\bar\Psi+\bar\psi,\Psi+\psi]$ of degree two or more, the anomalous
+ones included, whose diagrams with one loop are the rings of $-\frac12{\rm Tr}\ln(-S''[\bar\Psi,\Psi])+{\rm Tr}\ln(-G_0^{-1})$ and those
+with two or more $\Gamma_1$ with its lines expanded in $G_0$. At zero means
 the derivatives, $\Psi$ first and then $\bar\Psi$, give $G_0^{-1}-\Sigma$ with the perturbative self-energy, and
 $\delta^4\Gamma/\delta\bar\Psi(x_1)\,\delta\Psi(x_2)\,\delta\bar\Psi(x_3)\,\delta\Psi(x_4)$ is the full vertex $F(x_1,x_2;x_3,x_4)$ with bare
 lines, whose skeletons are \fnref{PerturbativeFullVertex}; in code, with the rightmost derivative first,
@@ -1413,9 +1427,11 @@ lines, whose skeletons are \fnref{PerturbativeFullVertex}; in code, with the rig
 \pkg{FunctionalDerivative[Gamma, Psibar[x1], Psi[x2], Psibar[x3], Psi[x4]]} is $F(x_1,x_2;x_3,x_4)$. \fnref{EffectiveAction2PI} with its means at the stationary $G$ is
 the functional of Nambu and Gor'kov at zero anomalous propagator: to third order it differs from $\Gamma[\bar\Psi,\Psi]$ by
 the diagrams with an anomalous vertex, which the superfield recovers. For a superfield (\pkg{"Statistics" -> "Superfield"},
-the mean $\boldsymbol\Psi=\langle\boldsymbol\psi\rangle$, \pkg{X} in \pkg{NambuField -> X}) the 1PI action with bare lines is
-$\Gamma[\boldsymbol\Psi]=-\frac12\boldsymbol\Psi\mathcal G_0^{-1}\boldsymbol\Psi+S_{\rm int}[\boldsymbol\Psi]-\frac12{\rm
-Tr}\ln(-\mathcal G_0^{-1})$ minus the connected 1PI vacuum diagrams; its components (\fnref{SuperfieldComponents}) are
+the mean $\boldsymbol\Psi=\langle\boldsymbol\psi\rangle$, \pkg{X} in \pkg{NambuField -> X}) the 1PI action is
+$\Gamma[\boldsymbol\Psi]=S[\boldsymbol\Psi]-\frac12{\rm Tr}\ln(-S''[\boldsymbol\Psi])+\Gamma_1[\boldsymbol\Psi]$, with
+$S[\boldsymbol\Psi]=-\frac12\boldsymbol\Psi\mathcal G_0^{-1}\boldsymbol\Psi+S_{\rm int}[\boldsymbol\Psi]$, written with bare lines,
+$S[\boldsymbol\Psi]-\frac12{\rm Tr}\ln(-\mathcal G_0^{-1})$ minus the connected 1PI vacuum diagrams with lines $\mathcal G_0$ and the
+vertices of degree two or more; its components (\fnref{SuperfieldComponents}) are
 $\Gamma[\bar\Psi,\Psi]$, and it is the superfield \fnref{EffectiveAction2PI} at its stationary $\mathcal G[\boldsymbol\Psi]$. Other lines for fermions
 and superfields, a single Grassmann field or complex bosons give the message \pkg{onepi} and \pkg{\$Failed}. The electron gas to first order:
 \excode{effective_action_1pi_fermions}

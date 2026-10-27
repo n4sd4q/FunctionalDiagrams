@@ -404,7 +404,7 @@ DiagramPlot[ConnectedFunctionFromVertices[{a, b, c, d, e, f}, "FermionLines"],
 (*The four-point vertex of φ^4 theory*)
 
 (* ::Text:: *)
-(*In φ^4 theory Γ^(3) = 0 by symmetry, and Γ^(4) starts with λ, a point. EffectiveAction1PI writes Γ[φ̄] itself (here with bare lines D0, to λ^3), and its fourth derivative at φ̄ = 0 is Γ^(4), with the self-energy insertions on its lines (1, 3 and 12 diagrams); the second derivative is D0⁻¹ − Σ.*)
+(*In φ^4 theory Γ^(3) = 0 by symmetry, and Γ^(4) starts with λ, a point. EffectiveAction1PI writes Γ[φ̄] = S[φ̄] + ½ Tr ln S''[φ̄] + Γ1[φ̄] itself, with S''[φ̄] = D0⁻¹ + λφ̄²/2 the fluctuation operator in the background and Γ1 minus the 1PI vacuum diagrams with two or more loops in the background, with the lines S''⁻¹ (here with bare lines D0, to λ^3: the one loop and Γ1 expanded in D0), and its fourth derivative at φ̄ = 0 is Γ^(4), with the self-energy insertions on its lines (1, 3 and 12 diagrams); the second derivative is D0⁻¹ − Σ.*)
 
 effectiveAction1PI = EffectiveAction1PI[FreeBosonGeneratingFunctional, Phi4Vertex, 3,
     phi -> phiMean, FreePropagator -> FreePropagator];

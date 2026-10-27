@@ -1379,6 +1379,17 @@ writeValue["check 1PI pieces", {SimplifyDiagrams[OrderPart[gamma1PIBare, lambda,
      ParticleIrreducibleDiagrams[OrderPart[gamma1PIBare, lambda, {1, 2, 3}], 1, {}, {FreePropagator}]],
    SimplifyDiagrams[gamma1PIPieces[1] - ExpandTrace[1/2 TraceLog[Power[FreePropagator, -1] - LabelFunction[-lambda/2 phiMean[a]^2 DeltaFunction[a, b], {a, b}]],
        FreePropagator, 3] + 1/2 TraceLog[Power[FreePropagator, -1]]]}];
+(* Gamma1[phibar] = Gamma - S[phibar] - 1/2 Tr ln S''[phibar] (S'' = D^-1, the lines D[phibar] the head BackgroundPropagator): minus the
+   1PI vacuum diagrams with lines D[phibar] and the vertices lambda phibar phi^3/6 and lambda phi^4/24 (ConnectedVacuumDiagrams); at
+   G = D[phibar], Gamma2[phibar, G] of the 2PI section is its part 2PI in these lines, and the others are 2PI reducible *)
+gammaOne1PI = SimplifyDiagrams[gamma1PI - 1/2 IntegralOver[OperatorKernel[Power[FreePropagator, -1]][x, y] phiMean[x] phiMean[y], {x, y}] -
+    (Phi4Vertex /. phi -> phiMean) - 1/2 TraceLog[Power[BackgroundPropagator, -1]]];
+writeValue["check 1PI gamma one", byOrder[gammaOne1PI + ParticleIrreducibleDiagrams[ConnectedVacuumDiagrams[FreeBosonGeneratingFunctional /.
+       FreePropagator -> BackgroundPropagator, lambda/6 IntegralOver[phiMean[z] phi[z]^3, {z}] + Phi4Vertex, 3], 1, {}, {BackgroundPropagator}], lambda, {1, 2, 3}]];
+writeValue["check 2PI gamma one", byOrder[(gamma2PhiG /. DressedPropagator -> BackgroundPropagator) -
+    ParticleIrreducibleDiagrams[gammaOne1PI, 2, {}, {BackgroundPropagator}], lambda, {1, 2, 3}]];
+writeValue["counts 1PI not two PI", orderCounts[SimplifyDiagrams[gammaOne1PI - ParticleIrreducibleDiagrams[gammaOne1PI, 2, {}, {BackgroundPropagator}]],
+    lambda, {1, 2, 3}]];
 (* Gamma[phibar] = Gamma[phibar, G[phibar]] at the stationary G[phibar] = (d^2 Gamma[phibar]/d phibar d phibar)^-1 = (D0^-1 - Sigma[phibar])^-1,
    the full propagator in the background, expanded in D0 (the 2PI section) *)
 eaSigmaBackground = SimplifyDiagrams[OperatorKernel[Power[FreePropagator, -1]][a, b] - FunctionalDerivative[gamma1PIBare, phiMean[a], phiMean[b]]];
@@ -1604,6 +1615,29 @@ writeValue["check Nambu stationary means", byOrder[nambuGammaStationary - nambuO
 nambuOnePIComponents = timed["Nambu Gamma[X] components", SuperfieldComponents[nambuOnePI, {}, {NambuField -> {psi, psibar}, NambuMean -> {MeanPsi, MeanPsibar},
      BareNambuPropagator -> {BareGreenFunction, 0, 0}, NambuVertex -> CoulombVertex}]];
 writeValue["check Nambu 1PI components", byOrder[nambuOnePIComponents - gammaPsi1PI, InteractionPotential, Range[0, maximumOrder]]];
+(* Gamma[X] = S[X] - 1/2 Tr ln(-S''[X]) + Gamma1[X] (the 1PI sections): Gamma1[X] is minus the 1PI vacuum diagrams with lines S''[X]^-1
+   (head NambuBackground) and the vertices of degree three or more, computed by the private meanIrreducibleVacuum, the routine of
+   EffectiveAction1PI for vertices with Grassmann-odd means. In components, the one loop of Gamma[Psibar, Psi] (the diagrams with
+   one loop of the electron gas) is the rings of -1/2 Tr ln(-S''[Psibar, Psi]) + Tr ln(-G0^-1), and its diagrams with two or more
+   loops are Gamma1 with its lines expanded in G0. At calG = S''[X]^-1, Gamma2[X, calG] is the part of Gamma1[X] 2PI in these lines. *)
+DeclareAntisymmetric[NambuBackground];
+nambuInsertion = SimplifyDiagrams[FunctionalDerivative[nambuInteraction /. NambuField -> NambuMean, NambuMean[a], NambuMean[b]]];
+nambuFluctuation = Power[BareNambuPropagator, -1] + LabelFunction[nambuInsertion, {a, b}];
+nambuGammaOne = timed["Nambu Gamma1[X]", -FunctionalDiagrams`Private`meanIrreducibleVacuum[nambuZ0 /. BareNambuPropagator -> NambuBackground,
+     Total[Drop[FunctionalDiagrams`Private`shiftedInteractionParts[nambuInteraction, {NambuField -> NambuMean}], 3]], orders, {NambuMean}, 1,
+     NambuBackground]];
+psiComponents[e_] := SuperfieldComponents[e, {}, {NambuField -> {psi, psibar}, NambuMean -> {MeanPsi, MeanPsibar},
+    BareNambuPropagator -> {BareGreenFunction, 0, 0}, NambuVertex -> CoulombVertex}];
+writeValue["check 1PI psi pieces", timed["Nambu Gamma1[X] components", {
+    byOrder[psiComponents[ExpandTrace[-1/2 TraceLog[-nambuFluctuation], BareNambuPropagator, maximumOrder] +
+        1/2 TraceLog[-Power[BareNambuPropagator, -1]]] - gammaPsi1PIPieces[1], InteractionPotential, orders],
+    byOrder[psiComponents[ExpandTrace[nambuGammaOne /. NambuBackground -> Power[nambuFluctuation, -1], BareNambuPropagator, maximumOrder,
+         "MaximumOrder" -> {NambuVertex, maximumOrder}]] - Total[KeyDrop[gammaPsi1PIPieces, {0, 1}]], InteractionPotential, orders]}]];
+nambuGamma2Means = SimplifyDiagrams[nambuGammaMeans + 1/2 IntegralOver[OperatorKernel[Power[BareNambuPropagator, -1]][u, w] NambuMean[u] ** NambuMean[w], {u, w}] -
+    (nambuInteraction /. NambuField -> NambuMean) + 1/2 TraceLog[-Power[NambuPropagator, -1]] + 1/2 OperatorTrace[Power[BareNambuPropagator, -1] . NambuPropagator - 1] +
+    1/2 IntegralOver[(nambuInsertion /. {a -> u, b -> w}) NambuPropagator[w, u], {u, w}]];
+writeValue["check Nambu gamma two", byOrder[(nambuGamma2Means /. NambuPropagator -> NambuBackground) -
+    ParticleIrreducibleDiagrams[nambuGammaOne, 2, {}, {NambuBackground}], NambuVertex, orders]];
 writeValue["check Nambu mean derivatives", {byOrder[SetSourcesToZero[FunctionalDerivative[nambuGammaMeans, NambuMean[a], NambuMean[b]]] -
        OperatorKernel[Power[BareNambuPropagator, -1]][a, b] + nambuSigma, NambuVertex, Range[0, maximumOrder]],
    SimplifyDiagrams[SetSourcesToZero[FunctionalDerivative[nambuGammaMeans, NambuMean[a], NambuMean[b], NambuMean[c], NambuMean[d]]] - NambuVertex[a, b, c, d]]}];

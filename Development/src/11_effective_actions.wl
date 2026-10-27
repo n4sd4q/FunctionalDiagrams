@@ -687,16 +687,17 @@ meanFieldEffectiveAction[z0_, interaction_, n_Integer, g0_ -> g_, means_List, op
    selectMeanDegree[free + parts[[1]] + EffectiveAction2PI[0, g0 -> g, Sequence @@ opts] + mass + gamma2, means[[All, 2]], degrees]];
 
 (* ---- the 1PI effective action Gamma[M] (EffectiveAction1PI) ----
-   Gamma[M] = S[M] + 1/2 Tr ln D[M]^-1 - (connected 1PI vacuum diagrams with lines D[M] and the vertices of S_int[M + phi]
-   of degree three or more), D[M] = (D0^-1 + S_int''[M])^-1 the propagator in the background, written with the head given
-   (D0 -> Dm). Dm depends on M: dDm(x, y)/dM(a) = -Integral Dm(x, u) S_int'''[M](u, v, a) Dm(v, y), declared with
+   Gamma[M] = S[M] + 1/2 Tr ln S''[M] + Gamma1[M], Gamma1 = -(connected 1PI vacuum diagrams, with two or more loops, with lines
+   D[M] and the vertices of S_int[M + phi] of degree three or more), D[M] = S''[M]^-1 = (D0^-1 + S_int''[M])^-1 the propagator in
+   the background, written with the head given (D0 -> Dm). Dm depends on M: dDm(x, y)/dM(a) = -Integral Dm(x, u) S_int'''[M](u, v, a) Dm(v, y), declared with
    DeclareFunctionalDerivative, so that FunctionalDerivative differentiates through the lines and the trace-log. At M = 0,
    Dm = D0 if the interaction has no quadratic part. Real bosons only.
    With bare lines (D0 -> D0, or G0 -> G0 for fermions) the vertices of degree two stay vertices: Gamma[M] = S[M] +
    kappa Tr ln(zeta G0^-1) - (connected 1PI vacuum diagrams with lines G0 and the vertices of S_int[M + phi] of degree two
-   or more), the rings of the degree-two vertices being the one-loop term. For fermions ({psi -> Psi, psibar -> Psibar},
-   Grassmann-odd means) this is the only form: in a Grassmann background the vertices of degree two include the anomalous
-   ones V Psi Psi psibar psibar, and the propagator in the background has anomalous parts (Nambu). *)
+   or more): the rings of the degree-two vertices are the one loop, the diagrams with two or more loops Gamma1 with its lines
+   expanded in G0. For fermions ({psi -> Psi, psibar -> Psibar}, Grassmann-odd means) this is the only form: in a Grassmann
+   background the vertices of degree two include the anomalous ones V Psi Psi psibar psibar, S'' is a Nambu matrix and the
+   propagator in the background S''^-1 has anomalous parts; Gamma = S - 1/2 Tr ln(-S'') + Gamma1, as for a superfield. *)
 EffectiveAction1PI::onepi = "The 1PI effective action is available for a real boson with one mean field (phi -> phiMean, lines in the background D0 -> Dm or bare D0 -> D0), for fermions with their two Grassmann-odd means ({psi -> Psi, psibar -> Psibar}, bare lines G0 -> G0) and for a superfield with its Grassmann-odd mean (NambuField -> X, \"Statistics\" -> \"Superfield\", bare lines).";
 Options[EffectiveAction1PI] = {"Statistics" -> "Boson"};
 EffectiveAction1PI[z0_, interaction_, n_Integer, field_Symbol -> mean_Symbol, d0_Symbol -> dm_Symbol, opts___Rule] :=

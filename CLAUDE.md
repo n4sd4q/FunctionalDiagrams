@@ -117,6 +117,12 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
 - Φ = −(2PI skeleton vacuum diagrams with G0 → G); Σ(x, y) = δΦ/δG(y, x); Γ⁰(1, 2; 3, 4) = δΣ(1, 2)/δG(4, 3), so that
   Γ⁰·Y puts Y in place of one line of Σ. Channels: ph (12|34), ph̄ (14|32), pp (13|24); Γ⁰ = F − R_ph = Γ_irr + R_ph̄ + R_pp,
   and Γ_irr (the fully irreducible vertex) is the bare vertex up to third order.
+- 1PI action: Γ[φ̄] = S[φ̄] + ½Tr ln S''[φ̄] + Γ₁[φ̄]; fermions S[Ψ̄, Ψ] − ½Tr ln(−S''[Ψ̄, Ψ]) + Γ₁, S'' the Nambu matrix of the
+  second derivatives in (Ψ, Ψ̄) (normal block D⁻¹ below, anomalous blocks δ²S/δΨ̄δΨ̄ = VΨΨ, δ²S/δΨδΨ = VΨ̄Ψ̄); superfield
+  S[𝚿] − ½Tr ln(−S''[𝚿]) + Γ₁. Γ₁ = −(1PI vacuum diagrams with two or more loops, lines S''⁻¹, vertices of degree three or more),
+  as Γ₂ is for the 2PI action; Γ₂ at G = S''⁻¹ is the 2PI part of Γ₁. S is written whole, its free and interacting parts named
+  only where they are used; the one loop is never called Γ^[1] (Γ^[ℓ], ℓ ≥ 2, is the part of Γ₁ with ℓ loops).
+  `EffectiveAction1PI` expands fermions and superfields in G0 (bare lines, the vertices of degree two kept).
 - 2PI action with means (Cornwall, Jackiw and Tomboulis): Γ[φ̄, G] = S[φ̄] + ½Tr ln G⁻¹ + ½Tr(D⁻¹[φ̄]G − 1) + Γ₂, D⁻¹ = S'';
   fermions S[Ψ̄, Ψ] − Tr ln(−G⁻¹) − Tr(D⁻¹[Ψ̄, Ψ]G − 1) + Γ₂, D⁻¹(x, y) = δ²S/δΨ̄(x)δΨ(y) = G0⁻¹ − Σ_HF[−ΨΨ̄] (the first-order
   Σ_HF[G] with −Ψ(x)Ψ̄(y) in place of G(x, y): the Hartree and Fock potentials of the means); superfield −½Tr(S''[𝚿]𝒢 − 1). The

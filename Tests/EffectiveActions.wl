@@ -693,13 +693,25 @@ Print["  (", Length[DiagramTerms[OrderPart[envelopeF, V, #]]] & /@ Range[4], " d
 
 (* ------------------------------------------------------------------------- *)
 section["the 1PI effective action Gamma[phibar] (EffectiveAction1PI)"];
-(* Gamma[phibar] = S[phibar] + 1/2 Tr ln Dm^-1 - (1PI vacuum diagrams with lines Dm = D[phibar]); dDm/dphibar declared *)
+(* Gamma[phibar] = S[phibar] + 1/2 Tr ln S''[phibar] + Gamma1[phibar], with the lines Dm = D[phibar] = S''[phibar]^-1; dDm/dphibar declared *)
 gamma1 = EffectiveAction1PI[Zb, Vb, 3, phi -> phiMean, D0 -> Dm];
 vacuumB3 = ConnectedVacuumDiagrams[Zb, Vb, 3];
 checkMessage[EffectiveAction1PI[Zf, Vf, 1, psi -> Psi1, G0 -> Gm1], "EffectiveAction1PI refuses a Grassmann field (message onepi, $Failed)",
   EffectiveAction1PI::onepi, $Failed];
 check["at phibar = 0 (Dm = D0): -log Z = 1/2 Tr ln D0^-1 - (connected vacuum diagrams, all 1PI in phi^4)",
   SimplifyDiagrams[(SetSourcesToZero[gamma1] /. Dm -> D0) - 1/2 TraceLog[Power[D0, -1]] + vacuumB3], 0];
+(* Gamma[phibar] = S[phibar] + 1/2 Tr ln S''[phibar] + Gamma1[phibar], S'' = D^-1[phibar] = Dm^-1: Gamma1 is minus the 1PI vacuum
+   diagrams with two or more loops, lines Dm and the vertices of degree three or more (lambda phibar phi^3/6, lambda phi^4/24), as
+   Gamma2 is minus the 2PI ones with lines G for Gamma[phibar, G]; Gamma2[phibar, G -> Dm] is the part of Gamma1 2PI in its lines *)
+gammaOneB = SimplifyDiagrams[gamma1 - classicalB - 1/2 TraceLog[Power[Dm, -1]]];
+loopsOf[t_, line_] := Total[Cases[{t}, IntegralOver[f_, v_List] :> Exponent[f /. p : line[__] :> mark p, mark] - Length[v], Infinity]] + 1;
+check["Gamma1[phibar] = Gamma - S - 1/2 Tr ln S'' = -(1PI vacuum diagrams with lines Dm and the vertices lambda phibar phi^3/6, lambda phi^4/24), orders 1-3; 2 to 4 loops",
+  {zeroByOrder[gammaOneB + ParticleIrreducibleDiagrams[ConnectedVacuumDiagrams[Zb /. D0 -> Dm, lambda/6 IntegralOver[phiMean[z] phi[z]^3, {z}] + Vb, 3],
+       1, {}, {Dm}], lambda, {1, 2, 3}], Union[loopsOf[#, Dm] & /@ DiagramTerms[gammaOneB]]}, {{0, 0, 0}, {2, 3, 4}}];
+check["Gamma2[phibar, G] at G = Dm = the part of Gamma1[phibar] 2PI in the lines Dm, orders 1-3; the others (0, 1, 4 at lambda, lambda^2, lambda^3)",
+  {zeroByOrder[(gamma2Phi /. Gb -> Dm) - ParticleIrreducibleDiagrams[gammaOneB, 2, {}, {Dm}], lambda, {1, 2, 3}],
+   Table[Length[DiagramTerms[OrderPart[SimplifyDiagrams[gammaOneB - ParticleIrreducibleDiagrams[gammaOneB, 2, {}, {Dm}]], lambda, k]]], {k, 3}]},
+  {{0, 0, 0}, {0, 1, 4}}];
 check["dDm(x, y)/dphibar(a) = -lambda Dm(x, a) phibar(a) Dm(a, y)", SimplifyDiagrams[FunctionalDerivative[Dm[x, y], phiMean[a]] + lambda Dm[x, a] phiMean[a] Dm[a, y]], 0];
 dGamma1 = ExpandTrace[FunctionalDerivative[gamma1, phiMean[a]]];
 check["the exact equation for the mean field, lambda^1: D0^-1 phibar + lambda phibar^3/6 + lambda phibar(a) Dm(a, a)/2 (+ lambda^2 ...)",
@@ -731,18 +743,28 @@ check["ConnectedFunctionFromVertices with VertexFunction = derivatives of Gamma[
 (* ------------------------------------------------------------------------- *)
 section["the 1PI effective action with bare lines: phi^4 and Gamma[Psibar, Psi] of fermions"];
 (* bare lines (D0 -> D0, G0 -> G0): the vertices of degree two stay vertices; for phi^4 the same series as the lines D[phibar]
-   expanded in D0; for fermions the only form *)
+   expanded in D0; for fermions the only form (their one loop -1/2 Tr ln(-S''[Psibar, Psi]) and Gamma1 have Nambu lines: checked by
+   their components in Superfields.wl) *)
 gamma1Bare = EffectiveAction1PI[Zb, Vb, 3, phi -> phiMean, D0 -> D0];
 check["phi^4 with bare lines = the lines D[phibar] = (D0^-1 + lambda phibar^2/2)^-1 expanded in D0, orders 0-3",
   zeroByOrder[gamma1Bare - ExpandTrace[gamma1 /. Dm -> Power[Power[D0, -1] - LabelFunction[-lambda/2 phiMean[a]^2 DeltaFunction[a, b], {a, b}], -1],
      D0, 3, "MaximumOrder" -> {lambda, 3}], lambda, {0, 1, 2, 3}], {0, 0, 0, 0}];
+(* by loops (lines - vertices + 1, unchanged by an insertion of degree two): the tree S_int[phibar], the one loop the rings of
+   1/2 Tr ln S''[phibar] - 1/2 Tr ln D0^-1, and Gamma1[phibar] with its lines Dm = S''^-1 expanded in D0 *)
+bareByLoops = GroupBy[DiagramTerms[OrderPart[gamma1Bare, lambda, {1, 2, 3}]], loopsOf[#, D0] &, Total];
+sppB = Power[D0, -1] - LabelFunction[-lambda/2 phiMean[a]^2 DeltaFunction[a, b], {a, b}];
+check["phi^4 with bare lines by loops: S_int[phibar]; the rings of 1/2 Tr ln S''[phibar] - 1/2 Tr ln D0^-1; Gamma1[phibar] expanded in D0, orders 1-3",
+  {SimplifyDiagrams[bareByLoops[0] - lambda/24 IntegralOver[phiMean[z]^4, {z}]],
+   SimplifyDiagrams[bareByLoops[1] - ExpandTrace[1/2 TraceLog[sppB], D0, 3] + 1/2 TraceLog[Power[D0, -1]]],
+   zeroByOrder[Total[KeyDrop[bareByLoops, {0, 1}]] - ExpandTrace[gammaOneB /. Dm -> Power[sppB, -1], D0, 3, "MaximumOrder" -> {lambda, 3}],
+     lambda, {1, 2, 3}]}, {0, 0, {0, 0, 0}}];
 checkMessage[EffectiveAction1PI[Zf, Vf, 1, {psi -> Psi, psibar -> Psibar}, G0 -> G], "fermions with lines other than G0 are refused (message onepi, $Failed)",
   EffectiveAction1PI::onepi, $Failed];
 t0 = AbsoluteTime[];
 gammaPsi1PI = EffectiveAction1PI[Zf, Vf, 3, {psi -> Psi, psibar -> Psibar}, G0 -> G0];
 check["Gamma[Psibar, Psi] at zero means: -Tr ln(-G0^-1) - (connected vacuum diagrams, all 1PI for fermions)",
   SimplifyDiagrams[SetSourcesToZero[gammaPsi1PI] + TraceLog[-Power[G0, -1]] + ConnectedVacuumDiagrams[Zf, Vf, 3]], 0];
-check["Gamma[Psibar, Psi]: tree -Psibar G0^-1 Psi + S_int[Psibar, Psi]",
+check["Gamma[Psibar, Psi]: the tree S[Psibar, Psi] = -Psibar G0^-1 Psi + S_int[Psibar, Psi]",
   SimplifyDiagrams[Total[Select[DiagramTerms[gammaPsi1PI], FreeQ[#, G0[_, _]] && FreeQ[#, TraceLog] &]] +
     IntegralOver[OperatorKernel[Power[G0, -1]][x, y] Psibar[x] ** Psi[y], {x, y}] - (Vf /. {psi -> Psi, psibar -> Psibar})], 0];
 check["Gamma[Psibar, Psi]: d^2/dPsibar(a) dPsi(b) at zero means = -G0^-1 + Sigma (perturbative, lines G0), orders 0-3",

@@ -198,6 +198,43 @@ onePIF2 = EffectiveAction1PI[Zf, Vf, 2, {psi -> Psi, psibar -> Psibar}, G0 -> G0
 meanRules = {NambuField -> {psi, psibar}, NambuMean -> {Psi, Psibar}, BareNambuPropagator -> {G0, 0, 0}, NambuVertex -> Vf};
 check["Gamma[X] projected: Gamma[Psibar, Psi] of the electron gas, its anomalous diagram included (5 and 15 diagrams at V, V^2)",
   {SimplifyDiagrams[SuperfieldComponents[onePINambu, {}, meanRules] - onePIF2], Table[Length[DiagramTerms[OrderPart[onePIF2, V, k]]], {k, 2}]}, {0, {5, 15}}];
+(* Gamma[X] = S[X] - 1/2 Tr ln(-S''[X]) + Gamma1[X], as Gamma[phibar] = S + 1/2 Tr ln S'' + Gamma1 for bosons: Gamma1 is minus the
+   1PI vacuum diagrams with two or more loops, lines the Nambu propagator in the background S''[X]^-1 (head NambuBack) and the
+   vertices of degree three or more. EffectiveAction1PI expands it in calG0: by loops (calG0 lines - vertices + 1), S_int[X], the rings
+   of -1/2 Tr ln(-S''[X]) + 1/2 Tr ln(-calG0^-1) and Gamma1[X] with NambuBack expanded. In components S''[X] is the Nambu matrix
+   S''[Psibar, Psi] (normal block D^-1[Psibar, Psi], anomalous blocks V Psi Psi and V Psibar Psibar), and the pieces are those of
+   Gamma[Psibar, Psi]. Gamma1[X] is computed by the private meanIrreducibleVacuum, the routine of the package for vertices with
+   Grassmann-odd means (ConnectedVacuumDiagrams takes no such vertex). *)
+DeclareAntisymmetric[NambuBack];
+loopsNambu[t_, line_, vertex_] := Total[Cases[{t}, IntegralOver[f_, _List] :> Exponent[f /. p : line[__] :> mark p, mark] -
+       Exponent[f /. p : vertex[__] :> mark p, mark], Infinity]] + 1;
+nambuByLoops = GroupBy[DiagramTerms[OrderPart[onePINambu, NambuVertex, {1, 2}]], loopsNambu[#, BareNambuPropagator, NambuVertex] &, Total];
+fermionByLoops = GroupBy[DiagramTerms[OrderPart[onePIF2, V, {1, 2}]], loopsNambu[#, G0, V] &, Total];
+insertionX = SimplifyDiagrams[fluctuationS - OperatorKernel[Power[BareNambuPropagator, -1]][a, b]];
+sppX = Power[BareNambuPropagator, -1] + LabelFunction[insertionX, {a, b}];
+partsX = FunctionalDiagrams`Private`shiftedInteractionParts[nambuInteraction, {NambuField -> NambuMean}];
+gammaOneX = -FunctionalDiagrams`Private`meanIrreducibleVacuum[nambuZ0 /. BareNambuPropagator -> NambuBack, Total[Drop[partsX, 3]], {1, 2}, {NambuMean}, 1, NambuBack];
+gammaOneXExpanded = ExpandTrace[gammaOneX /. NambuBack -> Power[sppX, -1], BareNambuPropagator, 2, "MaximumOrder" -> {NambuVertex, 2}];
+check["Gamma[X] by loops, orders 1-2: S_int[X]; the rings of -1/2 Tr ln(-S''[X]) + 1/2 Tr ln(-calG0^-1); Gamma1[X] (2 and 3 loops) with S''^-1 expanded in calG0",
+  {SimplifyDiagrams[nambuByLoops[0] - (nambuInteraction /. NambuField -> NambuMean)],
+   SimplifyDiagrams[nambuByLoops[1] - ExpandTrace[-1/2 TraceLog[-sppX], BareNambuPropagator, 2] - 1/2 TraceLog[-Power[BareNambuPropagator, -1]]],
+   Union[loopsNambu[#, NambuBack, NambuVertex] & /@ DiagramTerms[gammaOneX]],
+   Table[SimplifyDiagrams[OrderPart[Total[KeyDrop[nambuByLoops, {0, 1}]] - gammaOneXExpanded, NambuVertex, k]], {k, 2}]},
+  {0, 0, {2, 3}, {0, 0}}];
+check["in components: the one loop and Gamma1 of Gamma[Psibar, Psi], orders 1-2; S''[X] has the normal block d^2 S/dPsibar(x) dPsi(y) and the anomalous V Psi Psi, V Psibar Psibar",
+  {SimplifyDiagrams[SuperfieldComponents[nambuByLoops[1], {}, meanRules] - fermionByLoops[1]],
+   SimplifyDiagrams[SuperfieldComponents[gammaOneXExpanded, {}, meanRules] - Total[KeyDrop[fermionByLoops, {0, 1}]]],
+   SimplifyDiagrams[SuperfieldComponents[fluctuationS, {a -> psibar[x], b -> psi[y]}, meanRules] - OperatorKernel[Power[G0, -1]][x, y] -
+     IntegralOver[V[x, u] GrassmannProduct[Psi[u], Psibar[u]], {u}] DeltaFunction[x, y] + V[x, y] GrassmannProduct[Psi[x], Psibar[y]]],
+   SimplifyDiagrams[SuperfieldComponents[fluctuationS, {a -> psibar[x], b -> psibar[y]}, meanRules] - V[x, y] GrassmannProduct[Psi[x], Psi[y]]],
+   SimplifyDiagrams[SuperfieldComponents[fluctuationS, {a -> psi[x], b -> psi[y]}, meanRules] - V[x, y] GrassmannProduct[Psibar[x], Psibar[y]]]},
+  {0, 0, 0, 0, 0}];
+(* at calG = S''[X]^-1 the trace term vanishes and Gamma2 is the part of Gamma1 2PI in these lines, as for bosons *)
+gamma2X = SimplifyDiagrams[gammaMean - classicalS + 1/2 TraceLog[-Power[NambuPropagator, -1]] +
+    1/2 OperatorTrace[Power[BareNambuPropagator, -1] . NambuPropagator - 1] + 1/2 IntegralOver[(insertionX /. {a -> u, b -> w}) NambuPropagator[w, u], {u, w}]];
+check["Gamma2[X, calG] at calG = S''[X]^-1 = the part of Gamma1[X] 2PI in these lines, orders 1-2",
+  Table[SimplifyDiagrams[OrderPart[(gamma2X /. NambuPropagator -> NambuBack) - ParticleIrreducibleDiagrams[gammaOneX, 2, {}, {NambuBack}], NambuVertex, k]], {k, 2}],
+  {0, 0}];
 check["at X = 0 and fixed calG: d^2 Gamma/dX dX = calG0^-1 - Sigma[calG], d^4 Gamma/dX^4 = calV (the fully irreducible vertex to V^2)",
   {SimplifyDiagrams[SetSourcesToZero[FunctionalDerivative[gammaMean, NambuMean[a], NambuMean[b]]] - OperatorKernel[Power[BareNambuPropagator, -1]][a, b] +
      OrderPart[sigmaNambu, NambuVertex, {1, 2}]], SetSourcesToZero[FunctionalDerivative[gammaMean, NambuMean[a], NambuMean[b], NambuMean[c], NambuMean[d]]]},

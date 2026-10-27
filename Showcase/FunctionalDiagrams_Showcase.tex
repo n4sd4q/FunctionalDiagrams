@@ -295,7 +295,7 @@ interaction $V$).
 \item \textbf{From diagrams to numbers}: in momentum and Matsubara frequency the sums over the internal frequencies
   are done by residues, and the continued self-energy obeys the optical theorem.
 \item The \textbf{1PI effective action} $\Gamma[\bar\phi]$ of the mean field $\bar\phi=\langle\phi\rangle$ is the Legendre transform of $W$ in the source. Its pieces are the classical action $S[\bar\phi]$, the
-  one loop $\frac12{\rm Tr}\ln S''[\bar\phi]$ and the 1PI vacuum diagrams in the background; its derivatives are
+  one loop $\frac12{\rm Tr}\ln S''[\bar\phi]$ and $\Gamma_1[\bar\phi]$, the 1PI vacuum diagrams with two or more loops in the background; its derivatives are
   the one-particle-irreducible vertices, and every connected function is a tree of full propagators and 1PI vertices.
 \item The \textbf{2PI effective action} adds to $J$ a two-point source $K(x,y)$, coupled to $\frac12\phi(x)\phi(y)$ (to
   $\bar\psi(x)\psi(y)$ for fermions), and is the Legendre transform of $W[J,K]$ in both sources: the mean field $\bar\phi$ and
@@ -1463,13 +1463,15 @@ degree in the fluctuation $\phi$: the number $S_{\rm int}[\bar\phi]$; a linear v
 two, which adds to the inverse propagator, $D^{-1}[\bar\phi]=D_0^{-1}+S_{\rm int}''[\bar\phi]=S''[\bar\phi]$, the fluctuation operator in the
 background; and the vertices of degree three or more. Then
 \[
-\Gamma[\bar\phi]=S[\bar\phi]+\tfrac12{\rm Tr}\ln D^{-1}[\bar\phi]-(\text{1PI vacuum diagrams in the background}),
+\Gamma[\bar\phi]=S[\bar\phi]+\tfrac12{\rm Tr}\ln S''[\bar\phi]+\Gamma_1[\bar\phi].
 \]
-with the lines $D[\bar\phi]$ and the vertices of degree three or more. The three pieces are the orders of the loop
-expansion, the number of loops $\ell$ being the power of $\hbar$: the tree $\Gamma^{[0]}=S[\bar\phi]$, the classical action; the one
-loop $\Gamma^{[1]}=\frac12{\rm Tr}\ln D^{-1}[\bar\phi]$, at constant $\bar\phi$ the volume times the effective potential of Coleman
-and Weinberg~\cite{ColemanWeinberg1973}; and the vacuum diagrams, $\Gamma^{[\ell]}$ with $\ell\ge2$. \pkg{EffectiveAction1PI} writes it
-with the lines $D[\bar\phi]$ (double lines), whose derivative $\delta D/\delta\bar\phi=-D\,S_{\rm int}'''[\bar\phi]\,D$ is declared, so
+The equation defines $\Gamma_1$ exactly, as the 2PI action defines $\Gamma_2$ (section~\ref{sec:twopi}); expanded in the
+interaction, $\Gamma_1$ is minus the 1PI vacuum diagrams with two or more loops in the background, with the lines
+$D[\bar\phi]=S''[\bar\phi]^{-1}$, the propagator in the background, and the vertices of degree three or more. The three pieces are
+the orders of the loop expansion, the number of loops $\ell$ being the power of $\hbar$: the tree $S[\bar\phi]$, the classical
+action; the one loop $\frac12{\rm Tr}\ln S''[\bar\phi]$, at constant $\bar\phi$ the volume times the effective potential of Coleman
+and Weinberg~\cite{ColemanWeinberg1973}; and $\Gamma_1=\Gamma^{[2]}+\Gamma^{[3]}+\cdots$, $\Gamma^{[\ell]}$ its diagrams with $\ell$ loops.
+\pkg{EffectiveAction1PI} writes it with the lines $D[\bar\phi]$ (double lines), whose derivative $\delta D/\delta\bar\phi=-D\,S_{\rm int}'''[\bar\phi]\,D$ is declared, so
 that the vertex functions follow by differentiation; for $\phi^4$ (computed to third order, shown here to the second):
 \begin{code}
 gamma1PI = EffectiveAction1PI[FreeBosonGeneratingFunctional, Phi4Vertex, 3,
@@ -1487,9 +1489,10 @@ $\lambda\phi^4/24$. In the pictures the mean field is a crossed circle at the en
 for $-\lambda$. Expanded in the bare propagator $D_0$, the logarithm is a series of rings and every line $D[\bar\phi]$ a chain of
 mass insertions. The same series comes directly with bare lines, \pkg{FreePropagator -> FreePropagator}: the mass insertion
 then stays a vertex of degree two. At the orders $\lambda$, $\lambda^2$ and $\lambda^3$ there are \val{Counts1PIBare}
-diagrams. A mass insertion does not change the number of loops $L$ (lines minus vertices plus one), so that grouping the
-diagrams by $L$ gives the pieces: the tree, $S[\bar\phi]=\frac12\int\bar\phi\,D_0^{-1}\bar\phi+S_{\rm int}[\bar\phi]$, the one
-loop, the rings of insertions $\bar\phi^2$, and the 1PI vacuum diagrams with two, three and four loops in the background:
+diagrams. A mass insertion does not change the number of loops $\ell$ (lines minus vertices plus one), so that grouping the
+diagrams by $\ell$ gives the pieces: the tree, $S[\bar\phi]=\frac12\int\bar\phi\,D_0^{-1}\bar\phi+S_{\rm int}[\bar\phi]$, whose diagrams are
+$S_{\rm int}[\bar\phi]$; the one loop, the rings of insertions $\bar\phi^2$; and $\Gamma_1$, its lines $D[\bar\phi]$ expanded in $D_0$, with
+two, three and four loops:
 \begin{code}
 gamma1PIBare = ExpandTrace[gamma1PI /. BackgroundPropagator -> Power[
     Power[FreePropagator, -1] - LabelFunction[-lambda/2 phiMean[a]^2 DeltaFunction[a, b],
@@ -1499,7 +1502,7 @@ loops[t_] := Total[Cases[{t}, IntegralOver[f_, v_List] :>
 KeySort[GroupBy[DiagramTerms[OrderPart[gamma1PIBare, lambda, {1, 2, 3}]], loops, Total]]
 \end{code}
 \figuresum{S_{\rm int}[\bar\phi]}{onepi_tree}
-\figuresum{\tfrac12{\rm Tr}\ln D^{-1}[\bar\phi]-\tfrac12{\rm Tr}\ln D_0^{-1}}{onepi_rings}
+\figuresum{\tfrac12{\rm Tr}\ln S''[\bar\phi]-\tfrac12{\rm Tr}\ln D_0^{-1}}{onepi_rings}
 \begin{ordersum}{\Gamma^{[2]}}
 \orderrow{\lambda}{onepi_two_loops_1}
 \orderrow{\lambda^2}{onepi_two_loops_2}
@@ -1519,7 +1522,8 @@ lines (section~\ref{sec:twopitoonepi}).
 \begin{result}
 \begin{tabular}{@{}l@{\quad}l@{}}
 in zero dimensions ($D_0=1$): $\Gamma[\bar\phi]+\log Z(J)-J\bar\phi$, $Z(J)=\int\frac{d\phi}{\sqrt{2\pi}}\,e^{-\phi^2/2-\lambda\phi^4/24+J\phi}$ & \val{Check1PIZeroDimensions}\\
-the diagrams minus their 1PI part; $\Gamma^{[1]}$ minus the rings of $\frac12{\rm Tr}\ln(D_0^{-1}+\lambda\bar\phi^2/2)$ & \val{Check1PIPieces}\\
+the diagrams minus their 1PI part; one loop minus the rings of $\frac12{\rm Tr}\ln(D_0^{-1}+\lambda\bar\phi^2/2)$ & \val{Check1PIPieces}\\
+$\Gamma_1$ plus the 1PI vacuum diagrams with lines $D[\bar\phi]$, vertices of degree $\ge3$, orders 1 to 3 & \val{Check1PIGammaOne}\\
 the bare lines $D_0$ minus the lines $D[\bar\phi]$ expanded in $D_0$, orders 0 to 3 & \val{Check1PIBareRoute}
 \end{tabular}
 \end{result}
@@ -1534,17 +1538,23 @@ $S_{\rm int}[\bar\Psi,\Psi]$, four means on one interaction line, vertices with 
 the source), vertices of degree two, and vertices of degree three (one mean) and four. The vertices of degree two are of
 two kinds: normal, $V\bar\Psi\Psi\,\bar\psi\psi$, the Hartree and Fock potentials of the means, and anomalous, $V\Psi\Psi\,
 \bar\psi\bar\psi$ and $V\bar\Psi\bar\Psi\,\psi\psi$, which create or destroy two fermions. Because of these the fluctuation
-operator in the background mixes $\psi$ and $\bar\psi$, as in the Nambu--Gor'kov formalism, and its inverse is not one directed
-line but a Nambu matrix, with anomalous parts (section~\ref{sec:nambu}). \pkg{EffectiveAction1PI} therefore keeps the bare
-lines and the vertices of degree two:
+operator in the background mixes $\psi$ and $\bar\psi$, as in the Nambu--Gor'kov formalism: it is the matrix $S''[\bar\Psi,\Psi]$ of the
+second derivatives of $S[\bar\Psi,\Psi]$ with respect to the components of $\sfieldmean=(\Psi,\bar\Psi)$ (section~\ref{sec:nambu}), whose
+normal block $D^{-1}[\bar\Psi,\Psi](x,y)=\delta^2S/\delta\bar\Psi(x)\,\delta\Psi(y)$ is $G_0^{-1}$ minus the Hartree and Fock potentials of
+the means (section~\ref{sec:twopi}), and whose anomalous blocks are $\delta^2S/\delta\bar\Psi(x)\,\delta\bar\Psi(y)=V(x,y)\Psi(x)\Psi(y)$
+and $\delta^2S/\delta\Psi(x)\,\delta\Psi(y)=V(x,y)\bar\Psi(x)\bar\Psi(y)$. With the signs of a Grassmann integral, the 1PI action has the
+form of bosons,
 \[
-\Gamma[\bar\Psi,\Psi]=-\bar\Psi G_0^{-1}\Psi+S_{\rm int}[\bar\Psi,\Psi]-{\rm Tr}\ln(-G_0^{-1})-(\text{1PI vacuum diagrams}),
+\Gamma[\bar\Psi,\Psi]=S[\bar\Psi,\Psi]-\tfrac12{\rm Tr}\ln\bigl(-S''[\bar\Psi,\Psi]\bigr)+\Gamma_1[\bar\Psi,\Psi],
 \]
-with the lines $G_0$ and the vertices of degree two or more: the form of the $\phi^4$ series with bare lines.
-The pieces are again the orders in the loops, $\ell=(\text{fermion lines})-(\text{interaction lines})+1$: the tree $-\bar\Psi G_0^{-1}\Psi
-+S_{\rm int}[\bar\Psi,\Psi]$; the one loop, the logarithm of the fluctuation operator in the background (a supertrace over its
-Nambu components), which expanded in $G_0$ is $-{\rm Tr}\ln(-G_0^{-1})$ and the rings of the vertices of degree two, normal and
-anomalous; and the 1PI vacuum diagrams with two or more loops. A mean is a crossed circle at the end of a short fermion
+the trace running over the Nambu components (at zero means the one loop is $-{\rm Tr}\ln(-G_0^{-1})$), and $\Gamma_1$ minus the 1PI
+vacuum diagrams with two or more loops, with the vertices of degree three or more and the lines $S''[\bar\Psi,\Psi]^{-1}$, the
+Nambu propagator in the background, with anomalous blocks. Such a line is not one
+directed line, and \pkg{EffectiveAction1PI} expands the action in $G_0$, as the $\phi^4$ series with bare lines: $S[\bar\Psi,\Psi]-{\rm
+Tr}\ln(-G_0^{-1})$ minus the connected 1PI vacuum diagrams with the lines $G_0$ and the vertices of degree two or more. Grouped by
+the number of loops, $\ell=(\text{fermion lines})-(\text{interaction lines})+1$, its diagrams are the pieces: the tree,
+$S[\bar\Psi,\Psi]=-\bar\Psi G_0^{-1}\Psi+S_{\rm int}[\bar\Psi,\Psi]$, whose diagrams are $S_{\rm int}[\bar\Psi,\Psi]$; the one loop, the rings
+of the vertices of degree two, normal and anomalous; and $\Gamma_1$, its lines expanded in $G_0$. A mean is a crossed circle at the end of a short fermion
 line, the means taken in the canonical order of section~\ref{sec:engine}, every $\Psi$ before every $\bar\Psi$
 (so that $S_{\rm int}[\bar\Psi,\Psi]=\frac12\int_{x,y}V(x,y)\bar\Psi(x)\bar\Psi(y)\Psi(y)\Psi(x)$ is
 $-\frac12\int_{x,y}V(x,y)\Psi(x)\Psi(y)\bar\Psi(x)\bar\Psi(y)$), and every interaction line stands for $-V$ (the pieces with
@@ -1559,7 +1569,7 @@ KeySort[GroupBy[DiagramTerms[OrderPart[gammaPsi1PI, InteractionPotential, {1, 2,
     loopsPsi, Total]]
 \end{code}
 \figuresum{S_{\rm int}[\bar\Psi,\Psi]}{onepi_psi_tree}
-\begin{ordersum}{\Gamma^{[1]}+{\rm Tr}\ln(-G_0^{-1})}
+\begin{ordersum}{-\tfrac12{\rm Tr}\ln\bigl(-S''[\bar\Psi,\Psi]\bigr)+{\rm Tr}\ln(-G_0^{-1})}
 \orderrow{V}{onepi_psi_rings_1}
 \orderrow{V^2}{onepi_psi_rings_2}
 \orderrow{V^3}{onepi_psi_rings_3}
@@ -1581,6 +1591,8 @@ interaction vanishes, so there is no zero-dimensional check; the checks are the 
 \begin{result}
 \begin{tabular}{@{}l@{\quad}l@{}}
 the diagrams minus their 1PI part & \val{Check1PIPsi1}\\
+one loop minus the rings of $-\frac12{\rm Tr}\ln(-S''[\bar\Psi,\Psi])+{\rm Tr}\ln(-G_0^{-1})$, orders 1 to 3 & \val{Check1PIPsiPieces1}\\
+two or more loops minus $\Gamma_1$ expanded in $G_0$ (both from $\Gamma[\sfieldmean]$, section~\ref{sec:nambu}) & \val{Check1PIPsiPieces2}\\
 $\Gamma[0,0]+{\rm Tr}\ln(-G_0^{-1})+{}$(connected vacuum diagrams) & \val{Check1PIPsi2}\\
 $\delta^2\Gamma/\delta\bar\Psi(x)\,\delta\Psi(y)|_0-G_0^{-1}+\Sigma$, the perturbative $\Sigma$ of section~\ref{sec:dyson}, orders 0 to 3 & \val{Check1PIPsi3}\\
 $\delta^4\Gamma/\delta\bar\Psi(x_1)\delta\Psi(x_2)\delta\bar\Psi(x_3)\delta\Psi(x_4)|_0-F$, bare lines, orders 1 and 2 & \val{Check1PIPsi4}
@@ -1802,7 +1814,7 @@ $S_{\rm int}[\bar\phi+\phi]$ of degree three or more in the fluctuation $\phi$.
 \paragraph{Its pieces} The pieces carry the diagrams of $\Gamma[\bar\phi]$ in this way: $S[\bar\phi]$ the tree, as before;
 $\frac12{\rm Tr}\ln G^{-1}+\frac12{\rm Tr}(D_0^{-1}G-1)$ the one loop, with the full $G$; $\frac12{\rm Tr}(S_{\rm int}''[\bar\phi]\,G)$, the
 part of the trace term with the mean field, the vertex of degree two (for $\phi^4$ the mass $\lambda\bar\phi^2/2$) closed by one
-line $G$; and $\Gamma_2$ the rest, with lines $G$. The vertex of degree two is not a vertex of $\Gamma_2$: it is in the trace, and the rings of
+line $G$; and $\Gamma_2$ the rest, with lines $G$, as $\Gamma_1$ with lines $D[\bar\phi]$ in the 1PI action. The vertex of degree two is not a vertex of $\Gamma_2$: it is in the trace, and the rings of
 section~\ref{sec:onepi} come back when $G$ is dressed with it (section~\ref{sec:twopitoonepi}). It must be there: the stationarity
 in $G$ is the Dyson equation $G^{-1}=D^{-1}[\bar\phi]-\Sigma[\bar\phi,G]$, with $\Sigma=-2\,\delta\Gamma_2/\delta G$, and only through
 $D^{-1}[\bar\phi]$ does the self-energy get its mean-field part, $-S_{\rm int}''[\bar\phi]$. For $\phi^4$ this is the tadpole
@@ -1814,8 +1826,8 @@ $G=-\langle T\psi\bar\psi\rangle_c$, and the signs of the trace terms are those 
 \[
 \Gamma[\bar\Psi,\Psi,G]=S[\bar\Psi,\Psi]-{\rm Tr}\ln(-G^{-1})-{\rm Tr}\bigl(D^{-1}[\bar\Psi,\Psi]\,G-1\bigr)+\Gamma_2[\bar\Psi,\Psi,G],
 \]
-with the classical action $S[\bar\Psi,\Psi]=-\bar\Psi G_0^{-1}\Psi+S_{\rm int}[\bar\Psi,\Psi]$ and, as $D^{-1}[\bar\phi]=S''[\bar\phi]$, its
-second derivative (the rightmost derivative first)
+with the classical action $S[\bar\Psi,\Psi]$ and, as $D^{-1}[\bar\phi]=S''[\bar\phi]$, the normal block of its second derivative
+$S''[\bar\Psi,\Psi]$ (section~\ref{sec:onepifermions}; the rightmost derivative first)
 \[
 D^{-1}[\bar\Psi,\Psi](x,y)=\frac{\delta^2S}{\delta\bar\Psi(x)\,\delta\Psi(y)}=G_0^{-1}(x,y)-\Sigma_{\rm HF}[-\Psi\bar\Psi](x,y),
 \]
@@ -1825,9 +1837,9 @@ ${\rm Tr}(\Sigma_{\rm HF}[-\Psi\bar\Psi]\,G)$ of the trace term closes with one 
 Dyson equation is $G^{-1}=D^{-1}[\bar\Psi,\Psi]-\Sigma[\bar\Psi,\Psi,G]$, with $\Sigma(x,y)=\delta\Gamma_2/\delta G(y,x)$, and its first
 order, $\Sigma_{\rm HF}[-\Psi\bar\Psi]$ from $D^{-1}$ and $\Sigma_{\rm HF}[G]$ from $\Gamma_2$, is $\Sigma_{\rm HF}[G-\Psi\bar\Psi]$, the Hartree--Fock
 self-energy of the whole $-\langle T\psi\bar\psi\rangle=G-\Psi\bar\Psi$. At zero means the term vanishes. $\Gamma_2$ is minus the 2PI vacuum diagrams with lines $G$ and the vertices of degree three or more,
-which carry at most one mean. $D^{-1}$ is only the normal block of the second derivative: the anomalous vertices of degree
-two, $V\Psi\Psi\,\bar\psi\bar\psi$ and $V\bar\Psi\bar\Psi\,\psi\psi$, are not in this form, since a normal source cannot absorb
-them. \pkg{EffectiveAction2PI} with the means returns this form, which is exact
+which carry at most one mean. $D^{-1}$ is only the normal block of $S''[\bar\Psi,\Psi]$: the anomalous vertices of degree
+two, $V\Psi\Psi\,\bar\psi\bar\psi$ and $V\bar\Psi\bar\Psi\,\psi\psi$, in the one loop of the 1PI action, are not in this form, since a
+normal $G$ cannot close them. \pkg{EffectiveAction2PI} with the means returns this form, which is exact
 at zero means in the normal state, where its derivatives are the self-energy and the irreducible vertex
 (section~\ref{sec:meanderivatives}); at finite means, where the anomalous propagator $-\langle T\psi\psi\rangle$ is of order
 $V\Psi\Psi$ (section~\ref{sec:twopitoonepi}), and in a paired state, the variable is the whole Nambu propagator, with the
@@ -1906,10 +1918,11 @@ $\Gamma_2[\bar\Psi,\Psi,G]$ minus its 2PI part; its vertices with two or more me
 
 At its stationary point in $G$, the full propagator in the background $G[\bar\phi]=(\delta^2\Gamma[\bar\phi]/\delta\bar\phi\,\delta\bar\phi)^{-1}
 =D[\bar\phi]+O(\lambda)$, $\Gamma[\bar\phi,G]$ is the 1PI action $\Gamma[\bar\phi]$ of section~\ref{sec:onepi}, whose diagrams are these
-pieces with $G$ dressed: at $G=D[\bar\phi]$ the traces are the one loop $\frac12{\rm Tr}\ln D^{-1}[\bar\phi]$ (the term
-$\frac12{\rm Tr}(D^{-1}[\bar\phi]\,G-1)$ vanishes) and $\Gamma_2$ gives the diagrams of $\Gamma^{[2]}$, $\Gamma^{[3]}$ and $\Gamma^{[4]}$ that are
-2PI in the lines $D[\bar\phi]$; the others, 1PI but two-particle reducible like the chain of three bubbles, come from the self-energy
-insertions in $G[\bar\phi]-D[\bar\phi]$, at second order in them since $\Gamma$ is stationary in $G$.
+pieces with $G$ dressed: at $G=D[\bar\phi]$ the traces are the one loop $\frac12{\rm Tr}\ln S''[\bar\phi]$ (the term
+$\frac12{\rm Tr}(D^{-1}[\bar\phi]\,G-1)$ vanishes) and $\Gamma_2[\bar\phi,D[\bar\phi]]$ is the part of $\Gamma_1[\bar\phi]$ that is 2PI in its
+lines $D[\bar\phi]$; the others, 1PI but two-particle reducible like the chain of three bubbles (\val{Counts1PINotTwoPI} at $\lambda$,
+$\lambda^2$, $\lambda^3$), come from the self-energy insertions in $G[\bar\phi]-D[\bar\phi]$, at second order in them since $\Gamma$ is
+stationary in $G$.
 
 For the electron gas the stationary $G$ to first order is enough to $V^3$ (its error, of order $V^2$, changes $\Gamma$ at order
 $V^4$, by stationarity). With the normal $G$ alone it gives the diagrams of $\Gamma[\bar\Psi,\Psi]$ of
@@ -1924,6 +1937,7 @@ variable the functional at its stationary point is $\Gamma[\bar\Psi,\Psi]$ with 
 section~\ref{sec:nambu}, paragraph \emph{At finite means}).
 \begin{result}
 \begin{tabular}{@{}l@{\quad}l@{}}
+$\phi^4$: $\Gamma_2[\bar\phi,D[\bar\phi]]$ minus the 2PI part of $\Gamma_1[\bar\phi]$, orders 1 to 3 & \val{Check2PIGammaOne}\\
 $\phi^4$: $\Gamma[\bar\phi,G[\bar\phi]]-\Gamma[\bar\phi]$, expanded in $D_0$, orders 0 to 3 & \val{Check2PIAtStationaryG}\\
 electron gas, $G$: $\Gamma[\bar\Psi,\Psi,G[\bar\Psi,\Psi]]-\Gamma[\bar\Psi,\Psi]+{}$(anomalous diagrams), orders 0 to 3 & \val{Check2PIPsiAtStationaryG}
 \end{tabular}
@@ -2793,7 +2807,7 @@ is the form of section~\ref{sec:twopifermions} with one field,
 \Gamma[\sfieldmean,\mathcal G]=S[\sfieldmean]-\tfrac12{\rm Tr}\ln(-\mathcal G^{-1})-\tfrac12{\rm Tr}\bigl(S''[\sfieldmean]\,\mathcal G-1\bigr)
 +\Gamma_2[\sfieldmean,\mathcal G],
 \]
-with $S[\sfieldmean]=-\frac12\sfieldmean\mathcal G_0^{-1}\sfieldmean+S_{\rm int}[\sfieldmean]$, whose free part is $-\bar\Psi G_0^{-1}\Psi$, and
+with $S[\sfieldmean]=-\frac12\sfieldmean\mathcal G_0^{-1}\sfieldmean+S_{\rm int}[\sfieldmean]$, whose components are $S[\bar\Psi,\Psi]$, and
 \[
 S''[\sfieldmean](a,b)=\frac{\delta^2S}{\delta\sfieldmean(a)\,\delta\sfieldmean(b)}=\mathcal G_0^{-1}(a,b)-\sfieldSigma^{(1)}[-\sfieldmean\sfieldmean](a,b),
 \]
@@ -2805,16 +2819,22 @@ $\mathcal G_{\bar\psi\bar\psi}$. To first order,
 \Gamma[\sfieldmean,\mathcal G]=\formulalines{nambu_gamma_means}
 \end{gather*}
 Its stationary $\mathcal G[\sfieldmean]$ has anomalous blocks of order $V\Psi\Psi$, and there the functional is the 1PI action
-$\Gamma[\sfieldmean]$ (\pkg{EffectiveAction1PI} with \pkg{"Statistics" -> "Superfield"}), whose components are the
-$\Gamma[\bar\Psi,\Psi]$ of section~\ref{sec:onepifermions}, with all its \val{Counts1PIPsiOrders3} diagrams at $V^3$, the
-\val{Counts1PIPsiAnomalous3} with an anomalous vertex included: the 2PI functional of fermions is exact at its stationary
-point at any means. At $\sfieldmean=0$ and fixed $\mathcal G$ its derivatives are those of section~\ref{sec:meanderivatives}:
+\[
+\Gamma[\sfieldmean]=S[\sfieldmean]-\tfrac12{\rm Tr}\ln\bigl(-S''[\sfieldmean]\bigr)+\Gamma_1[\sfieldmean],
+\]
+$\Gamma_1$ minus the 1PI vacuum diagrams with two or more loops, with the lines $S''[\sfieldmean]^{-1}$ and the vertices of degree
+three or more; at $\mathcal G=S''[\sfieldmean]^{-1}$ the trace term vanishes and $\Gamma_2$ is the part of $\Gamma_1$ 2PI in these lines, as
+for $\phi^4$ (section~\ref{sec:twopitoonepi}). \pkg{EffectiveAction1PI} with \pkg{"Statistics" -> "Superfield"} writes $\Gamma[\sfieldmean]$
+expanded in $\mathcal G_0$; its components are the $\Gamma[\bar\Psi,\Psi]$ of section~\ref{sec:onepifermions}, with all its
+\val{Counts1PIPsiOrders3} diagrams at $V^3$, the \val{Counts1PIPsiAnomalous3} with an anomalous vertex included: the 2PI functional
+of fermions is exact at its stationary point at any means. At $\sfieldmean=0$ and fixed $\mathcal G$ its derivatives are those of section~\ref{sec:meanderivatives}:
 $\mathcal G_0^{-1}-\sfieldSigma[\mathcal G]$, and the fully irreducible vertex $\mathcal V$ to third order.
 \begin{result}
 \begin{tabular}{@{}l@{\quad}l@{}}
 $S_{\rm int}''[\sfieldmean]$ plus the first-order $\sfieldSigma[\mathcal G]$ with $-\sfieldmean\sfieldmean$ in place of $\mathcal G$ & \val{CheckNambuFluctuationOperator}\\
 $\Gamma[\sfieldmean,\mathcal G[\sfieldmean]]-\Gamma[\sfieldmean]$, orders 0 to 3 & \val{CheckNambuStationaryMeans}\\
 components of $\Gamma[\sfieldmean]$ minus $\Gamma[\bar\Psi,\Psi]$ of section~\ref{sec:onepifermions}, orders 0 to 3 & \val{CheckNambu1PIComponents}\\
+$\Gamma_2[\sfieldmean,S''[\sfieldmean]^{-1}]$ minus the 2PI part of $\Gamma_1[\sfieldmean]$, orders 1 to 3 & \val{CheckNambuGammaTwo}\\
 $\delta^2\Gamma/\delta\sfieldmean\delta\sfieldmean|_{0,\mathcal G}-\mathcal G_0^{-1}+\sfieldSigma[\mathcal G]$ (orders 0 to 3); $\delta^4\Gamma/\delta\sfieldmean^4|_{0,\mathcal G}-\mathcal V$ &
 \val{CheckNambuMeanDerivatives}
 \end{tabular}
