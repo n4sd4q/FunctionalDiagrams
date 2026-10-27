@@ -30,7 +30,8 @@
   reducible in ph̄ and in pp, the latter with `"ExternalOrder" -> {x4, x2, x3, x1}` (the incoming particles on the left):
   these are the pictures by channel that followed the first command before. A sum written order by order is drawn as
   one sum and then split, so that every order looks as in `DiagramPlot` of the whole output. The first example of the
-  README plots Φ[G] too (`DiagramPlot[Phi]`), and its picture shows Γ⁰ as `DiagramPlot` draws it, without channel marks.
+  README plots Φ[G] too (`DiagramPlot[Phi]`), and its picture shows Γ⁰ as `DiagramPlot` draws it, without channel marks;
+  so does the notebook of the demo video, whose last cell now has its three outputs, Φ[G], Σ and Γ⁰.
 - **Every code block of the showcase gives what follows it.** The introduction says once that the sizing options of the
   script are left out; every other option is now in the code: `"Interactions"` for W in Φ[G, W] and for D_σ, `"Couplings"
   -> {g}` for the phonons, `"LegDirections"` for δΣ/δU. The particle–particle kernel and the averaged propagator of

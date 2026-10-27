@@ -136,11 +136,10 @@ PREAMBLE = r"""\documentclass[12pt,multi=elem,border=3pt]{standalone}
 \usepackage[scale=0.9]{sourcecodepro}
 \usepackage{amsmath,slashed,tikz,xcolor,graphicx,varwidth}
 \usetikzlibrary{decorations.pathmorphing}
-\definecolor{accent}{HTML}{1F4E79}\definecolor{muted}{HTML}{59636E}\definecolor{comment}{HTML}{6A7B8C}
+\definecolor{accent}{HTML}{1F4E79}\definecolor{muted}{HTML}{59636E}
 \definecolor{codebg}{HTML}{F5F7FA}\definecolor{codeframe}{HTML}{C9D3DF}
 \definecolor{bandA}{HTML}{EEF3F9}\definecolor{bandB}{HTML}{F7F9FC}
 \newcommand{\diagramgap}{\hskip 0.9em\relax}
-\newcommand{\channelmark}[1]{\par\mbox{\footnotesize\color{comment}(#1)}\diagramgap}
 \newcommand{\figlines}{\lineskiplimit=9pt\lineskip=9pt\relax}
 \newcommand{\rest}{\unskip\nobreak\diagramgap\mbox{${}+\cdots$}}
 % a row "lhs = diagrams": the left-hand side in a box of fixed width, the diagrams as a ragged paragraph
@@ -179,9 +178,11 @@ def elements():
                      r"\band{bandB}{%s}{V}{%s}\\[-1pt]" % (w, fig("green_function_1", **nb)) +
                      r"\band{bandA}{%s}{V^2}{%s}" % (w, fig("green_function_2", **nb)) + r"\end{tabular}")
     lhs, rhs = "2.2cm", "11.4cm"
-    small = r"\fontsize{9}{11}\selectfont\renewcommand{\channelmark}[1]{}\def\break{\diagramgap}"
-    # the last cell has two outputs, Sigma and Gamma0 to third order (Out[4] and Out[5]): shown, like the README, up to
-    # second order, the rest as +...
+    small = r"\fontsize{9}{11}\selectfont"
+    # the last cell has three outputs, Phi, Sigma and Gamma0 to third order (Out[4], Out[5] and Out[6]): shown, like the
+    # README, up to second order, the rest as +... (Gamma0 plain, as DiagramPlot draws it: the crossed pp diagrams too)
+    e["nb_phi"] = r"{%s\eqrow{%s}{$\Phi[G]={}$}{%s}{%s\diagramgap%s\rest}}" % (
+        small, lhs, rhs, fig("luttinger_ward_1", **nb), fig("luttinger_ward_2", **nb))
     e["nb_sigma"] = r"{%s\eqrow{%s}{$\Sigma=\dfrac{\delta\Phi}{\delta G}={}$}{%s}{%s\diagramgap%s\rest}}" % (
         small, lhs, rhs, fig("self_energy_1", **nb), fig("self_energy_2", **nb))
     e["nb_gamma"] = r"{%s\eqrow{%s}{$\Gamma^0=\dfrac{\delta\Sigma}{\delta G}={}$}{%s}{%s\diagramgap%s\rest}}" % (
@@ -774,7 +775,7 @@ class Notebook:
         cells = readme_cells()
         # the outputs, and the height of their Out[n]= (from their top): the first band of the Green function, the
         # middle of the left-hand side of an equation (Out[n]= level with its = sign)
-        outputs = {2: [(el["nb_green"], px(6))], 3: [(el[k], self.lhs_middle(el[k]) - px(9)) for k in ("nb_sigma", "nb_gamma")]}
+        outputs = {2: [(el["nb_green"], px(6))], 3: [(el[k], self.lhs_middle(el[k]) - px(9)) for k in ("nb_phi", "nb_sigma", "nb_gamma")]}
         speeds = [70, 260, 170, 240]    # characters per second
         self.cells, t, y, line = [], start, px(34), 1
         for i, code in enumerate(cells):
