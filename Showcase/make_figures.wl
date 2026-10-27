@@ -43,11 +43,23 @@ writePicture[name_String, e_, ext_List, opts___] := Module[{parts = DiagramToTik
 (* a formula, written by ExpressionToLaTeX *)
 writeFormula[name_String, e_, opts___] := With[{tex = ExpressionToLaTeX[e, opts]},
    Export["figures/formula_" <> name <> ".tex", tex, "Text"]; Print[name, ": ", tex]];
-(* the terms of the orders ms in the coupling or interaction line v, written to NAME_m.terms *)
 (* orderPart: OrderPart remembered, as most sums are both counted and written *)
 orderPart[e_, v_, m_] := orderPart[e, v, m] = OrderPart[e, v, m];
-writeOrders[name_String, e_, ext_List, v_, ms_List, opts___] := Do[With[{part = orderPart[e, v, m]},
-    If[part =!= 0, writeTerms[name <> "_" <> ToString[m], part, ext, opts]]], {m, ms}];
+(* the terms of the orders ms in the coupling or interaction line v, written to NAME_m.terms. The whole sum is drawn at
+   once, as DiagramPlot draws it (the directions of the legs, the density points and the sizes of the blobs depend on
+   all its terms), and its pictures are sorted by order: DiagramToTikZ draws the terms of DiagramTerms in the order of
+   their numbers of integration variables *)
+integrationCount[t_] := Total[Cases[{t}, IntegralOver[_, vars_List] :> Length[vars], Infinity]];
+orderOfTerm[t_, v_] := SelectFirst[Range[0, 12], OrderPart[t, v, #] =!= 0 &];
+writeOrders[name_String, e_, ext_List, v_, ms_List, opts___] := Module[{terms = DiagramTerms[e], parts, orders},
+   parts = DiagramToTikZ[e, ext, "Output" -> "List", opts, Sequence @@ pictureOptions];
+   orders = orderOfTerm[#, v] & /@ terms[[Ordering[integrationCount /@ terms]]];
+   Do[With[{part = Pick[parts, orders, m]},
+     If[Length[parts] =!= Length[terms] || Length[part] =!= Length[DiagramTerms[orderPart[e, v, m]]],
+      Print["writeOrders: the pictures of ", name, " do not match its orders"]; Abort[]];
+     If[part =!= {}, Export["figures/" <> name <> "_" <> ToString[m] <> ".terms",
+       joinBlocks[(#[[1]] <> "\n%%PICTURE%%\n" <> #[[2]]) & /@ part], "Text"]; Print[name <> "_" <> ToString[m], ": ", Length[part], " terms"]]],
+    {m, ms}]];
 (* the residual of a check order by order: e is evaluated once (byOrder has no Hold attribute), then the part of each
    order is simplified *)
 byOrder[e_, v_, ms_List] := Table[SimplifyDiagrams[OrderPart[e, v, m]], {m, ms}];
@@ -196,21 +208,16 @@ writeValue["check Tr Sigma G = 2m Phi", Table[SimplifyDiagrams[IntegralOver[Orde
 (* Gamma0(x1, x2; x3, x4) = d^2 Phi/dG(x4, x3) dG(x2, x1); IrreducibleVertex is the shortcut (checked below) *)
 irreducibleVertex = timed["Gamma0", SimplifyDiagrams[FunctionalDerivative[luttingerWard, DressedGreenFunction[x4, x3], DressedGreenFunction[x2, x1]]]];
 writeValue["counts Gamma0", orderCounts[irreducibleVertex, InteractionPotential, orders]];
-(* the diagrams of each order by channel: Gamma0 is particle-hole irreducible, so only the fully irreducible (bare) vertex
-   and the diagrams reducible in the transverse particle-hole and particle-particle channels appear. The legs x1 (out),
-   x2 (in), x3 (out), x4 (in) counterclockwise from the top left; the diagrams reducible in the particle-particle channel
-   with the incoming legs x4, x2 on the left *)
-gamma0Channels = Table[ParquetDecomposition[OrderPart[irreducibleVertex, InteractionPotential, m], {x1, x2, x3, x4}, {DressedGreenFunction}],
-   {m, orders}];
-Do[writeValue["channels Gamma0 order " <> ToString[m], Map[Length[DiagramTerms[#]] &, gamma0Channels[[m]]]], {m, orders}];
-Do[
-  Do[With[{name = "irreducible_vertex_" <> ToString[m] <> "_" <> k, part = gamma0Channels[[m]][k]},
-    Which[
-     part === 0, Null,
-     k === "ParticleParticle", writeTerms[name, part, {x1, x2, x3, x4}, "LegDirections" -> "Alternating", "ExternalOrder" -> {x4, x2, x3, x1}],
-     True, writeTerms[name, part, {x1, x2, x3, x4}, "LegDirections" -> "Alternating"]]],
-   {k, Keys[gamma0Channels[[m]]]}],
-  {m, orders}];
+(* as DiagramPlot draws it, the legs x1 (out), x2 (in), x3 (out), x4 (in) counterclockwise from the top left *)
+writeOrders["irreducible_vertex", irreducibleVertex, {x1, x2, x3, x4}, InteractionPotential, orders];
+(* by channel: Gamma0 is particle-hole irreducible, so only the fully irreducible (bare) vertex and the diagrams reducible
+   in the transverse particle-hole and particle-particle channels appear; the last drawn with the incoming legs x4, x2
+   on the left *)
+gamma0Channels = ParquetDecomposition[irreducibleVertex, {x1, x2, x3, x4}, {DressedGreenFunction}];
+writeValue["counts Gamma0 channels", Map[orderCounts[#, InteractionPotential, orders] &, gamma0Channels]];
+writeOrders["irreducible_vertex_phbar", gamma0Channels["TransverseParticleHole"], {x1, x2, x3, x4}, InteractionPotential, orders];
+writeOrders["irreducible_vertex_pp", gamma0Channels["ParticleParticle"], {x1, x2, x3, x4}, InteractionPotential, orders,
+  "ExternalOrder" -> {x4, x2, x3, x1}];
 (* Gamma0_{12;34} = d^2 Phi/dG_{21} dG_{43} is symmetric under 1 <-> 3, 2 <-> 4 *)
 writeValue["check Gamma0 symmetry", SimplifyDiagrams[irreducibleVertex - (irreducibleVertex /. {x1 -> x3, x2 -> x4, x3 -> x1, x4 -> x2})]];
 (* Sigma(m) has 2m - 1 lines: Gamma0(m) . G = (2m - 1) Sigma(m) *)

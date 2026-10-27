@@ -142,13 +142,13 @@
  {\par\vspace{9pt plus 3pt minus 2pt}}
 \newcommand{\figuresum}[3][]{\begin{diagramsum}{#2}\inputfigure{#3}#1\end{diagramsum}}
 % a sum written order by order: \begin{ordersum}{lhs} \orderrow{order}{name} ... \end{ordersum}, one coloured band per
-% order, with the order on the left
+% order, with the order on the left; the left-hand side starts a page when the first band would not fit below it
 \definecolor{bandA}{HTML}{EEF3F9}
 \definecolor{bandB}{HTML}{F7F9FC}
 \newcounter{fdband}
 \newlength{\orderlabelwidth}\setlength{\orderlabelwidth}{0.95cm}
 \newenvironment{ordersum}[1]{%
-  \par\medskip\needspace{2.2cm}\noindent$\displaystyle #1 = {}$\par\nobreak\vspace{1pt}\setcounter{fdband}{0}}%
+  \par\medskip\needspace{3.2cm}\noindent$\displaystyle #1 = {}$\par\nobreak\vspace{1pt}\setcounter{fdband}{0}}%
  {\par\vspace{8pt plus 3pt minus 2pt}}
 \newcommand{\orderrow}[2]{\stepcounter{fdband}%
   \ifodd\value{fdband}\def\fdbandcolor{bandA}\else\def\fdbandcolor{bandB}\fi
@@ -2031,12 +2031,7 @@ equation (for the Hartree--Fock $\Phi$, the antisymmetrized interaction):
 \Gamma^0(x_1,x_2;x_3,x_4)=\frac{\delta\Sigma(x_1,x_2)}{\delta G(x_4,x_3)}=\frac{\delta^2\Phi}{\delta G(x_2,x_1)\,\delta G(x_4,x_3)}.
 \]
 The fermions leave at $x_1$, $x_3$ and enter at $x_2$, $x_4$; the legs are drawn counterclockwise from the top left, and
-points joined by delta functions are a single vertex. Up to third order every diagram of $\Gamma^0$ beyond first order is
-reducible either in the transverse particle--hole channel $[\phbar]$ or in the particle--particle channel $[\pp]$; the
-first fully irreducible diagrams beyond the bare vertex, of the envelope type (section~\ref{sec:parquet}), appear at
-fourth order. The $[\pp]$ diagrams are drawn with the incoming legs $x_4$, $x_2$ on the left, so that the two particles propagate from left to
-right (and, when a particle entering at $x_2$ leaves at $x_1$, with $x_1$ and $x_3$ exchanged, so that the two lines stay
-parallel).
+points joined by delta functions are a single vertex.
 \begin{code}
 irreducibleVertex = FunctionalDerivative[luttingerWard,
     DressedGreenFunction[x4, x3], DressedGreenFunction[x2, x1]];
@@ -2047,6 +2042,29 @@ DiagramPlot[irreducibleVertex, {x1, x2, x3, x4}]
 \orderrow{V}{irreducible_vertex_1}
 \orderrow{V^2}{irreducible_vertex_2}
 \orderrow{V^3}{irreducible_vertex_3}
+\end{ordersum}
+Up to third order every diagram beyond the bare vertex is reducible either in the transverse particle--hole channel
+$\phbar$ or in the particle--particle channel $\pp$ (section~\ref{sec:fourpoint}); the first fully irreducible diagrams
+beyond the bare vertex, of the envelope type (section~\ref{sec:parquet}), appear at fourth order. \pkg{ParquetDecomposition}
+sorts the diagrams by channel, by cutting pairs of lines. The two lines of a $\pp$ diagram carry two particles from $x_2$
+and $x_4$ to $x_1$ and $x_3$; with the incoming legs on the left, \pkg{"ExternalOrder" -> \{x4, x2, x3, x1\}}, they
+propagate from left to right (and when the particle entering at $x_2$ leaves at $x_1$ the labels on the right are
+exchanged, so that the two lines stay parallel). The parts of $\Gamma^0$ reducible in the two channels,
+$R_{\phbar}$ and $R_{\pp}$:
+\begin{code}
+channels = ParquetDecomposition[irreducibleVertex, {x1, x2, x3, x4},
+    {DressedGreenFunction}];
+DiagramPlot[channels["TransverseParticleHole"], {x1, x2, x3, x4}]
+DiagramPlot[channels["ParticleParticle"], {x1, x2, x3, x4},
+    "ExternalOrder" -> {x4, x2, x3, x1}]
+\end{code}
+\begin{ordersum}{R_{\phbar}}
+\orderrow{V^2}{irreducible_vertex_phbar_2}
+\orderrow{V^3}{irreducible_vertex_phbar_3}
+\end{ordersum}
+\begin{ordersum}{R_{\pp}}
+\orderrow{V^2}{irreducible_vertex_pp_2}
+\orderrow{V^3}{irreducible_vertex_pp_3}
 \end{ordersum}
 \begin{result}
 \begin{tabular}{@{}l@{\quad}l@{}}

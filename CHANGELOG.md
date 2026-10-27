@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Documents
+
+- **The showcase shows what its code gives.** The irreducible vertex Γ⁰ follows `DiagramPlot[irreducibleVertex, {x1, x2,
+  x3, x4}]` as that command draws it, order by order (the diagrams reducible in the particle–particle channel with their
+  two lines crossing); a second code block then sorts it by channel with `ParquetDecomposition` and draws the parts
+  reducible in ph̄ and in pp, the latter with `"ExternalOrder" -> {x4, x2, x3, x1}` (the incoming particles on the left):
+  these are the pictures by channel that followed the first command before. A sum written order by order is drawn as
+  one sum and then split, so that every order looks as in `DiagramPlot` of the whole output. The first example of the
+  README plots Φ[G] too (`DiagramPlot[Phi]`), and its picture shows Γ⁰ as `DiagramPlot` draws it, without channel marks.
+
 ## 2.4.0 (2026-10-26)
 
 Since 2.3.0: one new option, `"Appearance"` of `DiagramPlot` and `DrawDiagram`; no public name added, removed or renamed

@@ -66,6 +66,7 @@ DiagramPlot[
    Gamma0(x1, x2; x3, x4) = dSigma(x1, x2)/dG(x4, x3), the irreducible vertex
    (the shortcuts SelfEnergy and IrreducibleVertex give the same) *)
 Phi = LuttingerWardFunctional[Z0, interaction, 3, G0 -> G];
+DiagramPlot[Phi]
 DiagramPlot[FunctionalDerivative[Phi, G[y, x]], {x, y}]
 DiagramPlot[FunctionalDerivative[Phi, G[x4, x3], G[x2, x1]], {x1, x2, x3, x4}]
 ```
@@ -73,8 +74,8 @@ DiagramPlot[FunctionalDerivative[Phi, G[x4, x3], G[x2, x1]], {x1, x2, x3, x4}]
 <p align="center"><img src="Documentation/readme_1.svg" width="600" alt="The Luttinger–Ward functional Phi[G] of the
 electron gas to second order, the self-energy Sigma = dPhi/dG and the irreducible vertex Gamma0 = dSigma/dG"></p>
 <p align="center">The output of the last three lines, up to second order: Φ[G] and its derivatives Σ and Γ⁰. A wavy
-line stands for −V, so that the number in front of a picture times the values of its lines is the term; (ph̄) and (pp)
-mark the diagrams of Γ⁰ reducible in those channels.</p>
+line stands for −V, so that the number in front of a picture times the values of its lines is the term; the legs of Γ⁰
+are x₁ (out), x₂ (in), x₃ (out), x₄ (in), counterclockwise from the top left.</p>
 
 The [guided tour](Examples.nb) ([`Examples.wl`](Examples.wl), the same as a script, can be read on GitHub) goes on from
 here in thirteen short sections: the effective actions, the Bethe–Salpeter and parquet equations, pairing, Hedin's
