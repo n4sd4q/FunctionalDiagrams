@@ -5,21 +5,22 @@ later ones use.
 
 ## Which function gives the object I need?
 
-Every object is a functional derivative, and the package computes it as one; the functions with the names of the
-objects are shortcuts for those derivatives, with the same results. For the electron gas of the README (`Z0`,
-`interaction`, the propagator `G0` made full as `G`):
+The objects of a calculation are derivatives of a few generating functionals (Z, log Z, the Luttinger–Ward functional
+Φ, the effective actions), and the package computes them as such; the functions named after the objects are shortcuts
+that give the same results. For the electron gas of the README (`Z0`, `interaction`, the propagator `G0` made full as
+`G`):
 
-| object | as a derivative | function |
+| object | what it is | function |
 |---|---|---|
-| Green function G(x, y) = −⟨ψ(x) ψ̄(y)⟩ | of Z with respect to η̄(x) and η(y) | `-PerturbativeCorrelationFunction[Z0, {psi[x], psibar[y]}, interaction, n]` |
-| connected functions | of log Z | `ConnectedCorrelationFunction[Z0, {psi[x1], psibar[x2], ...}, interaction, n]` |
+| Green function G(x, y) = −⟨ψ(x) ψ̄(y)⟩ | a derivative of Z with respect to η̄(x) and η(y) | `-PerturbativeCorrelationFunction[Z0, {psi[x], psibar[y]}, interaction, n]` |
+| connected functions | derivatives of log Z | `ConnectedCorrelationFunction[Z0, {psi[x1], psibar[x2], ...}, interaction, n]` |
 | connected vacuum diagrams | log(Z/Z₀) | `ConnectedVacuumDiagrams[Z0, interaction, n]` |
-| Luttinger–Ward functional Φ[G] | | `LuttingerWardFunctional[Z0, interaction, n, G0 -> G]` |
-| self-energy Σ(x, y) | `FunctionalDerivative[Phi, G[y, x]]` | `SelfEnergy[Phi, G, {x, y}]` |
-| irreducible vertex Γ⁰(x₁, x₂; x₃, x₄) | `FunctionalDerivative[Phi, G[x4, x3], G[x2, x1]]` | `IrreducibleVertex[Phi, G, {x1, x2, x3, x4}]` |
-| full vertex F(x₁, x₂; x₃, x₄) | of the 1PI action with respect to the means | `PerturbativeFullVertex[Z0, interaction, n, {psi, psibar}, {x1, x2, x3, x4}, G0 -> G]` |
-| vertex of the density Λ(x₁, x₂; z) | −δG⁻¹(x₁, x₂)/δU(z) | `PerturbativeDensityVertex[Z0, interaction, n, {psi, psibar}, {x1, x2, z}, G0 -> G]` |
-| 2PI effective action Γ[G] | | `EffectiveAction2PI[Phi, G0 -> G]` |
+| Luttinger–Ward functional Φ[G] | minus the 2PI vacuum diagrams, with G₀ → G | `LuttingerWardFunctional[Z0, interaction, n, G0 -> G]` |
+| self-energy Σ(x, y) | δΦ/δG(y, x): `FunctionalDerivative[Phi, G[y, x]]` | `SelfEnergy[Phi, G, {x, y}]` |
+| irreducible vertex Γ⁰(x₁, x₂; x₃, x₄) | δ²Φ/δG(x₄, x₃)δG(x₂, x₁): `FunctionalDerivative[Phi, G[x4, x3], G[x2, x1]]` | `IrreducibleVertex[Phi, G, {x1, x2, x3, x4}]` |
+| full vertex F(x₁, x₂; x₃, x₄) | the fourth derivative of the 1PI action with respect to the means | `PerturbativeFullVertex[Z0, interaction, n, {psi, psibar}, {x1, x2, x3, x4}, G0 -> G]` |
+| vertex of the density Λ(x₁, x₂; z) | −δG⁻¹(x₁, x₂)/δU(z), U coupled to the density | `PerturbativeDensityVertex[Z0, interaction, n, {psi, psibar}, {x1, x2, z}, G0 -> G]` |
+| 2PI effective action Γ[G] | the Legendre transform of −log Z with respect to the two-point source | `EffectiveAction2PI[Phi, G0 -> G]` |
 
 The [map of the functions](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html) places every
 public name by its role in a calculation, and `?Name` gives its usage message.
@@ -28,7 +29,8 @@ public name by its role in a calculation, and `?Name` gives its usage message.
 
 `PerturbativeCorrelationFunction` is the expectation value ⟨…⟩ = ⟨… e^(−S_int)⟩₀/⟨e^(−S_int)⟩₀: the vacuum bubbles cancel,
 but a function of four or more fields keeps its disconnected terms. `ConnectedCorrelationFunction` is the cumulant, the
-derivative of log Z, with only the diagrams in which all the external points are connected. For two free fermions:
+derivative of log Z, with only the diagrams in which all the external points are connected. The four-point function of
+free fermions (order 0):
 
 ```mathematica
 Needs["FunctionalDiagrams`"]
