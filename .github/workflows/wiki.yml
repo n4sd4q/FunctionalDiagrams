@@ -1,0 +1,46 @@
+# Publishes the pages of wiki/ to the GitHub wiki of the repository, which is a git repository of its own
+# (FunctionalDiagrams.wiki.git): on every push to main that changes wiki/ or this file, and on demand (Run workflow), the
+# folder is mirrored into the wiki and committed there. The pages are written and checked in wiki/
+# (Development/check_wiki.wl, Development/check_consistency.py); edits made on the wiki itself are overwritten.
+name: wiki
+on:
+  push:
+    branches: [main]
+    paths:
+      - "wiki/**"
+      - ".github/workflows/wiki.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: wiki
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clone the wiki
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ! git clone --quiet "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" "$RUNNER_TEMP/wiki"; then
+            echo "::error title=No wiki to publish to::Cannot clone https://github.com/${GITHUB_REPOSITORY}.wiki.git. The wiki must be enabled (Settings, Features, Wikis) and have at least one page: create any first page on GitHub, then run this workflow again."
+            exit 1
+          fi
+      - name: Mirror wiki/ into the wiki
+        run: rsync -a --delete --exclude .git wiki/ "$RUNNER_TEMP/wiki/"
+      - name: Commit and push
+        working-directory: ${{ runner.temp }}/wiki
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "The wiki already has the pages of wiki/ at ${GITHUB_SHA}."
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit --quiet -m "Pages of wiki/ at ${GITHUB_SHA::7}" \
+            -m "https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+          branch=$(git rev-parse --abbrev-ref HEAD)
+          git push --quiet origin "HEAD:${branch}"
+          echo "Published the pages of wiki/ at ${GITHUB_SHA} to the branch ${branch} of the wiki."
