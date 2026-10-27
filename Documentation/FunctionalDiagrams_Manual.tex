@@ -1321,9 +1321,19 @@ Options:
 \item \opt{MeanFields} \pkg{-> \{phi -> phiMean\}} (one real boson) or \pkg{\{psi -> Psi, psibar -> Psibar\}} (fermions, with
   Grassmann-odd means $\Psi=\langle\psi\rangle$, $\bar\Psi=\langle\bar\psi\rangle$; complex bosons likewise) makes the expectation values of the fields variables too ($\bar\phi=\langle\phi\rangle$ for a real boson), declared as
   sources. For a real boson this is $\Gamma[\bar\phi,G]=S[\bar\phi]+\frac12{\rm Tr}\ln G^{-1}+\frac12{\rm Tr}(D^{-1}[\bar\phi]G-1)
-  +\Gamma_2[\bar\phi,G]$, with $D^{-1}[\bar\phi]=D_0^{-1}+S_{\rm int}''[\bar\phi]$ the bare inverse propagator in the background (its
-  $\bar\phi$-dependent part written as the diagram $\langle S_{\rm int}^{(2)}\rangle_G$) and $\Gamma_2$ minus the 2PI vacuum
-  diagrams with lines $G$ and the vertices of $S_{\rm int}[\bar\phi+\phi]$ of degree three or more in $\phi$. For an interaction
+  +\Gamma_2[\bar\phi,G]$, with $D^{-1}[\bar\phi]=S''[\bar\phi]=D_0^{-1}+S_{\rm int}''[\bar\phi]$ the bare inverse propagator in the
+  background, whose part $\frac12{\rm Tr}(S_{\rm int}''[\bar\phi]G)$ closes the vertex of degree two with one line $G$, and $\Gamma_2$
+  minus the 2PI vacuum diagrams with lines $G$ and the vertices of $S_{\rm int}[\bar\phi+\phi]$ of degree three or more in $\phi$. The
+  stationarity in $G$ is the Dyson equation $G^{-1}=D^{-1}[\bar\phi]-\Sigma[\bar\phi,G]$, $\Sigma$ the self-energy of $\Gamma_2$: through
+  $D^{-1}$ the self-energy gets its mean-field part $-S_{\rm int}''[\bar\phi]$ (for $\phi^4$ the tadpole $-\lambda\bar\phi^2/2$, which
+  with $-\lambda G(x,x)/2$ from $\Gamma_2$ is the tadpole of $\langle\phi\phi\rangle=G+\bar\phi\bar\phi$), zero at $\bar\phi=0$. For fermions
+  $\Gamma[\bar\Psi,\Psi,G]=S[\bar\Psi,\Psi]-{\rm Tr}\ln(-G^{-1})-{\rm Tr}(D^{-1}[\bar\Psi,\Psi]G-1)+\Gamma_2[\bar\Psi,\Psi,G]$, with
+  $S[\bar\Psi,\Psi]=-\bar\Psi G_0^{-1}\Psi+S_{\rm int}[\bar\Psi,\Psi]$ and $D^{-1}[\bar\Psi,\Psi](x,y)=\delta^2S/\delta\bar\Psi(x)\,\delta\Psi(y)
+  =G_0^{-1}(x,y)-\Sigma_{\rm HF}[-\Psi\bar\Psi](x,y)$ (\pkg{FunctionalDerivative[S, Psibar[x], Psi[y]]}, the normal block of the
+  second derivative): $\Sigma_{\rm HF}[-\Psi\bar\Psi]$ is the first-order self-energy $\Sigma_{\rm HF}[G]$ with $-\Psi(x)\bar\Psi(y)$ in
+  place of $G(x,y)$, the Hartree and Fock potentials of the means, which ${\rm Tr}(\Sigma_{\rm HF}[-\Psi\bar\Psi]\,G)$ closes with one
+  line $G$; the Dyson equation $G^{-1}=D^{-1}[\bar\Psi,\Psi]-\Sigma[\bar\Psi,\Psi,G]$ has at first order $\Sigma_{\rm HF}[G-\Psi\bar\Psi]$,
+  the Hartree and Fock potentials of the whole $-\langle T\psi\bar\psi\rangle=G-\Psi\bar\Psi$. For an interaction
   even in the fields the derivatives with respect to the means at zero mean field and fixed $G$ are skeleton vertex
   functions: the second is $D_0^{-1}-\Sigma[G]$, the fourth the fully irreducible vertex $\Gamma_{\rm irr}$ of
   \fnref{ParquetDecomposition}. At $\bar\phi\neq0$ the perturbative $\Sigma$ in the background is selected with
@@ -1333,7 +1343,8 @@ Options:
   exact at zero means in the normal state (no pairing source and no spontaneous pairing: in a paired state the anomalous
   propagator is finite at zero means too); at finite means the anomalous propagator is of order $V\Psi\Psi$, and the superfield,
   \pkg{\{NambuField -> X\}} with \pkg{"Statistics" -> "Superfield"} (one Grassmann-odd mean $\boldsymbol\Psi=(\Psi,\bar\Psi)$, the
-  \pkg{X} of the code, the free part $-\frac12\boldsymbol\Psi\mathcal G_0^{-1}\boldsymbol\Psi$), is exact there: at its stationary
+  \pkg{X} of the code, the free part $-\frac12\boldsymbol\Psi\mathcal G_0^{-1}\boldsymbol\Psi$, the trace term
+  $-\frac12{\rm Tr}(S''[\boldsymbol\Psi]\mathcal G-1)$ with the whole second derivative, its anomalous vertices included), is exact there: at its stationary
   $\mathcal G[\boldsymbol\Psi]$ it is the 1PI action $\Gamma[\boldsymbol\Psi]$ of
   \fnref{EffectiveAction1PI}, whose components are $\Gamma[\bar\Psi,\Psi]$ with the diagrams of the anomalous vertices.
 \item \opt{Source} \pkg{-> U} adds a one-body source to the bare inverse propagator, so that the action gains
@@ -1350,8 +1361,8 @@ Options:
 \end{itemize}
 \excode{effective_action_source}
 \exformula{effective_action_source}
-$\phi^4$ theory with its mean field, to first order: the classical action, the trace terms, the mass $\lambda\bar\phi^2/2$ in
-$\langle S_{\rm int}^{(2)}\rangle_G$, and the figure eight:
+$\phi^4$ theory with its mean field, to first order: the classical action, the trace terms, the mass $\lambda\bar\phi^2/2$ closed by
+$G$ in $\frac12{\rm Tr}(S_{\rm int}''[\bar\phi]G)$, and the figure eight:
 \excode{effective_action_mean_field}
 \exformula{effective_action_mean_field}
 

@@ -569,6 +569,11 @@ check["Gamma - S[phibar] - (one loop with D^-1[phibar] = D0^-1 + lambda phibar^2
   FreeQ[gamma2Phi, D0 | TraceLog | OperatorTrace] && ! FreeQ[gamma2Phi, phiMean], True];
 check["phibar = 0: Gamma[0, G] is Gamma[G] on the Luttinger-Ward functional",
   SimplifyDiagrams[SetSourcesToZero[gammaPhi] - EffectiveAction2PI[phiB3, D0 -> Gb, "Statistics" -> "Boson"]], 0];
+(* the trace term in the background: D^-1[phibar] = S''[phibar] = D0^-1 - Sigma1 with phibar phibar in place of G (the tadpole
+   of the mean field), as D^-1[Psibar, Psi] = G0^-1 - Sigma_HF for fermions below *)
+check["D^-1[phibar] = d^2 S/dphibar dphibar = D0^-1 - (the first-order Sigma[G] with phibar phibar in place of G)",
+  SimplifyDiagrams[FunctionalDerivative[classicalB, phiMean[a], phiMean[b]] - OperatorKernel[Power[D0, -1]][a, b] +
+    (OrderPart[SelfEnergy[phiB3, Gb, {a, b}, "Statistics" -> "Boson"], lambda, 1] /. Gb[p_, q_] :> phiMean[p] phiMean[q])], 0];
 check["the phibar-dependence of Gamma2 at lambda^2: the sunset with two vertices lambda phibar",
   SimplifyDiagrams[OrderPart[gamma2Phi - SetSourcesToZero[gamma2Phi], lambda, 2] +
     lambda^2/12 IntegralOver[phiMean[u] Gb[u, w]^3 phiMean[w], {u, w}]], 0];
@@ -635,6 +640,15 @@ check["classical action: -Psibar G0^-1 Psi + S_int[Psibar, Psi]",
   {SimplifyDiagrams[OrderPart[gammaPsi, V, 0] - EffectiveAction2PI[0, G0 -> G] + IntegralOver[OperatorKernel[Power[G0, -1]][x, y] Psibar[x] ** Psi[y], {x, y}]],
    SimplifyDiagrams[EffectiveAction2PI[Zf, Vf, 1, G0 -> G, "MeanFields" -> {psi -> Psi, psibar -> Psibar}, "MeanFieldDegree" -> {4}] -
      (Vf /. {psi -> Psi, psibar -> Psibar})]}, {0, 0}];
+(* the form of Cornwall, Jackiw and Tomboulis: Gamma = S[Psibar, Psi] - Tr ln(-G^-1) - Tr(D^-1[Psibar, Psi] G - 1) + Gamma2, with
+   D^-1(a, b) = FunctionalDerivative[S, Psibar[a], Psi[b]] = G0^-1 - Sigma_HF, Sigma_HF the first-order self-energy with
+   -Psi Psibar in place of G: the Hartree and Fock potentials of the means, closed by G in the trace term *)
+classicalF = -IntegralOver[OperatorKernel[Power[G0, -1]][x, y] Psibar[x] ** Psi[y], {x, y}] + (Vf /. {psi -> Psi, psibar -> Psibar});
+fluctuationF = FunctionalDerivative[classicalF, Psibar[a], Psi[b]];
+check["fermions: D^-1[Psibar, Psi] = d^2 S/dPsibar dPsi = G0^-1 - Sigma_HF[G -> -Psi Psibar]; to first order Gamma = S - Tr ln(-G^-1) - Tr(D^-1 G - 1) + Phi[G]",
+  {SimplifyDiagrams[fluctuationF - OperatorKernel[Power[G0, -1]][a, b] + (OrderPart[SelfEnergy[phiF3, G, {a, b}], V, 1] /. G[p_, q_] :> -GrassmannProduct[Psi[p], Psibar[q]])],
+   SimplifyDiagrams[ExpandTrace[OrderPart[gammaPsi, V, {0, 1}] - classicalF + TraceLog[-Power[G, -1]] + IntegralOver[(fluctuationF /. {a -> u, b -> w}) G[w, u], {u, w}] -
+      OperatorTrace[1] - OrderPart[phiF3, V, 1]]]}, {0, 0}];
 check["on shell the means vanish: dGamma/dPsibar = 0 at Psi = Psibar = 0 (odd)", SetSourcesToZero[FunctionalDerivative[gammaPsi, Psibar[a]]], 0];
 check["d^2 Gamma/dPsibar(a) dPsi(b) at zero means and fixed G = -G0^-1 + Sigma[G] (Hartree-Fock included), orders 0-3",
   zeroByOrder[SetSourcesToZero[FunctionalDerivative[FunctionalDerivative[gammaPsi, Psibar[a]], Psi[b]]] + OperatorKernel[Power[G0, -1]][a, b] -

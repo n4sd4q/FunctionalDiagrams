@@ -104,6 +104,10 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
 - Φ = −(2PI skeleton vacuum diagrams with G0 → G); Σ(x, y) = δΦ/δG(y, x); Γ⁰(1, 2; 3, 4) = δΣ(1, 2)/δG(4, 3), so that
   Γ⁰·Y puts Y in place of one line of Σ. Channels: ph (12|34), ph̄ (14|32), pp (13|24); Γ⁰ = F − R_ph = Γ_irr + R_ph̄ + R_pp,
   and Γ_irr (the fully irreducible vertex) is the bare vertex up to third order.
+- 2PI action with means (Cornwall, Jackiw and Tomboulis): Γ[φ̄, G] = S[φ̄] + ½Tr ln G⁻¹ + ½Tr(D⁻¹[φ̄]G − 1) + Γ₂, D⁻¹ = S'';
+  fermions S[Ψ̄, Ψ] − Tr ln(−G⁻¹) − Tr(D⁻¹[Ψ̄, Ψ]G − 1) + Γ₂, D⁻¹(x, y) = δ²S/δΨ̄(x)δΨ(y) = G0⁻¹ − Σ_HF[−ΨΨ̄] (the first-order
+  Σ_HF[G] with −Ψ(x)Ψ̄(y) in place of G(x, y): the Hartree and Fock potentials of the means); superfield −½Tr(S''[𝚿]𝒢 − 1). The
+  Dyson equation is G⁻¹ = D⁻¹ − Σ[Γ₂]. Never write the mean-field part of the trace as ⟨S_int^(2)⟩_G.
 - Vertex of the density: Λ(x1, x2; z) = −δG⁻¹(x1, x2)/δU(z), ⟨ψψ̄ρ⟩_c = L₀Λ, ⟨ρρ⟩_c = −L₀Λ; Λ = γ + Γ⁰L₀Λ = γ + FL₀γ,
   Σ = Σ_H − VGΛ. Hedin: W = V − V⟨ρρ⟩_cV, P = −(proper part of ⟨ρρ⟩_c) = L₀Λ̃, Σ = Σ_H − GWΛ̃ (L₀ a pair of propagators, never written GG). Hubbard–Stratonovich:
   ⟨φφ⟩_0 = V and the coupling −i∫φρ (φ⁴: ⟨σσ⟩_0 = λ/3 δ, coupling −(i/2)∫σφ²). Real bosons: Γ⁰ = −2δΣ/δG, and a pair of

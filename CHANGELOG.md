@@ -45,6 +45,15 @@
   (Hedin), the Nambu kernel follows its derivative, and the orders left out of a picture are said. The left-hand side
   of a sum written order by order no longer stays alone at the foot of a page, and a plain sum of pictures, like a
   displayed formula, no longer starts a page apart from the line that introduces it.
+- **The 2PI action with means in the form of the textbooks.** Γ[Ψ̄, Ψ, G] is now written as Γ[φ̄, G] is,
+  S[Ψ̄, Ψ] − Tr ln(−G⁻¹) − Tr(D⁻¹[Ψ̄, Ψ] G − 1) + Γ₂, with D⁻¹(x, y) = δ²S/δΨ̄(x)δΨ(y) = G₀⁻¹ − Σ_HF[−ΨΨ̄] the inverse
+  propagator in the presence of the means: Σ_HF[−ΨΨ̄], the first-order self-energy Σ_HF[G] with −Ψ(x)Ψ̄(y) in place of
+  G(x, y), is the Hartree and Fock potentials of the means, which the trace term closes with one line G. The notation ⟨S_int⁽²⁾⟩_G is gone from the
+  showcase, the manual and the usage message of `EffectiveAction2PI`, which now say why the term is there: through it the
+  Dyson equation G⁻¹ = D⁻¹ − Σ gets the mean-field part of the self-energy, so that its first order is Σ_HF[G − ΨΨ̄], the
+  Hartree–Fock self-energy of the whole −⟨Tψψ̄⟩ = G − ΨΨ̄ (for φ⁴ the tadpole of ⟨φφ⟩ = G + φ̄φ̄), and it vanishes at zero means. The
+  superfield is written with the whole second derivative S''[𝚿], anomalous vertices included. The showcase and the tests
+  check D⁻¹ against the first-order self-energy for φ⁴, the electron gas and the superfield.
 
 ## 2.4.0 (2026-10-26)
 

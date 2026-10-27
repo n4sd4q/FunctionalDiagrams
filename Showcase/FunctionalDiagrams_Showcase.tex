@@ -1801,20 +1801,33 @@ $S_{\rm int}[\bar\phi+\phi]$ of degree three or more in the fluctuation $\phi$.
 
 \paragraph{Its pieces} The pieces carry the diagrams of $\Gamma[\bar\phi]$ in this way: $S[\bar\phi]$ the tree, as before;
 $\frac12{\rm Tr}\ln G^{-1}+\frac12{\rm Tr}(D_0^{-1}G-1)$ the one loop, with the full $G$; $\frac12{\rm Tr}(S_{\rm int}''[\bar\phi]\,G)$, the
-vertex of degree two closed by one line $G$ (the diagram $\langle S_{\rm int}^{(2)}\rangle_G$); and $\Gamma_2$ the rest, with lines $G$.
-The vertex of degree two is not a vertex of $\Gamma_2$: it is in the trace, and the rings of section~\ref{sec:onepi} come back
-when $G$ is dressed with it (section~\ref{sec:twopitoonepi}).
+part of the trace term with the mean field, the vertex of degree two (for $\phi^4$ the mass $\lambda\bar\phi^2/2$) closed by one
+line $G$; and $\Gamma_2$ the rest, with lines $G$. The vertex of degree two is not a vertex of $\Gamma_2$: it is in the trace, and the rings of
+section~\ref{sec:onepi} come back when $G$ is dressed with it (section~\ref{sec:twopitoonepi}). It must be there: the stationarity
+in $G$ is the Dyson equation $G^{-1}=D^{-1}[\bar\phi]-\Sigma[\bar\phi,G]$, with $\Sigma=-2\,\delta\Gamma_2/\delta G$, and only through
+$D^{-1}[\bar\phi]$ does the self-energy get its mean-field part, $-S_{\rm int}''[\bar\phi]$. For $\phi^4$ this is the tadpole
+$-\frac\lambda2\bar\phi^2$, which with the tadpole $-\frac\lambda2G(x,x)$ of $\Gamma_2$ makes the tadpole of the whole
+$\langle\phi\phi\rangle=G+\bar\phi\bar\phi$. At $\bar\phi=0$ the term vanishes.
 
 \paragraph{Fermions} The two-point source $K(x,y)$ couples to $\bar\psi(x)\psi(y)$, the variables are the Grassmann-odd means and
 $G=-\langle T\psi\bar\psi\rangle_c$, and the signs of the trace terms are those of a Grassmann integral:
 \[
-\Gamma[\bar\Psi,\Psi,G]=-\bar\Psi G_0^{-1}\Psi+S_{\rm int}[\bar\Psi,\Psi]-{\rm Tr}\ln(-G^{-1})-{\rm Tr}(G_0^{-1}G-1)+\langle S_{\rm int}^{(2)}\rangle_G
-+\Gamma_2[\bar\Psi,\Psi,G],
+\Gamma[\bar\Psi,\Psi,G]=S[\bar\Psi,\Psi]-{\rm Tr}\ln(-G^{-1})-{\rm Tr}\bigl(D^{-1}[\bar\Psi,\Psi]\,G-1\bigr)+\Gamma_2[\bar\Psi,\Psi,G],
 \]
-with $\langle S_{\rm int}^{(2)}\rangle_G$ the normal vertices of degree two, the Hartree and Fock potentials of the means, closed by
-one line $G$, and $\Gamma_2$ minus the 2PI vacuum diagrams with lines $G$ and the vertices of degree three or more, which carry
-one mean each. The anomalous vertices of degree two, $V\Psi\Psi\,\bar\psi\bar\psi$ and $V\bar\Psi\bar\Psi\,\psi\psi$, are not
-in this form: a normal source cannot absorb them. \pkg{EffectiveAction2PI} with the means returns this form, which is exact
+with the classical action $S[\bar\Psi,\Psi]=-\bar\Psi G_0^{-1}\Psi+S_{\rm int}[\bar\Psi,\Psi]$ and, as $D^{-1}[\bar\phi]=S''[\bar\phi]$, its
+second derivative (the rightmost derivative first)
+\[
+D^{-1}[\bar\Psi,\Psi](x,y)=\frac{\delta^2S}{\delta\bar\Psi(x)\,\delta\Psi(y)}=G_0^{-1}(x,y)-\Sigma_{\rm HF}[-\Psi\bar\Psi](x,y),
+\]
+the inverse propagator in the presence of the means. $\Sigma_{\rm HF}[-\Psi\bar\Psi]$ is the first-order self-energy $\Sigma_{\rm HF}[G]$
+with $-\Psi(x)\bar\Psi(y)$ in place of $G(x,y)$: the Hartree and Fock potentials of the means, which the part
+${\rm Tr}(\Sigma_{\rm HF}[-\Psi\bar\Psi]\,G)$ of the trace term closes with one line $G$. It must be there for the same reason: the
+Dyson equation is $G^{-1}=D^{-1}[\bar\Psi,\Psi]-\Sigma[\bar\Psi,\Psi,G]$, with $\Sigma(x,y)=\delta\Gamma_2/\delta G(y,x)$, and its first
+order, $\Sigma_{\rm HF}[-\Psi\bar\Psi]$ from $D^{-1}$ and $\Sigma_{\rm HF}[G]$ from $\Gamma_2$, is $\Sigma_{\rm HF}[G-\Psi\bar\Psi]$, the Hartree--Fock
+self-energy of the whole $-\langle T\psi\bar\psi\rangle=G-\Psi\bar\Psi$. At zero means the term vanishes. $\Gamma_2$ is minus the 2PI vacuum diagrams with lines $G$ and the vertices of degree three or more,
+which carry at most one mean. $D^{-1}$ is only the normal block of the second derivative: the anomalous vertices of degree
+two, $V\Psi\Psi\,\bar\psi\bar\psi$ and $V\bar\Psi\bar\Psi\,\psi\psi$, are not in this form, since a normal source cannot absorb
+them. \pkg{EffectiveAction2PI} with the means returns this form, which is exact
 at zero means in the normal state, where its derivatives are the self-energy and the irreducible vertex
 (section~\ref{sec:meanderivatives}); at finite means, where the anomalous propagator $-\langle T\psi\psi\rangle$ is of order
 $V\Psi\Psi$ (section~\ref{sec:twopitoonepi}), and in a paired state, the variable is the whole Nambu propagator, with the
@@ -1850,6 +1863,7 @@ obtained by transforming also the free part of the two-point source, is $-\Gamma
 the mass shift in the background (checked below).
 \begin{result}
 \begin{tabular}{@{}l@{\quad}l@{}}
+$S_{\rm int}''[\bar\phi]$ plus the first-order $\Sigma[G]$ with $\bar\phi\bar\phi$ in place of $G$ & \val{CheckEAPhiFluctuationOperator}\\
 $\Gamma_2[\bar\phi,G]$ minus its 2PI part; its vertices with two or more mean fields & \val{Check2PIPieces}\\
 $\Lambda_2^{\rm int}+\frac{\lambda}{24}\int\bar\phi^4+\frac{\lambda}{4}\int\bar\phi^2G+\Gamma_2[\bar\phi,G]$ at $\lambda$, $\lambda^2$, $\lambda^3$ & \val{CheckEckhardtFig5}
 \end{tabular}
@@ -1867,10 +1881,12 @@ To first order,
 \begin{gather*}
 \Gamma[\bar\Psi,\Psi,G]=\formulalines{ea_gamma_psi}
 \end{gather*}
-The pieces with vertices are the classical interaction and the Hartree and Fock potentials of the means closed by $G$,
+With $S[\bar\Psi,\Psi]=-\bar\Psi G_0^{-1}\Psi+S_{\rm int}[\bar\Psi,\Psi]$ and the trace term written as
+${-{\rm Tr}(D^{-1}[\bar\Psi,\Psi]\,G-1)}={-{\rm Tr}(G_0^{-1}G-1)}+{{\rm Tr}(\Sigma_{\rm HF}[-\Psi\bar\Psi]\,G)}$, the pieces with vertices
+are the classical interaction and the Hartree and Fock potentials of the means closed by $G$,
 \[
 S_{\rm int}[\bar\Psi,\Psi]=\inputfigure{ea_piece_psi_classical}\;,\qquad
-\langle S_{\rm int}^{(2)}\rangle_G=\inputfigure{ea_piece_psi_mass}\;,
+{\rm Tr}\bigl(\Sigma_{\rm HF}[-\Psi\bar\Psi]\,G\bigr)=\inputfigure{ea_piece_psi_mass}\;,
 \]
 and $\Gamma_2$. A vacuum diagram has the vertices with one mean in pairs, one with $\Psi$ and one with $\bar\Psi$, so that the
 means enter $\Gamma_2$ from the second order; to $V^3$ it has \val{CountsEAGamma2Psi} diagrams:
@@ -1880,7 +1896,10 @@ means enter $\Gamma_2$ from the second order; to $V^3$ it has \val{CountsEAGamma
 \orderrow{V^3}{ea_gamma2_psi_3}
 \end{ordersum}
 \begin{result}
-$\Gamma_2[\bar\Psi,\Psi,G]$ minus its 2PI part; its vertices with two or more means: \val{Check2PIPsiPieces}
+\begin{tabular}{@{}l@{\quad}l@{}}
+$\delta^2S_{\rm int}/\delta\bar\Psi(x)\,\delta\Psi(y)$ plus the first-order $\Sigma[G]$ with $-\Psi\bar\Psi$ in place of $G$ & \val{CheckEAPsiFluctuationOperator}\\
+$\Gamma_2[\bar\Psi,\Psi,G]$ minus its 2PI part; its vertices with two or more means & \val{Check2PIPsiPieces}
+\end{tabular}
 \end{result}
 
 \subsection{At the stationary \texorpdfstring{$G$}{G}: back to the 1PI action}\label{sec:twopitoonepi}
@@ -2771,11 +2790,17 @@ gammaNambu = EffectiveAction2PI[nambuZ0, nambuInteraction, 3,
 \end{code}
 is the form of section~\ref{sec:twopifermions} with one field,
 \[
-\Gamma[\sfieldmean,\mathcal G]=-\tfrac12\sfieldmean\mathcal G_0^{-1}\sfieldmean+S_{\rm int}[\sfieldmean]-\tfrac12{\rm Tr}\ln(-\mathcal G^{-1})
--\tfrac12{\rm Tr}(\mathcal G_0^{-1}\mathcal G-1)+\langle S_{\rm int}^{(2)}[\sfieldmean]\rangle_{\mathcal G}+\Gamma_2[\sfieldmean,\mathcal G],
+\Gamma[\sfieldmean,\mathcal G]=S[\sfieldmean]-\tfrac12{\rm Tr}\ln(-\mathcal G^{-1})-\tfrac12{\rm Tr}\bigl(S''[\sfieldmean]\,\mathcal G-1\bigr)
++\Gamma_2[\sfieldmean,\mathcal G],
 \]
-in which $-\frac12\sfieldmean\mathcal G_0^{-1}\sfieldmean$ is $-\bar\Psi G_0^{-1}\Psi$ and all the vertices of degree two, normal and anomalous,
-are closed by $\mathcal G$: $V\Psi\Psi\,\bar\psi\bar\psi$ by $\mathcal G_{\bar\psi\bar\psi}$. To first order,
+with $S[\sfieldmean]=-\frac12\sfieldmean\mathcal G_0^{-1}\sfieldmean+S_{\rm int}[\sfieldmean]$, whose free part is $-\bar\Psi G_0^{-1}\Psi$, and
+\[
+S''[\sfieldmean](a,b)=\frac{\delta^2S}{\delta\sfieldmean(a)\,\delta\sfieldmean(b)}=\mathcal G_0^{-1}(a,b)-\sfieldSigma^{(1)}[-\sfieldmean\sfieldmean](a,b),
+\]
+the first-order self-energy $\sfieldSigma^{(1)}[\mathcal G]$ having $-\sfieldmean(a)\sfieldmean(b)$ in place of $\mathcal G(a,b)$. This is the whole
+second derivative, so that
+all the vertices of degree two, normal and anomalous, are closed by $\mathcal G$: $V\Psi\Psi\,\bar\psi\bar\psi$ by
+$\mathcal G_{\bar\psi\bar\psi}$. To first order,
 \begin{gather*}
 \Gamma[\sfieldmean,\mathcal G]=\formulalines{nambu_gamma_means}
 \end{gather*}
@@ -2787,6 +2812,7 @@ point at any means. At $\sfieldmean=0$ and fixed $\mathcal G$ its derivatives ar
 $\mathcal G_0^{-1}-\sfieldSigma[\mathcal G]$, and the fully irreducible vertex $\mathcal V$ to third order.
 \begin{result}
 \begin{tabular}{@{}l@{\quad}l@{}}
+$S_{\rm int}''[\sfieldmean]$ plus the first-order $\sfieldSigma[\mathcal G]$ with $-\sfieldmean\sfieldmean$ in place of $\mathcal G$ & \val{CheckNambuFluctuationOperator}\\
 $\Gamma[\sfieldmean,\mathcal G[\sfieldmean]]-\Gamma[\sfieldmean]$, orders 0 to 3 & \val{CheckNambuStationaryMeans}\\
 components of $\Gamma[\sfieldmean]$ minus $\Gamma[\bar\Psi,\Psi]$ of section~\ref{sec:onepifermions}, orders 0 to 3 & \val{CheckNambu1PIComponents}\\
 $\delta^2\Gamma/\delta\sfieldmean\delta\sfieldmean|_{0,\mathcal G}-\mathcal G_0^{-1}+\sfieldSigma[\mathcal G]$ (orders 0 to 3); $\delta^4\Gamma/\delta\sfieldmean^4|_{0,\mathcal G}-\mathcal V$ &

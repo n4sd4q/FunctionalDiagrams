@@ -162,7 +162,7 @@ check["SuperfieldComponents: messages head, labels ($Failed), trace (the trace k
   {$Failed, $Failed, TraceLog[-Power[NambuPropagator, -1]]}];
 
 (* ------------------------------------------------------------------------- *)
-(* Gamma[X, calG] = -1/2 X calG0^-1 X + S_int[X] - 1/2 Tr ln(-calG^-1) - 1/2 Tr(calG0^-1 calG - 1) + <S_int^(2)[X]>_calG + Gamma2 *)
+(* Gamma[X, calG] = S[X] - 1/2 Tr ln(-calG^-1) - 1/2 Tr(S''[X] calG - 1) + Gamma2, S[X] = -1/2 X calG0^-1 X + S_int[X] *)
 section["EffectiveAction2PI and EffectiveAction1PI of the superfield: Nambu-Gor'kov, exact at finite means"];
 DeclareAntisymmetric[NambuTwoPointSource, NambuInsertion];
 gammaNambu = EffectiveAction2PI[phiNambu2, BareNambuPropagator -> NambuPropagator, "Statistics" -> "Superfield"];
@@ -178,6 +178,15 @@ check["with the two-point source K (pairing sources included): stationary where 
      NambuPropagator, {a, b}, "Statistics" -> "Superfield"] - (OperatorKernel[Power[NambuPropagator, -1]][a, b] - OperatorKernel[Power[BareNambuPropagator, -1]][a, b] + NambuTwoPointSource[a, b])], 0];
 gammaMean = EffectiveAction2PI[nambuZ0, nambuInteraction, 2, BareNambuPropagator -> NambuPropagator, "Statistics" -> "Superfield", "MeanFields" -> {NambuField -> NambuMean}];
 check["Gamma[X, calG] at X = 0 is Gamma[calG]", SimplifyDiagrams[SetSourcesToZero[gammaMean] - gammaNambu], 0];
+(* S''(a, b) = FunctionalDerivative[S, X[a], X[b]] = calG0^-1 - Sigma1 with -X X in place of calG: the vertices of degree two,
+   normal and anomalous, closed by calG in the trace term *)
+classicalS = -1/2 IntegralOver[OperatorKernel[Power[BareNambuPropagator, -1]][u, w] NambuMean[u] ** NambuMean[w], {u, w}] + (nambuInteraction /. NambuField -> NambuMean);
+fluctuationS = FunctionalDerivative[classicalS, NambuMean[a], NambuMean[b]];
+check["superfield: S''[X] = calG0^-1 - Sigma1[calG -> -X X]; to first order Gamma = S - 1/2 Tr ln(-calG^-1) - 1/2 Tr(S'' calG - 1) + Phi[calG]",
+  {SimplifyDiagrams[fluctuationS - OperatorKernel[Power[BareNambuPropagator, -1]][a, b] +
+     (OrderPart[sigmaNambu, NambuVertex, 1] /. NambuPropagator[p_, q_] :> -GrassmannProduct[NambuMean[p], NambuMean[q]])],
+   SimplifyDiagrams[ExpandTrace[OrderPart[gammaMean, NambuVertex, {0, 1}] - classicalS + 1/2 TraceLog[-Power[NambuPropagator, -1]] +
+      1/2 IntegralOver[(fluctuationS /. {a -> u, b -> w}) NambuPropagator[w, u], {u, w}] - 1/2 OperatorTrace[1] - OrderPart[phiNambu, NambuVertex, 1]]]}, {0, 0}];
 (* the stationary calG[X] to first order is enough to V^2 *)
 sigmaMean1 = OrderPart[SelfEnergy[gammaMean, NambuPropagator, {a, b}, "Statistics" -> "Superfield"], NambuVertex, 1] /. NambuPropagator -> BareNambuPropagator;
 gammaAtStationary = SimplifyDiagrams[Sum[ExpandTrace[OrderPart[gammaMean, NambuVertex, m] /. NambuPropagator -> Power[Power[BareNambuPropagator, -1] - LabelFunction[sigmaMean1, {a, b}], -1],

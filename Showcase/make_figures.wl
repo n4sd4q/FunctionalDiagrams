@@ -1237,9 +1237,12 @@ gammaPhiG = timed["EA Gamma[phibar, G]", EffectiveAction2PI[FreeBosonGeneratingF
     "Statistics" -> "Boson", "MeanFields" -> {phi -> phiMean}]];
 writeFormula["ea_gamma_phi_g_first_order", OrderPart[gammaPhiG, lambda, {0, 1}], "Names" -> eaNames];
 (* the pieces (the 2PI section): S_int[phibar], 1/2 Tr(S_int''[phibar] G), and Gamma2[phibar, G], what is left of Gamma[phibar, G]
-   after S[phibar] and the traces; Gamma2 must be 2PI, with at most one mean field at a vertex *)
+   after S[phibar] and the traces; Gamma2 must be 2PI, with at most one mean field at a vertex. S_int''[phibar] is minus the
+   first-order Sigma[G] with phibar phibar in place of G (checked), as -Sigma_HF for fermions below *)
 eaClassical = Phi4Vertex /. phi -> phiMean;
-eaMass = SimplifyDiagrams[1/2 IntegralOver[FunctionalDerivative[eaClassical, phiMean[x], phiMean[y]] DressedPropagator[x, y], {x, y}]];
+writeValue["check EA phi fluctuation operator", SimplifyDiagrams[FunctionalDerivative[eaClassical, phiMean[a], phiMean[b]] +
+    (OrderPart[phi4SelfEnergyG, lambda, 1] /. DressedPropagator[p_, q_] :> phiMean[p] phiMean[q])]];
+eaMass =SimplifyDiagrams[1/2 IntegralOver[FunctionalDerivative[eaClassical, phiMean[x], phiMean[y]] DressedPropagator[x, y], {x, y}]];
 writeTerms["ea_piece_classical", eaClassical, {}];
 writeTerms["ea_piece_mass", eaMass, {}];
 gamma2PhiG = SimplifyDiagrams[gammaPhiG - 1/2 IntegralOver[OperatorKernel[Power[FreePropagator, -1]][x, y] phiMean[x] phiMean[y], {x, y}] -
@@ -1264,20 +1267,24 @@ gammaPsiG = EffectiveAction2PI[FreeFermionGeneratingFunctional, CoulombVertex, 1
 writeValue["check EA fermion means", SimplifyDiagrams[SetSourcesToZero[FunctionalDerivative[gammaPsiG, MeanPsibar[a], MeanPsi[b]]] -
     OperatorKernel[Power[BareGreenFunction, -1]][a, b] +
     OrderPart[SelfEnergy[luttingerWard, DressedGreenFunction, {a, b}], InteractionPotential, 1]]];
-(* Gamma[Psibar, Psi, G] of the electron gas to third order (the 2PI section), piece by piece: S_int[Psibar, Psi], the trace term
-   <S_int^(2)>_G (Hartree and Fock of the means), and Gamma2: the vertices with one mean come in pairs, from V^2 on; at zero
-   means it is the Luttinger-Ward functional, and its second derivative there is Sigma[G] (beyond the first order, which
-   is in the trace term); for phi^4 the same two checks of Gamma2[phibar, G] *)
+(* Gamma[Psibar, Psi, G] of the electron gas to third order (the 2PI section), piece by piece as Gamma[phibar, G] above:
+   S_int[Psibar, Psi]; the part with the means of the trace term -Tr(D^-1[Psibar, Psi] G - 1), -Tr(S_int'' G), with
+   D^-1(x, y) = FunctionalDerivative[S, Psibar[x], Psi[y]] = G0^-1 - Sigma_HF (the Hartree and Fock potentials of the means:
+   the first-order self-energy with -Psi Psibar in place of G, checked); and Gamma2: the vertices with one mean come in
+   pairs, from V^2 on; at zero means it is the Luttinger-Ward functional, and its second derivative there is Sigma[G]
+   (beyond the first order, which is in the trace term); for phi^4 the same two checks of Gamma2[phibar, G] *)
 gammaPsiG2 = timed["EA Gamma[Psibar, Psi, G]", EffectiveAction2PI[FreeFermionGeneratingFunctional, CoulombVertex, maximumOrder,
     BareGreenFunction -> DressedGreenFunction, "MeanFields" -> {psi -> MeanPsi, psibar -> MeanPsibar}]];
 (* the showcase shows it to first order *)
 writeFormula["ea_gamma_psi", OrderPart[gammaPsiG2, InteractionPotential, {0, 1}], "Names" -> eaNames];
 eaPsiClassical = CoulombVertex /. {psi -> MeanPsi, psibar -> MeanPsibar};
-eaPsiMass = SimplifyDiagrams[OrderPart[gammaPsiG2, InteractionPotential, 1] - SetSourcesToZero[OrderPart[gammaPsiG2, InteractionPotential, 1]] - eaPsiClassical];
+eaPsiInteractionSecond = SimplifyDiagrams[FunctionalDerivative[eaPsiClassical, MeanPsibar[x], MeanPsi[y]]];
+writeValue["check EA psi fluctuation operator", SimplifyDiagrams[eaPsiInteractionSecond +
+    (OrderPart[selfEnergy, InteractionPotential, 1] /. DressedGreenFunction[p_, q_] :> -GrassmannProduct[MeanPsi[p], MeanPsibar[q]])]];
+eaPsiMass = SimplifyDiagrams[-IntegralOver[eaPsiInteractionSecond DressedGreenFunction[y, x], {x, y}]];
 writeTerms["ea_piece_psi_classical", eaPsiClassical, {}];
 writeTerms["ea_piece_psi_mass", eaPsiMass, {}];
-gamma2PsiG = SimplifyDiagrams[gammaPsiG2 - OrderPart[gammaPsiG2, InteractionPotential, 0] -
-    (OrderPart[gammaPsiG2, InteractionPotential, 1] - SetSourcesToZero[OrderPart[gammaPsiG2, InteractionPotential, 1]])];
+gamma2PsiG = SimplifyDiagrams[gammaPsiG2 - OrderPart[gammaPsiG2, InteractionPotential, 0] - eaPsiClassical - eaPsiMass];
 writeOrders["ea_gamma2_psi", gamma2PsiG, {}, InteractionPotential, orders];
 writeValue["counts EA gamma2 psi", orderCounts[gamma2PsiG, InteractionPotential, orders]];
 (* a vertex of Gamma2 carries at most one mean: no interaction line with two means at its ends *)
@@ -1550,6 +1557,9 @@ writeTerms["thouless", With[{p5 = Unique["p"], p6 = Unique["p"], p7 = Unique["p"
 nambuGammaMeans = timed["Nambu Gamma[X, calG]", EffectiveAction2PI[nambuZ0, nambuInteraction, maximumOrder, BareNambuPropagator -> NambuPropagator,
     "Statistics" -> "Superfield", "MeanFields" -> {NambuField -> NambuMean}]];
 writeFormula["nambu_gamma_means", OrderPart[nambuGammaMeans, NambuVertex, {0, 1}], "Names" -> nambuNames];
+(* S''[X] = calG0^-1 - Sigma1 with -X X in place of calG: every vertex of degree two, normal and anomalous, in the trace term *)
+writeValue["check Nambu fluctuation operator", SimplifyDiagrams[FunctionalDerivative[nambuInteraction /. NambuField -> NambuMean, NambuMean[a], NambuMean[b]] +
+    (OrderPart[nambuSigma, NambuVertex, 1] /. NambuPropagator[p_, q_] :> -GrassmannProduct[NambuMean[p], NambuMean[q]])]];
 nambuSigmaMeans1 = OrderPart[SelfEnergy[nambuGammaMeans, NambuPropagator, {a, b}, "Statistics" -> "Superfield"], NambuVertex, 1] /.
    NambuPropagator -> BareNambuPropagator;
 nambuGammaStationary = timed["Nambu Gamma[X, calG*]", SimplifyDiagrams[Sum[ExpandTrace[OrderPart[nambuGammaMeans, NambuVertex, m] /.

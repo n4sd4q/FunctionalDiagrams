@@ -650,10 +650,14 @@ meanConnectedVacuumTerms[z0_, interaction_, orders_List, oddHeads_List, keep_ : 
    terms];
 
 (* ---- Gamma[phibar, G] ----
-   Gamma[M, G] (M = phibar = <phi>) = S[M] + kappa Tr ln(zeta G^-1) + kappa Tr(G0^-1 G - 1) + <S_int^(2)[M; phi]>_G + Gamma2[M, G]
-   (Cornwall, Jackiw and Tomboulis): S[M] = S0[M] + S_int[M] the classical action; <S_int^(2)>_G = kappa Tr(S_int''[M] G)
-   the part of the trace term kappa Tr(G0^-1(M) G - 1) that depends on M, with G0^-1(M) = G0^-1 + S_int''[M] the bare
-   inverse propagator in the background (phi^4: the mass lambda M^2/2); Gamma2[M, G] = minus the 2PI vacuum diagrams with
+   Gamma[M, G] (M = phibar = <phi>) = S[M] + kappa Tr ln(zeta G^-1) + kappa Tr(D^-1[M] G - 1) + Gamma2[M, G]
+   (Cornwall, Jackiw and Tomboulis): S[M] = S0[M] + S_int[M] the classical action, D^-1[M] = S''[M] = G0^-1 + S_int''[M]
+   its second derivative, the bare inverse propagator in the background (for fermions d^2 S/dPsibar(x) dPsi(y), the Psi
+   derivative first: G0^-1 - Sigma_HF, the Hartree and Fock potentials of the means, the first-order self-energy with
+   -Psi(x) Psibar(y) in place of G(x, y); phi^4: S_int'' = lambda M^2/2). Its part kappa Tr(S_int''[M] G) (mass below), the
+   vertex of degree two in the fluctuation closed by one line G, gives the self-energy its mean-field part (stationarity:
+   G^-1 = D^-1[M] - Sigma[M, G], Sigma from Gamma2); it is computed as minus the connected vacuum diagram of that vertex
+   with one line G (its Gaussian average with the propagator G). Gamma2[M, G] = minus the 2PI vacuum diagrams with
    lines G and the vertices of S_int[M + phi] of degree three or more in the fluctuation (phi^4: lambda M phi^3/6 and
    lambda phi^4/24). The linear part of S_int[M + phi] does not appear: it is cancelled by the source (the one-point
    counterterm j of the self-consistent representation). At M = 0 it is Gamma[G] built on the Luttinger-Ward functional.
