@@ -45,6 +45,16 @@
   (Hedin), the Nambu kernel follows its derivative, and the orders left out of a picture are said. The left-hand side
   of a sum written order by order no longer stays alone at the foot of a page, and a plain sum of pictures, like a
   displayed formula, no longer starts a page apart from the line that introduces it.
+- **Every example of the manual gives what follows it.** The introduction of the manual says how the outputs are
+  written: a sum of diagrams as `DiagramPlot` draws it, with the free labels of the output as the external labels and
+  only the sizing options left out of the code; a formula with the usual names, which the text now gives where they
+  differ from those of the code (`PropagatorOfJ`, `DressedPropagator`, `Sg`, `phiMean`, the Nambu heads, `Om`). The
+  irreducible vertex Γ⁰ and the first-order particle–particle kernel of the superfield, drawn before with
+  `"LegDirections" -> "Alternating"` (the kernel also with the corners of the pp channel) that their code did not show,
+  are drawn as their commands give them; the examples of `"VertexLabels"` and `"InteractionStyle"` show the
+  `DiagramPlot` commands that draw them. `make_examples.wl` takes no drawing option outside the code: a code that ends
+  with `DiagramPlot[...]` is drawn with its arguments, and the external labels of every picture are checked to be the
+  free labels of the output.
 - **The 2PI action with means in the form of the textbooks.** Γ[Ψ̄, Ψ, G] is now written as Γ[φ̄, G] is,
   S[Ψ̄, Ψ] − Tr ln(−G⁻¹) − Tr(D⁻¹[Ψ̄, Ψ] G − 1) + Γ₂, with D⁻¹(x, y) = δ²S/δΨ̄(x)δΨ(y) = G₀⁻¹ − Σ_HF[−ΨΨ̄] the inverse
   propagator in the presence of the means: Σ_HF[−ΨΨ̄], the first-order self-energy Σ_HF[G] with −Ψ(x)Ψ̄(y) in place of

@@ -169,10 +169,14 @@
 \vspace*{3.6cm}
 
 \noindent This manual describes every function, option and convention of the package \textbf{FunctionalDiagrams}.
-The examples were computed by the package itself: the code shown in a grey box was evaluated, and its output, in a box
-marked \textsf{\scriptsize out}, was written by the package --- formulas by \fnref{ExpressionToLaTeX}, diagrams by
-\fnref{DiagramToTikZ} (\pkg{Documentation/make\_examples.wl}). The examples of a section build on those before it, in
-one session. A guided tour of the package is \pkg{Examples.nb}; a presentation, with $\phi^4$ theory and the
+The examples were computed by the package itself (\pkg{Documentation/make\_examples.wl}): the code shown in a grey box
+was evaluated, and the box marked \textsf{\scriptsize out} after it shows what the code gives, as the package writes it:
+a sum of diagrams as \fnref{DiagramPlot} draws it, with the free labels of the output as the external labels, at the size
+of this page (\fnref{DiagramToTikZ} with \pkg{"Scale" -> 0.6}, \pkg{"LineWidth" -> 0.55} and \pkg{"LabelFont" ->
+"\textbackslash\textbackslash scriptsize"}, which only set the size and are left out of the code); a formula as
+\fnref{ExpressionToLaTeX} writes it, with the usual names of the functions (the text gives them where they differ from
+the names in the code) and $\varepsilon$ for \pkg{eps}; any other result in \pkg{InputForm}. The examples of a section
+build on those before it, in one session. A guided tour of the package is \pkg{Examples.nb}; a presentation, with $\phi^4$ theory and the
 electron gas worked out to third order at every step, is \pkg{Showcase/FunctionalDiagrams\_Showcase.pdf}.
 
 \medskip
@@ -665,8 +669,8 @@ early. Examples:
 Grassmann sources: the two orders of the derivatives differ by a sign.
 \excode{grassmann_sources}
 \extext{grassmann_sources}
-A declared rule, $\delta G(a,b)/\delta J(c)=G(a,c)\,G(c,b)$ for $G=(G_0^{-1}-J)^{-1}$, applied inside an integral (the two
-terms of the second derivative are the same diagram, since $V$ is symmetric):
+A declared rule, $\delta G(a,b)/\delta J(c)=G(a,c)\,G(c,b)$ for $G=(G_0^{-1}-J)^{-1}$ (\pkg{PropagatorOfJ}) inside an
+integral (the two terms of the second derivative are one diagram, $V$ being symmetric):
 \excode{implicit_rule}
 \exformula{implicit_rule}
 A source can be any function, with any number of arguments (the two-point source $K(x,y)$ of the 2PI action, for
@@ -1169,7 +1173,8 @@ $\Gamma^{(4)}=-(\text{amputated connected four-point function})$, so that $F=\la
 same for a superfield (one Grassmann field, \pkg{\{NambuField\}}), whose $F$ is $\mathcal V+O(\mathcal V^2)$.
 Takes the option \opt{Method}. The vertex is the fourth derivative of the 1PI action (\fnref{EffectiveAction1PI},
 section~\ref{sec:effective}) at zero mean field, and the result is its skeleton diagrams with $G_0\to G$ (for fermions, the
-derivative $\delta^4\Gamma/\delta\bar\Psi\,\delta\Psi\,\delta\bar\Psi\,\delta\Psi$ of $\Gamma[\bar\Psi,\Psi]$); for $\phi^4$ theory:
+derivative $\delta^4\Gamma/\delta\bar\Psi\,\delta\Psi\,\delta\bar\Psi\,\delta\Psi$ of $\Gamma[\bar\Psi,\Psi]$); for $\phi^4$ theory,
+with the dressed line $D$ (\pkg{DressedPropagator}):
 \excode{full_vertex_phi4}
 \exboth{full_vertex_phi4}
 This function computes the same from the connected function, the other side of the Legendre transform:
@@ -1236,7 +1241,7 @@ ${\rm Tr}\ln\bigl(c(G_0^{-1}-X)\bigr)={\rm Tr}\ln(cG_0^{-1})-\sum_k{\rm Tr}\bigl
 $\bigl(c(G_0^{-1}-X)\bigr)^{-1}=c^{-1}\sum_k(G_0X)^kG_0$, the Dyson series; a propagator replaced by an operator, e.g.\
 $G\to(G_0^{-1}-S)^{-1}$ with $S$ a \fnref{LabelFunction} of a self-energy, is expanded inside the diagrams too. With
 \opt{MaximumOrder} \pkg{-> \{V, m\}} only the terms of order $m$ or less in \pkg{V} (a coupling or the head of the
-interaction lines) are kept, the products being truncated as they are formed. The rings of the self-energy:
+interaction lines) are kept, the products being truncated as they are formed. The rings of the self-energy $\Sigma$ (\pkg{Sg}):
 \excode{trace_log_rings}
 \exboth{trace_log_rings}
 
@@ -1361,7 +1366,8 @@ Options:
 \end{itemize}
 \excode{effective_action_source}
 \exformula{effective_action_source}
-$\phi^4$ theory with its mean field, to first order: the classical action, the trace terms, the mass $\lambda\bar\phi^2/2$ closed by
+$\phi^4$ theory with its mean field $\bar\phi$ (\pkg{phiMean}) and the propagator $G$ (\pkg{DressedPropagator}), to first
+order: the classical action, the trace terms, the mass $\lambda\bar\phi^2/2$ closed by
 $G$ in $\frac12{\rm Tr}(S_{\rm int}''[\bar\phi]G)$, and the figure eight:
 \excode{effective_action_mean_field}
 \exformula{effective_action_mean_field}
@@ -1427,7 +1433,7 @@ Potthoff's universal functional~\cite{Potthoff2003} $\mathcal F[S]=\Phi[G[S]]-{\
 for real bosons, $+{\rm Tr}(SG)$ for complex bosons), the Legendre transform of the Luttinger--Ward functional from $G$ to
 the self-energy, $G[S]$ being the propagator at which $\Sigma[G]=S$. It is inert: its derivative with respect to $S(x,y)$
 is $-G[S](y,x)$ (\fnref{LegendrePropagator}); with respect to another kernel of $\Phi$, an interaction $V$, it is
-$\delta\Phi/\delta V$ at $G=G[S]$, since $\mathcal F$ is stationary in $G$:
+$\delta\Phi/\delta V$ at $G=G[S]$, since $\mathcal F$ is stationary in $G$ (in the code $S$ is \pkg{Sg}, written $\Sigma$):
 \excode{legendre_interaction}
 \exformula{legendre_interaction}
 $\mathcal F$ depends on the interaction only: the diagrams of $\Phi$ contain $G$ and $V$, never $G_0$.
@@ -1606,11 +1612,13 @@ G_{\bar\psi\bar\psi}]$, whose derivatives with respect to the means and the bloc
 permutation of the four Grassmann derivatives changes the sign. With
 it the gap function $\Delta=\Sigma_{\bar\psi\bar\psi}$ and the particle--particle kernel (the channel \pkg{"t"} of
 \fnref{IrreducibleVertex}) are one call away. The superfield of the electron gas is written as $\phi^4$ theory, with one
-source, one antisymmetric propagator and one antisymmetric vertex, drawn as a point standing for $-\mathcal V$; its $\Phi$ has
+source, one antisymmetric propagator $\mathcal G$ and one antisymmetric vertex $\mathcal V$ (\pkg{NambuPropagator},
+\pkg{NambuVertex}), drawn as a point standing for $-\mathcal V$; its $\Phi$ has
 one diagram at each order:
 \excode{superfield_phi}
 \exboth{superfield_phi}
-Its components at first order are the Hartree and Fock diagrams and the pairing term, an anomalous line of each kind (the
+Its components at first order are the Hartree and Fock diagrams and the pairing term, an anomalous line of each kind,
+$\mathcal G_{\psi\psi}$ and $\mathcal G_{\bar\psi\bar\psi}$ (\pkg{AnomalousGreenFunction}, \pkg{AnomalousGreenFunctionBar}; the
 weights read them along the fermion line, section~\ref{sec:weights}):
 \excode{superfield_components}
 \exboth{superfield_components}
@@ -1962,9 +1970,11 @@ ImageSize & Automatic & Mathematica: the width of the picture in pixels (\pkg{Au
 \bottomrule
 \end{tabularx}
 \end{center}
-The same diagram with \pkg{"VertexLabels" -> All}, and with \pkg{"InteractionStyle" -> "Dashed"}:
+The exchange diagram of the Green function at first order with \pkg{"VertexLabels" -> All}, and with
+\pkg{"InteractionStyle" -> "Dashed"}:
 \excode{vertex_labels}
 \expictures{vertex_labels}
+\excode{interaction_style}
 \expictures{interaction_style}
 
 \subsection{Line styles}
@@ -2272,7 +2282,8 @@ with a Fock insertion on its line, a diagram of the perturbative self-energy (we
 \excode{double_pole_diagram}
 \exformula{double_pole_diagram}
 A boson line: the self-energy of electrons of spin $\frac12$ (\opt{SpinDegeneracy} \pkg{-> 2}) coupled to phonons, to
-order $g^2$~\cite{Migdal1958}, with the boson rule of section~\ref{sec:matsubara-conventions}. The first term is the
+order $g^2$~\cite{Migdal1958}, with the boson rule of section~\ref{sec:matsubara-conventions} and the phonon frequency
+$\Omega_q$ (\pkg{Om[q]}). The first term is the
 exchange of a phonon, with the factors of the textbooks~\cite{Mahan}, $n_B+1-n_F$ for its emission and $n_B+n_F$ for its
 absorption; the second is the tadpole, the phonon at zero momentum, $D_0(0,0)=2/\Omega_0$, attached to the density of
 the two spin projections, $2\sum_pn_F(\xi_p)$:

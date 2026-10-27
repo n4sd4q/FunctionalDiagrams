@@ -152,9 +152,6 @@ free energy.
 
 ## Documents
 
-- **The examples of the manual.** `Documentation/make_examples.wl` passes drawing options that the code strings shown in
-  the manual do not contain (for instance `"LegDirections" -> "Alternating"` for the irreducible vertex at first order);
-  audit them as the showcase was, so that every command shown gives exactly what follows it (the rule in `CLAUDE.md`).
 - Usage messages: those of `EffectiveAction2PI` (about 7800 characters) and `EffectiveAction1PI` (3700) are long; the
   details could move to the manual.
 

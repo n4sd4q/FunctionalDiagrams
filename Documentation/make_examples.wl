@@ -14,17 +14,31 @@ SetDirectory[If[$InputFileName =!= "", DirectoryName[$InputFileName], NotebookDi
 Get[FileNameJoin[{ParentDirectory[Directory[]], "FunctionalDiagrams.wl"}]];
 If[! DirectoryQ["examples"], CreateDirectory["examples"]];
 
+(* Every command shown gives what follows it (the rule of the documents, stated in the introduction of the manual): the
+   pictures are those of DiagramPlot[output, ext], written by DiagramToTikZ with the options that only set their size;
+   a code that ends with DiagramPlot[expr, ext, options] is drawn with these arguments. Every other drawing option belongs
+   in the code. *)
 pictureOptions = {"Scale" -> 0.6, "LineWidth" -> 0.55, "LabelFont" -> "\\scriptsize"};
+(* the labels of an expression that are not integrated over: the external labels of its pictures *)
+freeLabels[e_] := Union @@ Append[Function[t, Complement[
+       Union[Cases[t /. IntegralOver[f_, _] :> f, h_[a__] /; ! MemberQ[{Times, Plus, Power, NonCommutativeMultiply, List}, h] :>
+          Sequence @@ Select[{a}, Head[#] === Symbol &], {0, Infinity}]],
+       Flatten[Cases[t, IntegralOver[_, v_] :> v, {0, Infinity}]]]] /@ DiagramTerms[e], {}];
 (* example[name, code, output, ext, options]: output is "Formula", "Pictures", "Both" or "Text"; ext are the external
-   labels of the pictures; options go to ExpressionToLaTeX and DiagramToTikZ *)
-example[name_String, code_String, output_String, ext_List : {}, opts___] := Module[{result},
+   labels of the pictures, the free labels of the output; the options "Names" and "Subscripts" go to ExpressionToLaTeX
+   (the usual names of the formulas, which the manual gives) *)
+example[name_String, code_String, output_String, ext_List : {}, opts___] := Module[{result, drawn, drawExt, drawOpts},
    Export["examples/" <> name <> ".wl", code, "Text"];
-   result = ToExpression[code];
+   result = Block[{DiagramPlot = plotted}, ToExpression[code]];
+   {drawn, drawExt, drawOpts} = If[MatchQ[result, plotted[_, _List, ___]], {result[[1]], result[[2]], List @@ Drop[result, 2]},
+     {result, ext, {}}];
+   If[! MemberQ[{"Names", "Subscripts"}, #[[1]]], Print[name, ": the option ", #[[1]], " belongs in the code"]] & /@ {opts};
    If[MemberQ[{"Formula", "Both"}, output],
-    Export["examples/" <> name <> ".tex", ExpressionToLaTeX[result, Sequence @@ Select[{opts}, MemberQ[{"Names", "Labels", "Subscripts"}, #[[1]]] &]],
-     "Text"]];
+    Export["examples/" <> name <> ".tex", ExpressionToLaTeX[drawn, opts], "Text"]];
    If[MemberQ[{"Pictures", "Both"}, output],
-    Export["examples/" <> name <> "_pictures.tex", DiagramToTikZ[result, ext, Sequence @@ Select[{opts}, ! MemberQ[{"Names", "Subscripts"}, #[[1]]] &],
+    If[Sort[drawExt] =!= freeLabels[drawn], Print[name, ": the external labels ", drawExt, " are not the free labels ",
+      freeLabels[drawn]]];
+    Export["examples/" <> name <> "_pictures.tex", DiagramToTikZ[drawn, drawExt, Sequence @@ drawOpts,
       Sequence @@ pictureOptions], "Text"]];
    (* a string as it is; anything else in InputForm (with -> for rules, as Mathematica writes it) *)
    If[output === "Text", Export["examples/" <> name <> ".txt",
@@ -73,7 +87,7 @@ example["blobs", "DeclareDirectedPropagator[Gb];
 DeclareBlob[Kb, \"\\\\Gamma^0\", \"Shape\" -> \"Box\", \"Fill\" -> \"CrossHatched\"];
 DeclareBlob[Fb, \"F\", \"Shape\" -> \"Box\"];
 Kb[x1, x2, x3, x4] + BetheSalpeterLadder[Kb[x1, x2, x3, x4], Fb[x1, x2, x3, x4],
-  {x1, x2, x3, x4}, \"ParticleHole\", Gb]", "Pictures", {x1, x2, x3, x4}, "LegDirections" -> "Alternating"];
+  {x1, x2, x3, x4}, \"ParticleHole\", Gb]", "Pictures", {x1, x2, x3, x4}];
 example["blobs_turned", "DeclareSymmetric[Gs];
 DeclareBlob[Vertex4, \"\\\\Gamma^{(4)}\", \"Shape\" -> \"Box\"];
 lambda/6 IntegralOver[Gs[a, u] Gs[a, v] Gs[a, w] Vertex4[u, v, w, b], {u, v, w}]", "Pictures", {a, b}];
@@ -166,7 +180,7 @@ example["luttinger_ward", "DeclareDirectedPropagator[G];
 Phi = LuttingerWardFunctional[Zf, CoulombVertex, 2, G0 -> G]", "Both"];
 example["self_energy", "sigmaG = FunctionalDerivative[Phi, G[y, x]]", "Both", {x, y}];
 example["self_energy_shortcut", "SimplifyDiagrams[SelfEnergy[Phi, G, {x, y}] - sigmaG]", "Text"];
-example["irreducible_vertex", "FunctionalDerivative[OrderPart[Phi, V, 1], G[x4, x3], G[x2, x1]]", "Both", {x1, x2, x3, x4}, "LegDirections" -> "Alternating"];
+example["irreducible_vertex", "FunctionalDerivative[OrderPart[Phi, V, 1], G[x4, x3], G[x2, x1]]", "Both", {x1, x2, x3, x4}];
 example["irreducible_vertex_shortcut", "SimplifyDiagrams[IrreducibleVertex[Phi, G, {x1, x2, x3, x4}] -
   FunctionalDerivative[Phi, G[x4, x3], G[x2, x1]]]", "Text"];
 example["dyson_series", "DysonSeries[sigmaG /. {x -> s1, y -> s2, G -> G0}, {s1, s2}, G0, {x, y}, 2,
@@ -185,7 +199,7 @@ example["full_vertex_derivative", "SimplifyDiagrams[vertexPhi - PerturbativeFull
 
 (* ---------------------------------------------------------------- channels and parquet *)
 example["ladder_ph", "kernel = DeltaFunction[x1, x2] DeltaFunction[x3, x4] V[x1, x3];
-BetheSalpeterLadder[kernel, kernel, {x1, x2, x3, x4}, \"ParticleHole\", G]", "Both", {x1, x2, x3, x4}, "LegDirections" -> "Alternating"];
+BetheSalpeterLadder[kernel, kernel, {x1, x2, x3, x4}, \"ParticleHole\", G]", "Both", {x1, x2, x3, x4}];
 example["parquet_phi4", "vertex = PerturbativeFullVertex[Z0, Phi4Vertex, 2, {phi}, {a, b, c, d},
     D0 -> DressedPropagator];
 Map[Length[DiagramTerms[#]] &, ParquetDecomposition[OrderPart[vertex, lambda, 2],
@@ -217,8 +231,7 @@ example["superfield_pp_derivative", "PhiComponents = SuperfieldComponents[PhiNam
 ppKernel = -4 FunctionalDerivative[PhiComponents, AnomalousGreenFunction[x2, x4],
      AnomalousGreenFunctionBar[x1, x3]] /. {AnomalousGreenFunction[__] -> 0,
      AnomalousGreenFunctionBar[__] -> 0};
-OrderPart[ppKernel, V, 1]", "Both", {x1, x2, x3, x4},
-  "LegDirections" -> "Alternating", "ExternalOrder" -> {x4, x2, x3, x1}];
+OrderPart[ppKernel, V, 1]", "Both", {x1, x2, x3, x4}];
 example["superfield_gap", "sigmaNambu = -2 FunctionalDerivative[PhiNambu, NambuPropagator[a, b]];
 SuperfieldComponents[OrderPart[sigmaNambu, NambuVertex, 1],
   {a -> psibar[x1], b -> psibar[x2]}, nambuRules]", "Both", {x1, x2},
@@ -284,8 +297,9 @@ example["tree_fermion_lines", "ConnectedFunctionFromVertices[{x1, x2, x3, x4, x5
 
 (* ---------------------------------------------------------------- pictures and formulas *)
 example["tikz_fock", "DiagramToTikZ[-G[x, y] V[x, y], {x, y}]", "Text"];
-example["vertex_labels", "-IntegralOver[G0[x, z] G0[z, w] G0[w, y] V[z, w], {z, w}]", "Pictures", {x, y}, "VertexLabels" -> All];
-example["interaction_style", "-IntegralOver[G0[x, z] G0[z, w] G0[w, y] V[z, w], {z, w}]", "Pictures", {x, y}, "InteractionStyle" -> "Dashed"];
+example["vertex_labels", "fockDiagram = -IntegralOver[G0[x, z] G0[z, w] G0[w, y] V[z, w], {z, w}];
+DiagramPlot[fockDiagram, {x, y}, \"VertexLabels\" -> All]", "Pictures"];
+example["interaction_style", "DiagramPlot[fockDiagram, {x, y}, \"InteractionStyle\" -> \"Dashed\"]", "Pictures"];
 example["latex_names", "ExpressionToLaTeX[-IntegralOver[G0[x, z] G0[z, y] V[x, z], {z}],
     \"Names\" -> {G0 -> \"G_0\", V -> \"v\"},
   \"Labels\" -> {x -> \"1\", y -> \"2\"}]", "Text"];
@@ -546,8 +560,7 @@ example["effective_action_1pi", "EffectiveAction1PI[Z0, Phi4Vertex, 2, phi -> ph
 example["effective_action_1pi_vertex", "gamma1PI = EffectiveAction1PI[Z0, Phi4Vertex, 1, phi -> phiMean, D0 -> Dm];
 OrderPart[ExpandTrace[SetSourcesToZero[FunctionalDerivative[gamma1PI,
     phiMean[a], phiMean[b]]] /. Dm -> D0], lambda, {0, 1}]", "Formula"];
-example["effective_action_1pi_fermions", "EffectiveAction1PI[Zf, CoulombVertex, 1, {psi -> Psi, psibar -> Psibar}, G0 -> G0]", "Formula", {},
-  "Names" -> {Psi -> "\\Psi", Psibar -> "\\bar\\Psi"}];
+example["effective_action_1pi_fermions", "EffectiveAction1PI[Zf, CoulombVertex, 1, {psi -> Psi, psibar -> Psibar}, G0 -> G0]", "Formula"];
 example["effective_action_1pi_fermions_derivative", "SetSourcesToZero[FunctionalDerivative[EffectiveAction1PI[Zf, CoulombVertex, 1,
    {psi -> Psi, psibar -> Psibar}, G0 -> G0], Psibar[x], Psi[y]]]", "Formula"];
 example["self_energy_functional", "omega = SelfEnergyFunctional[Phi, G0 -> Sg, G]", "Formula", {},

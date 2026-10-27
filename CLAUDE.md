@@ -21,7 +21,8 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   `python3 Development/make_notebook.py Examples.wl Examples.nb`. Edit the `.wl`, never the `.nb`.
 - `Documentation/` — the reference manual. `FunctionalDiagrams_Manual.tex` (edit it directly) uses the examples computed
   by `make_examples.wl` (every example is a code string, evaluated and written to
-  `examples/NAME.wl`, with its output as `NAME.tex` (formula), `NAME_pictures.tex` (diagrams) or `NAME.txt`);
+  `examples/NAME.wl`, with its output as `NAME.tex` (formula), `NAME_pictures.tex` (diagrams, as `DiagramPlot` draws the
+  output, with the sizing options only: a code ending with `DiagramPlot[...]` is drawn with its arguments) or `NAME.txt`);
   `build_manual.sh` runs `make_index.py` (index of functions, long formulas broken into lines by
   `Development/latex_lines.py`, shared with `Showcase/assemble.py`) and pdflatex (through latexmk when installed). Keep the
   manual in sync with the usage messages.
@@ -291,7 +292,7 @@ when it exists, with a fallback (as `LightDarkSwitched`, from 14.3, for the pict
 - Keep commits small and their messages clear.
 - In the documents every command shown gives as output exactly what is shown right after it: a sum of diagrams as
   `DiagramPlot` draws the whole output (its orders in bands; the sizing options `"Scale"`, `"LineWidth"`, `"LabelFont"`
-  are the only ones left out, as the introduction of the showcase says), so that every other option (`"ExternalOrder"`,
+  are the only ones left out, as the introductions of the showcase and of the manual say), so that every other option (`"ExternalOrder"`,
   `"LegDirections"`, `"Interactions"`, `"Couplings"`, ...), declaration, channel split, grouping or selection is in the
   code shown or, for a selection of orders, said in the text. A rearrangement of an output comes after the plain output,
   with its own code. Pictures that follow text and no command (exact equations with blobs, left-hand sides) are free.
