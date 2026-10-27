@@ -72,6 +72,9 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   before a block for installation lines and paths); `check_consistency.py` checks the version, the public names and the
   links of the pages.
 - `Development/TODO.md` — things worth doing sooner or later; keep it up to date.
+- `Development/benchmark.wl` — timings of about fifty representative calculations (`--list`; a case or group by name,
+  `--runs 3` for the minimum of three runs), each output compared with its reference in `build/optim/reference/`
+  (`--save`, from the code before a change), so that a faster package is checked to give exactly the same results.
 - `index.html` — the landing page of GitHub Pages (logo, links to the repository, the release, the PDFs, the map, the
   video and the wiki). `.nojekyll` (empty) — GitHub Pages serves the main branch as it is, so that the README can link the interactive map
   (`https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html`) and the video (`.../Media/demo.mp4`).
