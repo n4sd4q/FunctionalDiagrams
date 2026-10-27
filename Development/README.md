@@ -51,7 +51,16 @@ showcase (`assemble.py`).
 `python3 check_consistency.py` checks, without Mathematica, that `../FunctionalDiagrams.wl` is the concatenation of the
 sources, that `../Examples.nb` is generated from `../Examples.wl`, that every public function has a usage message
 and an entry in the manual, that the version is the same everywhere, that the badge of the README matches the last run
-of the tests, and that the map of the functions is drawn from the current public names and version. GitHub runs it on every push (`../.github/workflows/consistency.yml`).
+of the tests, that the map of the functions is drawn from the current public names and version, and that the pages of the wiki state
+that version, use only names of the package that exist and link pages, images and files that exist. GitHub runs it on
+every push (`../.github/workflows/consistency.yml`).
+
+The pages of the GitHub wiki are written in `../wiki/` (`Home.md`, `_Sidebar.md`, `_Footer.md`, one `Page-Name.md` per
+page, pictures in `images/`) and published by `../.github/workflows/wiki.yml`, which mirrors the folder into the wiki
+repository on every push to main that changes it. `wolfram -script check_wiki.wl` runs the code of every page, each in
+a fresh kernel (the pages at the same time): every block must give exactly what the page shows after it, a text block
+or a picture; `--images` redraws the pictures whose code changed (pdflatex, pdftocairo), as SVG on a white card. The
+comment at the top of `check_wiki.wl` gives the rules of a page.
 
 `PacletInfo.wl` (at the root) makes the repository a paclet; `wolfram -script build_paclet.wl` builds
 `../build/FunctionalDiagrams-<version>.paclet` (the package, the showcase, the manual, the guided tour, the license

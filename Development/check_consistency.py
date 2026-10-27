@@ -3,7 +3,9 @@
 FunctionalDiagrams.wl is the concatenation of Development/src, Examples.nb is generated from Examples.wl, and every public
 name has a usage message and an entry in the manual; one version is stated in the package, PacletInfo.wl, CITATION.cff,
 the install line of the README, the title of the manual and the check of the tests; the map of the functions
-(Documentation/function_map.*) is drawn from the current public names and version. Run from any folder:
+(Documentation/function_map.*) is drawn from the current public names and version; the pages of the wiki (wiki/) state
+that version, use only names of the package that exist, and link pages, images and files that exist (their code is run
+by Development/check_wiki.wl, which needs Mathematica). Run from any folder:
 python3 Development/check_consistency.py"""
 import json, os, re, subprocess, sys, tempfile
 
@@ -84,5 +86,109 @@ for name in ('function_map.svg', 'function_map.html'):
     if stale:
         problems.append('Documentation/%s is not drawn from function_map.json: run Development/make_function_map.py' % name)
 
-print('\n'.join(problems) if problems else 'consistent: package, notebook, %d public names documented' % len(public))
+# the pages of the wiki (wiki/, published by .github/workflows/wiki.yml; Development/check_wiki.wl runs their code): the
+# version wherever it is written, the names of the package in their code, the links to pages, images and files
+def code_tokens(text):
+    """the tokens of Wolfram Language code (symbols and single characters), outside strings and comments"""
+    out, i, n = [], 0, len(text)
+    while i < n:
+        if text.startswith('(*', i):
+            depth, i = 1, i + 2
+            while i < n and depth:
+                if text.startswith('(*', i):
+                    depth, i = depth + 1, i + 2
+                elif text.startswith('*)', i):
+                    depth, i = depth - 1, i + 2
+                else:
+                    i += 1
+        elif text[i] == '"':
+            i += 1
+            while i < n and text[i] != '"':
+                i += 2 if text[i] == '\\' else 1
+            i += 1
+        else:
+            m = re.compile(r'\$?[A-Za-z][A-Za-z0-9]*|.', re.S).match(text, i)
+            out.append(m.group(0))
+            i = m.end()
+    return out
+
+def code_symbols(text):
+    """the symbols of Wolfram Language code, outside strings and comments"""
+    return [s for s in code_tokens(text) if re.match(r'\$?[A-Za-z]', s)]
+
+def slug(heading):
+    """the anchor GitHub gives a heading"""
+    return re.sub(r'\s', '-', re.sub(r'[^\w\- ]', '', heading.strip().lower()))
+
+wiki = os.path.join(root, 'wiki')
+if os.path.isdir(wiki):
+    version = versions['FunctionalDiagrams.wl']
+    pages = {f[:-3]: open(os.path.join(wiki, f), encoding='utf-8').read() for f in sorted(os.listdir(wiki)) if f.endswith('.md')}
+    images = set(os.listdir(os.path.join(wiki, 'images'))) if os.path.isdir(os.path.join(wiki, 'images')) else set()
+    anchors = {name: {slug(h) for h in re.findall(r'^#+ (.*)$', re.sub(r'```.*?```', '', text, flags=re.S), re.M)}
+               for name, text in pages.items()}
+    # the symbols of the package's code (outside its strings and comments) are the built-in ones it uses; these few
+    # are used only on the pages (the last ones as names not to give to a propagator)
+    known = set(public) | set(code_symbols(package)) | {
+        'FunctionalDiagrams', 'Needs', 'Get', 'Put', 'Export', 'Print', 'ToString', 'AbsoluteTiming', 'SetOptions',
+        'Options', 'SystemOpen', 'FindFile', 'PacletInstall', 'PacletFind', 'PacletObject', 'PacletUninstall',
+        'PacletDirectoryLoad', '$UserBaseDirectory', '$Version', 'Times', 'LightDarkSwitched',
+        'C', 'D', 'E', 'I', 'K', 'N', 'O', 'Beta', 'Gamma', 'GreenFunction'}
+    code = {name: re.findall(r'```mathematica\n(.*?)```', text, re.S) for name, text in pages.items()}
+    # inline code, except paths and file names
+    inline = {name: [m[1] for m in re.findall(r'(`+)(.+?)(?<!`)\1(?!`)', re.sub(r'```.*?```', '', text, flags=re.S))
+                     if not re.search(r'/|\.[a-z]+$', m[1])]
+              for name, text in pages.items()}
+    # the symbols that the pages declare or define: the user's own (propagators, fields, results)
+    defined = set()
+    for snippet in [b for blocks in code.values() for b in blocks] + [s for spans in inline.values() for s in spans]:
+        for args in re.findall(r'\bDeclare[A-Za-z]*\[([^\]]*)\]', snippet):
+            defined |= set(code_symbols(args))
+        defined |= set(re.findall(r'(?m)(?:^|;)\s*([A-Za-z][A-Za-z0-9]*)(?:\[[^\]]*\])?\s*:?=(?!=)', snippet))
+    def checked_symbols(snippet):
+        """the heads and $-symbols of a snippet of code, and the snippet itself if it is a name of four or more
+        characters (shorter ones, G0, Dph, W, are the user's propagators and kernels)"""
+        tokens = [s for s in code_tokens(snippet) if not s.isspace()]
+        found = {s for s, after in zip(tokens, tokens[1:] + ['']) if after == '[' and re.match(r'\$?[A-Za-z]', s)}
+        found |= {s for s in code_symbols(snippet) if s.startswith('$')}
+        if re.fullmatch(r'\$?[A-Za-z][A-Za-z0-9]{3,}', snippet.strip()):
+            found.add(snippet.strip())
+        return found
+    for name, text in pages.items():
+        where = 'wiki/%s.md' % name
+        for v in sorted(set(re.findall(r'(?<![\d.])v?(\d+\.\d+\.\d+)(?![\d.])', text)) - {version}):
+            problems.append('%s states the version %s, not %s' % (where, v, version))
+        symbols = set()
+        for snippet in code[name] + inline[name]:
+            symbols |= checked_symbols(snippet)
+        for s in sorted(symbols):
+            if (s[0].isupper() or s[0] == '$') and s not in known and s not in defined:
+                problems.append('%s: %s is neither a public name of the package nor a name the pages declare '
+                                '(a built-in symbol used only in the wiki goes in the list of check_consistency.py)'
+                                % (where, s))
+        for image, target in re.findall(r'(!?)\[[^\]]*\]\(([^)\s]+)\)', re.sub(r'```.*?```', '', text, flags=re.S)):
+            if image:
+                if not (target.startswith('images/') and target[len('images/'):] in images):
+                    problems.append('%s shows %s, which is not in wiki/images' % (where, target))
+                continue
+            repo_file = re.match(r'https://(?:github\.com/n4sd4q/FunctionalDiagrams/(?:blob|tree)/main|'
+                                 r'n4sd4q\.github\.io/FunctionalDiagrams)/([^#?]+)', target)
+            if repo_file:
+                if not os.path.exists(os.path.join(root, repo_file.group(1))):
+                    problems.append('%s links %s, which is not a file of the repository' % (where, target))
+            elif not re.match(r'[a-z]+:', target):
+                page, _, anchor = target.partition('#')
+                page = page or name
+                if page not in pages:
+                    problems.append('%s links the page %s, which is not in wiki/' % (where, page))
+                elif anchor and anchor not in anchors[page]:
+                    problems.append('%s links %s, which is not a heading of wiki/%s.md' % (where, target, page))
+    used = set(re.findall(r'\]\(images/([^)\s]+)\)', '\n'.join(pages.values())))
+    for image in sorted(images - used):
+        problems.append('wiki/images/%s is not shown by any page' % image)
+    listed = set(re.findall(r'\]\(([A-Z][A-Za-z-]*)\)', pages.get('_Sidebar', '')))
+    for name in sorted(set(pages) - listed - {'_Sidebar', '_Footer'}):
+        problems.append('wiki/%s.md is not in wiki/_Sidebar.md' % name)
+
+print('\n'.join(problems) if problems else 'consistent: package, notebook, %d public names documented, wiki' % len(public))
 sys.exit(1 if problems else 0)

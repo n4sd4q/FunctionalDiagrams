@@ -137,6 +137,7 @@ A clone of the repository works as it is, with `PacletDirectoryLoad["/path/to/Fu
 | [**Showcase**](Showcase/FunctionalDiagrams_Showcase.pdf) | an introduction to the diagrammatic methods through the package, in three parts. Many-body theory: perturbation theory, the self-energy, linear response, Matsubara sums, the 1PI and 2PI effective actions, the grand potential, the Bethe–Salpeter equation from the response to a one-body source, vertices and response functions, the parquet equations from the derivatives of the 2PI action, pairing with the superfield of Nambu and Gor'kov, Hedin's equations, Hubbard–Stratonovich and *GW*, Potthoff's functional and divergent vertices, phonons and disorder. Quantum field theory: dimensional regularization, one-loop QED, the vertices of QCD. Tools: pictures and formulas, and what the package does under the hood |
 | [**Manual**](Documentation/FunctionalDiagrams_Manual.pdf) | every function, option and convention, with examples computed by the package |
 | [**Guided tour**](Examples.nb) | a notebook to run in Mathematica (GitHub shows its source: download it with *Download raw file*); [`Examples.wl`](Examples.wl) is the same as a script, readable on GitHub |
+| [**Wiki**](https://github.com/n4sd4q/FunctionalDiagrams/wiki) | practical guides and a FAQ: installing and updating, the conventions in one place, declaring a theory, reading the weights, exact equations, evaluating diagrams, pictures in LaTeX, scripts |
 
 ## What it does
 
@@ -274,6 +275,7 @@ without the effective actions), and the script that computes and draws everythin
 | `FunctionalDiagrams.wl` | the package, a single file |
 | `Examples.nb`, `Examples.wl` | the guided tour (notebook, and the same as a script) |
 | `Showcase/` | the showcase: `make_figures.wl` computes and draws everything in it, `build_pdf.sh` typesets it |
+| `wiki/` | the pages of the wiki, published to it by `.github/workflows/wiki.yml` |
 | `Documentation/` | the reference manual (`make_examples.wl` computes its examples, `build_manual.sh` typesets it) and the map of the functions |
 | `Tests/` | the test suite `RunTests.wl` and its last output `RunTests.out`; `QEDOneLoop.wl`, the one-loop QED computation used by the tests; `MatsubaraBruteForce.wl`, the brute-force Matsubara sums used by the tests and the showcase; `EffectiveActions.wl`, the tests of the effective actions, with two slow references stored in `FullyIrreducibleVertices.m`; `Superfields.wl`, the tests of the superfields; `Harness.wl`, the helpers they share |
 | `Media/` | the demo video and its preview |

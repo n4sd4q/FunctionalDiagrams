@@ -85,6 +85,13 @@
   Hartree–Fock self-energy of the whole −⟨Tψψ̄⟩ = G − ΨΨ̄ (for φ⁴ the tadpole of ⟨φφ⟩ = G + φ̄φ̄), and it vanishes at zero means. The
   superfield is written with the whole second derivative S''[𝚿], anomalous vertices included. The showcase and the tests
   check D⁻¹ against the first-order self-energy for φ⁴, the electron gas and the superfield.
+- **A wiki.** The [wiki](https://github.com/n4sd4q/FunctionalDiagrams/wiki) of the repository has practical guides
+  and a FAQ, beside the README, the showcase and the manual: installing and updating, the conventions in one place,
+  declaring a theory, reading the weights, orders and simplification, exact equations, particle–particle diagrams,
+  evaluating diagrams, pictures in LaTeX, light and dark notebooks, working in scripts. The pages are written in `wiki/`
+  and published by the Action `.github/workflows/wiki.yml` on every push that changes them; every block of code gives
+  what the page shows after it, which `Development/check_wiki.wl` checks by running the pages, each in a fresh kernel,
+  and `Development/check_consistency.py` checks their version, the names of the package they use and their links.
 
 ## 2.4.0 (2026-10-26)
 
