@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Pictures
+
+- **The lines of a box leave from its corners**, as those of a triangle already did. A box joined by two lines to a
+  circle (the Thouless criterion, Δ = −½ Δ L₀ Γ_pp) no longer moves its ports along its side to the circle's spacing:
+  the lines end at its corners, and the circle's ports face them 55 degrees (before 45) off the line of the centres, so
+  that the lines are parallel when the circle is wide enough and otherwise spread only slightly. A point twice a port of
+  one blob, which the general layout drew as a bubble from the middle of a side (χ = L(z₁, z₁; z₂, z₂), an interaction
+  line ending on L in δΣ/δU), now stands outside the two corners of that side, joined to each by a line, as x◁F▷y in
+  χ = χ₀ + γL₀FL₀γ: a density point when it is an external label and nothing else, otherwise a vertex with a dot; the
+  two legs of the vertex at the other end of that interaction line are fanned 90 degrees apart.
+
 ### Documents
 
 - **The showcase shows what its code gives.** The irreducible vertex Γ⁰ follows `DiagramPlot[irreducibleVertex, {x1, x2,
@@ -23,7 +34,8 @@
   a semicolon, declarations used by the pictures are shown (`DeclareSymmetric[DressedPropagator]`, the anomalous
   propagators, the dashed full phonon line), a code block that checks comes after the pictures it does not draw
   (Hedin), the Nambu kernel follows its derivative, and the orders left out of a picture are said. The left-hand side
-  of a sum written order by order no longer stays alone at the foot of a page.
+  of a sum written order by order no longer stays alone at the foot of a page, and a plain sum of pictures, like a
+  displayed formula, no longer starts a page apart from the line that introduces it.
 
 ## 2.4.0 (2026-10-26)
 

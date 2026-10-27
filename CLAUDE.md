@@ -36,8 +36,9 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   order by order is drawn whole, as `DiagramPlot` draws it, and split into `NAME_m.terms`), `formula_NAME.tex` (formulas, by `ExpressionToLaTeX`) and `values.txt`
   (checks, numbers of diagrams, timings). `build_pdf.sh` runs `assemble.py` (→ `figures/*.tex`, `figures/values.tex`,
   `figures/parquet_table.tex`, long formulas split) and pdflatex. In the `.tex`, `\begin{ordersum}{lhs}
-  \orderrow{V^2}{name_2} ... \end{ordersum}` draws a sum with one coloured band per order, `\figuresum{lhs}{name}` a
-  plain sum, `\formula{name}` a formula, `\val{Key}` a value of `values.txt`. The pictures are small:
+  \orderrow{V^2}{name_2} ... \end{ordersum}` draws a sum with one coloured band per order (its left-hand side never
+  alone at the foot of a page), `\figuresum{lhs}{name}` a plain sum (as a displayed formula, never at the top of a page
+  apart from the line that introduces it), `\formula{name}` a formula, `\val{Key}` a value of `values.txt`. The pictures are small:
   `pictureOptions` in `make_figures.wl`.
 - `Logo/` — the logo (SVG and PDF: the badge, which reads on light and dark pages; a white version for the dark title
   pages of the manual and the showcase; `_small.svg` for 16–32 px), drawn by `Development/make_logo.py`; the social preview
@@ -169,7 +170,8 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
 - Density points: an external label alone at its point that, in every term, ends exactly two propagators (one in and
   one out, or two undirected) and nothing else, and is not an argument of a local vertex, is a density insertion: a
   crossed circle at the point, no leg (`densityLabelsFor`). So is a label alone at the third corner of a triangle blob,
-  or sharing its point with exactly an outgoing and an incoming leg (a bare vertex); every density point carries its
+  twice a port of one blob and nothing else (χ = γLγ), or sharing its point with exactly an outgoing and an incoming leg
+  (a bare vertex); every density point carries its
   label (`$densityNodeLabels`), so the vertex of the density looks the same in every picture.
 - Loops: of two crossing chords the one bulging up or down is drawn outside, over the top (a loop with two diameters has
   a vertex at the top), on a loop hanging from a line or a point the one farthest from where it hangs; an interaction
@@ -210,13 +212,18 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   (`blobLabelPlacement`); a blob grows (0.6 up), its label never shrinks, except in a triangle, where it is written 0.8
   times smaller (`$triangleLabelScale`, a scaled TikZ node), so that Λ and Λ̃ keep about the size 0.6; in one picture, and in
   all the terms of a sum drawn together (`$sumBlobHeads`, set by `geometriesOf`), the blobs of one shape have one size
-  (`pictureBlobSize`). Two blobs joined by two lines have the lines parallel: the lines of a triangle always leave from
-  its corners, and a box joined by two lines to two corners of a triangle (Γ⁰ L₀ Λ, Γ_xc L₀ Λ̃) is as wide as the side
-  between them, in that picture and in the whole sum drawn with it (`boxFloorOf`, `$pictureBoxFloor`, `$sumBoxFloor`);
-  a circle with two ports joined to one blob has them facing it, on either side of the line of the centres (at
-  that blob's spacing if the circle is wide enough, else 45 degrees off the line), and a box so joined takes the circle's
-  spacing on its side (in `blobLayoutWithExternals`). A line from a port of a blob that leaves it outwards, 30 degrees or
-  more from its outline, is bent only to avoid crossing it (`leavesBlobClearQ` in `blobAvoidingKind`).
+  (`pictureBlobSize`). The lines of a box (four ports) and of a triangle always leave from its corners, never from a
+  point along a side. Two blobs joined by two lines have the lines parallel: a box joined by two lines to two corners
+  of a triangle (Γ⁰ L₀ Λ, Γ_xc L₀ Λ̃) is as wide as the side between them, in that picture and in the whole sum drawn
+  with it (`boxFloorOf`, `$pictureBoxFloor`, `$sumBoxFloor`); a circle with two ports joined to one blob has them
+  facing it, on either side of the line of the centres, at that blob's spacing if the circle is wide enough (parallel
+  lines), else 55 degrees off the line (`$circlePortAngle`), the lines spreading slightly to the corners of a box (the
+  Thouless criterion, Δ joined to Γ_pp; in `blobLayoutWithExternals`). A point twice a port of one blob (χ = γLγ =
+  L(z₁, z₁; z₂, z₂), an interaction line ending on L) stands outside the two corners of a side, joined to each by a line
+  (`blobPortCorner[blob, point, k]`), as the end of two propagators at the corners of F (x◁F▷y): a density point if it
+  is an external label and nothing else, a vertex (a dot) otherwise; two legs at a point of the blob layout are fanned
+  90 degrees apart, counterclockwise from the top left. A line from a port of a blob that leaves it outwards, 30 degrees
+  or more from its outline, is bent only to avoid crossing it (`leavesBlobClearQ` in `blobAvoidingKind`).
   Dressed lines follow the textbooks: in a skeleton expansion (Φ[G], Φ[G, W], Γ₂[G, D_σ] and their derivatives) every
   line is a dressed one and is drawn in the plain style of its kind, and the text says so; a double line marks the dressed
   propagator only where the bare one appears in the same picture or equation (a Dyson equation, Hedin's W = V + VPW next

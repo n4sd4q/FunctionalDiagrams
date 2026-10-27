@@ -339,6 +339,27 @@ check["DeclareBlob: a box joined by two lines to a triangle is as wide as its si
      AllTrue[Flatten[es, 1], Function[q, AnyTrue[Join[FunctionalDiagrams`Private`triangleCorners[tri[[1]], tri[[2, 4]]],
          Flatten[Table[box[[1]] + box[[2, 4]] {sx, sy}, {sx, {-1, 1}}, {sy, {-1, 1}}], 1]], Norm[# - q] < 0.01 &]]]}]],
   {True, 2, True, True}];
+(* the lines of a box leave from its corners: the gap function closed on the pp vertex, Delta = -1/2 Gamma_pp G G Delta *)
+DeclareBlob[GapBl, "\\Delta", "AxialPorts" -> {1, 2}]; DeclareBlob[LBx, "L", "Shape" -> "Box", "Fill" -> "White"];
+boxCorners[{p_, sp_}] := Flatten[Table[p + sp[[4]] {sx, sy}, {sx, {-1, 1}}, {sy, {-1, 1}}], 1];
+circleBox = geometryItems[IntegralOver[FBx[u1, u2, c, a] G[u1, u3] G[u2, u4] GapBl[u3, u4], {u1, u2, u3, u4}], {a, c},
+   "LegDirections" -> {"Out", "Out"}];
+check["DeclareBlob: a circle joined by two lines to a box: the lines end at the corners of the box, and leave the circle 55 degrees off the line of the centres",
+  With[{box = First[Cases[circleBox, {"B", p_, sp_} /; sp[[2]] === "Box" :> {p, sp}]],
+    circ = First[Cases[circleBox, {"B", p_, sp_} /; sp[[2]] === "Circle" :> {p, sp}]],
+    es = Cases[circleBox, {"E", {"segment", p_, q_}, "Arrow"} :> {p, q}]},
+   {Length[es], AllTrue[es, Function[e, AnyTrue[boxCorners[box], Min[Norm[# - e[[1]]], Norm[# - e[[2]]]] < 0.01 &]]],
+    Sort[Round[Table[With[{q = First[SortBy[e, Norm[# - circ[[1]]] &]]}, ArcTan[Abs[(q - circ[[1]])[[1]]], (q - circ[[1]])[[2]]]/Degree], {e, es}]]]}],
+  {2, True, {-55, 55}}];
+(* a point twice a port of a box: the susceptibility chi = gamma L gamma, and the end of an interaction line on L *)
+chiItems = geometryItems[LBx[z1, z1, z2, z2], {z1, z2}];
+check["DeclareBlob: a point twice a port of a box (chi = L(z1, z1; z2, z2)) is joined to the two corners of the facing side, a density point",
+  With[{box = First[Cases[chiItems, {"B", p_, sp_} :> {p, sp}]], es = Cases[chiItems, {"E", {"segment", p_, q_}, _} :> {p, q}]},
+   {Length[es], Count[es, e_ /; AnyTrue[boxCorners[box], Norm[# - e[[1]]] < 0.01 &]],
+    Sort[Round[10 Cases[chiItems, {"S", {p_, p_}} :> p[[1]]]]]}], {4, 4, {-16, 16}}];
+chainItems = geometryItems[IntegralOver[V[a, w] LBx[w, w, c, d] DeltaFunction[a, b], {w}], {a, b, c, d}];
+check["DeclareBlob: an interaction line ending on two ports of a box: a dot at each end, the two legs of its vertex fanned, a above b",
+  {Count[chainItems, {"N", _, "dot"}], Round[Cases[chainItems, {"L", q_, e_, _} :> ArcTan @@ (e - q)/Degree][[{1, 2}]]]}, {2, {135, -135}}];
 check["DeclareBlob: in one picture the blobs of one shape have one size (F beside a wider label)",
   Union[Cases[geometryItems[IntegralOver[WideBox[a, b, u, v] FBx[v, u, c, d], {u, v}], {a, b, c, d}], {"B", _, sp_} :> sp[[4]]]] // Length, 1];
 check["DeclareBlob: in a sum drawn together a blob has one size in every term (F alone as large as beside the wider label)",

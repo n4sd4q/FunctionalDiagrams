@@ -1767,7 +1767,7 @@ treeLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
    by lines are placed side by side, on the side of the ports that join them (Bethe-Salpeter ladders); the other points
    outside the ports they are joined to; the legs of external labels at ports point outwards, or along the side of the
    blob when they would meet a neighbouring blob. {positions, {"blob", blobs, centre}, {}}, or None. *)
-$declaredBlobSize = 0.6; $hatchSpacing = 0.1; $blobGap = 0.95; $blobPointDistance = 0.9;
+$declaredBlobSize = 0.6; $hatchSpacing = 0.1; $blobGap = 0.95; $blobPointDistance = 0.9; $circlePortAngle = 55. Degree;
 blobHeadOf[v_, blobs_] := First[Cases[blobs, {v, _, h_} :> h], None];
 (* the spec {label, shape, fill, size} of a declared blob: its size is $declaredBlobSize, or larger when its label needs it
    (declaredBlobSize) *)
@@ -1950,6 +1950,7 @@ blobAvoidingKind[pu_, pv_, uv_, discs_] := Module[{n = rotate90[unitVectorOf[pv 
    the others the remaining ports counterclockwise from the top left, in the order of the external labels they are, or are
    joined to (the corners x1, x2, x3, x4 of a four-point function), the rest in their order *)
 $blobSharedGap = 0.4;
+freelyOrderedHeadQ[h_] := (MemberQ[$symmetricHeads, h] || MemberQ[Attributes[h], Orderless]) && ! MemberQ[$antisymmetricHeads, h];
 orderSymmetricBlobPorts[blobs0_List, labelNodes_List, frameLines_List] := Module[{blobs = blobs0, nb = Length[blobs0], partners, order = {1},
     queue = {1}, i, args, n, shape, offs, back, u, slot, free, k, rank, rest, freeQ},
    (* the arguments of blob i joined to an argument of blob j, by a line or as a common point: {{of i, of j}, ...} *)
@@ -1960,7 +1961,7 @@ orderSymmetricBlobPorts[blobs0_List, labelNodes_List, frameLines_List] := Module
     Do[If[! MemberQ[order, j] && partners[i, j] =!= {}, AppendTo[order, j]; AppendTo[queue, j]], {j, nb}]];
    rank[x_] := With[{ks = Flatten[Table[Position[labelNodes, w, {1}], {w, Join[{x}, Cases[frameLines, {x, w_, _, _} :> w],
           Cases[frameLines, {w_, x, _, _} :> w]]}]]}, If[ks === {}, 10^6, Min[ks]]];
-   freeQ[h_] := (MemberQ[$symmetricHeads, h] || MemberQ[Attributes[h], Orderless]) && ! MemberQ[$antisymmetricHeads, h];
+   freeQ[h_] := freelyOrderedHeadQ[h];
    Do[i = order[[m]]; args = blobs[[i, 2]]; n = Length[args];
     If[n > 1 && freeQ[blobs[[i, 3]]],
      shape = blobSpecOf[blobs[[i, 3]]][[2]];
@@ -1983,7 +1984,7 @@ orderSymmetricBlobPorts[blobs0_List, labelNodes_List, frameLines_List] := Module
    blobs];
 blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_List, lines_List, blobs_List] := Module[
    {frameBlobs, ports, portNodes, portIndex, portOffsetIn, frameLines, centres, links, shared, progress, others, pos = {}, placedQ, posOf,
-    nb, pn, dir, centroid, legPositions = {}, discs, nbrsOf, axialPoints = {}},
+    nb, pn, dir, centroid, legPositions = {}, discs, nbrsOf, axialPoints = {}, sidePortsQ, legAngles},
    frameBlobs = Select[blobs, MemberQ[mainNodes, #[[1]]] &];
    If[frameBlobs === {} || ! AllTrue[frameBlobs, declaredBlobHeadQ[#[[3]]] &], Return[None]];
    (* the blob with the first external label first: on the left when the ports do not decide *)
@@ -1991,9 +1992,21 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
     frameBlobs = Join[{frameBlobs[[i1]]}, Delete[frameBlobs, i1]]];
    frameLines = Select[lines, MemberQ[mainNodes, #[[1]]] && #[[1]] =!= #[[2]] &];
    nbrsOf[v_] := Join[Cases[frameLines, {v, u_, _, _} :> u], Cases[frameLines, {u_, v, _, _} :> u]];
-   (* a point that is twice a port of one blob, or a port of three or more blobs: the general layout *)
-   If[AnyTrue[frameBlobs, hasDuplicatesQ[#[[2]]] &] || AnyTrue[Tally[Flatten[frameBlobs[[All, 2]]]], #[[2]] > 2 &], Return[None]];
+   (* a point that is a port of three or more blobs, or three times a port of one blob: the general layout; so is a point
+      twice a port of a blob whose arguments are symmetric (ordered below), or at two ports that face opposite ways *)
+   sidePortsQ[b_] := With[{n = Length[b[[2]]], shape = blobSpecOf[b[[3]]][[2]], h = blobSizeOfHead[b[[3]]]},
+     AllTrue[Select[DeleteDuplicates[b[[2]]], Count[b[[2]], #] > 1 &], Function[x,
+       vectorNorm[Total[Table[blobPortOffset[shape, k, n, h], {k, Flatten[Position[b[[2]], x, {1}]]}]]] > 0.5 h]]];
+   If[AnyTrue[Tally[Flatten[frameBlobs[[All, 2]]]], #[[2]] > 2 &] ||
+     AnyTrue[frameBlobs, hasDuplicatesQ[#[[2]]] && (freelyOrderedHeadQ[#[[3]]] || ! sidePortsQ[#]) &], Return[None]];
    frameBlobs = orderSymmetricBlobPorts[frameBlobs, labelNodes, frameLines];
+   (* a point twice a port of one blob (the density of L, chi(z, z') = L(z, z; z', z'), or the end of an interaction line
+      on it): the two ports (two corners of one side of a box) are points of their own (blobPortCorner), each joined to
+      it by a line, and it is placed outside them as any other point, as the end of two propagators at two corners of a
+      box (x <| F |> y): the lines of a box leave from its corners *)
+   frameBlobs = Table[With[{b = frameBlobs[[i]]}, ReplacePart[b, 2 -> Table[If[Count[b[[2]], b[[2, k]]] > 1,
+         blobPortCorner[b[[1]], b[[2, k]], k], b[[2, k]]], {k, Length[b[[2]]]}]]], {i, Length[frameBlobs]}];
+   frameLines = Join[frameLines, Flatten[Table[Cases[b[[2]], c : blobPortCorner[_, x_, _] :> {c, x, None, "Spoke"}], {b, frameBlobs}], 1]];
    (* ports: {node, blob, offset from the centre of the blob} *)
    ports = Flatten[Table[With[{b = frameBlobs[[i]], n = Length[frameBlobs[[i, 2]]]},
        Table[{b[[2, k]], i, blobPortOffset[blobSpecOf[b[[3]]][[2]], k, n, blobSizeOfHead[b[[3]]]], portDirection[b[[3]], blobSpecOf[b[[3]]][[2]], k, n]}, {k, n}]],
@@ -2009,8 +2022,10 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
    shared[i_, j_] := If[i == j, {}, Intersection[frameBlobs[[i, 2]], frameBlobs[[j, 2]]]];
    (* a circle whose two ports are both joined to two ports of one other blob (the gap function closed on the
       particle-particle vertex, Delta = -1/2 Delta L0 Gamma_pp): its ports, otherwise on opposite sides, turned to face
-      that blob, on either side of the line of the centres as the ports they are joined to, at their spacing if the
-      circle is wide enough, else 45 degrees off that line (the ports of the other blob then follow, below) *)
+      that blob, on either side of the line of the centres as the ports they are joined to (the corners of a box or a
+      triangle: the lines of a box, as those of a triangle, always leave from its corners), at their spacing if the
+      circle is wide enough, and the lines are parallel; else $circlePortAngle off that line, and the lines spread
+      slightly towards the corners (a port further round the circle would leave its line nearly along the outline) *)
    Do[If[i != j && blobSpecOf[frameBlobs[[i, 3]]][[2]] === "Circle" && Length[frameBlobs[[i, 2]]] == 2 && Length[links[i, j]] == 2,
      Module[{ends, cp, op, a, u, w, r, th},
       ends = Table[SortBy[l[[{1, 2}]], ports[[portIndex[#], 2]] == j &], {l, links[i, j]}];
@@ -2020,26 +2035,9 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
        a = Table[ports[[portIndex[q], 3]], {q, op}];
        (* u: from the other blob towards the circle, the side its two ports face; w across it *)
        u = unitVectorOf[Total[a]]; w = rotate90[u]; r = blobSizeOfHead[frameBlobs[[i, 3]]];
-       th = ArcSin[Min[vectorNorm[a[[1]] - a[[2]]]/(2 r), Sin[Pi/4.]]];
+       th = ArcSin[Min[vectorNorm[a[[1]] - a[[2]]]/(2 r), Sin[$circlePortAngle]]];
        Do[With[{o = r (-Cos[th] u + Sign[(a[[k]] - Mean[a]) . w] Sin[th] w)},
          ports[[portIndex[cp[[k]]], 3]] = o; ports[[portIndex[cp[[k]]], 4]] = unitVectorOf[o]], {k, 2}]]]],
-    {i, Length[frameBlobs]}, {j, Length[frameBlobs]}];
-   (* a box joined by two lines to a circle: its two ports on the side facing the circle are wider apart than the circle's
-      ports, so that the lines would spread; they are moved along that side, symmetrically about its middle, to the
-      spacing of the circle's ports, and the lines are parallel. (The lines of a triangle always leave from its corners:
-      a box joined so to a triangle is as wide as the triangle's side instead, pictureBlobSize) *)
-   Do[If[i != j && Length[links[i, j]] == 2 &&
-       blobSpecOf[frameBlobs[[j, 3]]][[2]] === "Box" && blobSpecOf[frameBlobs[[i, 3]]][[2]] === "Circle" && Length[frameBlobs[[i, 2]]] == 2,
-     Module[{ends, tp, pp, a, b, s},
-      ends = Table[SortBy[l[[{1, 2}]], ports[[portIndex[#], 2]] == j &], {l, links[i, j]}];
-      pp = ends[[All, 1]]; tp = ends[[All, 2]];
-      If[DuplicateFreeQ[pp] && DuplicateFreeQ[tp] && AllTrue[tp, Count[portNodes, #] == 1 &],
-       {a, b} = Table[ports[[portIndex[t], 3]], {t, tp}];
-       s = vectorNorm[ports[[portIndex[pp[[1]]], 3]] - ports[[portIndex[pp[[2]]], 3]]];
-       (* the two ports of a box on one side, not at opposite corners *)
-       If[s < vectorNorm[b - a] - 0.05 && Min[Abs[b - a]] < 0.01,
-        With[{m = (a + b)/2, e = unitVectorOf[b - a]},
-         ports[[portIndex[tp[[1]]], 3]] = m - s e/2; ports[[portIndex[tp[[2]]], 3]] = m + s e/2]]]]],
     {i, Length[frameBlobs]}, {j, Length[frameBlobs]}];
    progress = True;
    While[progress && MemberQ[centres, None], progress = False;
@@ -2085,7 +2083,13 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
    If[! AllTrue[others, placedQ], Return[None]];
    centroid = Mean[pos[[All, 2]]];
    (* the legs: outwards from a port (along the side of the blob if a neighbouring blob is in the way), else in the
-      largest free sector *)
+      largest free sector; two or more legs at one point (the vertex of an interaction line) fanned 90 (60) degrees apart,
+      counterclockwise from the top left as the corners of a box *)
+   legAngles[q_] := legAngles[q] = Module[{ks = Select[Range[Length[labels]], amputated[[#]] && labelNodes[[#]] === q &], a, m},
+     m = Length[ks];
+     a = gapDirection[Table[angleOf[posOf[w] - posOf[q]], {w, nbrsOf[q]}], preferredDirection[posOf[q], centroid]];
+     AssociationThread[ks, SortBy[If[m == 1, {a}, Table[a + (j - (m + 1)/2.) If[m == 2, 90., 60.] Degree, {j, m}]],
+       Mod[# - 3. Pi/4 + 0.01, 2. Pi] &]]];
    Do[If[amputated[[k]], With[{q = labelNodes[[k]]},
       If[MemberQ[portNodes, q],
        With[{pr = ports[[portIndex[q]]]}, Module[{u = pr[[4]], c = centres[[pr[[2]]]]},
@@ -2098,8 +2102,7 @@ blobLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
        If[MemberQ[axialPoints[[All, 1]], q],
         (* a point on the base of a triangle: its leg continues the base *)
         AppendTo[legPositions, {leg[labels[[k]]], posOf[q] + $legLength First[Cases[axialPoints, {q, u_} :> u]]}],
-        AppendTo[legPositions, {leg[labels[[k]]], posOf[q] + $legLength directionAt[gapDirection[
-              Table[angleOf[posOf[w] - posOf[q]], {w, nbrsOf[q]}], preferredDirection[posOf[q], centroid]]]}]]]]],
+        AppendTo[legPositions, {leg[labels[[k]]], posOf[q] + $legLength directionAt[legAngles[q][k]]}]]]]],
     {k, Length[labels]}];
    (* the blobs centred on the axis of the formula *)
    With[{m = Mean[centres]},
@@ -2270,6 +2273,11 @@ densityLabelsFor[terms_List, elementsList_List, ext_List, opts_List, directions_
        MatchQ[Cases[elements[[3]], {_, l_, h_} /; MemberQ[l, node] :> {l, blobSpecOf[h]}],
         {{l_, sp_}} /; Length[l] == 3 && l[[3]] === node && ListQ[sp] && MemberQ[{"Triangle", "TriangleUp"}, sp[[2]]]],
       seen[[k]] = True,
+      (* a point twice a port of one blob and nothing else (the susceptibility chi = gamma L gamma): the end of two lines
+         at two corners of the blob *)
+      at === {} && Count[blobLegs, node] == 2 && ! MemberQ[Cases[elements[[4]], {u_, _} :> u], node] &&
+       Count[cl, x_ /; MemberQ[ext, x]] == 1 && Count[elements[[3]], {_, l_, _} /; Count[l, node] == 2] == 1,
+      seen[[k]] = True,
       (* the bare vertex: three labels at a point without lines, the other two with an outgoing and an incoming leg; for
          bosons (legs without direction) the last label is the density *)
       at === {} && ! MemberQ[blobLegs, node] && ! MemberQ[Cases[elements[[4]], {u_, _} :> u], node] && Length[cl] == 3 &&
@@ -2365,9 +2373,11 @@ frameItems[frameNodes_, positions_, lines_, blobs_, stubs_, ext_, amputatedExt_,
    frameLines = Select[lines, MemberQ[frameNodes, #[[1]]] &];
    ports = Flatten[Cases[blobs, {_, l_, h_} /; declaredBlobHeadQ[h] :> l]];
    nonLoops = Select[frameLines, #[[1]] =!= #[[2]] &]; loops = Select[frameLines, #[[1]] === #[[2]] &];
-   (* the spokes of a blob to its ports, hidden by it; to a point shared with another blob, from its port (blobPortCorner) *)
-   spokes = Flatten[Table[{If[MemberQ[positions[[All, 1]], blobPortCorner[b[[1]], x]], blobPortCorner[b[[1]], x], b[[1]]], x, None, "Spoke"},
-      {b, Select[blobs, MemberQ[frameNodes, #[[1]]] &]}, {x, b[[2]]}], 1];
+   (* the spokes of a blob to its ports, hidden by it; to a point shared with another blob, or twice a port of it, from
+      its port (blobPortCorner) *)
+   spokes = Flatten[Table[With[{x = b[[2, k]]}, {Which[MemberQ[positions[[All, 1]], blobPortCorner[b[[1]], x, k]], blobPortCorner[b[[1]], x, k],
+        MemberQ[positions[[All, 1]], blobPortCorner[b[[1]], x]], blobPortCorner[b[[1]], x], True, b[[1]]], x, None, "Spoke"}],
+      {b, Select[blobs, MemberQ[frameNodes, #[[1]]] &]}, {k, Length[b[[2]]]}], 1];
    directions = Table[{v, {}}, {v, frameNodes}];
    add[v_, a_] := With[{k = Position[frameNodes, v, {1}]}, If[k =!= {}, directions[[k[[1, 1]], 2]] = Append[directions[[k[[1, 1]], 2]], a]]];
    (* external legs *)
@@ -2594,8 +2604,10 @@ frameItems[frameNodes_, positions_, lines_, blobs_, stubs_, ext_, amputatedExt_,
       MemberQ[ext, v] && ! MemberQ[amputatedExt[[All, 2]], v], AppendTo[items, {"N", p, "ext"}],
       Head[v] === blob && declaredBlobHeadQ[blobHeadOf[v, blobs]], AppendTo[items, {"B", p, blobSpecOf[blobHeadOf[v, blobs]]}],
       Head[v] === blob, AppendTo[items, {"N", p, "blob"}],
-      (* a port of a declared blob, on its boundary, joined to at most one line: no dot *)
-      MemberQ[ports, v] && Count[frameLines, {a_, b_, _, _} /; a =!= b && (a === v || b === v)] <= 1, Null,
+      (* a port of a declared blob, on its boundary, joined to at most one line: no dot (a point twice a port of a blob is
+         outside it, joined to two of its corners) *)
+      MemberQ[ports, v] && Count[frameLines, {a_, b_, _, _} /; a =!= b && (a === v || b === v)] <= 1 &&
+       FreeQ[positions[[All, 1]], blobPortCorner[_, v, _]], Null,
       MemberQ[sourceEnds, v], Null,
       True, AppendTo[items, {"N", p, "dot"}]];
      label = Which[

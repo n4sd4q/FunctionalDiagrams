@@ -133,9 +133,10 @@
 \newcommand{\diagramparagraph}{\rightskip=0pt plus 1fil \parfillskip=0pt plus 1fil
   \baselineskip=0pt \lineskiplimit=7pt \lineskip=7pt}
 \newcommand{\diagramgap}{\hskip 0.5em plus 0.6em minus 0.15em\relax}
-% \figuresum[after]{lhs}{name}: lhs = the diagrams of figures/name.tex
+% \figuresum[after]{lhs}{name}: lhs = the diagrams of figures/name.tex; as a displayed formula, never at the top of a
+% page apart from the line that introduces it
 \newenvironment{diagramsum}[1]{%
-  \par\medskip\noindent
+  \par\nopagebreak\medskip\noindent
   \setbox0=\hbox{$\displaystyle #1 = {}$}%
   \hangindent=\wd0 \hangafter=1 \diagramparagraph
   \box0\ignorespaces}%
