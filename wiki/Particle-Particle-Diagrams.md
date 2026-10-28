@@ -3,7 +3,8 @@ left** in the order of the labels given to `DiagramPlot`. For the fermion vertex
 at x₁, x₃ and enter at x₂, x₄, so the default order puts an incoming and an outgoing leg on each side. That suits the
 particle–hole channels. A particle–particle diagram carries two particles from x₂ and x₄ to x₁ and x₃: in the default
 order they enter on opposite sides and run in opposite directions, so the interaction lines between them cross. The
-package keeps the corners in the order given; the option `"ExternalOrder"` changes it.
+package keeps the corners in the order given, for every diagram; the option `"ExternalOrder"` changes the order, and
+its value `"Uncrossed"` exchanges the legs of one side of each diagram where its lines would cross.
 
 ## Sorting the diagrams by channel
 
@@ -36,24 +37,27 @@ DiagramPlot[channels["ParticleParticle"], {x1, x2, x3, x4}]
 
 ![The particle-particle diagrams of the second-order irreducible vertex in the default order of the external points](images/pp_default_order.svg)
 
-With the incoming legs on the left, `"ExternalOrder" -> {x4, x2, x3, x1}`, the two particles propagate from left to
-right and the diagrams are ladders (when the particle entering at x₂ leaves at x₁, the labels on the right are
-exchanged, so that the two lines stay parallel):
+With the incoming legs on the left, `"ExternalOrder" -> {"Uncrossed", {x4, x2, x3, x1}}`, the two particles propagate
+from left to right and the diagrams are ladders: the corners are taken in the order x₄, x₂, x₃, x₁, and when the particle
+entering at x₂ leaves at x₁ the legs x₁ and x₃ are exchanged, so that the two lines stay parallel:
 
 ```mathematica
 DiagramPlot[channels["ParticleParticle"], {x1, x2, x3, x4},
-  "ExternalOrder" -> {x4, x2, x3, x1}]
+  "ExternalOrder" -> {"Uncrossed", {x4, x2, x3, x1}}]
 ```
 
 ![The same diagrams with the incoming legs on the left: two ladders](images/pp_external_order.svg)
 
 The two pictures are the same diagrams: only the corners differ. The labels keep their meaning, so the weights do not
-change.
+change. With `"ExternalOrder" -> {x4, x2, x3, x1}` alone the order is kept in every diagram, and in the second one the
+legs x₁ and x₃ cross as an X; `"ExternalOrder" -> "Uncrossed"` alone starts from x₁, x₂, x₃, x₄ and draws one ladder
+upright.
 
 ## Notes
 
 - `"ExternalOrder"` takes any order of the external labels, also for other functions (a three-point vertex, a
-  correlation function with its points at the corners).
+  correlation function with its points at the corners). The same holds for bosons: the diagrams of the channel t
+  (ac|bd) of φ⁴ theory are drawn with the legs c and d crossing, and planar with `"Uncrossed"`.
 - `BetheSalpeterLadder[L, R, {x1, x2, x3, x4}, "ParticleParticle", G]` joins two vertices by the pair of propagators of
   the channel, −½ L(x₁, 5; x₃, 6) G(5, 7) G(6, 8) R(7, x₂; 8, x₄): the ladders of the T-matrix.
 - The kernel irreducible in the particle–particle channel is a derivative with respect to the anomalous propagators:

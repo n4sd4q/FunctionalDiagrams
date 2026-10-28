@@ -1768,6 +1768,18 @@ vertexPhi4 = SkeletonDiagrams[gamma4, {a, b, c, d}, {FreePropagator}] /.
 \orderrow{\lambda^2}{phi4_vertex_2}
 \orderrow{\lambda^3}{phi4_vertex_3}
 \end{ordersum}
+In every picture the labels are at the corners counterclockwise from the top left, $a$, $b$, $c$, $d$: the diagrams in
+which two opposite corners meet at a vertex, as the bubble of the channel $t$, are drawn with the legs $c$ and $d$
+crossing as an X. With the option \pkg{"ExternalOrder" -> "Uncrossed"} each of them has instead the legs of one side
+exchanged, the labels moving with them:
+\begin{code}
+DiagramPlot[vertexPhi4, {a, b, c, d}, "ExternalOrder" -> "Uncrossed"]
+\end{code}
+\begin{ordersum}{\Gamma^{(4)}}
+\orderrow{\lambda}{phi4_vertex_uncrossed_1}
+\orderrow{\lambda^2}{phi4_vertex_uncrossed_2}
+\orderrow{\lambda^3}{phi4_vertex_uncrossed_3}
+\end{ordersum}
 For fermions it is the full vertex $F$ of section~\ref{sec:cumulants}, the fourth derivative of the action
 $\Gamma[\bar\Psi,\Psi]$ of section~\ref{sec:onepifermions} (the rightmost derivative first), with the dressed propagator,
 here to second order (section~\ref{sec:twoparticle} checks the Bethe--Salpeter equation with it to the third, where it has
@@ -2084,7 +2096,8 @@ equation (for the Hartree--Fock $\Phi$, the antisymmetrized interaction):
 \[
 \Gamma^0(x_1,x_2;x_3,x_4)=\frac{\delta\Sigma(x_1,x_2)}{\delta G(x_4,x_3)}=\frac{\delta^2\Phi}{\delta G(x_2,x_1)\,\delta G(x_4,x_3)}.
 \]
-The fermions leave at $x_1$, $x_3$ and enter at $x_2$, $x_4$; the legs are drawn counterclockwise from the top left, and
+The fermions leave at $x_1$, $x_3$ and enter at $x_2$, $x_4$; the legs are drawn counterclockwise from the top left (in
+the particle--particle diagrams the two fermion lines join opposite corners, and the lines between them cross), and
 points joined by delta functions are a single vertex.
 \begin{code}
 irreducibleVertex = FunctionalDerivative[luttingerWard,
@@ -2101,16 +2114,18 @@ Up to third order every diagram beyond the bare vertex is reducible either in th
 $\phbar$ or in the particle--particle channel $\pp$ (section~\ref{sec:fourpoint}); the first fully irreducible diagrams
 beyond the bare vertex, of the envelope type (section~\ref{sec:parquet}), appear at fourth order. \pkg{ParquetDecomposition}
 sorts the diagrams by channel, by cutting pairs of lines. The two lines of a $\pp$ diagram carry two particles from $x_2$
-and $x_4$ to $x_1$ and $x_3$; with the incoming legs on the left, \pkg{"ExternalOrder" -> \{x4, x2, x3, x1\}}, they
-propagate from left to right (and when the particle entering at $x_2$ leaves at $x_1$ the labels on the right are
-exchanged, so that the two lines stay parallel). The parts of $\Gamma^0$ reducible in the two channels,
-$R_{\phbar}$ and $R_{\pp}$:
+and $x_4$ to $x_1$ and $x_3$, at opposite corners: drawn as above, their lines cross. With the option
+\pkg{"ExternalOrder" -> \{"Uncrossed", \{x4, x2, x3, x1\}\}} the incoming legs are on the left and the particles
+propagate from left to right: the corners are taken in the order $x_4$, $x_2$, $x_3$, $x_1$, and where the particle
+entering at $x_2$ leaves at $x_1$ the legs $x_1$ and $x_3$ are exchanged, so that the two lines stay parallel
+(\pkg{"Uncrossed"} alone starts from $x_1$, $x_2$, $x_3$, $x_4$, and turns some of the ladders upright). The parts of
+$\Gamma^0$ reducible in the two channels, $R_{\phbar}$ and $R_{\pp}$:
 \begin{code}
 channels = ParquetDecomposition[irreducibleVertex, {x1, x2, x3, x4},
     {DressedGreenFunction}];
 DiagramPlot[channels["TransverseParticleHole"], {x1, x2, x3, x4}]
 DiagramPlot[channels["ParticleParticle"], {x1, x2, x3, x4},
-    "ExternalOrder" -> {x4, x2, x3, x1}]
+    "ExternalOrder" -> {"Uncrossed", {x4, x2, x3, x1}}]
 \end{code}
 \begin{ordersum}{R_{\phbar}}
 \orderrow{V^2}{irreducible_vertex_phbar_2}
@@ -2249,7 +2264,7 @@ between the two pairs of legs:
 and the bare vertex iterated in the particle--particle channel gives the ladder of the
 $T$-matrix~\cite{Galitskii1958,FetterWalecka} --- the scattering amplitude of two particles in the medium, which governs
 a dilute gas with a short-range interaction --- here its second-order term, $T^{(2)}$, drawn with the incoming
-particles on the left (option \pkg{"ExternalOrder" -> \{x4, x2, x3, x1\}}):
+particles on the left (option \pkg{"ExternalOrder" -> \{"Uncrossed", \{x4, x2, x3, x1\}\}}):
 \figuresum{T^{(2)}}{pp_ladder}
 For real bosons the two lines of a pair are identical, and the pair carries the factor $-\frac12$. With the full
 vertex $\Gamma^{(4)}$ drawn as a square, the equation of the channel $s$ is
@@ -2540,14 +2555,22 @@ crossing $F_{12;34}=-F_{32;14}=-F_{14;32}$, $R_{\ph}(1,2;3,4)=-R_{\phbar}(3,2;1,
 \paragraph{Bosons} The parquet equations hold for bosons too: with the option \pkg{"Statistics" -> "Boson"},
 \pkg{ParquetDecomposition} and \pkg{CheckParquetEquations} use the channels $s$ $(ab|cd)$, $t$ $(ac|bd)$ and $u$
 $(ad|bc)$ of section~\ref{sec:fourpoint}. In $\phi^4$ theory, up to third order, $\Gamma_{\rm irr}$ is the point vertex $\lambda$, and each channel has
-\val{CountsPhi4RS2} and \val{CountsPhi4RS3} diagrams at orders $\lambda^2$ and $\lambda^3$; those of the channel $s$ are
+\val{CountsPhi4RS2} and \val{CountsPhi4RS3} diagrams at orders $\lambda^2$ and $\lambda^3$. Those of the channel $s$
+$(ab|cd)$, and those of $t$ $(ac|bd)$, which pairs opposite corners, drawn with their legs $c$ and $d$ exchanged (by
+default these two legs cross, as in $\Gamma^{(4)}$ above):
 \begin{code}
-ParquetDecomposition[vertexPhi4, {a, b, c, d}, {DressedPropagator},
-    "Statistics" -> "Boson"]["s"]
+phi4Channels = ParquetDecomposition[vertexPhi4, {a, b, c, d},
+    {DressedPropagator}, "Statistics" -> "Boson"];
+phi4Channels["s"]
+DiagramPlot[phi4Channels["t"], {a, b, c, d}, "ExternalOrder" -> "Uncrossed"]
 \end{code}
 \begin{ordersum}{R_s}
 \orderrow{\lambda^2}{phi4_vertex_s_2}
 \orderrow{\lambda^3}{phi4_vertex_s_3}
+\end{ordersum}
+\begin{ordersum}{R_t}
+\orderrow{\lambda^2}{phi4_vertex_t_2}
+\orderrow{\lambda^3}{phi4_vertex_t_3}
 \end{ordersum}
 At order $\lambda^4$ (three loops) $\Gamma^{(4)}$ has \val{CountsPhi4Vertex4} skeleton diagrams, and
 \pkg{ParquetDecomposition} finds \val{CountsPhi4FullyIrreducible4} fully irreducible diagram by cutting lines: the envelope,
@@ -4141,7 +4164,10 @@ kernel declared with \pkg{DeclareLocalVertex} is drawn as one point, a vertex of
 "VertexLabels" -> All & labels of the integration points $z_1,z_2,\dots$ too (\texttt{Automatic}: only the external
   points; \texttt{None}: no labels)\\
 "Labels" -> \{x -> "x\_1", \dots\} & the \LaTeX{} of the labels\\
-"ExternalOrder" -> \{x4, x2, x3, x1\} & the order of the external points, counterclockwise from the top left\\
+"ExternalOrder" -> \{x4, x2, x3, x1\} & the order of the external points, counterclockwise from the top left (by
+  default the order given; a four-point diagram that joins opposite corners is drawn with two legs crossing)\\
+"ExternalOrder" -> "Uncrossed" & in each four-point diagram the legs of one side exchanged where they would cross (also
+  \pkg{\{"Uncrossed", \{x4, x2, x3, x1\}\}})\\
 "LegDirections" -> "Alternating" & arrows on the external legs of fermionic vertex functions (or a list of
   \texttt{"Out"}, \texttt{"In"}, \texttt{None})\\
 "AmputatedLegs" -> True & external points drawn with legs, as in amputated functions, or (\texttt{False}) as open circles\\
@@ -4162,6 +4188,9 @@ from the diagram, by a few rules chosen to reproduce the way diagrams are drawn 
   open lines are straight: the horizontal axis of a two-point function, two parallel rails --- horizontal or vertical,
   according to which external points they join --- for a four-point function, whose legs point to the corners of a
   rectangle. The closed lines are circles (bubbles when they have two vertices).
+\item The four labels of a four-point function are at the corners counterclockwise from the top left, in the order
+  given, in every diagram; a diagram that joins two opposite corners is drawn with two of its legs crossing as an X just
+  outside it, or, with \pkg{"ExternalOrder" -> "Uncrossed"}, with those two legs exchanged.
 \item The interaction lines between the rails are perpendicular to them where possible, so that ladders are ladders; two
   that cross make a symmetric cross. Arcs between vertices of one line go to the side where they cross nothing, as in
   the Fock-like and crossed diagrams of sections~\ref{sec:bubbles}, \ref{sec:dyson} and~\ref{sec:disorder}; of two arcs

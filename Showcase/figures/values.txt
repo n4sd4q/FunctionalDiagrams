@@ -1,68 +1,68 @@
 version :: {"2.4.0", "15.0.1 for Linux x86 (64-bit) (July 2, 2026)"}
 maximum order :: 3
-seconds G :: 0.7
+seconds G :: 0.1
 counts G :: {1, 2, 10, 74}
-seconds Sigma perturbative :: 0.7
+seconds Sigma perturbative :: 0.2
 counts Sigma perturbative :: {2, 6, 42}
 check Dyson :: 0
-seconds vacuum :: 1.1
+seconds vacuum :: 0.6
 counts vacuum :: {2, 5, 20}
-seconds electron Z second order :: 2.2
+seconds electron Z second order :: 0.7
 counts electron Z and W at a source :: {5, 39, 24}
 check electron W at a source connected :: 0
-seconds electron Z third order :: 5.8
+seconds electron Z third order :: 3.7
 counts electron vacuum full :: {2, 8, 34}
 check electron linked cluster :: 0
 check electron connected vacuum shortcut :: 0
 counts electron numerator :: {1, 4, 22}
 check electron numerator factorizes :: {0, 0, 0}
 check electron G without bubbles :: 0
-seconds Phi :: 0.7
+seconds Phi :: 0.2
 counts Phi :: {2, 2, 6}
-seconds Sigma :: 0.2
+seconds Sigma :: 0.1
 counts Sigma :: {2, 2, 10}
 counts Sigma skeleton :: {2, 2, 10}
 check Sigma = skeleton part of the perturbative Sigma :: 0
 check Tr Sigma G = 2m Phi :: {0, 0, 0}
-seconds Gamma0 :: 0.6
+seconds Gamma0 :: 0.2
 counts Gamma0 :: {2, 6, 50}
 counts Gamma0 channels :: <|"FullyIrreducible" -> {2, 0, 0}, "ParticleHole" -> {0, 0, 0}, "TransverseParticleHole" -> {0, 4, 32}, "ParticleParticle" -> {0, 2, 18}, "SeveralChannels" -> {0, 0, 0}|>
 check Gamma0 symmetry :: 0
 check Gamma0 G = (2m-1) Sigma :: {0, 0, 0}
 check Ward identity :: 0
-seconds two-particle connected :: 2.6
+seconds two-particle connected :: 0.8
 counts two-particle connected :: {2, 26, 330}
 check two-particle cumulant connected :: 0
 check two-particle moments from cumulants :: 0
 check two-particle cumulant shortcut :: 0
-seconds EA Gamma[Psibar, Psi] :: 2.9
-seconds F :: 5.2
+seconds EA Gamma[Psibar, Psi] :: 1.1
+seconds F :: 1.1
 check full vertex shortcut :: 0
 counts F :: {2, 10, 82}
 check Bethe-Salpeter ph :: 0
 check Gamma0 = F - R_ph :: 0
-seconds parquet check :: 1.2
+seconds parquet check :: 0.5
 check Schwinger-Dyson :: {0, 0}
 check crossing :: {0, 0, 0}
 parquet residuals :: <|"ParticleHole" -> {0, 0, 0}, "TransverseParticleHole" -> {0, 0, 0}, "ParticleParticle" -> {0, 0, 0}|>
 parquet counts :: <|"FullyIrreducible" -> {2, 0, 0}, "ParticleHole" -> {0, 4, 32}, "TransverseParticleHole" -> {0, 4, 32}, "ParticleParticle" -> {0, 2, 18}, "SeveralChannels" -> {0, 0, 0}|>
-seconds Lambda :: 2.9
+seconds Lambda :: 0.8
 check density vertex shortcut :: 0
 counts Lambda :: {1, 2, 10, 82}
 check vertex equations :: {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0}}
 counts proper vertex :: {1, 1, 7, 63}
 check Hedin :: {{0, 0, 0, 0}, {0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}
-seconds L = dG/dU :: 4.1
+seconds L = dG/dU :: 1.8
 counts L :: {1, 6, 50, 518}
 check L = G G - C :: {0, 0, 0, 0}
-seconds chain rule :: 0.3
+seconds chain rule :: 0.1
 check chain rule :: 0
-seconds response equations :: 4.6
+seconds response equations :: 3.2
 check response equations :: {{0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0}}
-seconds HS G :: 0.9
+seconds HS G :: 0.6
 check HS G :: {0, 0, 0, 0}
 check HubbardStratonovich :: {0, 0, 0}
-seconds Phi[G,W] :: 1.1
+seconds Phi[G,W] :: 0.8
 counts Phi[G,W] :: {1, 1, 4}
 check GW derivatives :: {0, 0}
 counts Sigma[G,W] :: {1, 1, 6}
@@ -74,11 +74,11 @@ check phonons integrated out :: {0, 0}
 seconds Lindhard :: 0.
 check Lindhard = -chi0 :: 0
 check Lindhard T=0 one dimension :: 0
-seconds Sigma(2) Matsubara :: 0.1
+seconds Sigma(2) Matsubara :: 0.
 seconds Sigma(2) cutting rules :: 0.
 check cutting rules Sigma2 :: {0, 0}
-seconds cutting rules density :: 0.3
-seconds cutting rules Sigma :: 3.7
+seconds cutting rules density :: 0.1
+seconds cutting rules Sigma :: 1.3
 counts cutting rules density :: {6, 4, 2}
 counts cutting rules Sigma 2 :: {6, 6, 0}
 counts cutting rules Sigma 3 :: {42, 32, 10}
@@ -86,26 +86,26 @@ check cutting rules skeletons :: 0
 counts imaginary part Sigma 3 :: 12
 check cutting rules :: 0
 check delta prime :: 0
-seconds brute force :: 10.7
+seconds brute force :: 7.6
 errors brute force :: {"$2\\times10^{-13}$", "$7\\times10^{-8}$", "$3\\times10^{-9}$"}
 check brute force :: 0
-seconds Phi[G,D] :: 0.1
+seconds Phi[G,D] :: 0.
 check Migdal from Phi :: 0
 seconds Migdal :: 0.
 check cutting rules Migdal :: 0
-seconds brute force Migdal :: 0.1
+seconds brute force Migdal :: 0.
 error brute force Migdal :: "$2\\times10^{-9}$"
 check brute force Migdal :: 0
-seconds Phi disorder :: 0.1
+seconds Phi disorder :: 0.
 check SCBA :: 0
-seconds phi4 third order :: 6.1
+seconds phi4 third order :: 2.5
 counts phi4 Z and W at a source :: {3, 14, 8}
 check phi4 W at a source connected :: 0
 counts phi4 vacuum :: {1, 3, 7}
 counts phi4 log vacuum :: {1, 2, 4}
 check phi4 linked cluster :: 0
 check phi4 exponential of the connected diagrams :: 0
-seconds phi4 log vacuum :: 0.2
+seconds phi4 log vacuum :: 0.1
 check phi4 connected vacuum shortcut :: 0
 check phi4 numerator factorizes :: {0, 0, 0, 0}
 check phi4 propagator shortcut :: 0
@@ -114,25 +114,25 @@ check phi4 cumulant connected :: 0
 check phi4 moments from cumulants :: 0
 check phi4 cumulant shortcut :: 0
 check phi4 moment shortcut :: 0
-seconds phi4 moments and cumulants :: 17.3
+seconds phi4 moments and cumulants :: 7.5
 counts phi4 four-point connected :: {1, 7, 42}
 check phi4 Dyson :: 0
-seconds EA Gamma[phibar] :: 0.3
-seconds EA Gamma^(4) :: 1.
-seconds phi4 vertex :: 0.1
+seconds EA Gamma[phibar] :: 0.1
+seconds EA Gamma^(4) :: 0.3
+seconds phi4 vertex :: 0.
 check phi4 vertex shortcut :: 0
 counts phi4 vertex :: {1, 3, 9}
 check parquet phi4 :: <|"s" -> {0, 0, 0}, "t" -> {0, 0, 0}, "u" -> {0, 0, 0}|>
 counts phi4 R_s :: {1, 3}
 counts phi4 fully irreducible :: {1, 0, 0}
-seconds phi4 vertex fourth order :: 4.9
+seconds phi4 vertex fourth order :: 1.7
 counts phi4 vertex 4 :: 37
 counts phi4 fully irreducible 4 :: 1
 check phi4 crossing :: {0, 0, 0}
-seconds phi4 Gamma2 :: 0.1
+seconds phi4 Gamma2 :: 0.
 seconds phi4 Sigma[G] :: 0.
 check phi4 Sigma = skeleton part :: 0
-seconds phi4 Gamma0 :: 0.1
+seconds phi4 Gamma0 :: 0.
 counts phi4 Gamma0 :: {1, 2, 6}
 check phi4 Gamma0 :: {0, 0, {0, 0, 0}, 0, 0}
 check phi4 Schwinger-Dyson :: {0, 0}
@@ -142,7 +142,7 @@ counts phi4 Lambda :: {1, 1, 2, 6}
 check phi4 vertex equations :: {{0, 0, 0, 0}, {0, 0, 0, 0}}
 check phi4 HS G :: {0, 0, 0, 0}
 check phi4 sigma integrated out :: 0
-seconds phi4 Gamma2[G,D] :: 0.9
+seconds phi4 Gamma2[G,D] :: 0.4
 counts phi4 Gamma2[G,D] :: {1, 1, 3}
 check phi4 Sigma[G,D[G]] :: {0, 0, 0, 0}
 check phi2 correlation shortcut :: 0
@@ -160,11 +160,11 @@ check dimreg massive mass counterterm :: 0
 check dimreg RG functions :: {0, 0, 0}
 check dimreg Wilson-Fisher :: {0, 0, 0}
 dimreg exponents in three dimensions :: "0.019, 0.627, 0.37"
-seconds dimreg :: 1.6
+seconds dimreg :: 0.9
 seconds QED vertex diagrams :: 0.
 counts QED :: {1, 1, 6, 1}
 check QED tree vertex :: 0
-seconds QED one loop :: 5.6
+seconds QED one loop :: 3.1
 check QED Sigma pole :: {0, 0}
 check QED delta2 and Zm :: {0, 0}
 check QED on shell :: {0, 0}
@@ -181,34 +181,34 @@ QED F2 at -m2 :: "0.01090238584"
 check QED F2(-m2) :: 0
 check QED F2 independent of xi :: 0
 QED Schwinger value :: "0.0011614"
-seconds QED :: 4.8
-seconds QCD gluon self-energy :: 0.3
+seconds QED :: 2.6
+seconds QCD gluon self-energy :: 0.1
 check QCD gluon self-energy symmetric :: 0
-seconds QCD quark-gluon vertex :: 0.2
-seconds QCD three-gluon vertex :: 0.3
-seconds QCD quark self-energy two loops :: 0.7
+seconds QCD quark-gluon vertex :: 0.1
+seconds QCD three-gluon vertex :: 0.2
+seconds QCD quark self-energy two loops :: 0.4
 counts QCD :: {4, 1, 2, 8, 7}
 seconds trees 3 :: 0.
 seconds trees 4 :: 0.
-seconds trees 5 :: 0.1
-seconds trees 6 :: 0.6
+seconds trees 5 :: 0.
+seconds trees 6 :: 0.3
 counts trees :: {1, 4, 26, 236}
 check trees zero dimensions :: {0, 0, 0, 0}
 check ConnectedFunctionFromVertices :: 0
-seconds phi4 six-point :: 0.1
+seconds phi4 six-point :: 0.
 counts phi4 six-point :: {10, 0}
 check trees phi4 six-point :: 0
 counts fermion trees :: {1, 11}
-seconds fermion line trees :: 1.2
+seconds fermion line trees :: 0.7
 counts fermion line trees :: {1, 10}
 seconds electron six-point :: 0.1
 counts electron six-point :: 36
 check fermion line trees :: 0
 check EA stationarity :: {0, 0}
-seconds EA value at the perturbative G :: 1.3
+seconds EA value at the perturbative G :: 0.8
 check EA value :: {{0, 0, 0}, {0, 0, 0}}
 check EA dPhi dG :: {0, 0, 0}
-seconds EA second derivatives :: 0.2
+seconds EA second derivatives :: 0.1
 check EA second derivative :: {0, 0, 0}
 check EA homogeneity :: {{0, 0}, {0, 0}, {0, 0}}
 seconds EA Gamma[phibar, G] :: 0.1
@@ -219,7 +219,7 @@ check EA Sigma phibar G shortcut :: 0
 check EA zero mean field :: 0
 check EA mean field second derivative :: {0, 0, 0, 0}
 check EA fermion means :: 0
-seconds EA Gamma[Psibar, Psi, G] :: 0.3
+seconds EA Gamma[Psibar, Psi, G] :: 0.2
 check EA psi fluctuation operator :: 0
 counts EA gamma2 psi :: {2, 4, 16}
 check 2PI psi pieces :: {0, 0}
@@ -229,8 +229,8 @@ check 2PI means electron gas :: {0, {0, 0}}
 seconds EA Lambda phi^4 :: 0.1
 seconds EA parquet phi^4 :: 0.1
 check EA Lambda phi4 :: {0, 0, 0, 0}
-seconds EA Lambda electron gas :: 1.1
-seconds EA full vertex electron gas :: 26.7
+seconds EA Lambda electron gas :: 0.8
+seconds EA full vertex electron gas :: 21.6
 check EA Lambda electron gas :: {0, 0}
 counts EA Lambda :: {1, 64}
 seconds EA Gamma[phibar] with lines D0 :: 0.1
@@ -240,11 +240,11 @@ check 1PI pieces :: {0, 0}
 check 1PI gamma one :: {0, 0, 0}
 check 2PI gamma one :: {0, 0, 0}
 counts 1PI not two PI :: {0, 1, 4}
-seconds EA Gamma[phibar, G[phibar]] :: 0.4
+seconds EA Gamma[phibar, G[phibar]] :: 0.3
 check 2PI at stationary G :: {0, 0, 0, 0}
 check EA 1PI two point :: {0, 0, 0, 0}
 check EA 1PI four point :: {0, 0, 0}
-seconds EA Gamma[phibar] bare route :: 0.3
+seconds EA Gamma[phibar] bare route :: 0.4
 check 1PI bare route :: {0, 0, 0, 0}
 counts 1PI psi tree :: {1, 0, 0}
 counts 1PI psi rings :: {2, 4, 6}
@@ -252,9 +252,9 @@ counts 1PI psi two loops :: {2, 6, 35}
 counts 1PI psi three loops :: {0, 5, 42}
 counts 1PI psi four loops :: {0, 0, 20}
 counts 1PI psi orders :: {5, 15, 103}
-seconds EA Gamma[Psibar, Psi] checks :: 1.4
+seconds EA Gamma[Psibar, Psi] checks :: 1.2
 check 1PI psi :: {0, 0, {0, 0, 0, 0}, {0, 0}}
-seconds EA Gamma[Psibar, Psi, G*] :: 1.3
+seconds EA Gamma[Psibar, Psi, G*] :: 1.1
 check 2PI psi at stationary G :: {0, 0, 0, 0}
 counts 1PI psi anomalous :: {0, 1, 11}
 seconds Nambu Phi :: 0.2
@@ -263,14 +263,14 @@ counts Nambu Sigma :: {1, 1, 1}
 check Nambu stationarity :: 0
 seconds Nambu Phi components :: 0.7
 counts Nambu Phi components :: {3, 7, 52}
-seconds Phi with pairing terms :: 2.3
+seconds Phi with pairing terms :: 5.3
 check Nambu Phi components :: {{0, 0, 0}, 0}
 check Nambu first order :: {0, 0, 0}
 check Gorkov :: {0, 0}
-seconds Nambu channels :: 1.1
+seconds Nambu channels :: 2.4
 check Nambu shortcuts :: {0, 0, 0, 0}
 counts Nambu kernel :: {1, 2, 6}
-seconds Nambu F :: 1.2
+seconds Nambu F :: 2.9
 counts Nambu F :: {1, 3, 9}
 check Nambu channels :: {0, 0, 0}
 seconds Nambu parquet check :: 0.1
@@ -278,29 +278,29 @@ parquet residuals Nambu :: <|"s" -> {0, 0, 0}, "t" -> {0, 0, 0}, "u" -> {0, 0, 0
 counts Nambu parquet :: <|"FullyIrreducible" -> {1, 0, 0}, "s" -> {0, 1, 3}, "t" -> {0, 1, 3}, "u" -> {0, 1, 3}, "SeveralChannels" -> {0, 0, 0}|>
 check phi4 channels :: {0, 0, 0}
 check phi4 channel derivatives :: {0, 0, 0}
-seconds pp kernel :: 1.4
+seconds pp kernel :: 1.3
 counts pp kernel :: {2, 8, 64}
 check Nambu kernel components :: {0, 0, 0}
 check pp kernel from Phi :: 0
 check Bethe-Salpeter pp :: 0
 check Thouless :: {0, 0, 0}
 counts Thouless :: {1, 4, 32}
-seconds Nambu Gamma[X, calG] :: 1.5
+seconds Nambu Gamma[X, calG] :: 0.6
 check Nambu fluctuation operator :: 0
-seconds Nambu Gamma[X, calG*] :: 2.8
-seconds Nambu Gamma[X] :: 5.5
+seconds Nambu Gamma[X, calG*] :: 1.
+seconds Nambu Gamma[X] :: 3.3
 counts Nambu 1PI :: {3, 5, 13}
 check Nambu stationary means :: {0, 0, 0, 0}
-seconds Nambu Gamma[X] components :: 3.8
+seconds Nambu Gamma[X] components :: 2.2
 check Nambu 1PI components :: {0, 0, 0, 0}
-seconds Nambu Gamma1[X] :: 2.6
-seconds Nambu Gamma1[X] components :: 5.3
+seconds Nambu Gamma1[X] :: 1.4
+seconds Nambu Gamma1[X] components :: 3.3
 check 1PI psi pieces :: {{0, 0, 0}, {0, 0, 0}}
 check Nambu gamma two :: {0, 0, 0}
 check Nambu mean derivatives :: {{0, 0, 0, 0}, 0}
-seconds Nambu one site :: 0.2
+seconds Nambu one site :: 0.1
 check Nambu zero dimensions :: {0, {0, 0, 0, 0}, {0, 0, 0}, 0}
-seconds Nambu :: 44.8
+seconds Nambu :: 41.4
 check EA TDHF kernel shortcut :: 0
 check EA TDHF dynamic limit :: {0, 0, 0}
 check EA Hartree kernel shortcut :: 0
@@ -310,7 +310,7 @@ EA ring TDHF static :: "-0.25704"
 EA ring bubble alone :: "-0.3235"
 check EA compressibility sum rule :: 0
 check EA universality :: 0
-seconds EA Phi to fourth order :: 5.
+seconds EA Phi to fourth order :: 2.4
 check EA 0d Catalan :: 0
 check EA 0d value :: 0
 check EA 0d Potthoff :: {{0, 0}, 0}
@@ -319,6 +319,6 @@ check EA 0d charge vertex :: 0
 check EA 0d branch point :: 0
 check EA 0d wrong branch :: {0, 0}
 check EA 0d no solution :: 0
-seconds effective actions :: 107.3
-seconds total :: 517.4
+seconds effective actions :: 90.2
+seconds total :: 265.5
 

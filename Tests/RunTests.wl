@@ -232,9 +232,22 @@ check["TikZ: line width and font of the labels", {occurrences[DiagramToTikZ[V[a,
    occurrences[DiagramToTikZ[V[a, b], {a, b}, "LabelFont" -> "\\tiny"], "font=\\tiny"]}, {1, 2}];
 (* the layout of fermion lines: the private functions are tested directly *)
 arrowSegments[e_, ext_, opts___] := Cases[First[FunctionalDiagrams`Private`geometriesOf[e, ext, {opts}]][[2]], {"E", {"segment", p_, q_}, "Arrow"} :> {p, q}];
-check["exchange diagram of the particle-particle channel: parallel fermion lines",
+check["exchange diagram of the particle-particle channel: parallel fermion lines with \"Uncrossed\"",
   FunctionalDiagrams`Private`mutualCrossingCount[arrowSegments[G[x1, x2] G[x3, x4] V[x1, x3] V[x2, x4], {x1, x2, x3, x4},
-     "ExternalOrder" -> {x4, x2, x3, x1}]], 0];
+     "ExternalOrder" -> {"Uncrossed", {x4, x2, x3, x1}}]], 0];
+(* the labels at the corners top left, bottom left, bottom right, top right of every picture of a sum: their text in the
+   four quadrants around the mean of the four *)
+cornerLabels[e_, ext_, opts___] := Table[With[{ps = Table[First[Cases[g[[2]], {"T", p_, l, ___} :> p], {0., 0.}], {l, ext}]},
+     With[{q = Table[With[{dd = p - Mean[ps]}, Which[dd[[1]] < 0 && dd[[2]] > 0, 1, dd[[1]] < 0 && dd[[2]] < 0, 2, dd[[1]] > 0 && dd[[2]] < 0, 3, True, 4]],
+         {p, ps}]}, ext[[Ordering[q]]]]], {g, FunctionalDiagrams`Private`geometriesOf[e, ext, {opts}]}];
+check["four points: the labels at the corners in the order given, for bosons (Gamma4 of phi^4, its channel t crossed) and fermions (F)",
+  {DeleteDuplicates[cornerLabels[vertexPhi4, {a, b, c, d}]], DeleteDuplicates[cornerLabels[fullVertex, {x1, x2, x3, x4}]],
+   DeleteDuplicates[cornerLabels[G[x1, x2] G[x3, x4] V[x1, x3] V[x2, x4], {x1, x2, x3, x4}, "ExternalOrder" -> {x4, x2, x3, x1}]]},
+  {{{a, b, c, d}}, {{x1, x2, x3, x4}}, {{x4, x2, x3, x1}}}];
+check["four points with \"Uncrossed\": the bubbles of phi^4 drawn planar, the channel t with c and d exchanged",
+  Sort[cornerLabels[OrderPart[vertexPhi4, lambda, 2], {a, b, c, d}, "ExternalOrder" -> "Uncrossed"]], {{a, b, c, d}, {a, b, c, d}, {a, b, d, c}}];
+check["four points: the trees of W^(4) with their leaves in the order given, the crossed one included",
+  DeleteDuplicates[cornerLabels[ConnectedFunctionFromVertices[{a, b, c, d}, "Boson"], {a, b, c, d}]], {{a, b, c, d}}];
 (* x2 -> z1 -> z2 -> x1 on the left, x4 -> z3 -> z4 -> x3 on the right: the rungs z1-z4 and z2-z3 are horizontal *)
 ladderNodes = First[FunctionalDiagrams`Private`layoutRailUnits[{{x2, z1, z2, x1}, {x4, z3, z4, x3}}, {}, {{z1, z4}, {z2, z3}},
     {x1, x2, x3, x4}, {x1, x2, x3, x4}, {True, True, True, True}, {x1, x2, x3, x4}]];

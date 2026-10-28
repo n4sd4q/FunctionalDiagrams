@@ -2,8 +2,31 @@
 
 ## Unreleased
 
+### New
+
+- **`"ExternalOrder" -> "Uncrossed"`** (also `{"Uncrossed", {x1, ...}}`, starting from another order): in each diagram
+  with four external points the legs of one side are exchanged where the lines would cross, the labels moving with
+  them. Of the order given, the order with the labels on the right exchanged and the order with the labels on the top
+  exchanged (the three ways of going round four corners), each diagram takes the first whose lines, taken straight,
+  cross least. The parquet decomposition is drawn channel by channel with it: `DiagramPlot[ParquetDecomposition[...]["t"],
+  {a, b, c, d}, "ExternalOrder" -> "Uncrossed"]` for φ⁴ theory, `"ExternalOrder" -> {"Uncrossed", {x4, x2, x3, x1}}` for
+  the particle–particle ladders of the electron gas (the incoming legs on the left).
+
 ### Pictures
 
+- **Four external points are at the corners in the order given, for bosons too.** The labels of a four-point function
+  are at the corners counterclockwise from the top left, in the order given to `DiagramPlot`, `DrawDiagram` and
+  `DiagramToTikZ` (or `"ExternalOrder" -> {x1, ...}`), in every diagram, boson or fermion, blob or not. Fermion lines
+  already kept them (their particle–particle diagrams are drawn with the lines between the two rails crossing); the
+  general layout of bosons exchanged the two labels on the right of a diagram in which a vertex held two opposite
+  corners (the bubble of the channel t (ac|bd) of φ⁴ theory, drawn with c and d exchanged), the trees of vertex functions
+  and the products of propagators with tadpoles took a planar order of their own, and a list given to `"ExternalOrder"`
+  had the labels on the right exchanged where a fermion line would join opposite corners. Such a diagram is now drawn
+  crossed: laid out with the labels of one side exchanged, its two legs (or the lines to its points) are put back as an
+  X just outside it, at about a right angle (a bubble they leave is a lens, a loop through their vertices is drawn with
+  straight lines if its circle would be crossed); a vertex at the centre of an X with tadpoles on its arms stays as it
+  is. `"Uncrossed"` gives the planar pictures (the earlier ones of φ⁴ theory). Two and three points, and the sources of
+  Z[J], keep their layouts.
 - **The lines of a box leave from its corners**, as those of a triangle already did. A box joined by two lines to a
   circle (the Thouless criterion, Δ = −½ Δ L₀ Γ_pp) no longer moves its ports along its side to the circle's spacing:
   the lines end at its corners, and the circle's ports face them 55 degrees (before 45) off the line of the centres, so
@@ -32,6 +55,11 @@
 
 ### Documents
 
+- **Four-point functions with the new option.** The showcase draws Γ⁽⁴⁾ of φ⁴ theory as `DiagramPlot` draws it (the
+  diagrams of the channel t with the legs c and d crossing) and then with `"ExternalOrder" -> "Uncrossed"`; the parts of
+  Γ⁰ of the electron gas reducible in pp, and the T-matrix, with `{"Uncrossed", {x4, x2, x3, x1}}` (the same pictures
+  as before); the parquet decomposition of φ⁴ theory draws the channel t too, uncrossed. The manual shows both values of
+  the option under the options of the pictures, and `Examples.wl` the uncrossed Γ⁽⁴⁾ and the channel t.
 - **The showcase shows what its code gives.** The irreducible vertex Γ⁰ follows `DiagramPlot[irreducibleVertex, {x1, x2,
   x3, x4}]` as that command draws it, order by order (the diagrams reducible in the particle–particle channel with their
   two lines crossing); a second code block then sorts it by channel with `ParquetDecomposition` and draws the parts

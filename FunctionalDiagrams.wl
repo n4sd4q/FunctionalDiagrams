@@ -120,7 +120,7 @@ ExternalSource::usage = "ExternalSource[x] is the source J(x) with respect to wh
 
 (* ----------------------------------------------------------------- pictures *)
 DrawDiagram::usage = "DrawDiagram[term, {x1, ..., xn}, options] draws one term as a Feynman diagram. Propagators are lines, interaction lines are wavy (see DeclareLineStyle), factors with three or more labels are grey blobs (vertex functions), factors with one label are source insertions. External points of correlation functions are open circles; in amputated vertex functions (self-energies, vertices) the external labels sit on vertices and are drawn as external legs; labels joined by a DeltaFunction are the same point. Options as for DiagramPlot.";
-DiagramPlot::usage = "DiagramPlot[expr, {x1, ..., xn}, options] draws every canonical term of expr with its weight: the number written in front of a picture, times the values of its elements, is the term. A propagator stands for itself, an interaction line (DeclareInteractionLine) for minus its kernel, a local vertex (DeclareLocalVertex) for minus its kernel, and a vertex for minus its coupling (DeclareCoupling): the minus signs come from expanding exp(-S_int). An anomalous line (\"DivergingArrows\", \"ConvergingArrows\") or an antisymmetric blob of two labels shows no orientation: the weight takes it read along its fermion line, around a loop in either sense, along an open line from its end at the first external label. A kernel OperatorKernel[D^-1] is drawn as a line: in a term with lines D (a derivative of a trace before ExpandTrace) it gives the message inversekernel. Options: \"VertexLabels\" -> Automatic (external labels) | All (also z1, z2, ...) | None; \"LegDirections\" -> Automatic | \"Alternating\" | {\"Out\", \"In\", ...} (arrows on the external legs of fermionic vertex functions); \"AmputatedLegs\" -> Automatic | True | False; \"InteractionStyle\" -> Automatic | \"Wavy\" | \"DoubleWavy\" | \"Curly\" | \"Dashed\" | \"Dotted\" | \"Zigzag\" (the style of all the interaction lines); \"Directed\" -> {G, ...} and \"Interactions\" -> {V, ...} (heads drawn as arrows or as interaction lines in this picture only); \"Couplings\" -> {g, ...} (couplings absorbed into the vertices in this picture only, as with DeclareCoupling); \"ExternalOrder\" -> Automatic | {x1, ...}; \"Columns\" -> n; \"Weights\" -> True | False | \"Coefficients\" (the coefficients of the terms, every line and vertex standing for its kernel); \"LineWidth\" -> width of the lines in points; \"Output\" -> \"Grid\" (a grid of weights and pictures); ImageSize -> width of the picture in pixels (Automatic: 46 pixels per diagram unit); \"Appearance\" -> Automatic (dark lines and text on a light notebook, light ones on a dark notebook, through LightDarkSwitched of Mathematica 14.3 or later; before 14.3 the light colours) | \"Light\" | \"Dark\" (forced, on a background of the paper colour: white, or the dark grey of a dark notebook; SetOptions[{DiagramPlot, DrawDiagram}, \"Appearance\" -> \"Dark\"] for a session). DiagramToTikZ ignores it: the TikZ code is for white pages.";
+DiagramPlot::usage = "DiagramPlot[expr, {x1, ..., xn}, options] draws every canonical term of expr with its weight: the number written in front of a picture, times the values of its elements, is the term. A propagator stands for itself, an interaction line (DeclareInteractionLine) for minus its kernel, a local vertex (DeclareLocalVertex) for minus its kernel, and a vertex for minus its coupling (DeclareCoupling): the minus signs come from expanding exp(-S_int). An anomalous line (\"DivergingArrows\", \"ConvergingArrows\") or an antisymmetric blob of two labels shows no orientation: the weight takes it read along its fermion line, around a loop in either sense, along an open line from its end at the first external label. A kernel OperatorKernel[D^-1] is drawn as a line: in a term with lines D (a derivative of a trace before ExpandTrace) it gives the message inversekernel. Options: \"VertexLabels\" -> Automatic (external labels) | All (also z1, z2, ...) | None; \"LegDirections\" -> Automatic | \"Alternating\" | {\"Out\", \"In\", ...} (arrows on the external legs of fermionic vertex functions); \"AmputatedLegs\" -> Automatic | True | False; \"InteractionStyle\" -> Automatic | \"Wavy\" | \"DoubleWavy\" | \"Curly\" | \"Dashed\" | \"Dotted\" | \"Zigzag\" (the style of all the interaction lines); \"Directed\" -> {G, ...} and \"Interactions\" -> {V, ...} (heads drawn as arrows or as interaction lines in this picture only); \"Couplings\" -> {g, ...} (couplings absorbed into the vertices in this picture only, as with DeclareCoupling); \"ExternalOrder\" -> Automatic | {x1, ...} | \"Uncrossed\" | {\"Uncrossed\", {x1, ...}} (four external labels are at the corners counterclockwise from the top left, in the order given to the function or in the order of the list, and a diagram whose channel joins two opposite corners is drawn with two legs crossing as an X; with \"Uncrossed\" each diagram has instead the legs of one side exchanged where that keeps its lines from crossing, the labels moving with their legs); \"Columns\" -> n; \"Weights\" -> True | False | \"Coefficients\" (the coefficients of the terms, every line and vertex standing for its kernel); \"LineWidth\" -> width of the lines in points; \"Output\" -> \"Grid\" (a grid of weights and pictures); ImageSize -> width of the picture in pixels (Automatic: 46 pixels per diagram unit); \"Appearance\" -> Automatic (dark lines and text on a light notebook, light ones on a dark notebook, through LightDarkSwitched of Mathematica 14.3 or later; before 14.3 the light colours) | \"Light\" | \"Dark\" (forced, on a background of the paper colour: white, or the dark grey of a dark notebook; SetOptions[{DiagramPlot, DrawDiagram}, \"Appearance\" -> \"Dark\"] for a session). DiagramToTikZ ignores it: the TikZ code is for white pages.";
 DiagramToTikZ::usage = "DiagramToTikZ[expr, {x1, ..., xn}, options] gives LaTeX/TikZ code for the diagrams of expr: a sum of tikzpictures with their weights, ready for a paper (it needs the TikZ library decorations.pathmorphing). Same options as DiagramPlot, plus \"Scale\" -> length of one diagram unit in cm (0.7), \"LineWidth\" -> width of the lines in pt (0.7; arrow heads, dashes and double lines follow), \"LabelFont\" -> LaTeX font command of the labels (\"\\\\small\"), \"Labels\" -> rules from labels to LaTeX strings, and \"Output\" -> \"List\" for a list of {weight, picture} strings.";
 ExpressionToLaTeX::usage = "ExpressionToLaTeX[expr, options] gives the LaTeX code of a formula: integrals with their variables as a subscript, functions with their arguments in parentheses, delta functions, Grassmann products in their order. Options: \"Names\" -> {h -> \"G_0\", ...}, the LaTeX of heads and symbols (by default the name given with DeclareDisplayName, else the symbol name, with greek letters, trailing digits and a final bar recognised) and of subexpressions (FermiFunction[xi[p1]] -> \"n_1\"); \"Labels\" -> {x -> \"x_1\", ...}, the LaTeX of labels; \"Subscripts\" -> {xi, v, ...}, heads whose arguments are written as a subscript, xi[p] as \\xi_{p} (dispersions and potentials in momentum space).";
 
@@ -2675,6 +2675,14 @@ treeLeafOrder[ext_, pairs_] := Module[{order = {}, minimumIndex, visit},
    visit[First[ext], None];
    Join[order, Complement[ext, order]]];
 
+(* a layout whose lines (node pairs, taken straight) do not cross, with no two nodes at one place and no node on a line that
+   does not end at it *)
+cleanLayoutQ[positions_, pairs_] := Module[{rules = Rule @@@ positions, segs, pts},
+   segs = Select[DeleteDuplicates[Sort /@ pairs], MatrixQ[Replace[#, rules, {1}], NumberQ] &];
+   pts = Cases[positions, {v_, p_} /; Head[v] =!= leg :> {v, p}];
+   mutualCrossingCount[Replace[segs, rules, {2}]] == 0 &&
+    ! AnyTrue[Subsets[pts[[All, 2]], {2}], vectorNorm[#[[1]] - #[[2]]] < 0.1 &] &&
+    ! AnyTrue[pts, Function[q, AnyTrue[segs, ! MemberQ[#, q[[1]]] && segmentDistance[q[[2]], Replace[#, rules, {1}]] < 0.06 &]]]];
 (* if the graph is a forest, the leaf orders of its trees one after the other (planar placement); else the given order *)
 forestLeafOrder[ext_, free_, pairs_] := Module[{components = {}},
    Do[If[FreeQ[components, v], AppendTo[components, componentOf[v, pairs]]], {v, ext}];
@@ -2717,18 +2725,30 @@ layoutWithExternals[externalLabels_, externalNodes_, amputated_, free_, pairs_, 
       externalOrder === Automatic && n >= 3 && free =!= {} && ! Or @@ amputated,
       forestLeafOrder[externalNodes, free, pairs] /. Thread[externalNodes -> externalLabels],
       True, externalLabels];
-    (* one node with two external labels at opposite corners, the other two labels on other nodes, or two nodes each
-       with a pair at opposite corners (a bubble in the channel (x1 x3|x2 x4)): the labels at the right corners are
-       exchanged, so that the legs of a node are neighbours and nothing crosses *)
+    (* four points without an order (the sources of Z[J]): one node with two of them at opposite corners, the other two on
+       other nodes, or two nodes each with a pair at opposite corners (a bubble in the channel (x1 x3|x2 x4)): the points at
+       the right corners are exchanged, so that the legs of a node are neighbours and nothing crosses. With an order (the
+       external labels of a four-point function) a node with two labels at opposite corners, which would be in the middle
+       with its legs across the picture, has the labels on the right exchanged in the same way, and the caller crosses
+       their legs back (crossedLegPositions) *)
     (* an external point at the end of a single line counts as the vertex it hangs from (two points joined to one vertex
        of phi^4 theory are placed like two labels of one node) *)
-    If[n == 4 && ! ListQ[externalOrder],
+    If[n == 4,
      With[{attach = Table[With[{v = externalNodes[[k]]}, With[{nb = neighboursOf[v, pairs]},
           If[Count[externalNodes, v] == 1 && Length[nb] == 1 && MemberQ[free, First[nb]], First[nb], v]]], {k, n}]},
       With[{corners = Table[Sort[Table[First[First[Position[order, externalLabels[[k]], {1}]]],
             {k, Select[Range[n], attach[[#]] === node &]}]], {node, DeleteDuplicates[attach]}]},
-       If[(Count[corners, {1, 3} | {2, 4}] == 1 && Length[DeleteDuplicates[attach]] == 3) ||
-         (Count[corners, {1, 3} | {2, 4}] == 2 && Length[DeleteDuplicates[attach]] == 2), order = order[[{1, 2, 4, 3}]]]]]];
+       Which[
+        ! ListQ[externalOrder],
+        If[(Count[corners, {1, 3} | {2, 4}] == 1 && Length[DeleteDuplicates[attach]] == 3) ||
+          (Count[corners, {1, 3} | {2, 4}] == 2 && Length[DeleteDuplicates[attach]] == 2), order = order[[{1, 2, 4, 3}]]],
+        Count[corners, {1, 3} | {2, 4}] >= 1 && ! TrueQ[$cornersAsGiven],
+        (* unless the picture with the labels as given is clean (a vertex at the centre of an X, with tadpoles on its arms) *)
+        With[{given = Block[{$cornersAsGiven = True}, layoutWithExternals[externalLabels, externalNodes, amputated, free, pairs,
+             propagatorPairs, externalOrder]]},
+         If[cleanLayoutQ[given[[1]], Join[pairs, legPairs]] && cornerArrangement[given[[1]], externalLabels, externalNodes, amputated] === order,
+          Return[given]]];
+        order = order[[{1, 2, 4, 3}]]]]]];
     (* three labels on two nodes and nothing else (a bubble of a three-point vertex): the order turned so that the node
        of two labels is on the left, its legs at the corners on the left, and the third leg points to the right *)
     If[n == 3 && ! ListQ[externalOrder] && Length[DeleteDuplicates[externalNodes]] == 2 &&
@@ -3762,7 +3782,27 @@ freeEndTreeLayout[component_List, lines_List, blobs_List, stubs_List, pairs_List
    {leaves = Select[component, Head[#] =!= blob && Count[Flatten[Select[pairs, MemberQ[component, #[[1]]] &]], #] == 1 &]},
    If[Length[leaves] < 2 || Intersection[component, Cases[stubs, {u_, _} :> u]] =!= {}, None,
     treeLayoutWithExternals[leaves, leaves, Table[False, {Length[leaves]}], component, lines, blobs, True]]];
-treeLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_List, lines_List, blobs_List, freeEnds_ : False] := Module[
+(* With four external points and their order (the corners counterclockwise from the top left), a tree of two vertex functions
+   joined by a line whose pairs of labels are the first two and the last two is drawn as it is, one whose pairs are the
+   first and the last two and the middle two upright (laid out turned, with the order turned, and turned back); in the
+   channel that joins opposite corners it is drawn upright with the labels on the right exchanged, and the caller crosses
+   their legs (crossedLegPositions) *)
+treeLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_List, lines_List, blobs_List, freeEnds_ : False,
+   order_ : Automatic] := Module[{res, turned, found = None},
+   If[Length[labels] =!= 4 || ! ListQ[order] || freeEnds,
+    treeLayoutOfOrder[labels, labelNodes, amputated, mainNodes, lines, blobs, freeEnds, Automatic],
+    res = treeLayoutOfOrder[labels, labelNodes, amputated, mainNodes, lines, blobs, False, order];
+    If[res === None, None,
+     Do[res = treeLayoutOfOrder[labels, labelNodes, amputated, mainNodes, lines, blobs, False, c];
+      If[cornerArrangement[res[[1]], labels, labelNodes, amputated] === c, found = res; Break[]];
+      (* turned clockwise: the corners top left, bottom left, bottom right, top right go to top right, top left, bottom
+         left, bottom right *)
+      turned = treeLayoutOfOrder[labels, labelNodes, amputated, mainNodes, lines, blobs, False, c[[{4, 1, 2, 3}]]];
+      turned = {Table[{q[[1]], {q[[2, 2]], -q[[2, 1]]}}, {q, turned[[1]]}], turned[[2]], turned[[3]]};
+      If[cornerArrangement[turned[[1]], labels, labelNodes, amputated] === c, found = turned; Break[]],
+      {c, {order, order[[{1, 2, 4, 3}]]}}];
+     If[found === None, treeLayoutOfOrder[labels, labelNodes, amputated, mainNodes, lines, blobs, False, order], found]]]];
+treeLayoutOfOrder[labels_List, labelNodes_List, amputated_List, mainNodes_List, lines_List, blobs_List, freeEnds_, order_] := Module[
    {treeLines, blobNodes, nbrs, blobNbrs, distances, ecc, centres, pos = {}, place, labelRank, subtreeRank, sortChildren,
     perpendicular, innerQ, shapeKey, upperFirst},
    If[Or @@ amputated || Length[labels] < 2 || Length[DeleteDuplicates[labelNodes]] < Length[labelNodes], Return[None]];
@@ -3787,7 +3827,8 @@ treeLayoutWithExternals[labels_List, labelNodes_List, amputated_List, mainNodes_
    centres = Pick[blobNodes, Thread[ecc == Min[ecc]]];
    (* the children of a node in the order of the first label of their subtrees; with free ends, by the shapes of their
       subtrees (number of leaves, kind of node, shapes of the children), as a palindrome *)
-   labelRank[v_] := First[First[Position[labelNodes, v, {1}]]];
+   labelRank[v_] := If[ListQ[order], First[First[Position[order, labels[[First[First[Position[labelNodes, v, {1}]]]]], {1}]]],
+     First[First[Position[labelNodes, v, {1}]]]];
    subtreeRank[v_, parent_] := If[! innerQ[v], labelRank[v],
      Min[Join[{Infinity}, Table[subtreeRank[u, v], {u, DeleteCases[nbrs[v], parent]}]]]];
    shapeKey[v_, parent_] := If[! innerQ[v], {1, "", {}},
@@ -4781,6 +4822,104 @@ straightenedSourceLines[positions_, sources_, pairs_] := Module[{pos = positions
     {s, sources}];
    pos];
 
+(* ---------------------------------------------------------------- the corners of a four-point picture *)
+(* The four external labels are at the corners counterclockwise from the top left (top left, bottom left, bottom right,
+   top right), in the order given: the external labels of the picture, or "ExternalOrder" -> {x1, ...}. A diagram whose
+   channel joins two opposite corners is drawn crossed: its layout exchanges the labels of one side (the general layout and
+   the rails of fermion lines the right ones, a tree of two vertex functions joined by a line is turned upright, a blob
+   picture has the corners of its ports), and the two legs are put back, crossing as an X just outside the picture.
+   "ExternalOrder" -> "Uncrossed" (or {"Uncrossed", {x1, ...}}) takes instead, per diagram, the first of the order, the
+   order with the labels on the right exchanged and the order with the labels on the top exchanged (the three cyclic orders
+   of four corners) whose picture has fewest crossings, the labels moving with their legs. Result: {order, uncrossed} *)
+externalOrderSpec[eo_, labels_List] := With[{arrange = Function[l, Join[Select[l, MemberQ[labels, #] &], Select[labels, ! MemberQ[l, #] &]]]},
+   Which[
+    eo === "Uncrossed", {labels, True},
+    MatchQ[eo, {"Uncrossed", _List}], {arrange[eo[[2]]], True},
+    ListQ[eo], {arrange[eo], False},
+    True, {labels, False}]];
+(* the orders with the labels of one side exchanged: {order, the two labels, outward normal of the side} for the right,
+   top, bottom and left sides *)
+cornerExchanges[o_List] := {{o[[{1, 2, 4, 3}]], o[[{3, 4}]], {1., 0.}}, {o[[{4, 2, 3, 1}]], o[[{1, 4}]], {0., 1.}},
+   {o[[{1, 3, 2, 4}]], o[[{2, 3}]], {0., -1.}}, {o[[{2, 1, 3, 4}]], o[[{1, 2}]], {-1., 0.}}};
+(* the labels at the corners top left, bottom left, bottom right and top right of a layout: the ends of their legs (or their
+   points) in the four quadrants around their mean; None if two are in one quadrant *)
+cornerArrangement[positions_, labels_, labelNodes_, amputated_] := Module[{ends, m, q},
+   ends = Table[Replace[If[amputated[[k]], leg[labels[[k]]], labelNodes[[k]]], Rule @@@ positions], {k, Length[labels]}];
+   If[! MatrixQ[ends, NumberQ], Return[None]];
+   m = Mean[ends];
+   q = Table[With[{dd = e - m}, Which[dd[[1]] < -10.^-6 && dd[[2]] > 10.^-6, 1, dd[[1]] < -10.^-6 && dd[[2]] < -10.^-6, 2,
+       dd[[1]] > 10.^-6 && dd[[2]] < -10.^-6, 3, dd[[1]] > 10.^-6 && dd[[2]] > 10.^-6, 4, True, 0]], {e, ends}];
+   If[Sort[q] =!= {1, 2, 3, 4}, None, labels[[Ordering[q]]]]];
+(* the crossings of the lines of a layout taken straight, its legs included; two nodes at one place count as two *)
+layoutCrossingCount[positions_, lines_, labels_, labelNodes_, amputated_] := Module[{rules = Rule @@@ positions, segs, pts},
+   segs = DeleteDuplicates[Join[Cases[lines, {u_, v_, _, _} /; u =!= v :> Sort[{u, v}]],
+      Table[{labelNodes[[k]], leg[labels[[k]]]}, {k, Select[Range[Length[labels]], amputated[[#]] &]}]]];
+   segs = Select[Replace[segs, rules, {2}], MatrixQ[#, NumberQ] &];
+   pts = Cases[positions, {v_, p_} /; Head[v] =!= leg :> p];
+   mutualCrossingCount[segs] + 2 Count[Flatten[Table[vectorNorm[pts[[i]] - pts[[j]]] < 0.05, {i, Length[pts]}, {j, i + 1, Length[pts]}]], True]];
+(* the legs (or the lines to the points) of the labels la, lb, exchanged by the layout on the side of the outward normal n,
+   put back: their ends exchanged (each at the height, along the side, of the vertex of the other leg) and moved out along n
+   until the two lines cross as an X $legCrossingGap outside everything else drawn with the labels exchanged (items; a
+   bubble the legs then leave towards is flattened into a lens, and the X is a little further out) *)
+$legCrossingGap = 0.3;
+(* the node at the end of the leg of the label l (leg[l], or its point) and the node where the leg starts (the vertex of the
+   label, or the other end of the single line at its point; None if several lines end there) *)
+legEndAndStart[l_, labels_, labelNodes_, amputated_, lines_] := With[{k = First[First[Position[labels, l, {1}]]]}, With[{v = labelNodes[[k]]},
+    Which[
+     amputated[[k]], {leg[l], v},
+     Count[labelNodes, v] == 1 && Count[lines, {v, _, _, _} | {_, v, _, _}] == 1, {v, First[Cases[lines, {v, w_, _, _} | {w_, v, _, _} :> w]]},
+     True, {v, None}]]];
+(* the lines drawn (items) that the legs of the labels la, lb cross, other than each other *)
+crossedLegDefects[items_, positions_, {la_, lb_}, labels_, labelNodes_, amputated_, lines_] := Module[{rules = Rule @@@ positions, se, legs, ends, others},
+   se = Table[legEndAndStart[l, labels, labelNodes, amputated, lines], {l, {la, lb}}];
+   If[MemberQ[se[[All, 2]], None], Return[0]];
+   legs = Replace[se[[All, {2, 1}]], rules, {2}]; ends = legs[[All, 2]];
+   If[! MatrixQ[Flatten[legs, 1], NumberQ], Return[0]];
+   others = Flatten[Table[With[{pts = lineCoarsePoints[it[[2]]]},
+       If[AnyTrue[ends, Function[e, AnyTrue[pts, vectorNorm[# - e] < 0.02 &]]], {}, Partition[pts, 2, 1]]], {it, Cases[items, {"E", __}]}], 1];
+   Total[Table[crossingsWith[{lg[[1]] + 0.08 unitVectorOf[lg[[2]] - lg[[1]]], lg[[2]]}, others], {lg, legs}]]];
+crossedLegPositions[positions_, items_, {la_, lb_}, n_, labels_, labelNodes_, amputated_, lines_] := Module[
+   {rules = Rule @@@ positions, endOf, vertexOf, pa, pb, qa, qb, t = {-n[[2]], n[[1]]}, near, reachOf, crossAt, solve, lo,
+    ta, tb, placed},
+   endOf[l_] := legEndAndStart[l, labels, labelNodes, amputated, lines][[1]];
+   vertexOf[l_] := legEndAndStart[l, labels, labelNodes, amputated, lines][[2]];
+   pa = Replace[endOf[la], rules]; pb = Replace[endOf[lb], rules];
+   (* a label at a vertex of its own (several lines end there): the two vertices change places, their lines crossing *)
+   If[vertexOf[la] === None || vertexOf[lb] === None,
+    Return[If[endOf[la] =!= endOf[lb] && Count[labelNodes, endOf[la]] == 1 && Count[labelNodes, endOf[lb]] == 1 && MatrixQ[{pa, pb}, NumberQ],
+      Replace[positions, {{endOf[la], _} -> {endOf[la], pb}, {endOf[lb], _} -> {endOf[lb], pa}}, {1}], positions]]];
+   qa = Replace[vertexOf[la], rules]; qb = Replace[vertexOf[lb], rules];
+   If[! MatrixQ[{pa, pb, qa, qb}, NumberQ] || vectorNorm[qa - qb] < 0.05, Return[positions]];
+   (* the ends change places along the side: each at the height of the other vertex, at least 0.6 apart *)
+   {tb, ta} = With[{u = {t . qa, t . qb}, s = Sign[t . pa - t . pb]}, With[{m = Mean[u], h = Max[Abs[u[[1]] - u[[2]]]/2, 0.3]},
+      If[s >= 0, {m + h, m - h}, {m - h, m + h}]]];
+   placed[xx_] := Replace[positions, {{endOf[la], _} -> {endOf[la], xx n + ta t}, {endOf[lb], _} -> {endOf[lb], xx n + tb t}}, {1}];
+   near[p_, e_] := vectorNorm[p - e] < 0.02;
+   (* how far out along n everything else reaches, the ends of the two lines at e1, e2 *)
+   reachOf[its_, e1_, e2_] := Max[Join[{n . qa, n . qb}, (n . #) & /@ itemPoints[Select[its, Function[it, Switch[it[[1]],
+          "L", ! (near[it[[3]], e1] || near[it[[3]], e2]),
+          "T", ! MemberQ[{la, lb}, it[[3]]],
+          "N", ! (near[it[[2]], e1] || near[it[[2]], e2]),
+          "E", ! AnyTrue[lineCoarsePoints[it[[2]]], near[#, e1] || near[#, e2] &],
+          _, True]]]]]];
+   (* how far out along n the two lines cross, with their ends at xx along n; -Infinity if they do not *)
+   crossAt[xx_] := With[{a = xx n + ta t - qa, b = xx n + tb t - qb}, With[{det = a[[2]] b[[1]] - a[[1]] b[[2]]},
+      If[Abs[det] < 10.^-9, -Infinity,
+       With[{s = ((qb - qa)[[2]] b[[1]] - (qb - qa)[[1]] b[[2]])/det, r = (a[[1]] (qb - qa)[[2]] - a[[2]] (qb - qa)[[1]])/det},
+        If[0 < s < 1 && 0 < r < 1, n . (qa + s a), -Infinity]]]]];
+   lo = Max[n . qa, n . qb] + 0.2;
+   (* the nearest ends whose lines cross $legCrossingGap beyond the reach r, and far enough beyond the vertices to cross
+      at about a right angle *)
+   solve[r_] := Module[{a = lo, b = lo + 0.5, target = Max[r + $legCrossingGap, Max[n . qa, n . qb] + 0.45 Abs[ta - tb]]},
+     Which[
+      crossAt[a] >= target, a,
+      crossAt[lo + 8.] === -Infinity, lo + 0.4,
+      True,
+      While[crossAt[b] < target && b < lo + 8., b = b + 0.5];
+      Do[With[{mid = (a + b)/2}, If[crossAt[mid] < target, a = mid, b = mid]], {20}];
+      b]];
+   placed[solve[reachOf[items, pa, pb]]]];
+
 (* geometry of a canonical term, with its diagramElements: {weight, items, bounding box} *)
 diagramGeometry[t_diagramTerm, elements_List, ext0_List, opts_List, legDirections_] := Block[
    {$pictureBlobHeads = Union[$sumBlobHeads, Cases[elements[[3]], {_, _, h_} :> h]], $pictureBoxFloor = $sumBoxFloor},
@@ -4818,18 +4957,76 @@ diagramGeometryOfPicture[t_diagramTerm, elements_List, ext0_List, opts_List, leg
       Table[{{k}, First[Select[mainComponents, MemberQ[#, externalNodes[[k]]] &]]}, {k, 2}],
       {{Range[Length[ext]], Flatten[mainComponents]}}];
     Do[With[{ks = g[[1]], mainNodes = g[[2]]},
-      With[{unitLayout = Replace[blobLayoutWithExternals[ext[[ks]], externalNodes[[ks]], amputated[[ks]], mainNodes, lines, blobs],
-          None :> Replace[unitLayoutWithExternals[ext[[ks]], externalNodes[[ks]], amputated[[ks]], mainNodes, lines,
-           drawingOption[opts, "ExternalOrder"]],
-          None :> treeLayoutWithExternals[ext[[ks]], externalNodes[[ks]], amputated[[ks]], mainNodes, lines, blobs]]]},
-       If[unitLayout =!= None, {positions, mode, circles} = unitLayout,
-        {positions, mode} = Block[{$multiplePairs = multiplePairs, $selfLoopNodes = Cases[lines, {u_, u_, _, _} :> u]}, layoutWithExternals[ext[[ks]], externalNodes[[ks]], amputated[[ks]], Select[mainNodes, ! MemberQ[externalNodes, #] &],
-          Select[pairs, MemberQ[mainNodes, #[[1]]] &], Select[propagatorPairs, MemberQ[mainNodes, #[[1]]] &], drawingOption[opts, "ExternalOrder"]]];
-        {positions, circles} = roundFermionLoops[positions, lines, mode, externalNodes[[ks]], Select[pairs, MemberQ[mainNodes, #[[1]]] &]]]];
-      AppendTo[frames, {Block[{$loopCircles = circles, $densityNodes = (# /. rules) & /@ Select[ext[[ks]], MemberQ[$densityLabels, #] &],
-         $densityNodeLabels = Table[(e /. rules) -> e, {e, Select[ext[[ks]], MemberQ[$densityLabels, #] &]}]},
+      Module[{layoutOf, itemsOf, spec, kind, res, count, best, bestCount, arrangement, exchange, frameLines},
+       (* the layout of the part with the external labels, with the labels in the order ord: {positions, mode, circles, kind} *)
+       layoutOf[ord_] := Module[{blob, unit, pos, md, cs},
+         blob = blobLayoutWithExternals[ext[[ks]], externalNodes[[ks]], amputated[[ks]], mainNodes, lines, blobs];
+         unit = If[blob =!= None, None, Replace[unitLayoutWithExternals[ext[[ks]], externalNodes[[ks]], amputated[[ks]], mainNodes, lines, ord],
+            None :> treeLayoutWithExternals[ext[[ks]], externalNodes[[ks]], amputated[[ks]], mainNodes, lines, blobs, False, ord]]];
+         Which[
+          blob =!= None, Append[blob, "blob"],
+          unit =!= None, Append[unit, "unit"],
+          True,
+          {pos, md} = Block[{$multiplePairs = multiplePairs, $selfLoopNodes = Cases[lines, {u_, u_, _, _} :> u]}, layoutWithExternals[ext[[ks]],
+             externalNodes[[ks]], amputated[[ks]], Select[mainNodes, ! MemberQ[externalNodes, #] &],
+             Select[pairs, MemberQ[mainNodes, #[[1]]] &], Select[propagatorPairs, MemberQ[mainNodes, #[[1]]] &], ord]];
+          {pos, cs} = roundFermionLoops[pos, lines, md, externalNodes[[ks]], Select[pairs, MemberQ[mainNodes, #[[1]]] &]];
+          {pos, md, cs, "general"}]];
+       itemsOf[pos_, md_, cs_] := Block[{$loopCircles = cs, $densityNodes = (# /. rules) & /@ Select[ext[[ks]], MemberQ[$densityLabels, #] &],
+          $densityNodeLabels = Table[(e /. rules) -> e, {e, Select[ext[[ks]], MemberQ[$densityLabels, #] &]}]},
          frameItems[Join[Select[nodes, MemberQ[mainNodes, #] &], leg /@ Select[amputatedExt, MemberQ[ext[[ks]], #[[1]]] &][[All, 1]]],
-          positions, lines, blobs, stubs, externalNodes, amputatedExt, legDirections, d, mode, vertexLabels]], True}]], {g, groups}]];
+          pos, lines, blobs, stubs, externalNodes, amputatedExt, legDirections, d, md, vertexLabels]];
+       exchange = None;
+       If[Length[ks] == 4,
+        (* four external points: the labels at the corners counterclockwise from the top left, in the order given *)
+        spec = externalOrderSpec[drawingOption[opts, "ExternalOrder"], ext[[ks]]];
+        frameLines = Select[lines, MemberQ[mainNodes, #[[1]]] &];
+        If[spec[[2]],
+         (* "Uncrossed": the first of the order, the order with the legs on the right exchanged and the order with the legs on
+            the top exchanged (the three cyclic orders) whose picture has fewest crossings; the labels go with their legs *)
+         best = None; bestCount = Infinity;
+         Do[res = layoutOf[c];
+          count = layoutCrossingCount[res[[1]], frameLines, ext[[ks]], externalNodes[[ks]], amputated[[ks]]];
+          If[count < bestCount, best = res; bestCount = count];
+          If[bestCount == 0 || res[[4]] === "blob", Break[]], {c, {spec[[1]], cornerExchanges[spec[[1]]][[1, 1]], cornerExchanges[spec[[1]]][[2, 1]]}}];
+         {positions, mode, circles, kind} = best,
+         (* a layout that keeps its lines from crossing by exchanging the labels of one side (a channel that joins opposite
+            corners): the two legs put back, crossing as an X outside the picture *)
+         {positions, mode, circles, kind} = layoutOf[spec[[1]]];
+         arrangement = cornerArrangement[positions, ext[[ks]], externalNodes[[ks]], amputated[[ks]]];
+         If[arrangement =!= None && arrangement =!= spec[[1]],
+          exchange = SelectFirst[cornerExchanges[spec[[1]]], #[[1]] === arrangement &, None]]],
+        {positions, mode, circles, kind} = layoutOf[With[{eo = drawingOption[opts, "ExternalOrder"]},
+           If[ListQ[eo] && ! MatchQ[eo, {"Uncrossed", _}], eo, Automatic]]]];
+       items = itemsOf[positions, mode, circles];
+       If[exchange =!= None,
+        Module[{crossed, tried = {}, cand, defects, lay, best = None},
+         (* the legs crossed on the side of the exchange; if they cross other lines (two vertices on opposite sides of a
+            loop), on the other sides, the labels of that side exchanged in the layout, and the one with fewest such
+            crossings *)
+         (* a loop drawn as a circle through the vertex of a crossed leg, which would leave it across the circle, is drawn
+            with straight lines (a polygon) when that crosses fewer lines *)
+         crossed[lay0_, ex_] := Module[{attempt, res, starts, cs},
+           attempt[cs0_] := Module[{its = itemsOf[lay0[[1]], lay0[[2]], cs0], pos, its2},
+             pos = crossedLegPositions[lay0[[1]], its, ex[[2]], ex[[3]], ext[[ks]], externalNodes[[ks]], amputated[[ks]], frameLines];
+             its2 = itemsOf[pos, lay0[[2]], cs0];
+             {pos, lay0[[2]], cs0, its2, crossedLegDefects[its2, pos, ex[[2]], ext[[ks]], externalNodes[[ks]], amputated[[ks]], frameLines]}];
+           res = attempt[lay0[[3]]];
+           If[res[[5]] > 0,
+            starts = Table[legEndAndStart[l, ext[[ks]], externalNodes[[ks]], amputated[[ks]], frameLines][[2]], {l, ex[[2]]}];
+            cs = Select[lay0[[3]], Intersection[#[[1]], starts] === {} &];
+            If[cs =!= lay0[[3]], With[{res2 = attempt[cs]}, If[res2[[5]] < res[[5]], res = res2]]]];
+           res];
+         best = crossed[{positions, mode, circles}, exchange]; AppendTo[tried, exchange[[1]]];
+         If[best[[5]] > 0 && kind =!= "blob",
+          Do[If[! MemberQ[tried, ex[[1]]],
+            lay = layoutOf[ex[[1]]];
+            If[cornerArrangement[lay[[1]], ext[[ks]], externalNodes[[ks]], amputated[[ks]]] === ex[[1]],
+             cand = crossed[lay, ex];
+             If[cand[[5]] < best[[5]], best = cand]];
+            If[best[[5]] == 0, Break[]]], {ex, cornerExchanges[spec[[1]]]}]];
+         {positions, mode, circles, items} = best[[1 ;; 4]]]];
+       AppendTo[frames, {items, True}]]], {g, groups}]];
    Do[unitQ = False; straighten = {}; axisFrame = False; With[{unitLayout = unitLayoutVacuum[c, lines],
       (* the source insertions at the ends of single lines (the diagrams of Z[J] at a non-zero source): placed like the
          external points of a correlation function, on the axis or at the corners *)

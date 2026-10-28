@@ -162,8 +162,21 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
 - Diagrams in which every vertex lies on one fermion line (open or closed) use the unit layout (`unitLayoutWithExternals`,
   `unitLayoutVacuum`): a two-point function has its open line on a horizontal axis (`layoutAxisUnits`), a four-point
   function its two open lines as parallel rails (`layoutRailUnits`), with the legs towards the corners of a rectangle,
-  counterclockwise from the top left (`x1` out, `x2` in, `x3` out, `x4` in); `"ExternalOrder" -> {x4, x2, x3, x1}` for
-  particle–particle diagrams; a rail that would join opposite corners has the labels of the right corners exchanged.
+  counterclockwise from the top left (`x1` out, `x2` in, `x3` out, `x4` in); `"ExternalOrder" -> {"Uncrossed", {x4, x2,
+  x3, x1}}` for particle–particle diagrams drawn as ladders; a rail that would join opposite corners is laid out with the
+  labels of the right corners exchanged, and its two legs cross back (below).
+- Four external points, in every layout (boson or fermion, blob or not): the labels in the order given to the function
+  (or `"ExternalOrder" -> {x1, ...}`, a fixed order) at the corners counterclockwise from the top left. A diagram whose
+  channel joins opposite corners is drawn crossed: its layout exchanges the labels of one side (`layoutRailUnits` and
+  `layoutWithExternals` the right ones, when a node would hold two opposite corners and the picture as given is not
+  clean, `cleanLayoutQ`; `treeLayoutWithExternals` turns a tree of two vertices upright; a blob picture has the corners
+  of its ports), and `crossedLegPositions` puts the two legs back as an X, their ends at the heights of each other's
+  vertex, crossing 0.3 outside everything else and at about a right angle (a bubble they leave towards becomes a lens);
+  if they would cross another line, a loop circle through their vertices is drawn straight and the other sides are
+  tried (`crossedLegDefects`). `"ExternalOrder" -> "Uncrossed"` (or `{"Uncrossed", {x1, ...}}`) takes per diagram the
+  first of the order, the order with the right labels exchanged and the order with the top labels exchanged whose
+  layout has fewest straight crossings (`layoutCrossingCount`): the labels move with their legs. Two and three points
+  keep their layouts (any order of three is planar), and so do the source points of Z[J] (no order is given).
   Rails keep the picture low: along vertical rails the nodes are 0.75 apart, between horizontal rails the lines to loops
   are 0.5 long and the bubbles 0.7 wide (above and below them the lines to loops keep their length); a rail of one node (bare vertex) has its legs open at 110 degrees, 1.25 legLength
   long (up to 2.2 towards the corners beside a longer rail), a wide V, never a straight line. Loops are circles hanging from the lines and from each other (`placeBlock`, `placeUnit`, `placeLoopOnLine`; a loop

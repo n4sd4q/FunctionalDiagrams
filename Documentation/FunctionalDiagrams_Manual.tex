@@ -1963,7 +1963,9 @@ defaults, for instance \pkg{SetOptions[DiagramToTikZ, "Scale" -> 0.5]}, and an u
 "Labels" & \{\} & TikZ: rules \pkg{label -> "LaTeX"}; by default \pkg{x12} is written $x_{12}$, \pkg{lambda} $\lambda$, \pkg{etabar}
   $\bar\eta$\\
 "ExternalOrder" & Automatic & the order of the external labels, counterclockwise from the top left (for four points: top
-  left, bottom left, bottom right, top right)\\
+  left, bottom left, bottom right, top right): those given to the function, or a list \pkg{\{x1, \dots\}};
+  \texttt{"Uncrossed"}, \pkg{\{"Uncrossed", \{x1, \dots\}\}}: in each four-point diagram the legs of one side exchanged
+  where that keeps its lines from crossing\\
 "LegDirections" & Automatic & arrows on the external legs: inferred from the fermion lines; \texttt{"Alternating"}: out,
   in, out, in, \dots; a list of \texttt{"Out"}, \texttt{"In"}, \texttt{None}; \texttt{None}\\
 "AmputatedLegs" & Automatic & \texttt{True}: every external label gets a leg; \texttt{False}: none, all are points\\
@@ -1992,6 +1994,20 @@ The exchange diagram of the Green function at first order with \pkg{"VertexLabel
 \expictures{vertex_labels}
 \excode{interaction_style}
 \expictures{interaction_style}
+The four labels of a four-point function are at the corners counterclockwise from the top left, in the order given, in
+every diagram; a diagram whose channel joins two opposite corners, as the bubble of the channel $t$ $(ac|bd)$ of
+$\Gamma^{(4)}$ in $\phi^4$ theory (the example of \fnref{PerturbativeFullVertex}), is drawn with two of its legs crossing as
+an X just outside it. With \pkg{"ExternalOrder" -> "Uncrossed"} the legs of one side of such a diagram are exchanged
+instead, the labels moving with them: of the order given, the order with the two labels on the right exchanged and the
+order with the two labels on the top exchanged (the three ways of going round four corners), each diagram takes the first
+in which its lines, taken straight, cross least:
+\excode{external_order}
+\expictures{external_order}
+The value \pkg{\{"Uncrossed", \{x4, x2, x3, x1\}\}} starts from another order: here the particle--particle ladder of the
+bare vertex, the incoming legs $x_4$, $x_2$ on the left, with $x_1$ and $x_3$ exchanged where the particle entering at
+$x_2$ leaves at $x_1$:
+\excode{external_order_list}
+\expictures{external_order_list}
 
 \subsection{Line styles}
 
@@ -2034,8 +2050,8 @@ and the diagram is drawn line by line:
 \item a four-point function whose external points are the ends of two open lines has them as two parallel rails. The
   external labels are at the corners of a rectangle, in the order of \opt{ExternalOrder}; each rail joins two neighbouring
   corners, so that the rails are horizontal or vertical according to the pairing of the external points (if a rail would
-  join opposite corners, the labels at the two right corners are exchanged, so that the rails stay parallel). The legs
-  point to the corners;
+  join opposite corners, the rails are laid out with the labels of the two right corners exchanged, and the two legs on
+  the right cross back as an X; with \texttt{"Uncrossed"} they stay exchanged). The legs point to the corners;
 \item the interaction lines between the rails are perpendicular to them, so that ladders are drawn as ladders; two lines
   that cross make a symmetric cross, with more room around it. Arcs between vertices of one rail go outside, or inside
   when that avoids a conflict;
@@ -2058,7 +2074,9 @@ and the diagram is drawn line by line:
 with the external points at its leaves (the tree expansion, \fnref{ConnectedFunctionFromVertices}), has its central vertex,
 or its two central vertices, in the middle. Chains of vertices are straight; the legs of a vertex at the end of a chain
 are fanned outwards, those of a vertex along a chain perpendicular to it; a vertex with three or more vertex neighbours
-has them all around. The external points follow each other counterclockwise in the order of their labels. A tree whose
+has them all around. The external points follow each other counterclockwise in the order of their labels; a tree of
+four points and two vertices whose pairs are the first and the last label is drawn upright, and one that pairs opposite
+corners is drawn upright with the two legs on the right crossing. A tree whose
 leaves are free ends (its labels integrated over: the shapes of the trees $W^{(n)}$ under \fnref{ConnectedFunctionFromVertices}) is drawn
 alike, the free ends where the external points would be and its centre on the axis; its inner nodes may also be bare
 vertices of three or more propagators. Its leaves have no order: the branches of a vertex are arranged by their shapes,
@@ -2068,8 +2086,10 @@ so that a symmetric tree is drawn symmetric about the vertical axis, and the leg
 propagators alone --- are drawn by the general layout: the external points of a two-point function on
 a horizontal axis with the rest in layers above it; those of an $n$-point function on a circle (at the corners of a
 square for four points), counterclockwise from the top left, the open lines between neighbouring external points
-straight, and the rest placed by a barycentric embedding (a vertex with two legs at opposite corners has the labels of
-the right corners exchanged, so that its legs are neighbours); vacuum parts as a cycle with the rest inside, or several loops
+straight, and the rest placed by a barycentric embedding (a vertex with two legs at opposite corners, which would be in
+the middle with its legs across the picture, is placed with the labels of the right corners exchanged, and the two legs
+on the right cross back as an X outside the diagram; a loop through the vertex of such a leg is then drawn with straight
+lines if its circle would be crossed); vacuum parts as a cycle with the rest inside, or several loops
 side by side, around a circle, or one inside the other (two loops joined by three or more lines). Closed fermion loops are
 circles in this layout too. When three interaction lines would be diameters of a fermion loop drawn as a circle, meeting at
 its centre, one is drawn outside the loop, over the top, and the other two cross at the centre; with four or more the vertices

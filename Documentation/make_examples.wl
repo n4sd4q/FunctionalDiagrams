@@ -300,6 +300,14 @@ example["tikz_fock", "DiagramToTikZ[-G[x, y] V[x, y], {x, y}]", "Text"];
 example["vertex_labels", "fockDiagram = -IntegralOver[G0[x, z] G0[z, w] G0[w, y] V[z, w], {z, w}];
 DiagramPlot[fockDiagram, {x, y}, \"VertexLabels\" -> All]", "Pictures"];
 example["interaction_style", "DiagramPlot[fockDiagram, {x, y}, \"InteractionStyle\" -> \"Dashed\"]", "Pictures"];
+(* the corners of a four-point function: Gamma4 of phi^4 at lambda^2 (vertexPhi, above) with its legs exchanged where they
+   would cross, and the particle-particle ladder of the bare vertex (kernel, above) from the order x4, x2, x3, x1 *)
+example["external_order", "DiagramPlot[OrderPart[vertexPhi, lambda, 2], {a, b, c, d},
+  \"ExternalOrder\" -> \"Uncrossed\"]", "Pictures"];
+example["external_order_list", "bareVertex = kernel - (kernel /. {x2 -> x4, x4 -> x2});
+DiagramPlot[BetheSalpeterLadder[bareVertex, bareVertex, {x1, x2, x3, x4},
+   \"ParticleParticle\", G], {x1, x2, x3, x4},
+  \"ExternalOrder\" -> {\"Uncrossed\", {x4, x2, x3, x1}}]", "Pictures"];
 example["latex_names", "ExpressionToLaTeX[-IntegralOver[G0[x, z] G0[z, y] V[x, z], {z}],
     \"Names\" -> {G0 -> \"G_0\", V -> \"v\"},
   \"Labels\" -> {x -> \"1\", y -> \"2\"}]", "Text"];

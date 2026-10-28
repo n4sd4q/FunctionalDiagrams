@@ -428,6 +428,12 @@ DiagramPlot[vertexPhi4, {a, b, c, d}, "Columns" -> 5]
 (* -1 (the bare vertex, standing for -lambda); one bubble in each of the channels s, t, u
    (-1/2 each); nine diagrams of two loops *)
 
+(* ::Text:: *)
+(*The labels of a four-point function are at the corners counterclockwise from the top left, a, b, c, d, in every diagram: those of the channel t (ac|bd), which joins opposite corners, are drawn with the legs c and d crossing as an X. The option "ExternalOrder" -> "Uncrossed" exchanges instead the legs of one side of each such diagram, the labels moving with them:*)
+
+DiagramPlot[vertexPhi4, {a, b, c, d}, "Columns" -> 5, "ExternalOrder" -> "Uncrossed"]
+(* the same diagrams, those of the channel t with c and d exchanged *)
+
 (* ::Section:: *)
 (*7. The 2PI effective action: the Luttinger–Ward functional*)
 
@@ -576,12 +582,13 @@ DiagramPlot[directKernel + oneBubble + twoBubbles, {x1, x2, x3, x4},
 (*The particle–particle ladder*)
 
 (* ::Text:: *)
-(*Two particles scattering repeatedly: the bare vertex iterated in the particle–particle channel (the T-matrix). The option "ExternalOrder" -> {x4, x2, x3, x1} puts the incoming particles on the left, so that the rungs of the ladder are vertical.*)
+(*Two particles scattering repeatedly: the bare vertex iterated in the particle–particle channel (the T-matrix). The option "ExternalOrder" -> {"Uncrossed", {x4, x2, x3, x1}} puts the incoming particles on the left and, where the particle entering at x2 leaves at x1, exchanges the legs x1 and x3, so that the rungs of the ladder are vertical ("ExternalOrder" -> {x4, x2, x3, x1} alone keeps the order, and those two legs cross).*)
 
 bareVertex = OrderPart[fullVertex, InteractionPotential, 1];
 particleParticleLadder = BetheSalpeterLadder[bareVertex, bareVertex, {x1, x2, x3, x4},
     "ParticleParticle", DressedGreenFunction];
-DiagramPlot[particleParticleLadder, {x1, x2, x3, x4}, "ExternalOrder" -> {x4, x2, x3, x1}]
+DiagramPlot[particleParticleLadder, {x1, x2, x3, x4},
+    "ExternalOrder" -> {"Uncrossed", {x4, x2, x3, x1}}]
 (* the ladder with two rungs (+1) and the same with the outgoing particles exchanged
    (-1) *)
 
@@ -612,8 +619,8 @@ Map[Length[DiagramTerms[#]] &, parquetDecomposition]
    ParticleParticle -> 2, SeveralChannels -> 0|> *)
 
 DiagramPlot[parquetDecomposition["ParticleParticle"], {x1, x2, x3, x4},
-    "ExternalOrder" -> {x4, x2, x3, x1}]
-(* the two particle-particle diagrams of second order *)
+    "ExternalOrder" -> {"Uncrossed", {x4, x2, x3, x1}}]
+(* the two particle-particle diagrams of second order, the incoming particles on the left *)
 
 {SimplifyDiagrams[fullyIrreducibleVertex - parquetDecomposition["FullyIrreducible"]],
  SimplifyDiagrams[fullVertex - parquetDecomposition["ParticleHole"] - irreducibleVertex]}
@@ -630,9 +637,16 @@ CheckParquetEquations[fullVertex, {x1, x2, x3, x4}, DressedGreenFunction,
 (* ::Text:: *)
 (*For bosons the channels are s, t and u ("Statistics" -> "Boson"); the four-point vertex of φ^4 theory of section 6, to λ^3:*)
 
-Map[Length[DiagramTerms[#]] &, ParquetDecomposition[vertexPhi4, {a, b, c, d},
-    {DressedPropagator}, "Statistics" -> "Boson"]]
+phi4Channels = ParquetDecomposition[vertexPhi4, {a, b, c, d}, {DressedPropagator},
+    "Statistics" -> "Boson"];
+Map[Length[DiagramTerms[#]] &, phi4Channels]
 (* <|FullyIrreducible -> 1, s -> 4, t -> 4, u -> 4, SeveralChannels -> 0|> *)
+
+(* ::Text:: *)
+(*Each channel is drawn with DiagramPlot; the diagrams of t, which pairs opposite corners, with their legs c and d exchanged ("ExternalOrder" -> "Uncrossed"; by default these two legs cross):*)
+
+DiagramPlot[phi4Channels["t"], {a, b, c, d}, "ExternalOrder" -> "Uncrossed"]
+(* the bubble of the channel t (-1/2) and its three corrections at lambda^3 *)
 
 CheckParquetEquations[vertexPhi4, {a, b, c, d}, DressedPropagator, lambda, 3,
     "Statistics" -> "Boson"]["Residuals"]
@@ -1010,7 +1024,7 @@ DiagramPlot[gluonSelfEnergy, {x, y}]
 (*12. Pictures and formulas for a paper*)
 
 (* ::Text:: *)
-(*DiagramPlot, DrawDiagram (one term) and DiagramToTikZ take the same options, among them "VertexLabels" (Automatic, All, None), "LegDirections", "ExternalOrder", "Columns" and "Weights" ("Coefficients": the coefficients of the terms, instead of the weights of the pictures, in which an interaction line stands for −V and a vertex for minus its coupling); SetOptions changes their defaults. Line styles are declared once with DeclareLineStyle: "Plain", "Arrow", "DoubleArrow", "DottedArrow", "Double", "Wavy", "DoubleWavy", "Curly", "Dashed", "Dotted", "Zigzag", "Impurity", "DivergingArrows", "ConvergingArrows". In a skeleton expansion every line is the dressed one, drawn plain; a double line ("DoubleArrow", "DoubleWavy") marks the dressed propagator only where the bare one appears too, as in the Dyson equation and in Hedin's W = V + V P W of section 10. The options "Directed" -> {G, ...}, "Interactions" -> {V, ...} and "InteractionStyle" change the style of some lines in one picture only, as for W in Φ[G, W] (section 10). The skeleton self-energy, with every internal point labelled:*)
+(*DiagramPlot, DrawDiagram (one term) and DiagramToTikZ take the same options, among them "VertexLabels" (Automatic, All, None), "LegDirections", "ExternalOrder" (the order of the labels counterclockwise from the top left; "Uncrossed": in each four-point diagram the legs of one side exchanged where they would cross), "Columns" and "Weights" ("Coefficients": the coefficients of the terms, instead of the weights of the pictures, in which an interaction line stands for −V and a vertex for minus its coupling); SetOptions changes their defaults. Line styles are declared once with DeclareLineStyle: "Plain", "Arrow", "DoubleArrow", "DottedArrow", "Double", "Wavy", "DoubleWavy", "Curly", "Dashed", "Dotted", "Zigzag", "Impurity", "DivergingArrows", "ConvergingArrows". In a skeleton expansion every line is the dressed one, drawn plain; a double line ("DoubleArrow", "DoubleWavy") marks the dressed propagator only where the bare one appears too, as in the Dyson equation and in Hedin's W = V + V P W of section 10. The options "Directed" -> {G, ...}, "Interactions" -> {V, ...} and "InteractionStyle" change the style of some lines in one picture only, as for W in Φ[G, W] (section 10). The skeleton self-energy, with every internal point labelled:*)
 
 DiagramPlot[selfEnergy, {x, y}, "VertexLabels" -> All]
 (* the skeleton self-energy, every line a full G, with the internal points z1, z2, ... labelled *)

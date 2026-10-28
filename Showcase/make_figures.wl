@@ -212,12 +212,12 @@ writeValue["counts Gamma0", orderCounts[irreducibleVertex, InteractionPotential,
 writeOrders["irreducible_vertex", irreducibleVertex, {x1, x2, x3, x4}, InteractionPotential, orders];
 (* by channel: Gamma0 is particle-hole irreducible, so only the fully irreducible (bare) vertex and the diagrams reducible
    in the transverse particle-hole and particle-particle channels appear; the last drawn with the incoming legs x4, x2
-   on the left *)
+   on the left, x1 and x3 exchanged where the particle entering at x2 leaves at x1 *)
 gamma0Channels = ParquetDecomposition[irreducibleVertex, {x1, x2, x3, x4}, {DressedGreenFunction}];
 writeValue["counts Gamma0 channels", Map[orderCounts[#, InteractionPotential, orders] &, gamma0Channels]];
 writeOrders["irreducible_vertex_phbar", gamma0Channels["TransverseParticleHole"], {x1, x2, x3, x4}, InteractionPotential, orders];
 writeOrders["irreducible_vertex_pp", gamma0Channels["ParticleParticle"], {x1, x2, x3, x4}, InteractionPotential, orders,
-  "ExternalOrder" -> {x4, x2, x3, x1}];
+  "ExternalOrder" -> {"Uncrossed", {x4, x2, x3, x1}}];
 (* Gamma0_{12;34} = d^2 Phi/dG_{21} dG_{43} is symmetric under 1 <-> 3, 2 <-> 4 *)
 writeValue["check Gamma0 symmetry", SimplifyDiagrams[irreducibleVertex - (irreducibleVertex /. {x1 -> x3, x2 -> x4, x3 -> x1, x4 -> x2})]];
 (* Sigma(m) has 2m - 1 lines: Gamma0(m) . G = (2m - 1) Sigma(m) *)
@@ -271,7 +271,7 @@ twoBubbles = BetheSalpeterLadder[directKernel, oneBubble, {x1, x2, x3, x4}, "Par
 writeTerms["rpa_chain", directKernel + oneBubble + twoBubbles, {x1, x2, x3, x4}, "LegDirections" -> "Alternating"];
 bareVertex = OrderPart[fullVertex, InteractionPotential, 1];
 writeTerms["pp_ladder", BetheSalpeterLadder[bareVertex, bareVertex, {x1, x2, x3, x4}, "ParticleParticle", DressedGreenFunction], {x1, x2, x3, x4},
-  "LegDirections" -> "Alternating", "ExternalOrder" -> {x4, x2, x3, x1}];
+  "LegDirections" -> "Alternating", "ExternalOrder" -> {"Uncrossed", {x4, x2, x3, x1}}];
 fullVertexChannels = ParquetDecomposition[fullVertex, {x1, x2, x3, x4}, {DressedGreenFunction}];
 writeValue["check Gamma0 = F - R_ph", SimplifyDiagrams[fullVertex - fullVertexChannels["ParticleHole"] - irreducibleVertex]];
 writeOrders["vertex_ph", fullVertexChannels["ParticleHole"], {x1, x2, x3, x4}, InteractionPotential, orders];
@@ -322,11 +322,12 @@ writeTerms["exact_parquet", FullyIrreducibleBox @@ fourLabels +
    BetheSalpeterLadder[IrreducibleBoxPh @@ fourLabels, FBox @@ fourLabels, fourLabels, "ParticleHole", DressedGreenFunction] +
    BetheSalpeterLadder[IrreducibleBoxPhbar @@ fourLabels, FBox @@ fourLabels, fourLabels, "TransverseParticleHole", DressedGreenFunction] +
    (* the particle-particle term, -1/2 Gamma_pp(x1, 5; x3, 6) G(5, 7) G(6, 8) F(7, x2; 8, x4), with the boxes turned as in the
-      ladder of the T-matrix: the incoming particles x4, x2 on the left, the two lines parallel from left to right *)
+      ladder of the T-matrix: the incoming particles x4, x2 on the left, the two lines parallel from left to right (the
+      corners of its ports, kept with "Uncrossed"; by default its legs x1 and x4 would cross back to the order x1, ..., x4) *)
    With[{p5 = Unique["p"], p6 = Unique["p"], p7 = Unique["p"], p8 = Unique["p"]},
     -1/2 IntegralOver[FBox[x4, x2, p8, p7] DressedGreenFunction[p5, p7] DressedGreenFunction[p6, p8] IrreducibleBoxPp[p5, p6, x3, x1],
       {p5, p6, p7, p8}]], fourLabels,
-  "LegDirections" -> "Alternating", blobOptions];
+  "LegDirections" -> "Alternating", "ExternalOrder" -> "Uncrossed", blobOptions];
 (* the pair of full propagators of the particle-hole channel, L0(x1, x2; x3, x4) = G(x1, x4) G(x3, x2): the two lines that the
    Bethe-Salpeter equation cuts, F = Gamma0 + Gamma0 L0 F *)
 writeTerms["pair_l0", DressedGreenFunction[x1, x4] DressedGreenFunction[x3, x2], fourLabels, blobOptions];
@@ -777,6 +778,9 @@ vertexPhi4 = timed["phi4 vertex", SimplifyDiagrams[SkeletonDiagrams[gamma4, {a, 
 writeValue["check phi4 vertex shortcut", SimplifyDiagrams[PerturbativeFullVertex[FreeBosonGeneratingFunctional, Phi4Vertex, 3, {phi}, {a, b, c, d},
     FreePropagator -> DressedPropagator] - vertexPhi4]];
 writeOrders["phi4_vertex", vertexPhi4, {a, b, c, d}, lambda, {1, 2, 3}];
+(* the same with the legs of one side exchanged where they cross (the diagrams of the channel t, which pairs opposite
+   corners, with c and d exchanged) *)
+writeOrders["phi4_vertex_uncrossed", vertexPhi4, {a, b, c, d}, lambda, {1, 2, 3}, "ExternalOrder" -> "Uncrossed"];
 writeValue["counts phi4 vertex", orderCounts[vertexPhi4, lambda, {1, 2, 3}]];
 phi4Parquet = CheckParquetEquations[vertexPhi4, {a, b, c, d}, DressedPropagator, lambda, 3, "Statistics" -> "Boson"];
 writeValue["check parquet phi4", phi4Parquet["Residuals"]];
@@ -784,6 +788,8 @@ phi4Channels = ParquetDecomposition[vertexPhi4, {a, b, c, d}, {DressedPropagator
 writeValue["counts phi4 R_s", orderCounts[phi4Channels["s"], lambda, {2, 3}]];
 writeValue["counts phi4 fully irreducible", orderCounts[phi4Channels["FullyIrreducible"], lambda, {1, 2, 3}]];
 writeOrders["phi4_vertex_s", phi4Channels["s"], {a, b, c, d}, lambda, {2, 3}];
+(* the channel t pairs opposite corners: drawn with its legs c and d exchanged *)
+writeOrders["phi4_vertex_t", phi4Channels["t"], {a, b, c, d}, lambda, {2, 3}, "ExternalOrder" -> "Uncrossed"];
 (* the fourth order: its only fully irreducible diagram is the envelope, the first correction to the parquet
    approximation *)
 vertexPhi4Fourth = timed["phi4 vertex fourth order", OrderPart[PerturbativeFullVertex[FreeBosonGeneratingFunctional,

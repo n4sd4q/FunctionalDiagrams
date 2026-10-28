@@ -141,6 +141,13 @@ free energy.
 
 ## Pictures
 
+- **Crossed four-point diagrams.** A diagram whose channel joins opposite corners is laid out planar, with the labels of
+  one side exchanged, and its two legs are crossed back afterwards (`crossedLegPositions`): the X is outside the
+  picture, so the picture is wider (a bubble left towards becomes a narrow lens, a loop through the two vertices is drawn
+  with straight lines). A layout that places the crossing itself, the two vertices on the side of the X, would be more
+  compact. With `"Uncrossed"` from the default order the particle–particle ladders of fermions come out some upright,
+  some lying (the first of the right and top exchanges that is planar); `{"Uncrossed", {x4, x2, x3, x1}}` lays them all
+  down.
 - Minor layout items from the October review (the two tadpoles on one leg of the φ⁴ four-point function, which touched,
   are now on opposite sides of the leg):
   - some fermion-rail terms (vertical rails of ⟨ψψ̄ψ̄ψ⟩_c at V², section 4) are 1.3–1.5 times taller than their
