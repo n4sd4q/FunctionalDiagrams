@@ -84,12 +84,18 @@ correlation = OrderPart[ConnectedCorrelationFunction[Zqcd, {gluon[a], gluon[b]},
 ParticleIrreducibleDiagrams[AmputateExternalLegs[correlation, {a, b}, lines], 1,
   {a, b}, lines]", "Pictures", {a, b}];
 example["blobs", "DeclareDirectedPropagator[Gb];
-DeclareBlob[Kb, \"\\\\Gamma^0\", \"Shape\" -> \"Box\", \"Fill\" -> \"CrossHatched\"];
-DeclareBlob[Fb, \"F\", \"Shape\" -> \"Box\"];
+DeclareBlob[Kb, \"\\\\Gamma^0\", \"Shape\" -> \"Box\"];
+DeclareBlob[Fb, \"F\", \"Shape\" -> \"Box\", \"Fill\" -> \"CrossHatched\"];
 Kb[x1, x2, x3, x4] + BetheSalpeterLadder[Kb[x1, x2, x3, x4], Fb[x1, x2, x3, x4],
   {x1, x2, x3, x4}, \"ParticleHole\", Gb]", "Pictures", {x1, x2, x3, x4}];
+example["blobs_fills", "DeclareBlob[Irr, \"\\\\Gamma_{\\\\rm irr}\", \"Shape\" -> \"Box\", \"Fill\" -> \"Dotted\"];
+DeclareBlob[Gph, \"\\\\Gamma_{\\\\rm ph}\", \"Shape\" -> \"Box\"];
+DeclareBlob[Gphbar, \"\\\\Gamma_{\\\\overline{\\\\rm ph}}\", \"Shape\" -> \"Box\"];
+Irr[x1, x2, x3, x4] + BetheSalpeterLadder[Gph[x1, x2, x3, x4], Fb[x1, x2, x3, x4],
+  {x1, x2, x3, x4}, \"ParticleHole\", Gb] + BetheSalpeterLadder[Gphbar[x1, x2, x3, x4],
+  Fb[x1, x2, x3, x4], {x1, x2, x3, x4}, \"TransverseParticleHole\", Gb]", "Pictures", {x1, x2, x3, x4}];
 example["blobs_turned", "DeclareSymmetric[Gs];
-DeclareBlob[Vertex4, \"\\\\Gamma^{(4)}\", \"Shape\" -> \"Box\"];
+DeclareBlob[Vertex4, \"\\\\Gamma^{(4)}\", \"Shape\" -> \"Box\", \"Fill\" -> \"CrossHatched\"];
 lambda/6 IntegralOver[Gs[a, u] Gs[a, v] Gs[a, w] Vertex4[u, v, w, b], {u, v, w}]", "Pictures", {a, b}];
 
 (* ---------------------------------------------------------------- derivatives *)
@@ -262,8 +268,8 @@ example["density_vertex_derivative", "SimplifyDiagrams[lambdaU - PerturbativeDen
 example["exact_dyson", "DeclareBlob[SigmaBlob, \"\\\\Sigma\"]; DeclareLineStyle[FullG, \"DoubleArrow\"];
 Last[ExactEquation[\"Dyson\", {\"G\" -> FullG, \"G0\" -> G0, \"Sigma\" -> SigmaBlob},
     {x, y}]]", "Pictures", {x, y}];
-example["exact_response", "DeclareBlob[Lbox, \"L\", \"Shape\" -> \"Box\"];
-DeclareBlob[K0box, \"\\\\Gamma^0\", \"Shape\" -> \"Box\", \"Fill\" -> \"CrossHatched\"];
+example["exact_response", "DeclareBlob[Lbox, \"L\", \"Shape\" -> \"Box\", \"Fill\" -> \"White\"];
+DeclareBlob[K0box, \"\\\\Gamma^0\", \"Shape\" -> \"Box\"];
 Last[ExactEquation[\"Response\", {\"L\" -> Lbox, \"Gamma0\" -> K0box, \"G\" -> G},
     {x1, x2, x3, x4}]]",
   "Pictures", {x1, x2, x3, x4}];

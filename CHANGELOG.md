@@ -11,8 +11,9 @@
   cross least. The parquet decomposition is drawn channel by channel with it: `DiagramPlot[ParquetDecomposition[...]["t"],
   {a, b, c, d}, "ExternalOrder" -> "Uncrossed"]` for φ⁴ theory, `"ExternalOrder" -> {"Uncrossed", {x4, x2, x3, x1}}` for
   the particle–particle ladders of the electron gas (the incoming legs on the left).
-- **`"Fill" -> "Dotted"`** for `DeclareBlob`: dots on a square grid turned by 45 degrees (staggered rows), 0.14 units
-  apart, centred on the blob and kept inside its outline, a fill sparser than the hatching (0.1 units apart). It is
+- **`"Fill" -> "Dotted"`** for `DeclareBlob`: dots on a square grid turned by 45 degrees (staggered rows), about 0.14
+  units apart, centred on the blob and kept inside its outline (in a box or a diamond the grid is fitted so that its
+  outermost dots lie 0.06 units inside every side), a fill sparser than the hatching (0.1 units apart). It is
   drawn in the Graphics of Mathematica as points (light and dark, as the hatching) and in TikZ as small discs, without
   the patterns library; the label sits in a white clearing with a band of the fill around it, as on a hatched blob, and
   the blob has the size of a hatched one. The documents draw the fully irreducible vertex Γ_irr with it (before, grey).
@@ -60,6 +61,15 @@
 
 ### Documents
 
+- **One rule for the fills of the blobs.** The documents chose the fill of each blob case by case (Γ⁰ and the Γ_r
+  cross-hatched, F and Λ hatched, Γ_irr grey, P white, and L hatched in the manual but white in the showcase). They now
+  follow one rule: a vertex function is filled the more densely the more diagrams it contains, the fully irreducible
+  vertex Γ_irr dotted, the irreducible parts (Σ, Δ, P, Γ⁰, Γ_ph, Γ_ph̄, Γ_pp, Γ_xc, Λ̃) hatched, the full vertex functions
+  (F, Λ, Γ⁽⁴⁾) cross-hatched; the correlation and response functions (W⁽⁴⁾, L, χ) are white. The showcase states it
+  where the first blob appears, W⁽⁴⁾, with a legend of the four fills; the manual at `DeclareBlob`, with the vertex
+  irreducible in the particle–particle channel, Γ_pp = Γ_irr + R_ph + R_ph̄, drawn with the three fills of the vertices;
+  the wiki on exact equations, with the Bethe–Salpeter equation. Every blob of the showcase, the manual, the README and
+  the demo video is drawn so, and the code shown declares the fill drawn.
 - **Four-point functions with the new option.** The showcase draws Γ⁽⁴⁾ of φ⁴ theory as `DiagramPlot` draws it (the
   diagrams of the channel t with the legs c and d crossing) and then with `"ExternalOrder" -> "Uncrossed"`; the parts of
   Γ⁰ of the electron gas reducible in pp, and the T-matrix, with `{"Uncrossed", {x4, x2, x3, x1}}` (the same pictures

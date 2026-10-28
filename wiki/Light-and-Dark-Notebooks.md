@@ -2,7 +2,8 @@
 
 - **Mathematica 14.3 or later**: lines and text are dark on a light notebook and light on a dark one (through
   `LightDarkSwitched`); what hides the lines under it (the inside of a blob, of an external point, the clearing behind
-  the label of a hatched blob) takes the colour of the background, and the grey fills are darker on a dark notebook.
+  the label of a hatched or dotted blob) takes the colour of the background, and the grey fills are darker on a dark
+  notebook.
 - **Before 14.3**: the pictures have the colours of a light notebook, also on a dark one.
 
 The option `"Appearance"` forces one look, on a background of its own (white, or the dark grey of a dark notebook):

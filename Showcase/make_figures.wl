@@ -292,15 +292,17 @@ writeValue["parquet counts", parquetCheck["DiagramCounts"]];
 (* in the Dyson equation the full propagator FullG is a double line and the bare one BareGreenFunction a single line; in the
    other exact equations every line is a full propagator, drawn as a plain line; Sigma, F, Gamma0, Lambda and
    the vertices Gamma_r irreducible in one channel are blobs with their names inside, and the four-point ones squares
-   with the legs x1, x2, x3, x4 at the corners, counterclockwise from the top left *)
+   with the legs x1, x2, x3, x4 at the corners, counterclockwise from the top left. The fills follow one rule: a vertex
+   function the more densely the more diagrams it contains (the fully irreducible vertex dotted, the irreducible parts
+   hatched, the full vertex functions cross-hatched), the correlation and response functions white *)
 DeclareLineStyle[FullG, "DoubleArrow"];
 DeclareBlob[SigmaBlob, "\\Sigma"];
-DeclareBlob[FBox, "F", "Shape" -> "Box"];
-DeclareBlob[KernelBox, "\\Gamma^0", "Shape" -> "Box", "Fill" -> "CrossHatched"];
-DeclareBlob[FullyIrreducibleBox, "\\Gamma_{\\rm irr}", "Shape" -> "Box", "Fill" -> "Grey"];
-DeclareBlob[IrreducibleBoxPh, "\\Gamma_{\\rm ph}", "Shape" -> "Box", "Fill" -> "CrossHatched"];
-DeclareBlob[IrreducibleBoxPhbar, "\\Gamma_{\\overline{\\rm ph}}", "Shape" -> "Box", "Fill" -> "CrossHatched"];
-DeclareBlob[IrreducibleBoxPp, "\\Gamma_{\\rm pp}", "Shape" -> "Box", "Fill" -> "CrossHatched"];
+DeclareBlob[FBox, "F", "Shape" -> "Box", "Fill" -> "CrossHatched"];
+DeclareBlob[KernelBox, "\\Gamma^0", "Shape" -> "Box"];
+DeclareBlob[FullyIrreducibleBox, "\\Gamma_{\\rm irr}", "Shape" -> "Box", "Fill" -> "Dotted"];
+DeclareBlob[IrreducibleBoxPh, "\\Gamma_{\\rm ph}", "Shape" -> "Box"];
+DeclareBlob[IrreducibleBoxPhbar, "\\Gamma_{\\overline{\\rm ph}}", "Shape" -> "Box"];
+DeclareBlob[IrreducibleBoxPp, "\\Gamma_{\\rm pp}", "Shape" -> "Box"];
 blobOptions = Sequence["Scale" -> 0.55, "LineWidth" -> 0.45, "LabelFont" -> "\\footnotesize"];
 fourLabels = {x1, x2, x3, x4};
 writeTerms["exact_dyson_lhs", FullG[x, y], {x, y}, blobOptions];
@@ -310,7 +312,7 @@ writeTerms["exact_sigma_lhs", SigmaBlob[x, y], {x, y}, "LegDirections" -> {"Out"
 (* Hartree and Fock with the full propagator, and the term with F, as in the check of the Schwinger-Dyson equation *)
 (* F(a, y; c, d) drawn with its ports in the order (c, a, y, d): a and y at the bottom, on the axis of the self-energy,
    c and d at the top *)
-DeclareBlob[FBoxAxis, "F", "Shape" -> "Box", "AxialPorts" -> {2, 3}];
+DeclareBlob[FBoxAxis, "F", "Shape" -> "Box", "Fill" -> "CrossHatched", "AxialPorts" -> {2, 3}];
 writeTerms["exact_schwinger_dyson", OrderPart[selfEnergy, InteractionPotential, 1] -
    IntegralOver[InteractionPotential[x, u] DressedGreenFunction[x, a] DressedGreenFunction[d, u] DressedGreenFunction[u, c] FBoxAxis[c, a, y, d],
     {u, a, c, d}], {x, y},
@@ -386,13 +388,14 @@ hedinEquations = ExactEquation["Hedin", {"G" -> DressedGreenFunction, "V" -> Int
    "MaximumOrder" -> {InteractionPotential, maximumOrder}];
 writeValue["check Hedin", MapThread[CheckEquation[#1, InteractionPotential, #2] &, {hedinEquations,
     {maximumOrder, maximumOrder - 1, maximumOrder, maximumOrder}}]];
-(* the exact equations drawn: Lambda a hatched triangle, the proper vertex a cross-hatched one, W a double wavy line *)
-DeclareBlob[LambdaTriangle, "\\Lambda", "Shape" -> "Triangle"];
-DeclareBlob[ProperVertexTriangle, "\\tilde\\Lambda", "Shape" -> "Triangle", "Fill" -> "CrossHatched"];
-DeclareBlob[LambdaTriangleUp, "\\Lambda", "Shape" -> "TriangleUp"];
-DeclareBlob[ProperVertexTriangleUp, "\\tilde\\Lambda", "Shape" -> "TriangleUp", "Fill" -> "CrossHatched"];
-DeclareBlob[PolarizationBlob, "P", "Fill" -> "White"];
-DeclareBlob[XCBox, "\\Gamma_{\\rm xc}", "Shape" -> "Box", "Fill" -> "CrossHatched"];
+(* the exact equations drawn: Lambda a cross-hatched triangle (a full vertex), the proper vertex a hatched one (an
+   irreducible part, as P and Gamma_xc), W a double wavy line *)
+DeclareBlob[LambdaTriangle, "\\Lambda", "Shape" -> "Triangle", "Fill" -> "CrossHatched"];
+DeclareBlob[ProperVertexTriangle, "\\tilde\\Lambda", "Shape" -> "Triangle"];
+DeclareBlob[LambdaTriangleUp, "\\Lambda", "Shape" -> "TriangleUp", "Fill" -> "CrossHatched"];
+DeclareBlob[ProperVertexTriangleUp, "\\tilde\\Lambda", "Shape" -> "TriangleUp"];
+DeclareBlob[PolarizationBlob, "P"];
+DeclareBlob[XCBox, "\\Gamma_{\\rm xc}", "Shape" -> "Box"];
 DeclareSymmetric[ScreenedW]; DeclareInteractionLine[ScreenedW, "DoubleWavy"];
 blobObjects = {"G" -> DressedGreenFunction, "Sigma" -> SigmaBlob, "Lambda" -> LambdaTriangle, "Gamma0" -> KernelBox, "F" -> FBox,
    "V" -> InteractionPotential, "W" -> ScreenedW, "P" -> PolarizationBlob, "GammaXC" -> XCBox};
@@ -458,6 +461,13 @@ writeTerms["response_l_ladder", DressedGreenFunction[x1, x4] DressedGreenFunctio
   "LegDirections" -> "Alternating", blobOptions];
 writeTerms["response_rpa", PolarizationBlob[x, y] + IntegralOver[PolarizationBlob[x, u] InteractionPotential[u, v] ChiBlob[v, y], {u, v}], {x, y},
   blobOptions];
+(* the legend of the fills (section 4): Gamma_irr dotted, Gamma0 hatched, F cross-hatched, L white, drawn together (one
+   size) without the labels of their legs, each written to fill_legend_NAME.terms *)
+With[{parts = DiagramToTikZ[FullyIrreducibleBox @@ fourLabels + KernelBox @@ fourLabels + FBox @@ fourLabels + LBox @@ fourLabels, fourLabels,
+    "Output" -> "List", "Labels" -> Thread[fourLabels -> ""], blobOptions, Sequence @@ pictureOptions]},
+  Do[With[{pic = SelectFirst[parts[[All, 2]], StringContainsQ[#, "{$" <> f[[2]] <> "$}"] &]},
+     Export["figures/fill_legend_" <> f[[1]] <> ".terms", "1\n%%PICTURE%%\n" <> pic, "Text"]],
+   {f, {{"dotted", "\\Gamma_{\\rm irr}"}, {"hatched", "\\Gamma^0"}, {"crosshatched", "F"}, {"white", "L"}}}]];
 With[{chiF = LabelFunction[-densityCorrelationSkeleton, {a, b}], pF = LabelFunction[polarization, {a, b}],
     fF = LabelFunction[fullVertex, fourLabels], gamma0F = LabelFunction[irreducibleVertex, fourLabels],
     lF = LabelFunction[DressedGreenFunction[x1, x4] DressedGreenFunction[x3, x2] + withLegs[fullVertex], fourLabels],
@@ -830,7 +840,7 @@ writeValue["check phi4 Schwinger-Dyson", byOrder[phi4SelfEnergyG - lambda/6 Inte
         DressedPropagator[a, v] DressedPropagator[a, w] (vertexPhi4 /. {a -> u, b -> v, c -> w, d -> b}), {u, v, w}], lambda, Range[2, 3]]];
 (* Gamma4 the box of the Bethe-Salpeter equation below: joined by three corners to the vertex at a, it is drawn turned by
    45 degrees, b at its right corner, a on the diagonal through it, the lines to the top and bottom corners arcs *)
-DeclareBlob[Gamma4Square, "\\Gamma^{(4)}", "Shape" -> "Box"];
+DeclareBlob[Gamma4Square, "\\Gamma^{(4)}", "Shape" -> "Box", "Fill" -> "CrossHatched"];
 writeTerms["exact_schwinger_dyson_phi4", OrderPart[phi4SelfEnergyG, lambda, 1] +
    lambda/6 IntegralOver[DressedPropagator[a, u] DressedPropagator[a, v] DressedPropagator[a, w] Gamma4Square[v, u, b, w], {u, v, w}], {a, b},
   blobOptions];
@@ -1688,7 +1698,7 @@ writeFormula["ea_dgamma_du", FunctionalDerivative[EffectiveAction2PI[eaPhi1, Bar
 writeFormula["ea_dgamma_du_phi4", FunctionalDerivative[EffectiveAction2PI[OrderPart[phi4Gamma2, lambda, 1], FreePropagator -> DressedPropagator,
     "Statistics" -> "Boson", "Source" -> OneBodySourceB], OneBodySourceB[x, y]], "Names" -> eaNames];
 (* the response L = L0 + L0 Gamma0 L and chi = gamma L gamma, drawn with blobs *)
-DeclareSymmetric[KernelBoxB]; DeclareBlob[KernelBoxB, "\\Gamma^0", "Shape" -> "Box", "Fill" -> "CrossHatched"];
+DeclareSymmetric[KernelBoxB]; DeclareBlob[KernelBoxB, "\\Gamma^0", "Shape" -> "Box"];
 (* as it stands (Gamma0 and L share two points: joined by short links), and iterated twice, L0 + L0 Gamma0 L0 +
    L0 Gamma0 L0 Gamma0 L0, by the package's equation itself *)
 writeTerms["ea_response_bs", Last[ExactEquation["Response", {"L" -> LBox, "Gamma0" -> KernelBox, "G" -> DressedGreenFunction}, fourLabels]],

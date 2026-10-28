@@ -20,6 +20,33 @@ DiagramPlot[Last[dyson], {x, y}]
 `ExactEquation` gives `lhs == rhs`; `Last` is the right-hand side. The names of the equations and of their objects are
 in the usage message, `?ExactEquation`, and in the manual, section *Exact equations*.
 
+## Fills
+
+The fill of a blob (the option `"Fill"` of `DeclareBlob`) says what it stands for. The documents of the package follow
+one rule: a vertex function is filled the more densely the more diagrams it contains, and a correlation or response
+function is white.
+
+| `"Fill"` | objects |
+|---|---|
+| `"Dotted"` | the fully irreducible vertex Γ_irr |
+| `"Hatched"` (the default) | the irreducible parts: Σ, Δ, P, Γ⁰, Γ_ph, Γ_ph̄, Γ_pp, Γ_xc, Λ̃ |
+| `"CrossHatched"` | the full vertex functions: F, Λ, Γ⁽⁴⁾ |
+| `"White"` | the correlation and response functions: W⁽⁴⁾, L, χ |
+
+The Bethe–Salpeter equation F = Γ⁰ + Γ⁰L₀F, the irreducible vertex hatched and the full one cross-hatched; every line
+is a full propagator, a plain line, since no bare one appears:
+
+```mathematica
+DeclareDirectedPropagator[Gd];
+DeclareBlob[Gamma0Box, "\\Gamma^0", "Shape" -> "Box"];
+DeclareBlob[FBox, "F", "Shape" -> "Box", "Fill" -> "CrossHatched"];
+bs = ExactEquation["BetheSalpeter", {"F" -> FBox, "Gamma0" -> Gamma0Box, "G" -> Gd},
+   {x1, x2, x3, x4}];
+DiagramPlot[Last[bs], {x1, x2, x3, x4}]
+```
+
+![The right-hand side of the Bethe–Salpeter equation: the hatched box Γ⁰, and Γ⁰ joined by two lines to the cross-hatched box F](images/exact_bethe_salpeter.svg)
+
 ## Checking an equation
 
 For a check, the objects are functions of their labels: perturbative series wrapped in `LabelFunction`. The Dyson

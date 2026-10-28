@@ -940,7 +940,20 @@ expW = Exp[1/2 IntegralOver[ConnectedTwoPoint[x, y] J[x] J[y], {x, y}] +
 FieldExpectationValue[expW, {phi[a], phi[b], phi[c], phi[d]}]
 \end{code}
 \figuresum{\langle\phi_a\phi_b\phi_c\phi_d\rangle}{phi4_partitions}
-The package checks it by derivatives in $J$. With $Z[J]=Z_0[J]\,\bigl(1+z_1[J]+z_2[J]+z_3[J]\bigr)$, the series of
+Here $W^{(4)}$ is a blob (\pkg{DeclareBlob}), with its name written inside. All the blobs of this document are filled
+by one rule: a vertex function the more densely the more diagrams it contains --- the fully irreducible vertex dotted,
+the irreducible parts hatched, the full vertex functions cross-hatched~--- and a correlation or response function white
+(the values \pkg{"Dotted"}, \pkg{"Hatched"}, the default, \pkg{"CrossHatched"} and \pkg{"White"} of the option
+\pkg{"Fill"} of \pkg{DeclareBlob}; the objects are defined in the sections that follow):
+\begin{center}
+\begin{tabular}{@{}*{4}{>{\centering\arraybackslash}p{0.225\linewidth}}@{}}
+\inputfigure{fill_legend_dotted} & \inputfigure{fill_legend_hatched} & \inputfigure{fill_legend_crosshatched} &
+\inputfigure{fill_legend_white}\\[2pt]
+\small $\Gamma_{\rm irr}$ & \small $\Sigma$, $\Delta$, $P$, $\Gamma^0$, $\Gamma_r$, $\Gamma_{\rm xc}$, $\tilde\Lambda$ &
+\small $F$, $\Lambda$, $\Gamma^{(4)}$ & \small $W^{(4)}$, $L$, $\chi$
+\end{tabular}
+\end{center}
+The package checks the partitions by derivatives in $J$. With $Z[J]=Z_0[J]\,\bigl(1+z_1[J]+z_2[J]+z_3[J]\bigr)$, the series of
 section~\ref{sec:bubbles} at a non-zero source, $W[J]=\frac12J\cdot D_0\cdot J+\log\bigl(1+z_1[J]+z_2[J]+z_3[J]\bigr)$ expanded
 to $\lambda^3$; its fourth derivative at $J=0$ is compared with the fourth moment, the fourth derivative of $Z$ without its
 vacuum bubbles:
@@ -1013,7 +1026,7 @@ ConnectedCorrelationFunction[FreeFermionGeneratingFunctional,
 \orderrow{V^2}{two_particle_connected_2}
 \end{ordersum}
 The connected part defines the full vertex $F$ (the reducible vertex, or two-particle scattering amplitude), drawn as a
-hatched square: the connected function is $F$ with its four
+cross-hatched square: the connected function is $F$ with its four
 legs, full propagators $G$, attached at the corners $x_1$ (out), $x_2$ (in), $x_3$ (out), $x_4$ (in), counterclockwise from
 the top left,
 \figuresum{\langle\psi_1\bar\psi_2\bar\psi_4\psi_3\rangle_c}{two_particle_f_legs}
@@ -2237,8 +2250,8 @@ again. The pair is a function of four points, a particle and a hole that propaga
 propagator:
 \figuresum{L_0(x_1,x_2;x_3,x_4)}{pair_l0}
 Four-point functions are multiplied in this channel by joining the right pair of labels of one to the left pair of the
-next, $(AB)(1,2;3,4)=\int_{a,b}A(1,2;a,b)\,B(b,a;3,4)$. In pictures, with $\Gamma^0$ cross-hatched, $F$ hatched, every line
-a full propagator $G$ (a plain line, as in all the exact equations from here on: section~\ref{sec:dyson})
+next, $(AB)(1,2;3,4)=\int_{a,b}A(1,2;a,b)\,B(b,a;3,4)$. In pictures, with $\Gamma^0$ hatched and $F$ cross-hatched (the
+rule of section~\ref{sec:cumulants}), every line a full propagator $G$ (a plain line, as in all the exact equations from here on: section~\ref{sec:dyson})
 and the legs $x_1$ (out), $x_2$ (in), $x_3$ (out), $x_4$ (in) counterclockwise from the top left of each square, the
 equation is
 \figuresum{\inputfigure{exact_vertex_lhs}}{exact_bethe_salpeter}
@@ -2500,7 +2513,7 @@ Bethe--Salpeter equation, $\Gamma_r$ and $F$ joined by the pair of lines of the 
 of a reducible diagram leaves an irreducible piece and the rest. In the particle--hole channel $\Gamma_{\ph}=\Gamma^0$ and
 $R_{\ph}=\Gamma^0L_0F$ (section~\ref{sec:twoparticle}); in $\phbar$ the pair joins $(x_1x_4)$ to $(x_3x_2)$, and in $\pp$
 its two lines run the same way, with the factor $\frac12$ of two identical particles. In pictures, with $\Gamma_{\rm irr}$
-grey and the $\Gamma_r$ cross-hatched (the $\pp$ term turned as in the ladder of the T-matrix, the incoming $x_4$, $x_2$ on
+dotted, the $\Gamma_r$ hatched and $F$ cross-hatched (the $\pp$ term turned as in the ladder of the T-matrix, the incoming $x_4$, $x_2$ on
 the left and the two lines parallel from left to right):
 \figuresum{\inputfigure{exact_vertex_lhs}}{exact_parquet}
 Given $\Gamma_{\rm irr}$ and $G$, these are closed equations for the three $R_r$. The Schwinger--Dyson (or Dyson--Schwinger)

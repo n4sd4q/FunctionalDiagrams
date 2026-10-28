@@ -577,24 +577,33 @@ three legs at its corners, two on the left and one on the right: the vertex of a
 same triangle, two legs at the bottom, one at the top) or \opt{Diamond} (a square turned by 45 degrees, legs at its four corners);
 \opt{AxialPorts} -> \pkg{\{k1, \dots\}}: the lines of these legs leave horizontally, so that a self-energy is drawn with its
 fermion line on an axis (default \pkg{\{1, 2\}} for \opt{TriangleUp});
-\opt{Fill} -> \opt{Hatched} (the default), \opt{CrossHatched}, \opt{Grey} or \opt{White}; an unknown value gives the
-message \pkg{DeclareBlob::opt}. The legs leave the blob counterclockwise from the top left, from the corners of a square
+\opt{Fill} -> \opt{Hatched} (the default), \opt{CrossHatched}, \opt{Dotted} (dots on a staggered grid, sparser than the
+hatching), \opt{Grey} or \opt{White}; an unknown value gives the message \pkg{DeclareBlob::opt}. The legs leave the blob counterclockwise from the top left, from the corners of a square
 for four legs, and its lines leave from these corners, as from those of a triangle, never from along a side: a point
 that is twice an argument (\pkg{h[z, z, w, w]}, the density of a two-particle function) stands outside two corners,
 joined to each by a line. A blob is as large as its label needs: the label sits at the centre, or near the incentre of a triangle,
-on a hatched blob in a white clearing with a band of hatching left around it, and a label with an accent, a subscript or
+on a hatched, cross-hatched or dotted blob in a white clearing with a band of the fill left around it, and a label with an
+accent, a subscript or
 a superscript ($\tilde\Lambda$, $\Gamma_{\rm ph}$, $\Gamma^{(4)}$) makes the blob a little larger, never the label
 smaller; in one picture the blobs of one shape have one size, so that the lines between them are parallel, and so do
 those of all the terms of a sum drawn together, so that a blob looks the same in every term. The size is
 estimated from the LaTeX of the label for a label font up to 0.6 units of length (\pkg{"\textbackslash\textbackslash
 footnotesize"} at \opt{Scale} -> \pkg{0.55}, the default \pkg{"\textbackslash\textbackslash small"} at \pkg{0.7}). Blobs
 joined by lines are drawn side by side, on the side of the legs that join them, and a line that would
-cross a blob, or pass close to it, is bent around it. The hatching is drawn as lines, so the TikZ code still needs only
-\pkg{decorations.pathmorphing}. For the cuts a blob is a vertex, like any factor that is not a line. The exact equations
+cross a blob, or pass close to it, is bent around it. The hatching is drawn as lines and the dots as small discs, so the
+TikZ code still needs only \pkg{decorations.pathmorphing}. For the cuts a blob is a vertex, like any factor that is not a line. The exact equations
 of many-body theory are drawn in this way, e.g. the right-hand side of the Bethe--Salpeter equation
 $F=\Gamma^0+\Gamma^0L_0F$ ($L_0$, the pair of propagators of the channel, section~\ref{sec:conventions}):
 \excode{blobs}
 \expictures{blobs}
+The documents of the package fill the blobs by one rule: a vertex function the more densely the more diagrams it contains
+--- the fully irreducible vertex $\Gamma_{\rm irr}$ dotted, the irreducible parts ($\Sigma$, $\Delta$, $P$, $\Gamma^0$,
+the $\Gamma_r$ irreducible in one channel, $\Gamma_{\rm xc}$, $\tilde\Lambda$) hatched, the full vertex functions ($F$,
+$\Lambda$, $\Gamma^{(4)}$) cross-hatched --- and the correlation and response functions ($W^{(4)}$, $L$, $\chi$) white.
+The three fills of the vertices in the vertex irreducible in the particle--particle channel,
+$\Gamma_{\pp}=\Gamma_{\rm irr}+R_{\ph}+R_{\phbar}$ (section~\ref{sec:parquet}), with $F$ and the propagator above:
+\excode{blobs_fills}
+\expictures{blobs_fills}
 A box joined by single lines from three of its corners to one vertex is turned by 45 degrees, so that the picture is
 symmetric: the vertex lies on the diagonal through the fourth corner, the lines to the two other corners are arcs, and
 the label stays upright (the diamond is as large as the square, or larger if the label needs it). The term
@@ -1878,7 +1887,7 @@ The weights are those of section~\ref{sec:weights}.
 
 In a notebook the pictures follow its appearance. With Mathematica 14.3 or later, through \pkg{LightDarkSwitched}, the
 lines and the text are dark on a light notebook and light on a dark one; what hides the lines under it (the inside of a blob, of an
-external point or of a source insertion, the clearing behind the label of a hatched blob) has the colour of the
+external point or of a source insertion, the clearing behind the label of a hatched or dotted blob) has the colour of the
 background of the notebook, and the grey fills are a darker grey there. Before 14.3 the pictures have the colours of a
 light notebook. \pkg{"Appearance" -> "Light"} or \pkg{"Dark"} forces one of them, on a background of its own (white, or
 the dark grey of a dark notebook), for a picture exported for a page of the other kind;

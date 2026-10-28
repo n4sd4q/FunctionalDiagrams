@@ -1,0 +1,23 @@
+1
+%%PICTURE%%
+\begin{tikzpicture}[x=0.550cm, y=0.550cm, line width=0.450pt, baseline={([yshift=-0.6ex]0,0)}]
+  \draw (0.000,0.000) -- (-0.650,0.650);
+  \draw (0.000,0.000) -- (-0.650,-0.650);
+  \draw (0.000,0.000) -- (0.650,-0.650);
+  \draw (0.000,0.000) -- (0.650,0.650);
+  \draw (-0.650,0.650) -- (-1.074,1.074);
+  \draw (-0.650,-0.650) -- (-1.074,-1.074);
+  \draw (0.650,-0.650) -- (1.074,-1.074);
+  \draw (0.650,0.650) -- (1.074,1.074);
+  \fill[white] (-0.650,-0.650) rectangle (0.650,0.650);
+  \fill (-0.590,-0.590) circle (0.7\pgflinewidth) (-0.590,-0.393) circle (0.7\pgflinewidth) (-0.492,-0.492) circle (0.7\pgflinewidth) (-0.393,-0.590) circle (0.7\pgflinewidth) (-0.590,-0.197) circle (0.7\pgflinewidth) (-0.492,-0.295) circle (0.7\pgflinewidth) (-0.393,-0.393) circle (0.7\pgflinewidth) (-0.295,-0.492) circle (0.7\pgflinewidth) (-0.197,-0.590) circle (0.7\pgflinewidth) (-0.590,0.000) circle (0.7\pgflinewidth) (-0.492,-0.098) circle (0.7\pgflinewidth) (-0.393,-0.197) circle (0.7\pgflinewidth) (-0.295,-0.295) circle (0.7\pgflinewidth) (-0.197,-0.393) circle (0.7\pgflinewidth) (-0.098,-0.492) circle (0.7\pgflinewidth) (0.000,-0.590) circle (0.7\pgflinewidth) (-0.590,0.197) circle (0.7\pgflinewidth) (-0.492,0.098) circle (0.7\pgflinewidth) (-0.393,0.000) circle (0.7\pgflinewidth) (-0.295,-0.098) circle (0.7\pgflinewidth) (-0.197,-0.197) circle (0.7\pgflinewidth) (-0.098,-0.295) circle (0.7\pgflinewidth) (0.000,-0.393) circle (0.7\pgflinewidth) (0.098,-0.492) circle (0.7\pgflinewidth) (0.197,-0.590) circle (0.7\pgflinewidth) (-0.590,0.393) circle (0.7\pgflinewidth) (-0.492,0.295) circle (0.7\pgflinewidth) (-0.393,0.197) circle (0.7\pgflinewidth) (-0.295,0.098) circle (0.7\pgflinewidth) (-0.197,0.000) circle (0.7\pgflinewidth) (-0.098,-0.098) circle (0.7\pgflinewidth) (0.000,-0.197) circle (0.7\pgflinewidth) (0.098,-0.295) circle (0.7\pgflinewidth) (0.197,-0.393) circle (0.7\pgflinewidth) (0.295,-0.492) circle (0.7\pgflinewidth) (0.393,-0.590) circle (0.7\pgflinewidth) (-0.590,0.590) circle (0.7\pgflinewidth) (-0.492,0.492) circle (0.7\pgflinewidth) (-0.393,0.393) circle (0.7\pgflinewidth) (-0.295,0.295) circle (0.7\pgflinewidth) (-0.197,0.197) circle (0.7\pgflinewidth) (-0.098,0.098) circle (0.7\pgflinewidth) (0.000,0.000) circle (0.7\pgflinewidth) (0.098,-0.098) circle (0.7\pgflinewidth) (0.197,-0.197) circle (0.7\pgflinewidth) (0.295,-0.295) circle (0.7\pgflinewidth) (0.393,-0.393) circle (0.7\pgflinewidth) (0.492,-0.492) circle (0.7\pgflinewidth) (0.590,-0.590) circle (0.7\pgflinewidth) (-0.393,0.590) circle (0.7\pgflinewidth) (-0.295,0.492) circle (0.7\pgflinewidth) (-0.197,0.393) circle (0.7\pgflinewidth) (-0.098,0.295) circle (0.7\pgflinewidth) (0.000,0.197) circle (0.7\pgflinewidth) (0.098,0.098) circle (0.7\pgflinewidth) (0.197,0.000) circle (0.7\pgflinewidth) (0.295,-0.098) circle (0.7\pgflinewidth) (0.393,-0.197) circle (0.7\pgflinewidth) (0.492,-0.295) circle (0.7\pgflinewidth) (0.590,-0.393) circle (0.7\pgflinewidth) (-0.197,0.590) circle (0.7\pgflinewidth) (-0.098,0.492) circle (0.7\pgflinewidth) (0.000,0.393) circle (0.7\pgflinewidth) (0.098,0.295) circle (0.7\pgflinewidth) (0.197,0.197) circle (0.7\pgflinewidth) (0.295,0.098) circle (0.7\pgflinewidth) (0.393,0.000) circle (0.7\pgflinewidth) (0.492,-0.098) circle (0.7\pgflinewidth) (0.590,-0.197) circle (0.7\pgflinewidth) (0.000,0.590) circle (0.7\pgflinewidth) (0.098,0.492) circle (0.7\pgflinewidth) (0.197,0.393) circle (0.7\pgflinewidth) (0.295,0.295) circle (0.7\pgflinewidth) (0.393,0.197) circle (0.7\pgflinewidth) (0.492,0.098) circle (0.7\pgflinewidth) (0.590,0.000) circle (0.7\pgflinewidth) (0.197,0.590) circle (0.7\pgflinewidth) (0.295,0.492) circle (0.7\pgflinewidth) (0.393,0.393) circle (0.7\pgflinewidth) (0.492,0.295) circle (0.7\pgflinewidth) (0.590,0.197) circle (0.7\pgflinewidth) (0.393,0.590) circle (0.7\pgflinewidth) (0.492,0.492) circle (0.7\pgflinewidth) (0.590,0.393) circle (0.7\pgflinewidth) (0.590,0.590) circle (0.7\pgflinewidth);
+  \begin{scope}
+  \clip (-0.650,-0.650) rectangle (0.650,0.650);
+  \node[font=\footnotesize, inner sep=1.2pt, fill=white, rounded corners=2pt] at (0.000,0.000) {$\Gamma_{\rm irr}$};
+  \end{scope}
+  \draw (-0.650,-0.650) rectangle (0.650,0.650);
+  \node[font=\footnotesize, inner sep=0pt, anchor=315] at (-1.138,1.138) {$$};
+  \node[font=\footnotesize, inner sep=0pt, anchor=45] at (-1.138,-1.138) {$$};
+  \node[font=\footnotesize, inner sep=0pt, anchor=135] at (1.138,-1.138) {$$};
+  \node[font=\footnotesize, inner sep=0pt, anchor=225] at (1.138,1.138) {$$};
+\end{tikzpicture}

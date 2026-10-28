@@ -248,10 +248,15 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   than half of one of them are round, so that they cross high above the axis at a wide angle; an arc over another one
   stays above it. Closed fermion loops are circles.
 - Blobs (`DeclareBlob`): circles, squares, equilateral triangles for three-point vertices (two fermion legs on the left;
-  `"TriangleUp"` is the same triangle turned) and diamonds (hatched vertically, never along their edges). A blob is as
+  `"TriangleUp"` is the same triangle turned) and diamonds (hatched vertically, never along their edges). The fills follow
+  one rule in every document (the code shown declares the fill drawn): a vertex function the more densely the more
+  diagrams it contains, the fully irreducible vertex Γ_irr `"Dotted"` (staggered dots about 0.14 units apart, the grid
+  fitted to a box or a diamond so that its outermost dots are 0.06 inside every side; `blobDotsOf`), the irreducible parts
+  (Σ, Δ, P, Γ⁰, Γ_ph, Γ_ph̄, Γ_pp, Γ_xc, Λ̃) `"Hatched"`, the full vertex functions (F, Λ, Γ⁽⁴⁾) `"CrossHatched"`, and the
+  correlation and response functions (W⁽⁴⁾, L, χ) `"White"`; `"Grey"` is left unused. A blob is as
   large as its label needs (`declaredBlobSize`, from `blobLabelExtent`, an estimate of the LaTeX box, with the label font
-  taken as `$blobLabelEm` = 0.6 units): the label, in a white clearing on a hatched blob, lies inside the blob with a band
-  of hatching (0.1 units) all around it, at the centre or on the axis of a triangle near its incentre
+  taken as `$blobLabelEm` = 0.6 units): the label, in a white clearing on a hatched, cross-hatched or dotted blob, lies
+  inside the blob with a band of the fill (0.1 units) all around it, at the centre or on the axis of a triangle near its incentre
   (`blobLabelPlacement`); a blob grows (0.6 up), its label never shrinks, except in a triangle, where it is written 0.8
   times smaller (`$triangleLabelScale`, a scaled TikZ node), so that Λ and Λ̃ keep about the size 0.6; in one picture, and in
   all the terms of a sum drawn together (`$sumBlobHeads`, set by `geometriesOf`), the blobs of one shape have one size
