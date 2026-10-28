@@ -21,9 +21,16 @@ showcase script and took a third off the test suite.
   anything chiral.
 - **Cutting rules.** The finite-temperature cutting rules are checked for chains of lines; vertex corrections (the
   circling rules of Kobes and Semenoff) are not covered.
-- **Speed with the full Wolfram Language.** Profile the hot spots and check whether functions beyond the basic ones
-  (for example associations as lookup tables, compiled functions, graph functions, `Nearest`, `SparseArray`) would make
-  them faster.
+- **Speed with the full Wolfram Language.** Profiled (October 2026, `Development/benchmark.wl` and a sampling profiler)
+  over the suite and the scripts of the showcase and the manual; the hot spots, by their share: the canonical form (02
+  §6, a third to two fifths of the time: colour refinement and individualisation on symbolic expressions, ranks by
+  `Replace` with lists of rules, a `Module` per node; an integer encoding would help, with the same canonical
+  representatives), the TikZ export and the layout (two fifths of the showcase script: options looked up by `Select` at
+  every use, numbers formatted one at a time, crossings counted candidate by candidate), the Wick enumeration
+  (`wickPairingSum`: a `Module` and the roots of all the groups at every node), the cut tests of 04 §10
+  (`mergeOverlapping` after removing every subset of lines, on the raw terms: 70 % of Φ with pairing terms at V⁴; a
+  compiled union-find is about 40 times faster), delta functions integrated one at a time, the Dirac rules applied by
+  `//.` to whole expressions.
 - **Options.** Functions of 07, 09 and 10 check the names of their options (`checkOptionNames`) without `Options[f]`;
   those of 03, 04 and 11 have `Options[f]` with literal defaults and no check, so a misspelt `"Statistics"`, `"Channel"`
   or `"MaximumOrder"` is ignored silently and `SetOptions` has no effect on most. One helper (names checked, defaults
@@ -81,8 +88,9 @@ Left:
   FullPropagator = −𝒢, another sign convention).
 - Spin-resolved pairing kernels with spin components (singlet pairing at a contact interaction, where 𝒢_ψψ(x, x) = 0
   without spin); a superfield of complex bosons with a condensate.
-- Fourth order: Φ of the superfield takes 90 s at V⁴; the projections would need a selection by the number of anomalous
-  lines.
+- Fourth order: Φ of the superfield takes 2 s at V⁴ and its components 5 s; Φ of Z0 with the pairing terms written in
+  components takes more than a minute (the cut tests, see Speed); the projections would need a selection by the number
+  of anomalous lines.
 
 ## Further checks and functions (ranked)
 
