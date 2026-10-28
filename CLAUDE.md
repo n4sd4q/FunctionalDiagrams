@@ -172,7 +172,9 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   clean, `cleanLayoutQ`; `treeLayoutWithExternals` turns a tree of two vertices upright; a blob picture has the corners
   of its ports), and `crossedLegPositions` puts the two legs back as an X, their ends at the heights of each other's
   vertex, crossing 0.3 outside everything else and at about a right angle (a bubble they leave towards becomes a lens);
-  if they would cross another line, a loop circle through their vertices is drawn straight and the other sides are
+  when both legs leave blobs or vertices of bubbles towards the bubbles (a chain of bubbles, a tree of two vertex
+  functions), at 60 degrees, further out (`crowdedQ`, `$crowdedCrossingAngle`), so that the lenses are fuller and the X
+  clear of the blobs; with straight legs a bubble they leave towards cannot stay round; if they would cross another line, a loop circle through their vertices is drawn straight and the other sides are
   tried (`crossedLegDefects`). `"ExternalOrder" -> "Uncrossed"` (or `{"Uncrossed", {x1, ...}}`) takes per diagram the
   first of the order, the order with the right labels exchanged and the order with the top labels exchanged whose
   layout has fewest straight crossings (`layoutCrossingCount`): the labels move with their legs. Two and three points

@@ -30,7 +30,9 @@
   had the labels on the right exchanged where a fermion line would join opposite corners. Such a diagram is now drawn
   crossed: laid out with the labels of one side exchanged, its two legs (or the lines to its points) are put back as an
   X just outside it, at about a right angle (a bubble they leave is a lens, a loop through their vertices is drawn with
-  straight lines if its circle would be crossed); a vertex at the centre of an X with tadpoles on its arms stays as it
+  straight lines if its circle would be crossed); where both legs leave vertex functions or vertices of bubbles towards
+  the bubbles (the tree of two Γ⁽³⁾, the chain of two bubbles of Γ⁽⁴⁾ at λ³), they cross at 60 degrees, further out, so
+  that the X stands clear of the blobs and the lenses are fuller; a vertex at the centre of an X with tadpoles on its arms stays as it
   is. `"Uncrossed"` gives the planar pictures (the earlier ones of φ⁴ theory). Two and three points, and the sources of
   Z[J], keep their layouts.
 - **The lines of a box leave from its corners**, as those of a triangle already did. A box joined by two lines to a

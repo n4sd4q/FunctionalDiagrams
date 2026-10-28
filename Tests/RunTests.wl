@@ -248,6 +248,18 @@ check["four points with \"Uncrossed\": the bubbles of phi^4 drawn planar, the ch
   Sort[cornerLabels[OrderPart[vertexPhi4, lambda, 2], {a, b, c, d}, "ExternalOrder" -> "Uncrossed"]], {{a, b, c, d}, {a, b, c, d}, {a, b, d, c}}];
 check["four points: the trees of W^(4) with their leaves in the order given, the crossed one included",
   DeleteDuplicates[cornerLabels[ConnectedFunctionFromVertices[{a, b, c, d}, "Boson"], {a, b, c, d}]], {{a, b, c, d}}];
+(* the angles, in degrees, at which two straight lines or legs of a picture cross *)
+crossingAngles[items_] := With[{s = Join[Cases[items, {"E", {"segment", p_, q_}, _} :> {p, q}], Cases[items, {"L", p_, q_, ___} :> {p, q}]]},
+   Flatten[Table[With[{p = s[[i, 1]], r = s[[i, 2]] - s[[i, 1]], q = s[[j, 1]], u = s[[j, 2]] - s[[j, 1]]},
+      With[{den = r[[1]] u[[2]] - r[[2]] u[[1]]}, If[Abs[den] < 10.^-9, {},
+        With[{tt = ((q - p)[[1]] u[[2]] - (q - p)[[2]] u[[1]])/den, uu = ((q - p)[[1]] r[[2]] - (q - p)[[2]] r[[1]])/den},
+         If[0.05 < tt < 0.95 && 0.05 < uu < 0.95, {Round[VectorAngle[r, u]/Degree]}, {}]]]]], {i, Length[s]}, {j, i + 1, Length[s]}]]];
+check["crossed legs: at 60 degrees when both leave vertex functions (the tree of W^(4)) or a bubble (the channel t of Gamma4), else at about a right angle",
+  {crossingAngles[#[[2]]] & /@ FunctionalDiagrams`Private`geometriesOf[ConnectedFunctionFromVertices[{a, b, c, d}, "Boson"], {a, b, c, d}, {}],
+   crossingAngles[#[[2]]] & /@ FunctionalDiagrams`Private`geometriesOf[OrderPart[vertexPhi4, lambda, 2], {a, b, c, d}, {}],
+   Map[Abs[# - 90] < 10 &, crossingAngles[#[[2]]] & /@ FunctionalDiagrams`Private`geometriesOf[
+      IntegralOver[D0[a, z1] D0[c, z1] D0[z1, z2] D0[b, z2] D0[d, z2], {z1, z2}], {a, b, c, d}, {}], {2}]},
+  {{{}, {}, {60}, {}}, {{}, {60}, {}}, {{True}}}];
 (* x2 -> z1 -> z2 -> x1 on the left, x4 -> z3 -> z4 -> x3 on the right: the rungs z1-z4 and z2-z3 are horizontal *)
 ladderNodes = First[FunctionalDiagrams`Private`layoutRailUnits[{{x2, z1, z2, x1}, {x4, z3, z4, x3}}, {}, {{z1, z4}, {z2, z3}},
     {x1, x2, x3, x4}, {x1, x2, x3, x4}, {True, True, True, True}, {x1, x2, x3, x4}]];

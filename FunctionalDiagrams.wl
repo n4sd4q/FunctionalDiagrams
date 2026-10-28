@@ -4886,8 +4886,12 @@ layoutCrossingCount[positions_, lines_, labels_, labelNodes_, amputated_] := Mod
 (* the legs (or the lines to the points) of the labels la, lb, exchanged by the layout on the side of the outward normal n,
    put back: their ends exchanged (each at the height, along the side, of the vertex of the other leg) and moved out along n
    until the two lines cross as an X $legCrossingGap outside everything else drawn with the labels exchanged (items; a
-   bubble the legs then leave towards is flattened into a lens, and the X is a little further out) *)
+   bubble the legs then leave towards is flattened into a lens, and the X is a little further out). The X is at about a
+   right angle; where both legs leave blobs, or vertices of bubbles towards the bubbles (which they flatten: a chain of
+   bubbles), the lines cross at $crowdedCrossingAngle, further out: the X stands clear of the blobs and the lenses are
+   fuller *)
 $legCrossingGap = 0.3;
+$crowdedCrossingAngle = 60 Degree;
 (* the node at the end of the leg of the label l (leg[l], or its point) and the node where the leg starts (the vertex of the
    label, or the other end of the single line at its point; None if several lines end there) *)
 legEndAndStart[l_, labels_, labelNodes_, amputated_, lines_] := With[{k = First[First[Position[labels, l, {1}]]]}, With[{v = labelNodes[[k]]},
@@ -4906,7 +4910,7 @@ crossedLegDefects[items_, positions_, {la_, lb_}, labels_, labelNodes_, amputate
    Total[Table[crossingsWith[{lg[[1]] + 0.08 unitVectorOf[lg[[2]] - lg[[1]]], lg[[2]]}, others], {lg, legs}]]];
 crossedLegPositions[positions_, items_, {la_, lb_}, n_, labels_, labelNodes_, amputated_, lines_] := Module[
    {rules = Rule @@@ positions, endOf, vertexOf, pa, pb, qa, qb, t = {-n[[2]], n[[1]]}, near, reachOf, crossAt, solve, lo,
-    ta, tb, placed},
+    ta, tb, placed, crowdedQ},
    endOf[l_] := legEndAndStart[l, labels, labelNodes, amputated, lines][[1]];
    vertexOf[l_] := legEndAndStart[l, labels, labelNodes, amputated, lines][[2]];
    pa = Replace[endOf[la], rules]; pb = Replace[endOf[lb], rules];
@@ -4934,9 +4938,15 @@ crossedLegPositions[positions_, items_, {la_, lb_}, n_, labels_, labelNodes_, am
        With[{s = ((qb - qa)[[2]] b[[1]] - (qb - qa)[[1]] b[[2]])/det, r = (a[[1]] (qb - qa)[[2]] - a[[2]] (qb - qa)[[1]])/det},
         If[0 < s < 1 && 0 < r < 1, n . (qa + s a), -Infinity]]]]];
    lo = Max[n . qa, n . qb] + 0.2;
+   (* a leg that leaves a blob, or a vertex of a bubble (two or more propagators to one vertex) towards the bubble *)
+   crowdedQ[l_, q_, tEnd_] := With[{v = vertexOf[l], dir = n + Sign[tEnd - t . q] t},
+     Head[v] === blob || AnyTrue[DeleteDuplicates[Cases[lines, {v, w_, _, s_} | {w_, v, _, s_} /; w =!= v && ! interactionStyleQ[s] :> w]],
+       Function[w, Count[lines, {v, w, _, s_} | {w, v, _, s_} /; ! interactionStyleQ[s]] >= 2 && MatrixQ[{Replace[w, rules]}, NumberQ] &&
+         (Replace[w, rules] - q) . dir > 0.05]]];
    (* the nearest ends whose lines cross $legCrossingGap beyond the reach r, and far enough beyond the vertices to cross
-      at about a right angle *)
-   solve[r_] := Module[{a = lo, b = lo + 0.5, target = Max[r + $legCrossingGap, Max[n . qa, n . qb] + 0.45 Abs[ta - tb]]},
+      at about a right angle, or at $crowdedCrossingAngle *)
+   solve[r_] := Module[{a = lo, b = lo + 0.5, target = Max[r + $legCrossingGap, Max[n . qa, n . qb] +
+         If[crowdedQ[la, qa, ta] && crowdedQ[lb, qb, tb], 0.5/Tan[$crowdedCrossingAngle/2], 0.45] Abs[ta - tb]]},
      Which[
       crossAt[a] >= target, a,
       crossAt[lo + 8.] === -Infinity, lo + 0.4,

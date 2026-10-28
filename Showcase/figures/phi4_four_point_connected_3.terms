@@ -27,23 +27,23 @@
 \begin{tikzpicture}[x=0.340cm, y=0.340cm, line width=0.420pt, baseline={([yshift=-0.6ex]0,0)}]
   \draw (-0.955,0.955) -- (0.000,0.636);
   \draw (-0.955,-0.955) -- (0.000,-0.636);
-  \draw (1.173,-0.636) -- (0.000,0.636);
-  \draw (1.173,0.636) -- (0.000,-0.636);
-  \draw (0.000,0.000) arc[start angle=325.937, end angle=394.063, radius=0.568];
-  \draw (0.000,0.000) arc[start angle=214.063, end angle=145.937, radius=0.568];
-  \draw (0.000,0.000) arc[start angle=145.937, end angle=214.063, radius=0.568];
-  \draw (0.000,0.000) arc[start angle=34.063, end angle=-34.063, radius=0.568];
+  \draw (2.205,-0.636) -- (0.000,0.636);
+  \draw (2.205,0.636) -- (0.000,-0.636);
+  \draw (0.000,0.000) arc[start angle=308.594, end angle=411.406, radius=0.407];
+  \draw (0.000,0.000) arc[start angle=231.406, end angle=128.594, radius=0.407];
+  \draw (0.000,0.000) arc[start angle=128.594, end angle=231.406, radius=0.407];
+  \draw (0.000,0.000) arc[start angle=51.406, end angle=-51.406, radius=0.407];
   \fill (0.000,0.000) circle (0.064);
   \fill (0.000,0.636) circle (0.064);
   \fill (0.000,-0.636) circle (0.064);
   \draw[fill=white] (-0.955,0.955) circle (0.080);
   \draw[fill=white] (-0.955,-0.955) circle (0.080);
-  \draw[fill=white] (1.173,-0.636) circle (0.080);
-  \draw[fill=white] (1.173,0.636) circle (0.080);
+  \draw[fill=white] (2.205,-0.636) circle (0.080);
+  \draw[fill=white] (2.205,0.636) circle (0.080);
   \node[font=\tiny, inner sep=0pt, anchor=342] at (-1.116,1.008) {$a$};
   \node[font=\tiny, inner sep=0pt, anchor=18] at (-1.116,-1.008) {$b$};
-  \node[font=\tiny, inner sep=0pt, anchor=133] at (1.288,-0.761) {$c$};
-  \node[font=\tiny, inner sep=0pt, anchor=227] at (1.288,0.761) {$d$};
+  \node[font=\tiny, inner sep=0pt, anchor=150] at (2.352,-0.721) {$c$};
+  \node[font=\tiny, inner sep=0pt, anchor=210] at (2.352,0.721) {$d$};
 \end{tikzpicture}
 %%TERM%%
 \frac{1}{4}
@@ -771,10 +771,10 @@
 \begin{tikzpicture}[x=0.340cm, y=0.340cm, line width=0.420pt, baseline={([yshift=-0.6ex]0,0)}]
   \draw (-1.098,1.098) -- (0.065,0.581);
   \draw (-1.098,-1.098) -- (-0.581,-0.839);
-  \draw (1.656,-0.452) -- (0.065,0.581);
-  \draw (1.656,0.581) -- (0.194,-0.452);
-  \draw (0.065,0.581) arc[start angle=145.832, end angle=228.418, radius=0.789];
-  \draw (0.065,0.581) arc[start angle=48.418, end angle=-34.168, radius=0.789];
+  \draw (2.046,-0.452) -- (0.065,0.581);
+  \draw (2.046,0.581) -- (0.194,-0.452);
+  \draw (0.065,0.581) arc[start angle=140.388, end angle=233.862, radius=0.715];
+  \draw (0.065,0.581) arc[start angle=53.862, end angle=-39.612, radius=0.715];
   \draw (-0.581,-0.839) -- (0.194,-0.452);
   \draw (-0.581,-0.839) arc[start angle=116.565, end angle=476.565, radius=0.280];
   \fill (0.065,0.581) circle (0.064);
@@ -782,12 +782,12 @@
   \fill (0.194,-0.452) circle (0.064);
   \draw[fill=white] (-1.098,1.098) circle (0.080);
   \draw[fill=white] (-1.098,-1.098) circle (0.080);
-  \draw[fill=white] (1.656,-0.452) circle (0.080);
-  \draw[fill=white] (1.656,0.581) circle (0.080);
+  \draw[fill=white] (2.046,-0.452) circle (0.080);
+  \draw[fill=white] (2.046,0.581) circle (0.080);
   \node[font=\tiny, inner sep=0pt, anchor=336] at (-1.253,1.167) {$a$};
   \node[font=\tiny, inner sep=0pt, anchor=27] at (-1.250,-1.174) {$b$};
-  \node[font=\tiny, inner sep=0pt, anchor=147] at (1.799,-0.545) {$c$};
-  \node[font=\tiny, inner sep=0pt, anchor=215] at (1.795,0.679) {$d$};
+  \node[font=\tiny, inner sep=0pt, anchor=152] at (2.196,-0.531) {$c$};
+  \node[font=\tiny, inner sep=0pt, anchor=209] at (2.194,0.664) {$d$};
 \end{tikzpicture}
 %%TERM%%
 \frac{1}{4}
@@ -843,23 +843,23 @@
 \begin{tikzpicture}[x=0.340cm, y=0.340cm, line width=0.420pt, baseline={([yshift=-0.6ex]0,0)}]
   \draw (-1.098,1.098) -- (-0.581,0.839);
   \draw (-1.098,-1.098) -- (0.065,-0.581);
-  \draw (1.656,-0.581) -- (0.194,0.452);
-  \draw (1.656,0.452) -- (0.065,-0.581);
+  \draw (2.046,-0.581) -- (0.194,0.452);
+  \draw (2.046,0.452) -- (0.065,-0.581);
   \draw (-0.581,0.839) -- (0.194,0.452);
-  \draw (0.065,-0.581) arc[start angle=311.582, end angle=394.168, radius=0.789];
-  \draw (0.065,-0.581) arc[start angle=214.168, end angle=131.582, radius=0.789];
+  \draw (0.065,-0.581) arc[start angle=306.138, end angle=399.612, radius=0.715];
+  \draw (0.065,-0.581) arc[start angle=219.612, end angle=126.138, radius=0.715];
   \draw (-0.581,0.839) arc[start angle=243.435, end angle=603.435, radius=0.280];
   \fill (-0.581,0.839) circle (0.064);
   \fill (0.065,-0.581) circle (0.064);
   \fill (0.194,0.452) circle (0.064);
   \draw[fill=white] (-1.098,1.098) circle (0.080);
   \draw[fill=white] (-1.098,-1.098) circle (0.080);
-  \draw[fill=white] (1.656,-0.581) circle (0.080);
-  \draw[fill=white] (1.656,0.452) circle (0.080);
+  \draw[fill=white] (2.046,-0.581) circle (0.080);
+  \draw[fill=white] (2.046,0.452) circle (0.080);
   \node[font=\tiny, inner sep=0pt, anchor=333] at (-1.250,1.174) {$a$};
   \node[font=\tiny, inner sep=0pt, anchor=24] at (-1.253,-1.167) {$b$};
-  \node[font=\tiny, inner sep=0pt, anchor=145] at (1.795,-0.679) {$c$};
-  \node[font=\tiny, inner sep=0pt, anchor=213] at (1.799,0.545) {$d$};
+  \node[font=\tiny, inner sep=0pt, anchor=151] at (2.194,-0.664) {$c$};
+  \node[font=\tiny, inner sep=0pt, anchor=208] at (2.196,0.531) {$d$};
 \end{tikzpicture}
 %%TERM%%
 \frac{1}{4}
