@@ -18,11 +18,14 @@ that give the same results. For the electron gas of the README (`Z0`, `interacti
 | Luttinger–Ward functional Φ[G] | minus the 2PI vacuum diagrams, with G₀ → G | `LuttingerWardFunctional[Z0, interaction, n, G0 -> G]` |
 | self-energy Σ(x, y) | δΦ/δG(y, x): `FunctionalDerivative[Phi, G[y, x]]` | `SelfEnergy[Phi, G, {x, y}]` |
 | irreducible vertex Γ⁰(x₁, x₂; x₃, x₄) | δ²Φ/δG(x₄, x₃)δG(x₂, x₁): `FunctionalDerivative[Phi, G[x4, x3], G[x2, x1]]` | `IrreducibleVertex[Phi, G, {x1, x2, x3, x4}]` |
+| 1PI effective action Γ[Ψ̄, Ψ] | the Legendre transform of −log Z with respect to η and η̄: S[Ψ̄, Ψ] − ½ Tr ln(−S''[Ψ̄, Ψ]) + Γ₁[Ψ̄, Ψ] | `EffectiveAction1PI[Z0, interaction, n, {psi -> Psi, psibar -> Psibar}, G0 -> G0]` |
 | full vertex F(x₁, x₂; x₃, x₄) | the fourth derivative of the 1PI action with respect to the means | `PerturbativeFullVertex[Z0, interaction, n, {psi, psibar}, {x1, x2, x3, x4}, G0 -> G]` |
 | vertex of the density Λ(x₁, x₂; z) | −δG⁻¹(x₁, x₂)/δU(z), U coupled to the density | `PerturbativeDensityVertex[Z0, interaction, n, {psi, psibar}, {x1, x2, z}, G0 -> G]` |
-| 2PI effective action Γ[G] | the Legendre transform of −log Z with respect to the two-point source | `EffectiveAction2PI[Phi, G0 -> G]` |
+| 2PI effective action Γ[G] | the Legendre transform of −log Z with respect to the two-point source: Φ[G] − Tr ln(−G⁻¹) − Tr(G₀⁻¹G − 1) | `EffectiveAction2PI[Phi, G0 -> G]` |
 
-The [map of the functions](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html) places every
+The effective actions, with their notation (S the classical action, S'' its second derivative, Γ₁ and Γ₂), are in
+[Conventions](Conventions#effective-actions). The
+[map of the functions](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html) places every
 public name by its role in a calculation, and `?Name` gives its usage message.
 
 ## What is the difference between PerturbativeCorrelationFunction and ConnectedCorrelationFunction?

@@ -41,7 +41,7 @@ the usual problems.
 ## Pages
 
 - [Installation](Installation): installing, loading, updating and removing the package; which version is loaded
-- [Conventions](Conventions): signs, propagators, weights, channels and units, in one place
+- [Conventions](Conventions): signs, propagators, weights, channels, effective actions and units, in one place
 - Recipes
   - [Declaring a theory](Declaring-a-Theory): fields, sources, propagators, interaction lines, couplings
   - [Reading the weights](Reading-the-Weights): what the number in front of a picture means

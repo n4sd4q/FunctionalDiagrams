@@ -56,7 +56,9 @@ the expressions keep their coefficients, and `"Weights" -> "Coefficients"` shows
 - Γ⁰(x₁, x₂; x₃, x₄) = δΣ(x₁, x₂)/δG(x₄, x₃) = δ²Φ/δG(x₄, x₃)δG(x₂, x₁):
   `FunctionalDerivative[Phi, G[x4, x3], G[x2, x1]]` (the shortcut `IrreducibleVertex`). Fermions **leave at x₁, x₃
   and enter at x₂, x₄**; the pictures put the legs counterclockwise from the top left: x₁ (out), x₂ (in), x₃ (out),
-  x₄ (in).
+  x₄ (in). Every picture of a four-point function, boson or fermion, has its labels at the corners in the order given;
+  `"ExternalOrder"` changes the order, and `"ExternalOrder" -> "Uncrossed"` exchanges the legs of one side of a diagram
+  whose lines would cross ([Particle–particle diagrams](Particle-Particle-Diagrams)).
 - The full vertex F: ⟨ψ(1′) ψ̄(2′) ψ̄(4′) ψ(3′)⟩_c = G(1′, 1) G(2, 2′) F(1, 2; 3, 4) G(4, 4′) G(3′, 3).
 - A pair of propagators between two vertices is written L₀: in the particle–hole channel
   L₀(x₁, x₂; x₃, x₄) = G(x₁, x₄) G(x₃, x₂), so that F = Γ⁰ + Γ⁰L₀F.
@@ -77,9 +79,10 @@ For fermions, with the legs above:
 
 Γ⁰ is irreducible in ph: Γ⁰ = F − R_ph = Γ_irr + R_ph̄ + R_pp, with Γ_irr the fully irreducible vertex (the bare vertex up
 to third order). For real bosons and superfields the channels are `"s"` (a b | c d), `"t"` (a c | b d) and `"u"`
-(a d | b c). The particle–particle kernel of fermions is a derivative with respect to the anomalous propagators, so
-it needs the superfield below. Manual: *Two-particle channels, Bethe–Salpeter ladders and the parquet*;
-[Particle–particle diagrams](Particle-Particle-Diagrams).
+(a d | b c), with a, b, c, d at the corners counterclockwise from the top left: the diagrams of t join opposite
+corners and are drawn with two legs crossing, unless `"Uncrossed"` exchanges them. The particle–particle kernel of
+fermions is a derivative with respect to the anomalous propagators, so it needs the superfield below. Manual:
+*Two-particle channels, Bethe–Salpeter ladders and the parquet*; [Particle–particle diagrams](Particle-Particle-Diagrams).
 
 ## The vertex of the density and Hedin's equations
 
@@ -98,6 +101,43 @@ with respect to it are antisymmetrised. 𝚺 = −2 δΦ/δ𝒢, with the gap fu
 whose channels s, t, u are ph, pp and ph̄. `SuperfieldComponents` projects on ψ and ψ̄. In the pictures 𝒢_ψψ has two
 arrow heads pointing to its ends (`"DivergingArrows"`) and 𝒢_ψ̄ψ̄ two pointing to its middle (`"ConvergingArrows"`).
 Manual: *Superfields*.
+
+## Effective actions
+
+The effective actions are Legendre transforms of −log Z. The 1PI action is the transform with respect to the sources of
+the fields, a functional of the means φ̄ = ⟨φ⟩ (for fermions the Grassmann-odd Ψ = ⟨ψ⟩ and Ψ̄ = ⟨ψ̄⟩); the 2PI action is
+the transform with respect to a two-point source as well, a functional of the means and of the propagator G. In both, S
+is the classical action, written whole, and S'' its second derivative with respect to the means.
+
+**The 1PI action** (`EffectiveAction1PI`):
+
+- A real boson: Γ[φ̄] = S[φ̄] + ½ Tr ln S''[φ̄] + Γ₁[φ̄]. S''[φ̄] = D⁻¹[φ̄] = D₀⁻¹ + S_int''[φ̄] is the inverse
+  propagator in the background, and Γ₁, defined by this equation, is minus the connected 1PI vacuum diagrams with two
+  or more loops, with the lines D[φ̄] = S''[φ̄]⁻¹ and the vertices of S_int[φ̄ + φ] of degree three or more in φ.
+- Fermions: Γ[Ψ̄, Ψ] = S[Ψ̄, Ψ] − ½ Tr ln(−S''[Ψ̄, Ψ]) + Γ₁[Ψ̄, Ψ], with S'' the Nambu matrix of the second derivatives
+  with respect to (Ψ, Ψ̄): its normal block is D⁻¹[Ψ̄, Ψ](x, y) = δ²S/δΨ̄(x)δΨ(y), its anomalous blocks are
+  δ²S/δΨ̄(x)δΨ̄(y) = V(x, y)Ψ(x)Ψ(y) and δ²S/δΨ(x)δΨ(y) = V(x, y)Ψ̄(x)Ψ̄(y), and the lines of Γ₁ are S''⁻¹. A superfield
+  has the same form, Γ[𝚿] = S[𝚿] − ½ Tr ln(−S''[𝚿]) + Γ₁[𝚿]. The package computes these two with bare lines G₀, the
+  vertices of degree two kept as vertices: grouped by loops, their diagrams are S_int, the rings of the one loop, and
+  Γ₁ with its lines expanded.
+- At zero means the derivatives are the vertex functions: for a boson the second is D₀⁻¹ − Σ and the fourth Γ⁽⁴⁾; for
+  fermions δ²Γ/δΨ̄(a)δΨ(b) = G₀⁻¹(a, b) − Σ(a, b) (the rightmost derivative first), and the fourth derivative, with
+  respect to Ψ̄(x₁), Ψ(x₂), Ψ̄(x₃), Ψ(x₄), is the full vertex F(x₁, x₂; x₃, x₄).
+
+**The 2PI action** (`EffectiveAction2PI`):
+
+- At zero means: Γ[G] = Φ[G] − Tr ln(−G⁻¹) − Tr(G₀⁻¹G − 1) for fermions, Φ[G] + ½ Tr ln G⁻¹ + ½ Tr(D₀⁻¹G − 1) for a
+  real boson, with Φ the Luttinger–Ward functional. It is stationary where G⁻¹ = G₀⁻¹ − Σ[G], the Dyson equation, and
+  equal to −log Z there.
+- With the means (option `"MeanFields"`), the action of Cornwall, Jackiw and Tomboulis:
+  Γ[φ̄, G] = S[φ̄] + ½ Tr ln G⁻¹ + ½ Tr(D⁻¹[φ̄]G − 1) + Γ₂[φ̄, G], and for fermions
+  Γ[Ψ̄, Ψ, G] = S[Ψ̄, Ψ] − Tr ln(−G⁻¹) − Tr(D⁻¹[Ψ̄, Ψ]G − 1) + Γ₂[Ψ̄, Ψ, G]. D⁻¹ is that of the 1PI action, for fermions
+  D⁻¹[Ψ̄, Ψ] = G₀⁻¹ − Σ_HF[−ΨΨ̄]: Σ_HF[−ΨΨ̄], the first-order self-energy with −Ψ(x)Ψ̄(y) in place of G(x, y), is the
+  Hartree and Fock potentials of the means. Γ₂ is minus the 2PI vacuum diagrams with the lines G and the vertices of
+  degree three or more; at zero means it is Φ. The Dyson equation is G⁻¹ = D⁻¹ − Σ, with Σ the self-energy of Γ₂.
+- For a boson and for a superfield, at G = S''⁻¹, Γ₂ is the part of Γ₁ that is 2PI in these lines.
+
+Manual: *Effective actions and operator traces*.
 
 ## Matsubara frequencies
 

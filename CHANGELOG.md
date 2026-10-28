@@ -133,12 +133,14 @@
   with two or more against the expanded one loop and Γ₁ (φ⁴, the superfield, the electron gas through the components of
   the superfield), Γ₂ at G = S''⁻¹ against Γ₁ (φ⁴, the superfield).
 - **A wiki.** The [wiki](https://github.com/n4sd4q/FunctionalDiagrams/wiki) of the repository has practical guides
-  and a FAQ, beside the README, the showcase and the manual: installing and updating, the conventions in one place,
-  declaring a theory, reading the weights, orders and simplification, exact equations, particle–particle diagrams,
-  evaluating diagrams, pictures in LaTeX, light and dark notebooks, working in scripts. The pages are written in `wiki/`
-  and published by the Action `.github/workflows/wiki.yml` on every push that changes them; every block of code gives
-  what the page shows after it, which `Development/check_wiki.wl` checks by running the pages, each in a fresh kernel,
-  and `Development/check_consistency.py` checks their version, the names of the package they use and their links.
+  and a FAQ, beside the README, the showcase and the manual: installing and updating, the conventions in one place
+  (the 1PI and 2PI actions with the notation above), declaring a theory, reading the weights, orders and
+  simplification, exact equations, particle–particle diagrams (the corners of four-point pictures and `"Uncrossed"`, for
+  the electron gas and φ⁴ theory), evaluating diagrams, pictures in LaTeX, light and dark notebooks, working in scripts.
+  The pages are written in `wiki/` and published by the Action `.github/workflows/wiki.yml` on every push that changes
+  them; every block of code gives what the page shows after it, which `Development/check_wiki.wl` checks by running the
+  pages, each in a fresh kernel, and `Development/check_consistency.py` checks their version, the names of the package
+  they use and their links.
 
 ## 2.4.0 (2026-10-26)
 
