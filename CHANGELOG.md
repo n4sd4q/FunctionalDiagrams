@@ -124,6 +124,11 @@
   with `DiagramPlot[...]` is drawn with its arguments, and the external labels of every picture are checked to be the
   free labels of the output. The Z factors and the renormalization-group functions of φ⁴ are printed in κ, a symbol in
   the code (before, with powers of π, and in κ only in the text).
+- **When the package warns about a clash of names.** The manual said that `FunctionalDiagrams::clash` is issued when
+  another package defines a function of the same name. The check at load time sees only the symbols of ``System` ``
+  (a built-in function of a later Mathematica, used in place of the package's); a name defined by another package, or
+  typed before the package is loaded, gives Mathematica's own message `::shdw`, and the function used is that of the
+  context loaded last. The manual (installation, messages) and the wiki (installation) now say so.
 - **The 2PI action with means in the form of the textbooks.** Γ[Ψ̄, Ψ, G] is now written as Γ[φ̄, G] is,
   S[Ψ̄, Ψ] − Tr ln(−G⁻¹) − Tr(D⁻¹[Ψ̄, Ψ] G − 1) + Γ₂, with D⁻¹(x, y) = δ²S/δΨ̄(x)δΨ(y) = G₀⁻¹ − Σ_HF[−ΨΨ̄] the inverse
   propagator in the presence of the means: Σ_HF[−ΨΨ̄], the first-order self-energy Σ_HF[G] with −Ψ(x)Ψ̄(y) in place of

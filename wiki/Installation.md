@@ -113,13 +113,15 @@ PacletUninstall["FunctionalDiagrams"]
 - **The package does not load in an old Mathematica.** It needs 12.1 or later; `$Version` tells yours.
 - **A file of the repository downloaded from GitHub does not load.** Saving the page of a file in a browser saves HTML;
   use *Download raw file* on GitHub, or the release.
-- **`FunctionalDiagrams::clash`** when the package is loaded: names of the package are already defined in another
-  context (a function of a newer Mathematica, for example), and the package's own versions are not used. Load
-  FunctionalDiagrams in a fresh kernel; if the message remains, please report it in an
+- **`FunctionalDiagrams::clash`** when the package is loaded: names of the package are symbols of the context
+  ``System` ``, built-in functions of a Mathematica newer than the package, and those are used in place of the
+  package's own. Load FunctionalDiagrams in a fresh kernel; if the message remains, please report it in an
   [issue](https://github.com/n4sd4q/FunctionalDiagrams/issues).
 - **`DiagramPlot::shdw`** (or another name of the package) when the package is loaded: the name was typed in the
-  session before `Needs`, which made a symbol of its own in ``Global` ``. The package's function is the one used from
-  then on; ``Remove["Global`DiagramPlot"]`` removes the other, and loading the package first avoids the message.
+  session before `Needs`, which made a symbol of its own in ``Global` ``, or another package loaded before defines it.
+  The package's function is the one used from then on (the context loaded last comes first on the context path);
+  ``Remove["Global`DiagramPlot"]`` removes the symbol of ``Global` ``, and loading the package first avoids the
+  message.
 - **The pictures are black on a dark notebook.** Before Mathematica 14.3 the pictures have the colours of a light
   notebook: see [Light and dark notebooks](Light-and-Dark-Notebooks).
 - **Results show `DummyVariable[1, 1]`** in a script: see [Working in scripts](Working-in-Scripts).

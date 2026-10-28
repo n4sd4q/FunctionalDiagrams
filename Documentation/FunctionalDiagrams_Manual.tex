@@ -234,7 +234,7 @@ $W=\log Z$, $\Gamma[\bar\phi]$, $\Gamma[\bar\phi,G]$, $\Phi[G]$, $\Phi[\mathcal 
 check. In particular, weights are never put in by hand: symmetry factors and fermionic signs come out of the algebra, and
 the package only has to recognize when two terms are the same diagram.
 
-\subsection{Requirements and installation}
+\subsection{Requirements and installation}\label{sec:install}
 
 The package is a single file, \pkg{FunctionalDiagrams.wl}, written for Mathematica~12.1 or later (for the
 paclet manager that loads it).
@@ -261,9 +261,13 @@ package again in the same session starts afresh: the definitions of the package 
 cleared (attributes that the declarations gave to your own symbols, such as \pkg{Orderless} for a symmetric function,
 remain).
 
-When the package is loaded, it checks that its public names are not shadowed by symbols of other contexts, and issues
-\pkg{FunctionalDiagrams::clash} if they are (for instance if another package defines a function of the same name).
-In a notebook it then prints a banner two lines high: the logo, the attribution ``FunctionalDiagrams, by Nazzareno
+When the package is loaded, it checks that none of its public names is already a symbol of the context \pkg{System`}
+(a built-in function of a later version of Mathematica), which would be used in place of the package's function, and
+issues \pkg{FunctionalDiagrams::clash} if one is. A name of the package that another package loaded in the same
+session also defines, or that was typed before the package was loaded (a symbol in \pkg{Global`}), gives instead
+Mathematica's own message \pkg{::shdw} (\pkg{DiagramPlot::shdw}, say): the function used is that of the context loaded
+last, which comes first in \pkg{\$ContextPath}.
+In a notebook the package then prints a banner two lines high: the logo, the attribution ``FunctionalDiagrams, by Nazzareno
 Africani'' (which modified versions must keep), the version, the license, how to cite the package
 (section~\ref{sec:citing}) and links to the repository and to this manual. In a script (\pkg{wolfram -script}) nothing
 is printed.
@@ -3396,9 +3400,10 @@ zero-dimensional theory.
 \paragraph{Messages}
 \begin{itemize}
 \item \pkg{FunctionalDiagrams::builtin}: a declared name is a built-in symbol of the Wolfram Language; use another name.
-\item \pkg{FunctionalDiagrams::clash}: public names of the package are defined in another context (another package, or a
-  later version of Mathematica); the symbols of the other context shadow those of the package, whose definitions are then
-  not used.
+\item \pkg{FunctionalDiagrams::clash}: public names of the package are symbols of the context \pkg{System`} (built-in
+  functions of a later version of Mathematica), which are used in place of the package's functions; the definitions of
+  the package for these names are not made. A name also defined by another package gives \pkg{::shdw} instead
+  (section~\ref{sec:install}).
 \item \pkg{FunctionalDerivative::times}: a product of two Grassmann-odd factors was written with \pkg{Times}, which
   loses their order and the sign; the evaluation is aborted. Use \pkg{**}.
 \item \pkg{FunctionalDiagrams::label}: an external label does not occur in the expression --- a misprint, or the
