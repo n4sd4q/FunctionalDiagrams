@@ -32,9 +32,20 @@
 
 BeginPackage["FunctionalDiagrams`"];
 
-(* a fresh start when the package is loaded again in the same session *)
-Unprotect["FunctionalDiagrams`*"];
-ClearAll["FunctionalDiagrams`*", "FunctionalDiagrams`Private`*"];
+(* a fresh start when the package is loaded again in the same session. $FunctionalDiagramsUpdateCheck keeps its
+   setting (section 21): that of the package's symbol when the package is loaded again, or that of the symbol made by
+   typing the name before the package was first loaded (a symbol of Global`), which is removed before the package's own
+   symbol is made, so that neither shadows the other (::shdw). The symbols are named by strings, since a name in this
+   code would make the package's symbol at once *)
+With[{FunctionalDiagrams`Private`others = Select[Names["*`$FunctionalDiagramsUpdateCheck"],
+     StringContainsQ[#, "`"] && !StringStartsQ[#, "FunctionalDiagrams`"] &]},
+  With[{FunctionalDiagrams`Private`setting = Join @@ (If[ToExpression[#, InputForm, ValueQ], {ToExpression[#]}, {}] &) /@
+       Join[Names["FunctionalDiagrams`$FunctionalDiagramsUpdateCheck"], FunctionalDiagrams`Private`others]},
+   Scan[Quiet[Remove[#]] &, FunctionalDiagrams`Private`others];
+   Unprotect["FunctionalDiagrams`*"];
+   ClearAll["FunctionalDiagrams`*", "FunctionalDiagrams`Private`*"];
+   If[FunctionalDiagrams`Private`setting =!= {},
+    Set @@ {Symbol["FunctionalDiagrams`$FunctionalDiagramsUpdateCheck"], Last[FunctionalDiagrams`Private`setting]}]]];
 
 $FunctionalDiagramsVersion::usage = "$FunctionalDiagramsVersion is the version of the FunctionalDiagrams package.";
 FunctionalDiagrams::usage = "FunctionalDiagrams derives Feynman diagrams by differentiating generating functionals; ?FunctionalDiagrams`* lists its functions. Its messages are FunctionalDiagrams::name.";
@@ -196,6 +207,10 @@ LegendreTransform::usage = "LegendreTransform[Phi, G -> S] is Potthoff's univers
 LegendrePropagator::usage = "LegendrePropagator[G -> S, {V, ...}][x, y] is G[S](x, y), the propagator at which the self-energy of a Luttinger-Ward functional Phi (of G and of the kernels V, ...) equals S: the stationary point in G of Potthoff's universal functional \[ScriptCapitalF][S] = LegendreTransform[Phi, G -> S], whose derivative with respect to S is written with it. It is shown as G[S](x, y), and ExpandTrace and ZeroDimensionalValue write it as G(x, y) (G -> g(S) among the rules of ZeroDimensionalValue). Its derivatives are not available (\[Delta]G[S]/\[Delta]S is the inverse of the irreducible vertex, (\[Delta]\[CapitalSigma]/\[Delta]G)^-1, \[Delta]G[S]/\[Delta]V needs it too): FunctionalDerivative gives a message and the terms that need one are $Failed, as are the second derivatives of \[ScriptCapitalF] and of SelfEnergyFunctional with respect to S.";
 SelfEnergyFunctional::usage = "SelfEnergyFunctional[Phi, G0 -> S, G] is Potthoff's self-energy functional \[CapitalOmega]_G0[S] = \[ScriptCapitalF][S] - Tr ln(-(G0^-1 - S)) for fermions (\[ScriptCapitalF][S] + 1/2 Tr ln(D0^-1 - S) for real bosons, \[ScriptCapitalF][S] + Tr ln(G0^-1 - S) for complex bosons; option \"Statistics\"), with \[ScriptCapitalF] = LegendreTransform[Phi, G -> S] the universal functional. G0 enters only through the trace-log (Potthoff writes \[CapitalOmega]_t[S]: his t, the one-body part, is what G0^-1 contains besides the frequencies), so that \[ScriptCapitalF] is the same for every system with the same interaction and can be computed on a simpler reference system (the idea of the variational cluster approximation and of DMFT): \[CapitalOmega]_G0[S] is stationary at the physical self-energy, FunctionalDerivative with respect to S[x, y] being (G0^-1 - S)^-1(y, x) - G[S](y, x) (Dyson), and equal to -log Z there. G[S] is (G0^-1 - S)^-1 only at the stationary point: \[CapitalOmega]_G0[S] is a Legendre transform, not the substitution G -> (G0^-1 - S)^-1 in \[CapitalGamma][G] (EffectiveAction2PI), which is stationary at the same point but has G0 also inside Phi, and is therefore not universal.";
 ZeroDimensionalValue::usage = "ZeroDimensionalValue[expr, {G -> g, V -> u, ...}] is the value of expr in zero dimensions (one point, possibly with internal states): integrals dropped, DeltaFunction -> 1, every kernel h[x, y] replaced by its value, and a factor n (option \"LoopFactor\" -> n, e.g. 2s + 1; default 1) for every closed loop of kernels (ClosedLoopCount; kernels of operators, OperatorKernel[A][x, y], included, so that Integral A(x, y) B(y, x) counts as the trace Tr(A . B)) and every trace: OperatorTrace[A] -> n a and TraceLog[A] -> Log[a^n] (n Log[a] for a symbolic n), a the value of the operator A (products of numbers). LegendreTransform[Phi, G -> S] is written out as Phi[G] - Tr(S . G) for fermions (+ 1/2 Tr(S . G) for real bosons, + Tr(S . G) for complex bosons), with G -> g(S) given among the rules. The option \"Loops\" -> {G, ...} gives the heads of the lines whose loops are counted (default Automatic: every two-label kernel of expr that is neither symmetric nor an interaction line, i.e. propagators, self-energies and one-body sources, and the kernels of operators made of them). It is the exact check of the weights of the diagrams on a zero-dimensional model whose integral can be done. When a value is a list, an array of rank the number of labels of its kernel (e.g. the 4 x 4 Nambu matrix of one site with spin 1/2, NambuField = (psiUp, psiDn, psibarUp, psibarDn)), the labels run over the internal states: DeltaFunction is the identity, integrals are sums, operators are matrices (numbers times the identity), Tr ln A = Log[Det[A]], Tr A = Tr[A], OperatorKernel[A][x, y] the entry, and \"LoopFactor\" is not used; \"Indices\" -> {x -> i, ...} gives the internal states of the free labels.";
+
+(* ------------------------------------------------------------- the package *)
+FunctionalDiagramsUpdateCheck::usage = "FunctionalDiagramsUpdateCheck[] asks GitHub (api.github.com) for the latest release of FunctionalDiagrams and gives <|\"InstalledVersion\" -> ..., \"LatestVersion\" -> ..., \"InstallLine\" -> ...|>, the version loaded, the latest release and the PacletInstall line of its paclet; when the latest release is newer, it also prints that line. It gives $Failed, with a message, when the release cannot be read. Loading the package in a notebook does the same check by itself, at most once a day (see $FunctionalDiagramsUpdateCheck).";
+$FunctionalDiagramsUpdateCheck::usage = "$FunctionalDiagramsUpdateCheck is True (the default) when loading the package in a notebook checks for a newer release: at most once a day, in the background, it asks GitHub (api.github.com) for the latest release and, if it is newer than $FunctionalDiagramsVersion, adds to the banner the PacletInstall line of that release; any failure is silent, and scripts never check. Set $FunctionalDiagramsUpdateCheck = False before Needs[\"FunctionalDiagrams`\"] (in init.m to turn it off for good) to load without it. FunctionalDiagramsUpdateCheck[] checks by hand.";
 
 Begin["`Private`"];
 
@@ -8572,7 +8587,8 @@ $publicNames = {"IntegralOver", "DeltaFunction", "GrassmannProduct", "DummyVaria
    "InfraredRearrangedIntegral", "MassInsertion", "BetaFunctionFromZ", "AnomalousDimensionFromZ",
    "GammaMatrix", "SlashedMomentum", "DiracProduct", "DiracTrace", "SpinorChain", "LorentzMetric", "FourVector", "ScalarProduct", "SpacetimeDimension", "DiracSimplify", "DiracOrder", "QEDIntegrand", "FeynmanDenominator", "MinkowskiLoopIntegral", "IntegrateOneLoop", "SimplexIntegral", "ParameterIntegral", "ReduceParameterIntegrals", "CombineParameterIntegrals", "ExpandParameterIntegrals", "DifferentiateUnderIntegral", "VertexFormFactors",
    "EffectiveAction2PI", "EffectiveAction1PI", "TraceLog", "OperatorTrace", "OperatorKernel", "ExpandTrace", "LegendreTransform",
-   "LegendrePropagator", "SelfEnergyFunctional", "ZeroDimensionalValue", "SuperfieldComponents"};
+   "LegendrePropagator", "SelfEnergyFunctional", "ZeroDimensionalValue", "SuperfieldComponents",
+   "FunctionalDiagramsUpdateCheck"};
 With[{bad = Select[$publicNames, With[{sym = Symbol[#]}, Context[sym]] =!= "FunctionalDiagrams`" &]},
   If[bad =!= {}, Message[FunctionalDiagrams::clash, bad]]];
 
@@ -8614,12 +8630,15 @@ $repositoryURL = "https://github.com/n4sd4q/FunctionalDiagrams";
    backgrounds); U+2010 (a hyphen, not a minus sign), U+00B7 and U+00A0 by character code, so that the file stays plain
    ASCII. The front end may break a line between any two items of a Row, so the attribution, the version, the license,
    "please cite it: CITATION.cff" and GitHub are each one unbreakable group (LineBreakWithin -> False) ending with its
-   separator and a breakable space: in a narrow window the lines wrap after a separator, never before one *)
-loadBanner[] :=
-  Module[{nbsp = FromCharacterCode[160], dot, group, blue = lightDarkColor[$logoAccent, $logoLight],
-     grey = lightDarkColor[GrayLevel[0.45], GrayLevel[0.6]], file = $repositoryURL <> "/blob/main/"},
-    dot = nbsp <> nbsp <> FromCharacterCode[183] <> nbsp <> " ";
-    group[items__] := Style[Row[{items}], LineBreakWithin -> False];
+   separator and a breakable space: in a narrow window the lines wrap after a separator, never before one.
+   loadBanner[release] adds a third line, the notice of a newer release (updateNotice) *)
+bannerDot[] := With[{nbsp = FromCharacterCode[160]}, nbsp <> nbsp <> FromCharacterCode[183] <> nbsp <> " "];
+bannerGroup[items__] := Style[Row[{items}], LineBreakWithin -> False];
+bannerBlue[] := lightDarkColor[$logoAccent, $logoLight];
+bannerGrey[] := lightDarkColor[GrayLevel[0.45], GrayLevel[0.6]];
+loadBanner[release_ : None] :=
+  Module[{dot = bannerDot[], group = bannerGroup, blue = bannerBlue[], grey = bannerGrey[],
+     file = $repositoryURL <> "/blob/main/"},
     Style[Grid[{{packageLogo[30],
        Column[{
          Row[{group[Style["FunctionalDiagrams", Bold, 14, blue], Style[", by Nazzareno Africani", 14, blue],
@@ -8629,11 +8648,116 @@ loadBanner[] :=
              group[StringReplace["GPL-3.0-or-later", "-" -> FromCharacterCode[8208]], dot],
              group["please cite it: ", Hyperlink["CITATION.cff", file <> "CITATION.cff"], dot],
              group[Hyperlink["GitHub", $repositoryURL], dot],
-             Hyperlink["Manual", file <> "Documentation/FunctionalDiagrams_Manual.pdf"]}], 11, grey]},
+             Hyperlink["Manual", file <> "Documentation/FunctionalDiagrams_Manual.pdf"]}], 11, grey],
+         If[AssociationQ[release], updateNotice[release], Nothing]},
         Spacings -> 0.1]}},
       Alignment -> {Left, Center}, Spacings -> {0.7, 0}], FontFamily -> "Source Sans Pro", LineIndent -> 0]];
-(* in a notebook (not in scripts, which stay quiet), the banner *)
-If[TrueQ[$Notebooks], Print[loadBanner[]]];
+
+(* the update check. In a notebook (never in a script), at most once a day, the package asks GitHub for its latest
+   release in the background (URLSubmit: loading never waits for the network) and, if it is newer than the version
+   loaded, the banner gets a third line with the PacletInstall line of its paclet. Any failure (offline, a proxy, a
+   time limit, the rate limit of GitHub, an answer without the fields) is silent. The handler of the answer runs after
+   the evaluation that loaded the package, when a Print would go to the Messages window: it writes the banner again
+   in its own cell, found by a tag given to it at load, without moving the selection (NotebookWrite to a CellObject).
+   FunctionalDiagramsUpdateCheck[] asks by hand, and waits for the answer *)
+$latestReleaseURL = "https://api.github.com/repos/n4sd4q/FunctionalDiagrams/releases/latest";
+latestReleaseRequest[] := HTTPRequest[$latestReleaseURL, <|"Headers" -> {"Accept" -> "application/vnd.github+json"}|>];
+(* the date of the last check at load, in a small file of the user's base directory *)
+$updateCheckDirectory := FileNameJoin[{$UserBaseDirectory, "ApplicationData", "FunctionalDiagrams"}];
+updateCheckDate[] := DateString[{"Year", "-", "Month", "-", "Day"}];
+(* options of URLRead and URLSubmit, those that the version of Mathematica knows *)
+networkOptions[f_, opts_List] := FilterRules[opts, Options[f]];
+
+(* the numbers of a version "2.10.0" or of a tag "v2.10.0"; $Failed for anything else (a pre-release "v2.5.0-rc1") *)
+versionNumbers[s_String] := If[StringMatchQ[s, RegularExpression["v?[0-9]+\\.[0-9]+\\.[0-9]+"]],
+   FromDigits /@ StringSplit[StringReplace[s, StartOfString ~~ "v" -> ""], "."], $Failed];
+versionNumbers[_] := $Failed;
+(* whether version a is newer than version b, number by number (2.10.0 is newer than 2.9.0); False if either is not a
+   version. The canonical order of two lists of three integers is that of their numbers, from the first *)
+newerVersionQ[a_, b_] := With[{x = versionNumbers[a], y = versionNumbers[b]},
+   ListQ[x] && ListQ[y] && Order[y, x] === 1];
+
+(* the latest release in the answer of GitHub (JSON): <|"Version" -> "2.5.0", "Paclet" -> url of its .paclet,
+   "Page" -> url of its page|>, or $Failed for a draft or a pre-release, a malformed tag or no paclet of this
+   repository. ImportString reads bytes: the text (with the release notes) is encoded in UTF-8 first. The paclet's
+   address must be one of this repository's downloads, made of plain characters, since it is shown inside a line of
+   code to copy *)
+latestReleaseOf[body_String] := Module[{json, tag, version, paclets},
+   json = Quiet[ImportString[FromCharacterCode[ToCharacterCode[body, "UTF8"]], "RawJSON"]];
+   If[!AssociationQ[json], Return[$Failed]];
+   tag = Lookup[json, "tag_name"];
+   If[TrueQ[Lookup[json, "draft"]] || TrueQ[Lookup[json, "prerelease"]] || !ListQ[versionNumbers[tag]], Return[$Failed]];
+   version = StringReplace[tag, StartOfString ~~ "v" -> ""];
+   paclets = Cases[Lookup[json, "assets", {}], KeyValuePattern["browser_download_url" -> url_String] /;
+       StringMatchQ[url, RegularExpression[StringReplace[$repositoryURL, "." -> "\\."] <> "/releases/download/" <>
+          StringReplace[tag, "." -> "\\."] <> "/[A-Za-z0-9._-]+\\.paclet"]] :> url];
+   If[paclets === {}, $Failed,
+    <|"Version" -> version, "Paclet" -> First[paclets], "Page" -> $repositoryURL <> "/releases/tag/" <> tag|>]];
+latestReleaseOf[_] := $Failed;
+installLine[release_Association] := "PacletInstall[\"" <> release["Paclet"] <> "\"]";
+
+(* the third line of the banner: the newer version, a link to its page and the line that installs it, as code to copy
+   (its hyphens not drawn as dashes: "OperatorSubstitution" -> False); in a script, the same as text *)
+updateNotice[release_Association] := With[{dot = bannerDot[], group = bannerGroup},
+   Style[Row[{group[Style["version " <> release["Version"] <> " is available", Bold, bannerBlue[]], dot],
+      group[Hyperlink["what is new", release["Page"]], dot],
+      With[{url = release["Paclet"]}, Style[Defer[PacletInstall[url]], ShowStringCharacters -> True,
+        PrivateFontOptions -> {"OperatorSubstitution" -> False}]]}], 11, bannerGrey[]]];
+updateNoticeText[release_Association] :=
+  "FunctionalDiagrams " <> release["Version"] <> " is available (" <> $FunctionalDiagramsVersion <> " is loaded): " <>
+   installLine[release];
+
+(* whether the check at load is due today: the file LastUpdateCheck.txt of dir holds the date of the last check; the
+   date of today is written into it before asking. Any error reading or writing it: the check is due *)
+updateCheckDueQ[dir_String, today_String] := Module[{file = FileNameJoin[{dir, "LastUpdateCheck.txt"}], last, stream},
+   last = Quiet[ReadString[file]];
+   If[StringQ[last] && StringTrim[last] === today, Return[False]];
+   Quiet[If[!DirectoryQ[dir], CreateDirectory[dir, CreateIntermediateDirectories -> True]];
+    stream = OpenWrite[file];
+    If[Head[stream] === OutputStream, WriteString[stream, today <> "\n"]; Close[stream]]];
+   True];
+
+(* the asynchronous request at load; its handler writes the banner with the notice into the cell tagged tag of the
+   notebook nb, if the latest release is newer. Every step is quiet: a handler's messages would go to the Messages
+   window *)
+$updateCheckTask = None;
+submitUpdateCheck[nb_, tag_String] := Quiet[
+   $updateCheckTask = URLSubmit[latestReleaseRequest[],
+     HandlerFunctions -> <|"TaskFinished" -> (showUpdateNotice[nb, tag, #] &)|>,
+     HandlerFunctionsKeys -> {"StatusCode", "Body"}, Sequence @@ networkOptions[URLSubmit, {TimeConstraint -> 30}]]];
+showUpdateNotice[nb_, tag_String, answer_] := Quiet[Module[{release, cells},
+    release = If[Lookup[answer, "StatusCode"] === 200, latestReleaseOf[Lookup[answer, "Body"]], $Failed];
+    If[AssociationQ[release] && newerVersionQ[release["Version"], $FunctionalDiagramsVersion],
+     cells = Cells[nb, CellTags -> tag];
+     If[ListQ[cells] && Length[cells] == 1,
+      NotebookWrite[First[cells], ReplacePart[NotebookRead[First[cells]], 1 -> BoxData[ToBoxes[loadBanner[release]]]]]]]]];
+
+FunctionalDiagramsUpdateCheck::latest = "The latest release could not be read from GitHub (`1`).";
+FunctionalDiagramsUpdateCheck[] := Module[{response, status, release},
+   response = Quiet[URLRead[latestReleaseRequest[], Sequence @@ networkOptions[URLRead, {TimeConstraint -> 10}]]];
+   status = If[Head[response] === HTTPResponse, response["StatusCode"], None];
+   release = If[status === 200, latestReleaseOf[response["Body"]], $Failed];
+   If[!AssociationQ[release],
+    Message[FunctionalDiagramsUpdateCheck::latest, Which[status === None, "no answer", status =!= 200,
+       "status " <> ToString[status], True, "no release with a paclet in the answer"]];
+    $Failed,
+    If[newerVersionQ[release["Version"], $FunctionalDiagramsVersion],
+     Print[If[TrueQ[$Notebooks], Style[updateNotice[release], FontFamily -> "Source Sans Pro"], updateNoticeText[release]]]];
+    <|"InstalledVersion" -> $FunctionalDiagramsVersion, "LatestVersion" -> release["Version"],
+     "InstallLine" -> installLine[release]|>]];
+
+(* the check at load is on unless $FunctionalDiagramsUpdateCheck was set before loading (kept by the start of the
+   package, 00_header.wl) *)
+If[!ValueQ[$FunctionalDiagramsUpdateCheck], $FunctionalDiagramsUpdateCheck = True];
+
+(* in a notebook (not in scripts, which stay quiet), the banner, and the update check when it is due *)
+If[TrueQ[$Notebooks],
+  If[$FunctionalDiagramsUpdateCheck =!= False && $AllowInternet =!= False &&
+     updateCheckDueQ[$updateCheckDirectory, updateCheckDate[]],
+   With[{tag = "FunctionalDiagramsBanner" <> ToString[Round[10^6 AbsoluteTime[]]]},
+    CellPrint[ExpressionCell[loadBanner[], "Print", CellTags -> tag]];
+    submitUpdateCheck[EvaluationNotebook[], tag]],
+   Print[loadBanner[]]]];
 
 End[];
 EndPackage[];

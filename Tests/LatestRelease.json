@@ -1,0 +1,61 @@
+{
+  "url": "https://api.github.com/repos/n4sd4q/FunctionalDiagrams/releases/424827110",
+  "assets_url": "https://api.github.com/repos/n4sd4q/FunctionalDiagrams/releases/424827110/assets",
+  "upload_url": "https://uploads.github.com/repos/n4sd4q/FunctionalDiagrams/releases/424827110/assets{?name,label}",
+  "html_url": "https://github.com/n4sd4q/FunctionalDiagrams/releases/tag/v2.4.0",
+  "id": 424827110,
+  "node_id": "RE_kwDOVYB2QM4ZUljm",
+  "tag_name": "v2.4.0",
+  "target_commitish": "2f3f957ea5c55a49342204b80f4498d7aecb184b",
+  "name": "FunctionalDiagrams 2.4.0",
+  "draft": false,
+  "immutable": false,
+  "prerelease": false,
+  "created_at": "2026-10-26T21:46:08Z",
+  "updated_at": "2026-10-26T22:14:36Z",
+  "published_at": "2026-10-26T22:14:36Z",
+  "assets": [
+    {
+      "url": "https://api.github.com/repos/n4sd4q/FunctionalDiagrams/releases/assets/679642287",
+      "id": 679642287,
+      "node_id": "RA_kwDOVYB2QM4ogoSv",
+      "name": "FunctionalDiagrams-2.4.0.paclet",
+      "label": "",
+      "content_type": "application/octet-stream",
+      "state": "uploaded",
+      "size": 3546638,
+      "created_at": "2026-10-26T22:14:30Z",
+      "updated_at": "2026-10-26T22:14:34Z",
+      "browser_download_url": "https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.4.0/FunctionalDiagrams-2.4.0.paclet"
+    },
+    {
+      "url": "https://api.github.com/repos/n4sd4q/FunctionalDiagrams/releases/assets/679642299",
+      "id": 679642299,
+      "node_id": "RA_kwDOVYB2QM4ogoS7",
+      "name": "FunctionalDiagrams_Manual.pdf",
+      "label": "",
+      "content_type": "application/pdf",
+      "state": "uploaded",
+      "size": 801553,
+      "created_at": "2026-10-26T22:14:30Z",
+      "updated_at": "2026-10-26T22:14:34Z",
+      "browser_download_url": "https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.4.0/FunctionalDiagrams_Manual.pdf"
+    },
+    {
+      "url": "https://api.github.com/repos/n4sd4q/FunctionalDiagrams/releases/assets/679642303",
+      "id": 679642303,
+      "node_id": "RA_kwDOVYB2QM4ogoS_",
+      "name": "FunctionalDiagrams_Showcase.pdf",
+      "label": "",
+      "content_type": "application/pdf",
+      "state": "uploaded",
+      "size": 2486800,
+      "created_at": "2026-10-26T22:14:30Z",
+      "updated_at": "2026-10-26T22:14:35Z",
+      "browser_download_url": "https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.4.0/FunctionalDiagrams_Showcase.pdf"
+    }
+  ],
+  "tarball_url": "https://api.github.com/repos/n4sd4q/FunctionalDiagrams/tarball/v2.4.0",
+  "zipball_url": "https://api.github.com/repos/n4sd4q/FunctionalDiagrams/zipball/v2.4.0",
+  "body": "FunctionalDiagrams 2.4.0 — Feynman diagrams from functional derivatives."
+}

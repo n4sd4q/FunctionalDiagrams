@@ -1853,4 +1853,73 @@ With[{full = FunctionalDiagrams`Private`packageLogo[64, False], small = Function
      Count[small, _Polygon, Infinity]},
     {2, True, 0}]];
 
+(* ------------------------------------------------------------------------- *)
+(* the update check at load (section 21 of the package), without the network: the versions compared, the answer of
+   GitHub read from a saved one (LatestRelease.json, trimmed; its text is UTF-8, with an em dash), the line of a newer
+   release, the once-a-day rule in a temporary directory, and loading in a script, which never checks *)
+section["update check"];
+check["update check: versions compared number by number; a pre-release or a malformed version is never newer",
+  FunctionalDiagrams`Private`newerVersionQ @@@ {{"2.10.0", "2.9.0"}, {"2.9.0", "2.10.0"}, {"v2.4.0", "2.4.0"},
+    {"3.0.0", "2.99.99"}, {"2.4.1", "2.4.0"}, {"v2.5.0-rc1", "2.4.0"}, {"2.5", "2.4.0"}, {"version 2.5.0", "2.4.0"}},
+  {True, False, False, True, True, False, False, False}];
+latestAnswer = FromCharacterCode[BinaryReadList[FileNameJoin[{testDirectory, "LatestRelease.json"}]], "UTF-8"];
+latestRelease = <|"Version" -> "2.4.0",
+   "Paclet" -> "https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.4.0/FunctionalDiagrams-2.4.0.paclet",
+   "Page" -> "https://github.com/n4sd4q/FunctionalDiagrams/releases/tag/v2.4.0"|>;
+check["update check: the latest release read from an answer of GitHub (text beyond ASCII)",
+  {StringContainsQ[latestAnswer, FromCharacterCode[8212]], FunctionalDiagrams`Private`latestReleaseOf[latestAnswer]},
+  {True, latestRelease}];
+check["update check: no release for a draft, a pre-release, a malformed tag, a paclet elsewhere or with a quote, an error, a page that is not JSON",
+  FunctionalDiagrams`Private`latestReleaseOf /@ {
+    StringReplace[latestAnswer, "\"draft\": false" -> "\"draft\": true"],
+    StringReplace[latestAnswer, "\"prerelease\": false" -> "\"prerelease\": true"],
+    StringReplace[latestAnswer, "\"tag_name\": \"v2.4.0\"" -> "\"tag_name\": \"v2.5.0-rc1\""],
+    StringReplace[latestAnswer, "github.com/n4sd4q/FunctionalDiagrams/releases/download" -> "example.com/releases/download"],
+    StringReplace[latestAnswer, "/FunctionalDiagrams-2.4.0.paclet\"" -> "/a\\\"]; Quit[]; (\\\".paclet\""],
+    "{\"message\": \"API rate limit exceeded\", \"documentation_url\": \"https://docs.github.com/rest\"}",
+    "<html>offline</html>", $Failed},
+  Table[$Failed, 8]];
+check["update check: the line of a newer release under the banner (the release's page, the line that installs it) and as text",
+  {Cases[FunctionalDiagrams`Private`loadBanner[], Column[lines_List, ___] :> Length[lines], Infinity],
+   Cases[FunctionalDiagrams`Private`loadBanner[latestRelease], Column[lines_List, ___] :> Length[lines], Infinity],
+   Cases[FunctionalDiagrams`Private`updateNotice[latestRelease], Hyperlink[_, url_] :> url, Infinity],
+   Cases[FunctionalDiagrams`Private`updateNotice[latestRelease], Defer[e_] :> HoldForm[e], Infinity],
+   FunctionalDiagrams`Private`updateNoticeText[latestRelease]},
+  {{2}, {3}, {"https://github.com/n4sd4q/FunctionalDiagrams/releases/tag/v2.4.0"},
+   {HoldForm[PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.4.0/FunctionalDiagrams-2.4.0.paclet"]]},
+   "FunctionalDiagrams 2.4.0 is available (2.4.0 is loaded): " <>
+    "PacletInstall[\"https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.4.0/FunctionalDiagrams-2.4.0.paclet\"]"}];
+With[{dir = CreateDirectory[]},
+  check["update check: at most once a day, the date kept in a file of a directory made on demand",
+    {FunctionalDiagrams`Private`updateCheckDueQ[FileNameJoin[{dir, "a"}], "2026-10-29"],
+     FunctionalDiagrams`Private`updateCheckDueQ[FileNameJoin[{dir, "a"}], "2026-10-29"],
+     FunctionalDiagrams`Private`updateCheckDueQ[FileNameJoin[{dir, "a"}], "2026-10-30"],
+     FunctionalDiagrams`Private`updateCheckDueQ[FileNameJoin[{dir, "a"}], "2026-10-30"],
+     StringTrim[ReadString[FileNameJoin[{dir, "a", "LastUpdateCheck.txt"}]]]},
+    {True, False, True, False, "2026-10-30"}];
+  (* a directory that cannot be made (its path goes through a file): the date is neither kept nor read, the check is due *)
+  check["update check: a date that cannot be kept means a check",
+    Table[quietCheck[FunctionalDiagrams`Private`updateCheckDueQ[FileNameJoin[{dir, "a", "LastUpdateCheck.txt", "b"}],
+       "2026-10-29"], "message"], {2}],
+    {True, True}];
+  DeleteDirectory[dir, DeleteContents -> True]];
+(* in a script ($Notebooks is False) loading prints nothing and asks nothing. $FunctionalDiagramsUpdateCheck = False typed
+   before the package is first loaded is a symbol of Global`: the package's symbol takes its value and that symbol is
+   removed, without a message; the setting is kept when the package is loaded again, and True by default *)
+Quiet[ToExpression["Global`$FunctionalDiagramsUpdateCheck = False"]];
+loadPrinted = Module[{stream = OpenWrite[], text},
+   Block[{$Output = {stream}},
+    loadMessage = quietCheck[Get[FileNameJoin[{testDirectory, "..", "FunctionalDiagrams.wl"}]]; False, True]];
+   Close[stream]; text = ReadString[First[stream]]; DeleteFile[First[stream]]; text];
+check["update check: a script loads the package printing nothing and asking nothing; the setting typed before loading is the package's",
+  {loadPrinted, loadMessage, FunctionalDiagrams`Private`$updateCheckTask, $FunctionalDiagramsUpdateCheck,
+   Context[$FunctionalDiagramsUpdateCheck], Names["Global`$FunctionalDiagramsUpdateCheck"]},
+  {EndOfFile, False, None, False, "FunctionalDiagrams`", {}}];
+Get[FileNameJoin[{testDirectory, "..", "FunctionalDiagrams.wl"}]];
+updateCheckKept = $FunctionalDiagramsUpdateCheck;
+$FunctionalDiagramsUpdateCheck =.;
+Get[FileNameJoin[{testDirectory, "..", "FunctionalDiagrams.wl"}]];
+check["update check: the setting kept when the package is loaded again; True by default", {updateCheckKept, $FunctionalDiagramsUpdateCheck},
+  {False, True}];
+
 Print["\n", passed, " passed, ", failed, " failed", If[failed > 0, ": " <> StringRiffle[failures, ", "], ""], "   (", Round[AbsoluteTime[] - startTime], " s)"];
