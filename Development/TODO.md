@@ -176,6 +176,10 @@ free energy.
   vertices (`freeEndTreeLayout`), but a tree of blobs declared with `DeclareBlob` (their ports are points of their own)
   whose leaves are free ends is still drawn by the general layout, the blobs in a row with the leaves sticking up; with
   labelled leaves `blobLayoutWithExternals` draws it, and could take the free ends as its external points.
+- **Scripts in the names of blobs in Mathematica.** In the Graphics of `DiagramPlot` the label of a blob is plain text
+  read from its LaTeX (`plainBlobLabel`): the scripts are written on the line (Γirr, Γ(4), W(4)), while TikZ sets them as
+  scripts. Writing them as `Subscript` and `Superscript` boxes would match the printed pictures; the clearing and the
+  size of the blob (estimated from the LaTeX) would have to be checked in light and dark notebooks.
 
 ## Documents
 
