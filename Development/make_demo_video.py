@@ -320,9 +320,11 @@ def font(name, size):
 
 
 def readme_cells():
-    """The first example of README.md, one cell per paragraph."""
+    """The first example of README.md (the first code block of its section "A first example", after the installation
+    lines), one cell per paragraph."""
     text = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
-    block = re.search(r"```mathematica\n(.*?)```", text, re.S).group(1)
+    section = re.split(r"^## A first example\s*$", text, maxsplit=1, flags=re.M)[1]
+    block = re.search(r"```mathematica\n(.*?)```", section, re.S).group(1)
     return [cell.strip("\n") for cell in re.split(r"\n\s*\n", block) if cell.strip()]
 
 
