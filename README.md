@@ -67,7 +67,9 @@ the documents describe (see the [changelog](CHANGELOG.md)). One can also downloa
 and pass its path to `PacletInstall`. A clone of the repository works as it is, with
 `PacletDirectoryLoad["/path/to/FunctionalDiagrams"]` and ``Needs["FunctionalDiagrams`"]``, or simply
 `Get["/path/to/FunctionalDiagrams/FunctionalDiagrams.wl"]`. ``?FunctionalDiagrams`*`` lists the functions and `?Name`
-explains each one. Updating, uninstalling and the common problems: the wiki's
+explains each one. Loaded in a notebook, the package contacts `api.github.com` once a day, in the background, and adds a
+line to its banner when a newer release is out; `$FunctionalDiagramsUpdateCheck = False` before `Needs` turns this off.
+Updating, uninstalling and the common problems: the wiki's
 [Installation](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Installation) page.
 
 ## A first example

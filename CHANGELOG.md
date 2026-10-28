@@ -4,6 +4,15 @@
 
 ### New
 
+- **An update check at load.** Loaded in a notebook (never in a script), the package asks GitHub (`api.github.com`) for
+  its latest release at most once a day, in the background (`URLSubmit`: loading does not wait for the answer), and if
+  that release is newer than `$FunctionalDiagramsVersion`, the banner gets a third line: its version, a link to what is
+  new and the `PacletInstall` line of its paclet, ready to copy. The date of the last check is kept in
+  `LastUpdateCheck.txt`, in the folder `ApplicationData/FunctionalDiagrams` of `$UserBaseDirectory`; every failure (no
+  connection, a proxy, the rate limit of GitHub) is silent. `$FunctionalDiagramsUpdateCheck = False` before `Needs`
+  turns it off (the setting is kept when the package is loaded again), and the new function
+  `FunctionalDiagramsUpdateCheck[]` checks by hand: it gives the version loaded, the latest release and the line that
+  installs it, and prints that line when the release is newer.
 - **`"ExternalOrder" -> "Uncrossed"`** (also `{"Uncrossed", {x1, ...}}`, starting from another order): in each diagram
   with four external points the legs of one side are exchanged where the lines would cross, the labels moving with
   them. Of the order given, the order with the labels on the right exchanged and the order with the labels on the top

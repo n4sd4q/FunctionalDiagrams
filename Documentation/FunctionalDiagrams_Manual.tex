@@ -272,6 +272,29 @@ Africani'' (which modified versions must keep), the version, the license, how to
 (section~\ref{sec:citing}) and links to the repository and to this manual. In a script (\pkg{wolfram -script}) nothing
 is printed.
 
+In a notebook, loading the package also checks for a newer release, at most once a day: it asks GitHub
+(\pkg{api.github.com}) for the latest release in the background, so that loading does not wait for the answer, and if
+that release is newer than \pkg{\$FunctionalDiagramsVersion}, the banner gets a third line with its version, a link to
+what is new and the \pkg{PacletInstall} line of its paclet, ready to copy. The date of the last check is kept in the
+file \pkg{LastUpdateCheck.txt} of the folder \pkg{ApplicationData/FunctionalDiagrams} of \pkg{\$UserBaseDirectory}.
+Every failure (no connection, a proxy, the rate limit of GitHub) is silent, and a script never checks, nor does a
+session in which Mathematica may not use the Internet (\pkg{\$AllowInternet}). \pkg{\$FunctionalDiagramsUpdateCheck}
+is \pkg{True}; set to \pkg{False} before the package is loaded, it turns the check off:
+\begin{code}
+$FunctionalDiagramsUpdateCheck = False;
+Needs["FunctionalDiagrams`"]
+\end{code}
+(in the file \pkg{init.m} of the folder \pkg{Kernel} of \pkg{\$UserBaseDirectory}, for every session).
+
+\begin{function}{FunctionalDiagramsUpdateCheck}
+\syntax{FunctionalDiagramsUpdateCheck[]}
+\end{function}
+Asks GitHub for the latest release now, whatever the date of the last check and the value of
+\pkg{\$FunctionalDiagramsUpdateCheck}, and waits for the answer (up to ten seconds). It gives
+\pkg{<|"InstalledVersion" -> \dots, "LatestVersion" -> \dots, "InstallLine" -> \dots|>}: the version loaded, the
+latest release and the line that installs its paclet, as a string; when the release is newer, it also prints that line.
+When the release cannot be read it gives \pkg{\$Failed}, with the message \pkg{FunctionalDiagramsUpdateCheck::latest}.
+
 \subsection{A first session}
 
 The free fermion propagator $G_0$, a two-body interaction $V$, the Green function to first order, its self-energy and a
@@ -3656,7 +3679,7 @@ In \pkg{ParticleIrreducibleQ} and \pkg{ParticleIrreducibleDiagrams} the external
 
 \begin{center}
 \footnotesize
-\begin{tabular}{@{}l@{\hspace{0.5em}}r@{\hspace{1.1em}}l@{\hspace{0.5em}}r@{\hspace{1.1em}}l@{\hspace{0.5em}}r@{}}
+\begin{tabular}{@{}l@{\hspace{0.4em}}r@{\hspace{0.75em}}l@{\hspace{0.4em}}r@{\hspace{0.75em}}l@{\hspace{0.4em}}r@{}}
 \input{index_rows}
 \end{tabular}
 \end{center}

@@ -121,8 +121,9 @@ usageOf[name_String] := ToExpression[name <> "::usage"];
 kindOf[h : HoldComplete[s_Symbol]] := If[AllTrue[Join[DownValues[s], SubValues[s]], normalizingQ[h, #] &], "data", "function"];
 
 (* ---------------------------------------------------------------- source file of a name *)
-sourceFiles = Select[FileNames["*.wl", FileNameJoin[{root, "Development", "src"}]],
-   ! MemberQ[{"00_header.wl", "08_footer.wl"}, FileNameTake[#]] &];
+(* the files of the definitions (not 00_header.wl, the usage messages; 08_footer.wl, which defines the update check, is
+   not counted for the mentions: it names every public name in $publicNames) *)
+sourceFiles = Select[FileNames["*.wl", FileNameJoin[{root, "Development", "src"}]], FileNameTake[#] =!= "00_header.wl" &];
 sourceTexts = Association[(FileNameTake[#] -> Import[#, "Text"]) & /@ sourceFiles];
 (* the file with its first definition; a data head without definitions (LoopMomentum) gets the file in which most of
    the names of its group are defined, or else the one that mentions it most often *)
@@ -130,7 +131,8 @@ definitionFile[name_String] := SelectFirst[Keys[sourceTexts], StringContainsQ[so
      RegularExpression["(?m)^(" <> name <> "\\[|" <> name <> " /:|SetAttributes\\[" <> name <> ",)"]] &, None];
 fileOf[name_String] := Module[{definition = definitionFile[name], group, mentions},
    group = DeleteCases[definitionFile /@ Select[publicNames, categoryOf[#] === categoryOf[name] &], None];
-   mentions = Table[{StringCount[sourceTexts[f], RegularExpression["\\b" <> name <> "\\b"]], f}, {f, Keys[sourceTexts]}];
+   mentions = Table[{StringCount[sourceTexts[f], RegularExpression["\\b" <> name <> "\\b"]], f},
+     {f, DeleteCases[Keys[sourceTexts], "08_footer.wl"]}];
    Which[definition =!= None, definition, group =!= {}, First[Commonest[group]],
     Max[mentions[[All, 1]]] > 0, Last[First[SortBy[mentions, -First[#] &]]], True, "00_header.wl"]];
 

@@ -10,7 +10,8 @@ functional, 3 differentiate it, then 4 classify and check, 5 draw and 6 evaluate
 the hub of stage 3, and the names built on it hang from it. A name goes to the stage of its group (STAGE_OF_CATEGORY),
 or to stage 3 when it reaches FunctionalDerivative; a few placements are editorial (STAGE_OVERRIDE): the trace
 vocabulary and the Legendre heads are written in the functional (stage 2), as are the two auxiliary-field transforms,
-which rewrite it; ZeroDimensionalValue counts diagrams (stage 4). The names of stage 3 that FunctionalDerivative uses
+which rewrite it; ZeroDimensionalValue counts diagrams (stage 4); the package's own function, its update check, stands
+with the declarations (stage 1). The names of stage 3 that FunctionalDerivative uses
 itself stand beside it, each with what it is used for (PARTNER_NOTE). Colour: the group (a block of the usage messages of
 00_header.wl); filled chips are functions, dashed chips inert heads used as data.
 
@@ -79,7 +80,7 @@ TITLES = {'notation': 'Notation', 'declarations': 'Declarations', 'calculus': 'C
           'tree expansion': 'Tree expansion', 'pictures': 'Pictures', 'evaluation: Matsubara sums': 'Matsubara sums',
           'evaluation: dimensional regularization': 'Dimensional regularization',
           'evaluation: QED at one loop': 'QED at one loop',
-          'effective actions and operator traces': 'Effective actions and operator traces'}
+          'effective actions and operator traces': 'Effective actions and operator traces', 'the package': 'The package'}
 
 
 def title(cat):
@@ -91,7 +92,8 @@ HUB = 'FunctionalDerivative'
 STAGE_OF_CATEGORY = {'declarations': 'declare', 'notation': 'write', 'calculus': 'differentiate',
                      'perturbation theory': 'differentiate', 'functionals and vertices': 'differentiate',
                      'tree expansion': 'differentiate', 'effective actions and operator traces': 'differentiate',
-                     'diagram classes': 'classify', 'channels and the parquet': 'classify', 'pictures': 'draw'}
+                     'diagram classes': 'classify', 'channels and the parquet': 'classify', 'pictures': 'draw',
+                     'the package': 'declare'}
 # editorial placements: the trace vocabulary and the Legendre heads are written in a functional, the auxiliary-field
 # transforms rewrite one (stage 2); ZeroDimensionalValue counts the diagrams of a functional (stage 4)
 STAGE_OVERRIDE = {'TraceLog': 'write', 'OperatorTrace': 'write', 'OperatorKernel': 'write',
@@ -127,14 +129,14 @@ def deps(a):
 # ------------------------------------------------------------------------------------------------------------ colours
 # One colour per group, in the order of 00_header.wl (light, dark). Blues for the notation and the declarations, greens
 # for the calculus and perturbation theory, violets for vertices and channels, warm colours for the evaluation, grey for
-# the effective actions. Two pairs that share a panel and looked alike in a chip tint were moved apart (OKLab, also
+# the effective actions, brown for the package itself (its update check, drawn with the declarations). Two pairs that share a panel and looked alike in a chip tint were moved apart (OKLab, also
 # under simulated protanopia and deuteranopia): functionals and vertices / tree expansion (a blue-violet and a warm
 # purple), Matsubara sums / QED (a crimson and a magenta). Every group also carries its name, so that colour is never
 # the only cue.
 PALETTE = [('#1d5b92', '#4681bc'), ('#00b5d1', '#46e0ff'), ('#027d6e', '#10a895'), ('#35ae63', '#65d88a'),
            ('#9fb911', '#c6e536'), ('#4366e8', '#7698fc'), ('#ad619f', '#d889c9'), ('#852fbc', '#b16ee5'),
            ('#ba6c00', '#ee8f1b'), ('#ce355d', '#fd6283'), ('#a82900', '#dd4c27'), ('#c04ad2', '#e08ced'),
-           ('#7d8590', '#9198a1')]
+           ('#7d8590', '#9198a1'), ('#8c6239', '#c4925f')]
 THEMES = {
     'light': dict(card='#ffffff', panel='#f6f8fa', ink='#1f2328', ink2='#59636e', muted='#5f6872', hair='#d1d9e0',
                   code='#ffffff', headtext='#424a53', tree='#8c959f', spine='#1d5b92', on='#ffffff', hub='#027d6e',
@@ -660,7 +662,7 @@ def sample_chip(cv, x, y, label, dashed=False):
     """a chip of the key, not a public name; left edge x, centre y; returns its width"""
     p = cv.paint
     w = tw(label, 11) + 10
-    g = 'g%d' % (len(CATEGORIES) - 1)
+    g = 'g%d' % CATEGORIES.index('effective actions and operator traces')
     if dashed:
         cv.add('<rect x="%s" y="%s" width="%s" height="15" rx="4" %s stroke-dasharray="3 2"/>'
                % (f(x), f(y - 7.5), f(w), p(fill='card', stroke=g + '-dash')))
@@ -733,7 +735,8 @@ def build(cv):
     y += rich_text(cv, MARGIN, y + 11, lead, W - 2 * MARGIN, 13.2, 17.5) + 8
 
     # ---- row A: declare | write
-    decl = members('declare')
+    decl = members('declare', 'declarations')
+    package = members('declare', 'the package')
     notation = members('write', 'notation')
     traces = [a for a in members('write') if CAT[a] == 'effective actions and operator traces']
     transforms = [a for a in members('write') if a in TRANSFORMS]
@@ -745,8 +748,11 @@ def build(cv):
             lines = wrap('fields, sources, propagators, couplings', width, 11.5)
         for k, l in enumerate(lines):
             subtitle(s, x0, y0 + 9 + 15 * k, l)
-        return 16 + 15 * (len(lines) - 1) + flow_chips(s, x0, y0 + 16 + 15 * (len(lines) - 1), width, decl,
-                                                        pack=True)
+        yy = y0 + 16 + 15 * (len(lines) - 1)
+        yy += flow_chips(s, x0, yy, width, decl, pack=True) + 3
+        yy += group_label(s, x0, yy, 'the package', 'the package', '· its update check')
+        yy += flow_chips(s, x0, yy, width, package)
+        return yy - y0
 
     def write_block(s, x0, y0, width):
         yy = y0

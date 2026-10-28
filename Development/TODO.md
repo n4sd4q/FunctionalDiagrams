@@ -9,16 +9,8 @@ showcase script and took a third off the test suite.
 
 ## Package
 
-- **Update check at load (planned, for 2.5.0).** On `Needs`, ask GitHub for the latest release
-  (`api.github.com/repos/n4sd4q/FunctionalDiagrams/releases/latest`) and, if it is newer than
-  `$FunctionalDiagramsVersion`, add one line to the load banner with the `PacletInstall` line of that release. Only in
-  sessions with a front end (`$Notebooks`; never in scripts, so the suite, `make_figures.wl`, `make_examples.wl` and
-  `check_wiki.wl` keep their outputs); asynchronous (`URLSubmit`: loading never waits for the network; check that it
-  exists in 12.1); silent on any failure (offline, proxy, rate limit); at most once a day (the date of the last check in
-  a small file under `$UserBaseDirectory`); off with `$FunctionalDiagramsUpdateCheck = False` before loading, and a
-  public function to check by hand. README, manual (installation) and the wiki's Installation page say that loading
-  contacts api.github.com. A new public name and option: MINOR. Later, perhaps: the Wolfram Paclet Repository, so that
-  `PacletInstall` by name and `PacletUpdate` work.
+- **The Wolfram Paclet Repository.** Publishing the paclet there would make `PacletInstall["FunctionalDiagrams"]` by
+  name and `PacletUpdate` work (the update check at load only shows the install line of a newer release).
 - **Usability proposals (October 2026).** `SimplifyDiagrams` contracting D . D⁻¹; spin indices in
   `PerturbativeFullVertex`; a component form of Tr ln(−𝒢⁻¹) with anomalous blocks that `FunctionalDerivative` knows (now
   the message `supertrace`); a `DiagramPlot` option for the value of a vertex (+λ).

@@ -6,7 +6,8 @@ wolfram -script run.wl         # or: wolframscript -file run.wl
 ```
 
 The two commands do the same; on some installations only one of them is available. A script prints only what you
-`Print`: results of statements are not shown, and the banner of the package is not printed.
+`Print`: results of statements are not shown, the banner of the package is not printed, and the package does not
+look for a newer release ([Installation](Installation#updating-and-removing)).
 
 ## Printing results
 

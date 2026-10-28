@@ -25,8 +25,9 @@ Needs["FunctionalDiagrams`"]
 ```
 
 In a notebook this prints a banner of two lines (the logo, the version, the license, how to cite, links to the
-repository and the manual); in a script nothing is printed. `` ?FunctionalDiagrams`* `` lists the functions and `?Name`
-explains each one.
+repository and the manual) and, once a day, looks for a newer release (see [Updating and
+removing](#updating-and-removing)); in a script nothing is printed. `` ?FunctionalDiagrams`* `` lists the functions and
+`?Name` explains each one.
 
 The paclet also carries the showcase, the manual and the guided tour. To open the manual of the version installed:
 
@@ -85,6 +86,27 @@ FindFile["FunctionalDiagrams`"]
 `FindFile` gives the file that `Needs` loads.
 
 ## Updating and removing
+
+In a notebook, loading the package checks once a day whether a newer release is out: it asks `api.github.com` in the
+background, so that loading does not wait for the answer, and if there is one, the banner gets a third line with its
+version, a link to what is new and the `PacletInstall` line of its paclet, ready to copy. The date of the last check is
+kept in `LastUpdateCheck.txt`, in the folder `ApplicationData/FunctionalDiagrams` of `$UserBaseDirectory`. A script
+never checks, and a failure (no connection, a proxy) is silent. To load the package without the check:
+
+```mathematica
+$FunctionalDiagramsUpdateCheck = False;
+Needs["FunctionalDiagrams`"]
+```
+
+(put the first line in your `init.m`, see above, to turn the check off for good). To check by hand, at any time:
+
+<!-- not run: it asks GitHub, and its output depends on the latest release -->
+```mathematica
+FunctionalDiagramsUpdateCheck[]
+```
+
+It gives the version loaded, the latest release and the line that installs it, and prints that line when the release
+is newer (when GitHub cannot be reached, `$Failed` and a message).
 
 To update, install the paclet of the new release as above. `Needs` loads the newest version installed, in a new
 session; in the running one, `Needs` does nothing once the package is loaded, and

@@ -16,7 +16,8 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   (Feynman integrals in dimensional regularization: loop integrals of the diagrams, one-loop integrals in closed form,
   Laurent expansion in ε, infrared rearrangement, renormalization-group functions from Z factors), `10_qed` (QED at one
   loop: Dirac algebra in d, `QEDIntegrand`, `IntegrateOneLoop`, Feynman-parameter integrals, form factors), `11_effective_actions` (the 1PI and 2PI
-  effective actions, traces, Potthoff's functionals, zero dimensions; 09, 10 and 11 are concatenated before 08), `08_footer` (`$publicNames`, load-time checks, end of the package).
+  effective actions, traces, Potthoff's functionals, zero dimensions; 09, 10 and 11 are concatenated before 08), `08_footer` (`$publicNames`, load-time checks, the banner and the update check of a notebook session, end of the
+  package).
 - `Examples.wl` — the guided tour as a script. `Examples.nb` is generated from it:
   `python3 Development/make_notebook.py Examples.wl Examples.nb`. Edit the `.wl`, never the `.nb`.
 - `Documentation/` — the reference manual. `FunctionalDiagrams_Manual.tex` (edit it directly) uses the examples computed
@@ -29,7 +30,8 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
 - `Tests/RunTests.wl` — the test suite; `Tests/RunTests.out` is its last output. `Tests/QEDOneLoop.wl` is the one-loop QED
   computation (self-energy, vacuum polarization, vertex), loaded by the tests and runnable on its own (it prints a report);
   `Tests/MatsubaraBruteForce.wl`, the brute-force Matsubara sums of the integrand of a diagram, is loaded by the tests and
-  by `Showcase/make_figures.wl`. `Tests/EffectiveActions.wl` and `Tests/Superfields.wl` are loaded by the suite too, with
+  by `Showcase/make_figures.wl`; `Tests/LatestRelease.json` is a saved answer of GitHub (its latest release, trimmed) for
+  the tests of the update check, which need no network. `Tests/EffectiveActions.wl` and `Tests/Superfields.wl` are loaded by the suite too, with
   the shared helpers of `Tests/Harness.wl`; `Tests/FullyIrreducibleVertices.m` stores the reference vertices of the parquet
   check (`RECOMPUTE_REFERENCES=1` rebuilds them).
 - `Showcase/` — the presentation of the package. `make_figures.wl` (Mathematica, about two minutes) computes and draws
