@@ -660,8 +660,8 @@ and Matsubara frequency.
 
 With an interaction the generating functional is $Z[J]=e^{-S_{\rm int}[\delta/\delta J]}\,Z_0[J]$ (section~\ref{sec:wick}),
 up to a constant. For $\phi^4$ theory, $S_{\rm int}=\frac\lambda{4!}\int_z\phi^4$, the package applies this operator
-as it stands, one order at a time. In this document $\phi^4$ theory is worked out to third order in $\lambda$ and the
-electron gas to third order in $V$:
+as it stands, one order at a time. In this document $\phi^4$ theory is worked out to third order in $\lambda$
+(\pkg{phi4Z} is $Z[J]$ to that order, at any source) and the electron gas to third order in $V$:
 \begin{code}
 DeclareField[phi, J];
 Phi4Vertex = lambda/24 IntegralOver[phi[z]^4, {z}];   (* S_int, used below *)
@@ -670,7 +670,8 @@ applyInteraction[F_] := SimplifyDiagrams[
     -lambda/24 IntegralOver[FunctionalDerivative[F, J[z], J[z], J[z], J[z]], {z}]];
 firstOrder = applyInteraction[FreeBosonGeneratingFunctional];
 secondOrder = applyInteraction[firstOrder]; thirdOrder = applyInteraction[secondOrder];
-SetSourcesToZero[FreeBosonGeneratingFunctional + firstOrder + secondOrder/2 + thirdOrder/6]
+phi4Z = FreeBosonGeneratingFunctional + firstOrder + secondOrder/2 + thirdOrder/6;
+SetSourcesToZero[phi4Z]
 \end{code}
 At zero source $Z/Z_0=\langle e^{-S_{\rm int}}\rangle_0$ is the sum of all the vacuum diagrams, disconnected ones included,
 each with its symmetry factor~\cite{PeskinSchroeder,CvitanovicLautrupPearson1978}. Here and below, a sum of several orders
@@ -766,8 +767,7 @@ so the bubbles cancel against the normalization: $\langle\phi_a\phi_b\rangle=\la
 e^{-S_{\rm int}}\rangle_0$ is the sum of the diagrams without vacuum bubbles. The package checks the product order by order;
 \pkg{PerturbativeCorrelationFunction} computes $\langle\phi_a\phi_b\rangle$ directly, and never generates the bubbles:
 \begin{code}
-numerator = SetSourcesToZero[FunctionalDerivative[FreeBosonGeneratingFunctional +
-    firstOrder + secondOrder/2 + thirdOrder/6, J[a], J[b]]];
+numerator = SetSourcesToZero[FunctionalDerivative[phi4Z, J[a], J[b]]];
 phi4Propagator = PerturbativeCorrelationFunction[FreeBosonGeneratingFunctional,
     {phi[a], phi[b]}, Phi4Vertex, 3]
 SimplifyDiagrams[OrderPart[numerator - DropVacuumBubbles[numerator, {a, b}]
@@ -826,10 +826,11 @@ order, the products of the Fock and Hartree diagrams of first order:
 \frac18\inputfigure{electron_vacuum_hartree}\inputfigure{electron_vacuum_hartree}=\frac1{2!}\Bigl(\frac12\inputfigure{electron_vacuum_hartree}\Bigr)^2.
 \end{gather*}
 So the logarithm keeps the connected vacuum diagrams, $\log(Z/Z_0)=-\beta(\Omega-\Omega_0)$, where
-$Z=\operatorname{tr}e^{-\beta(H-\mu N)}$ and $\Omega=-\beta^{-1}\log Z$ is the grand potential. With \pkg{vacuum1},
-\pkg{vacuum2}, \pkg{vacuum3} now the vacuum diagrams of the electron gas, made with this \pkg{applyInteraction} as for
-$\phi^4$ theory:
+$Z=\operatorname{tr}e^{-\beta(H-\mu N)}$ and $\Omega=-\beta^{-1}\log Z$ is the grand potential. As for $\phi^4$ theory,
+with \pkg{vacuum1}, \pkg{vacuum2}, \pkg{vacuum3} now the vacuum diagrams of the electron gas:
 \begin{code}
+{vacuum1, vacuum2, vacuum3} = {SetSourcesToZero[firstOrder],
+    SetSourcesToZero[secondOrder]/2, SetSourcesToZero[thirdOrder]/6};
 connectedVacuum = ConnectedDiagrams[vacuum1 + vacuum2 + vacuum3, {}];
 vacuum = ConnectedVacuumDiagrams[FreeFermionGeneratingFunctional, CoulombVertex, 3]
 \end{code}
@@ -953,19 +954,21 @@ the irreducible parts hatched, the full vertex functions cross-hatched~--- and a
 \small $F$, $\Lambda$, $\Gamma^{(4)}$ & \small $W^{(4)}$, $L$, $\chi$
 \end{tabular}
 \end{center}
-The package checks the partitions by derivatives in $J$. With $Z[J]=Z_0[J]\,\bigl(1+z_1[J]+z_2[J]+z_3[J]\bigr)$, the series of
-section~\ref{sec:bubbles} at a non-zero source, $W[J]=\frac12J\cdot D_0\cdot J+\log\bigl(1+z_1[J]+z_2[J]+z_3[J]\bigr)$ expanded
-to $\lambda^3$; its fourth derivative at $J=0$ is compared with the fourth moment, the fourth derivative of $Z$ without its
-vacuum bubbles:
+The package checks the partitions by derivatives in $J$ of the series $Z[J]$ of section~\ref{sec:bubbles}
+(\pkg{phi4Z}). The derivatives of $W=\log Z$, with the logarithm expanded to $\lambda^3$ (\pkg{"MaximumOrder"}), give
+$W^{(4)}$ and $W^{(2)}$ at $J=0$ (\pkg{LabelFunction} makes $W^{(2)}$ a function of its two points); $W^{(4)}$ is compared
+with the connected diagrams of the fourth moment, the fourth derivative of $Z$ without its vacuum bubbles, and the moment
+with $W^{(4)}$ and the three pairings:
 \begin{code}
-(* Z = Z0[J] (1 + z1[J] + z2[J] + z3[J]), the series of section 3 at a source, and
-   W = 1/2 J.D0.J + log(1 + z1[J] + z2[J] + z3[J]), expanded to lambda^3 *)
-W4 = SetSourcesToZero[FunctionalDerivative[W, J[a], J[b], J[c], J[d]]];
-W2[p_, q_] := SetSourcesToZero[FunctionalDerivative[W, J[p], J[q]]];
+W4 = SetSourcesToZero[FunctionalDerivative[Log[phi4Z], J[a], J[b], J[c], J[d],
+    "MaximumOrder" -> {lambda, 3}]];
+W2 = LabelFunction[SetSourcesToZero[FunctionalDerivative[Log[phi4Z], J[a], J[b],
+    "MaximumOrder" -> {lambda, 3}]], {a, b}];
 moment = DropVacuumBubbles[SetSourcesToZero[
-    FunctionalDerivative[Z, J[a], J[b], J[c], J[d]]], {a, b, c, d}];
+    FunctionalDerivative[phi4Z, J[a], J[b], J[c], J[d]]], {a, b, c, d}];
 SimplifyDiagrams[W4 - ConnectedDiagrams[moment, {a, b, c, d}]]
-SimplifyDiagrams[moment - (W4 + W2[a, b] W2[c, d] + W2[a, c] W2[b, d] + W2[a, d] W2[b, c])]
+SimplifyDiagrams[OrderPart[moment - (W4 + W2[a, b] W2[c, d] + W2[a, c] W2[b, d] +
+    W2[a, d] W2[b, c]), lambda, {0, 1, 2, 3}]]
 \end{code}
 \begin{result}
 $W^{(4)}$ minus the connected diagrams of the fourth moment, to $\lambda^3$: \val{CheckPhi4CumulantConnected}\\
