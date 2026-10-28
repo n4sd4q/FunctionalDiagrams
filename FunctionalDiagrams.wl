@@ -4293,19 +4293,27 @@ blobHatchesOf[p_, {_, shape_, fill_, h_}] := Switch[fill,
    "CrossHatched", Join[blobHatchSegments[p, shape, h, 1], blobHatchSegments[p, shape, h, -1]],
    _, {}];
 (* the fill "Dotted", sparser than the hatching: dots on a square grid turned by 45 degrees (staggered rows), centred on
-   the blob, $dotFillSpacing apart (the hatching is $hatchSpacing apart), those at least $dotFillMargin inside the outline;
-   the pattern is symmetric about the centre and the two axes, as the blob *)
+   the blob, about $dotFillSpacing apart (the hatching is $hatchSpacing apart), those at least $dotFillMargin inside the
+   outline; the pattern is symmetric about the centre and the two axes, as the blob. In a box and in a diamond the grid is
+   fitted, a little denser or sparser, so that its outermost dots lie $dotFillMargin inside every side, as the hatching
+   runs to the outline *)
 $dotFillSpacing = 0.14; $dotFillMargin = 0.06;
 insideBlobOutlineQ[q_, p_, shape_, h_, m_] := Switch[shape,
    "Box", Max[Abs[q - p]] <= h - m,
    (* the corners counterclockwise: the inward normal of each edge on its left *)
    "Triangle" | "TriangleUp" | "Diamond", With[{c = triangleCorners[p, h, shape]},
     AllTrue[Range[Length[c]], Function[i, With[{e = c[[Mod[i, Length[c]] + 1]] - c[[i]]},
-       {-e[[2]], e[[1]]} . (q - c[[i]])/vectorNorm[e] >= m]]]],
+       {-e[[2]], e[[1]]} . (q - c[[i]])/vectorNorm[e] >= m - 10.^-9]]]],
    _, vectorNorm[q - p] <= h - m];
-blobDotsOf[p_, {_, shape_, "Dotted", h_}] := With[{n = Ceiling[2.5 h/$dotFillSpacing] + 1},
-   Select[Flatten[Table[p + $dotFillSpacing {i + j, i - j}/Sqrt[2.], {i, -n, n}, {j, -n, n}], 1],
-    insideBlobOutlineQ[#, p, shape, h, $dotFillMargin] &]];
+(* the step d of the grid, whose dots are {i + j, i - j} d: in a box the coordinates of the dots are multiples of d, up to
+   h - margin; in a diamond (|x| + |y| <= 1.3 h) the sums |x| + |y| are multiples of 2 d *)
+dotFillStep[shape_, h_] := With[{d0 = $dotFillSpacing/Sqrt[2.]}, Switch[shape,
+    "Box", With[{r = h - $dotFillMargin}, r/Max[1, Round[r/d0]]],
+    "Diamond", With[{r = 1.3 h - Sqrt[2.] $dotFillMargin}, r/(2 Max[1, Round[r/(2 d0)]])],
+    _, d0]];
+blobDotsOf[p_, {_, shape_, "Dotted", h_}] := With[{d = dotFillStep[shape, h]}, With[{n = Ceiling[1.5 h/d] + 1},
+    Select[Flatten[Table[p + d {i + j, i - j}, {i, -n, n}, {j, -n, n}], 1],
+     insideBlobOutlineQ[#, p, shape, h, $dotFillMargin - 10.^-9] &]]];
 blobDotsOf[_, _] := {};
 (* the label of a blob as plain text, for the pictures of Mathematica: Greek letters, without the LaTeX markup; a tilde
    or a hat over the letter that follows it, as an accent written above the letter (a combining character would be small
@@ -5490,8 +5498,9 @@ tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := 
    "  \\fill[" <> If[fill === "Grey", "black!20", "white"] <> "] " <> shapeString <> ";\n" <>
     If[hatches === {}, "", "  \\draw[line width=" <> numberString[0.55 lw] <> "pt] " <>
       joinStrings[Table[coordinateString[hs[[1]]] <> " -- " <> coordinateString[hs[[2]]], {hs, hatches}], " "] <> ";\n"] <>
-    (* the dots 1.4 line widths across (the hatch lines are 0.55), so that they read as dots in print *)
-    If[dots === {}, "", "  \\fill " <> joinStrings[Table[coordinateString[q] <> " circle (" <> numberString[0.7 lw] <> "pt)", {q, dots}], " "] <>
+    (* the dots 1.4 line widths across (the hatch lines are 0.55), so that they read as dots in print; their radius in
+       units of the line width of the picture, so that they follow it when the line width is changed *)
+    If[dots === {}, "", "  \\fill " <> joinStrings[Table[coordinateString[q] <> " circle (0.7\\pgflinewidth)", {q, dots}], " "] <>
       ";\n"] <>
     If[texturedFillQ[fill],
      "  \\begin{scope}\n  \\clip " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <>

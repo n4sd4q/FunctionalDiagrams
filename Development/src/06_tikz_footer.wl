@@ -193,8 +193,9 @@ tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := 
    "  \\fill[" <> If[fill === "Grey", "black!20", "white"] <> "] " <> shapeString <> ";\n" <>
     If[hatches === {}, "", "  \\draw[line width=" <> numberString[0.55 lw] <> "pt] " <>
       joinStrings[Table[coordinateString[hs[[1]]] <> " -- " <> coordinateString[hs[[2]]], {hs, hatches}], " "] <> ";\n"] <>
-    (* the dots 1.4 line widths across (the hatch lines are 0.55), so that they read as dots in print *)
-    If[dots === {}, "", "  \\fill " <> joinStrings[Table[coordinateString[q] <> " circle (" <> numberString[0.7 lw] <> "pt)", {q, dots}], " "] <>
+    (* the dots 1.4 line widths across (the hatch lines are 0.55), so that they read as dots in print; their radius in
+       units of the line width of the picture, so that they follow it when the line width is changed *)
+    If[dots === {}, "", "  \\fill " <> joinStrings[Table[coordinateString[q] <> " circle (0.7\\pgflinewidth)", {q, dots}], " "] <>
       ";\n"] <>
     If[texturedFillQ[fill],
      "  \\begin{scope}\n  \\clip " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <>
