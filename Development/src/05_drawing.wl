@@ -2274,17 +2274,48 @@ blobDotsOf[p_, {_, shape_, "Dotted", h_}] := With[{d = dotFillStep[shape, h]}, W
     Select[Flatten[Table[p + d {i + j, i - j}, {i, -n, n}, {j, -n, n}], 1],
      insideBlobOutlineQ[#, p, shape, h, $dotFillMargin - 10.^-9] &]]];
 blobDotsOf[_, _] := {};
-(* the label of a blob as plain text, for the pictures of Mathematica: Greek letters, without the LaTeX markup; a tilde
-   or a hat over the letter that follows it, as an accent written above the letter (a combining character would be small
-   and close to it) *)
-plainBlobLabel[label_String] := accentedBlobLabel[StringReplace[StringReplace[StringReplace[label, {"\\overline" -> "",
-       "\\mathrm" -> "", "\\rm" -> "", "\\Sigma" -> "\[CapitalSigma]", "\\Gamma" -> "\[CapitalGamma]",
-       "\\Lambda" -> "\[CapitalLambda]", "\\Phi" -> "\[CapitalPhi]", "\\Pi" -> "\[CapitalPi]", "\\Delta" -> "\[CapitalDelta]",
-       "\\chi" -> "\[Chi]"}],
-     {"{" -> "", "}" -> "", "^" -> "", "_" -> "", " " -> ""}],
-    {"\\tilde" ~~ c_ :> c <> "\:0303", "\\hat" ~~ c_ :> c <> "\:0302", "\\" -> ""}]];
-accentedBlobLabel[s_String] := If[StringFreeQ[s, "\:0303" | "\:0302"], s,
-   Row[StringCases[s, {c_ ~~ "\:0303" :> Overscript[c, "~"], c_ ~~ "\:0302" :> Overscript[c, "^"], c_ :> c}]]];
+(* the label of a blob as plain text, for the pictures of Mathematica, read from the tokens of its LaTeX (labelTokens):
+   Greek letters and a few symbols as characters, the scripts written on the line (Gamma_{\rm irr} as Gammairr), the
+   commands of style, font and spacing dropped (\scriptstyle W^{(4)} is W(4)); an accent written above the atom that
+   follows it (a combining character would be small and close to it), a bar or an overline over the whole group, so that
+   Gamma_{\overline{\rm ph}} stays apart from Gamma_{\rm ph}. Another command is written as its name *)
+$plainLabelCharacters = <|"alpha" -> "\[Alpha]", "beta" -> "\[Beta]", "gamma" -> "\[Gamma]", "delta" -> "\[Delta]",
+   "epsilon" -> "\[Epsilon]", "varepsilon" -> "\[CurlyEpsilon]", "zeta" -> "\[Zeta]", "eta" -> "\[Eta]", "theta" -> "\[Theta]",
+   "vartheta" -> "\[CurlyTheta]", "iota" -> "\[Iota]", "kappa" -> "\[Kappa]", "lambda" -> "\[Lambda]", "mu" -> "\[Mu]", "nu" -> "\[Nu]",
+   "xi" -> "\[Xi]", "pi" -> "\[Pi]", "varpi" -> "\[CurlyPi]", "rho" -> "\[Rho]", "varrho" -> "\[CurlyRho]", "sigma" -> "\[Sigma]",
+   "varsigma" -> "\[FinalSigma]", "tau" -> "\[Tau]", "upsilon" -> "\[Upsilon]", "phi" -> "\[Phi]", "varphi" -> "\[CurlyPhi]",
+   "chi" -> "\[Chi]", "psi" -> "\[Psi]", "omega" -> "\[Omega]", "Gamma" -> "\[CapitalGamma]", "Delta" -> "\[CapitalDelta]",
+   "Theta" -> "\[CapitalTheta]", "Lambda" -> "\[CapitalLambda]", "Xi" -> "\[CapitalXi]", "Pi" -> "\[CapitalPi]",
+   "Sigma" -> "\[CapitalSigma]", "Upsilon" -> "\[CapitalUpsilon]", "Phi" -> "\[CapitalPhi]", "Psi" -> "\[CapitalPsi]",
+   "Omega" -> "\[CapitalOmega]", "ell" -> "\[ScriptL]", "infty" -> "\[Infinity]", "partial" -> "\[PartialD]", "nabla" -> "\[Del]",
+   "prime" -> "\[Prime]", "pm" -> "\[PlusMinus]", "times" -> "\[Times]", "cdot" -> "\[CenterDot]", " " -> " ", "quad" -> " ",
+   "qquad" -> "  "|>;
+$plainLabelAccents = <|"tilde" -> (Overscript[#, "~"] &), "widetilde" -> (Overscript[#, "~"] &), "hat" -> (Overscript[#, "^"] &),
+   "widehat" -> (Overscript[#, "^"] &), "bar" -> OverBar, "overline" -> OverBar, "vec" -> OverVector, "dot" -> (Overscript[#, "."] &),
+   "ddot" -> (Overscript[#, ".."] &)|>;
+$plainLabelDropped = {"rm", "it", "bf", "sf", "cal", "mathrm", "mathit", "mathbf", "mathsf", "mathcal", "mathbb", "boldsymbol",
+   "text", "textrm", "operatorname", "scriptstyle", "scriptscriptstyle", "textstyle", "displaystyle", "left", "right", "big",
+   "Big", "limits", "nolimits", ",", ":", ";", "!", "check", "breve", "acute", "grave", "underline"};
+(* a list of strings and accented atoms as one label: the strings next to each other joined *)
+plainLabelJoin[pieces_List] := With[{r = Join @@ (If[AllTrue[#, StringQ], {StringJoin[#]}, #] & /@
+       Split[pieces, StringQ[#1] && StringQ[#2] &])}, If[MatchQ[r, {_String}], First[r], Row[r]]];
+plainBlobLabel[label_String] := Module[{toks = labelTokens[label], i = 1, sequence, atom},
+   (* the atoms up to a closing brace *)
+   sequence[] := Module[{out = {}}, While[i <= Length[toks] && toks[[i]] =!= {"ch", "}"}, out = Join[out, atom[]]]; out];
+   atom[] := Module[{t, b},
+     If[i > Length[toks], Return[{}]];
+     t = toks[[i]]; i++;
+     Which[
+      t === {"ch", "{"}, b = sequence[]; If[i <= Length[toks], i++]; b,
+      t[[1]] === "ch", If[MemberQ[{"^", "_"}, t[[2]]], {}, {t[[2]]}],
+      KeyExistsQ[$plainLabelCharacters, t[[2]]], {$plainLabelCharacters[t[[2]]]},
+      KeyExistsQ[$plainLabelAccents, t[[2]]], b = atom[]; If[b === {}, {}, {$plainLabelAccents[t[[2]]][plainLabelJoin[b]]}],
+      MemberQ[$plainLabelDropped, t[[2]]], {},
+      True, {t[[2]]}]];
+   Module[{pieces = sequence[]},
+    (* a stray closing brace is skipped *)
+    While[i <= Length[toks], i++; pieces = Join[pieces, sequence[]]];
+    If[pieces === {}, "", plainLabelJoin[pieces]]]];
 (* where the label of a blob is written: the centre, or near the incentre of a triangle (blobLabelPlacement) *)
 blobLabelPoint[p_, {label_, shape_, fill_, h_}] := p + If[triangleShapeQ[shape] && StringQ[label],
     blobLabelPlacement[shape, h, blobLabelBox[label, fill, shape]][[1]], {0., 0.}];

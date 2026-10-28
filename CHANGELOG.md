@@ -60,6 +60,12 @@
   outwards. Its leaves have no order, so the branches of a node are arranged by their shapes, a symmetric tree is drawn
   symmetric about the vertical axis, and the legs along a chain are on its upper side (the chain of four vertices of
   W⁽⁶⁾ is a comb, before drawn with its middle legs one up and one down). A vertex of φ⁴ with four free ends is an X.
+- **The names of the blobs in the pictures of Mathematica are read from their LaTeX.** The label of a blob, written
+  as plain text in the Graphics of `DiagramPlot` and `DrawDiagram`, kept the names of the LaTeX commands it did not know
+  and dropped every overline: W⁽⁴⁾ of the showcase, `"\\scriptstyle W^{(4)}"`, was written "scriptstyleW(4)", and
+  Γ_ph̄ was written as Γ_ph. The commands of style, font and spacing are now dropped, every Greek letter is a character,
+  and a bar or an overline is drawn over its whole group (Γph̄), as a tilde or a hat over its letter. The TikZ code
+  is unchanged.
 
 ### Documents
 

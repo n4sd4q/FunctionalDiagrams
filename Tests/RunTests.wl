@@ -382,6 +382,10 @@ check["DeclareBlob: the label of a triangle written 0.8 times smaller, in TikZ a
 check["DeclareBlob: in the pictures of Mathematica a tilde is written above its letter, not as a combining character",
   {FunctionalDiagrams`Private`plainBlobLabel["\\tilde\\Lambda"], FunctionalDiagrams`Private`plainBlobLabel["\\Gamma^0"]},
   {Row[{Overscript["\[CapitalLambda]", "~"]}], "\[CapitalGamma]0"}];
+check["DeclareBlob: in the pictures of Mathematica the commands of style are dropped and an overline covers its group",
+  FunctionalDiagrams`Private`plainBlobLabel /@ {"\\scriptstyle W^{(4)}", "\\Gamma_{\\overline{\\rm ph}}", "\\Gamma_{\\rm ph}",
+    "\\mathcal{T}_{\\!\\rm pp}", "\\bar\\Delta", "\\varphi'"},
+  {"W(4)", Row[{"\[CapitalGamma]", OverBar["ph"]}], "\[CapitalGamma]ph", "Tpp", Row[{OverBar["\[CapitalDelta]"]}], "\[CurlyPhi]'"}];
 (* Gamma0 L0 Lambda: the lines leave from the two corners of the triangle, and the box is as wide as the side between them *)
 boxTriangle = Last[FunctionalDiagrams`Private`geometriesOf[DeltaFunction[a, z] DeltaFunction[b, z] +
      IntegralOver[FBx[a, b, u1, u2] G[u2, u3] G[u4, u1] TriTilde[u3, u4, z], {u1, u2, u3, u4}], {a, b, z}, {}]][[2]];
