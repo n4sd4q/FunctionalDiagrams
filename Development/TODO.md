@@ -173,7 +173,14 @@ free energy.
   `DiagramPlot` compared with `figures/` (up to the sizing options): done once by hand in October 2026, it found three
   definitions broken over two lines, helpers of the script used without their definition and a name that already had a
   value (in October 2026 again, with the formulas of the dimensional-regularization and QED sections compared as
-  strings with `figures/`). It could run with the tests or in `check_consistency.py`.
+  strings with `figures/`, and a third time with every formula: two propagators declared directed after their first
+  use, a name reused as a frequency, a check that kept orders beyond those it states). It could run with the tests or in
+  `check_consistency.py`. Two blocks still lean on the text: the check of the moments of φ⁴ by the cumulants (section 4)
+  uses W[J] and Z[J] that a comment defines, and by then `firstOrder`, `secondOrder`, `thirdOrder` are those of the
+  electron gas; written out, Z is the φ⁴ series at a source and W⁽⁴⁾, W⁽²⁾ are `FunctionalDerivative[Log[Z], ...,
+  "MaximumOrder" -> {lambda, 3}]` (about 8 s), four more lines. The connected vacuum diagrams of the electron gas
+  (section 3) use `vacuum1`, `vacuum2`, `vacuum3` that the text says to redefine for the electron gas (the line has no
+  output; the one shown, `ConnectedVacuumDiagrams`, is right).
 - Usage messages: those of `EffectiveAction2PI` (about 7800 characters) and `EffectiveAction1PI` (3700) are long; the
   details could move to the manual.
 
