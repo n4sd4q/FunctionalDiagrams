@@ -21,6 +21,7 @@
   <a href="Showcase/FunctionalDiagrams_Showcase.pdf"><b>Showcase</b></a>
   ·&nbsp;<a href="Documentation/FunctionalDiagrams_Manual.pdf"><b>Manual</b></a>
   ·&nbsp;<a href="Examples.wl"><b>Guided&nbsp;tour</b></a>
+  ·&nbsp;<a href="https://github.com/n4sd4q/FunctionalDiagrams/wiki"><b>Wiki</b></a>
   ·&nbsp;<a href="#installation"><b>Installation</b></a>
 </p>
 
@@ -44,6 +45,30 @@ electron gas.
   also in the repository as <a href="Media/demo.mp4"><code>Media/demo.mp4</code></a>): the first example below typed and
   run, then a few other results.</sub>
 </p>
+
+## Installation
+
+The package needs Mathematica 12.1 or later. Install the paclet of the latest
+[release](https://github.com/n4sd4q/FunctionalDiagrams/releases) once (the button at the right of the box copies the
+line):
+
+```mathematica
+PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.4.0/FunctionalDiagrams-2.4.0.paclet"]
+```
+
+then load it in every session:
+
+```mathematica
+Needs["FunctionalDiagrams`"]
+```
+
+The paclet also contains the showcase, the manual and the guided tour. The latest release is 2.4.0, which this page and
+the documents describe (see the [changelog](CHANGELOG.md)). One can also download the `.paclet` file of the release
+and pass its path to `PacletInstall`. A clone of the repository works as it is, with
+`PacletDirectoryLoad["/path/to/FunctionalDiagrams"]` and ``Needs["FunctionalDiagrams`"]``, or simply
+`Get["/path/to/FunctionalDiagrams/FunctionalDiagrams.wl"]`. ``?FunctionalDiagrams`*`` lists the functions and `?Name`
+explains each one. Updating, uninstalling and the common problems: the wiki's
+[Installation](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Installation) page.
 
 ## A first example
 
@@ -111,24 +136,6 @@ self-energy of QCD"></p>
 <p align="center"><b>Field theory.</b> φ⁴ theory in dimensional regularization: the two-loop self-energy with its pole,
 and the β function. One-loop QED: the three 1PI functions, with δ₂, β(e) and the anomalous magnetic moment. QCD: the
 one-loop gluon self-energy.</p>
-
-## Installation
-
-The package needs Mathematica 12.1 or later (for the paclet manager that loads it). Install the paclet of a
-[release](https://github.com/n4sd4q/FunctionalDiagrams/releases), which also contains the showcase, the manual and the
-guided tour:
-
-```mathematica
-PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.4.0/FunctionalDiagrams-2.4.0.paclet"]   (* once *)
-Needs["FunctionalDiagrams`"]
-```
-
-or download the `.paclet` file of the release and pass its path to `PacletInstall`. The latest release is 2.4.0, which
-this page and the documents describe (see the [changelog](CHANGELOG.md)).
-
-A clone of the repository works as it is, with `PacletDirectoryLoad["/path/to/FunctionalDiagrams"]` and
-``Needs["FunctionalDiagrams`"]``, or simply `Get["/path/to/FunctionalDiagrams/FunctionalDiagrams.wl"]`.
-``?FunctionalDiagrams`*`` lists the functions and `?Name` explains each one.
 
 ## Documentation
 
@@ -282,6 +289,7 @@ without the effective actions), and the script that computes and draws everythin
 | `Logo/` | the logo: the exchange (Fock) vacuum diagram, one of the two first-order diagrams of the Luttinger–Ward functional |
 | `Development/` | the sources of the package, one file per part, and the scripts that assemble it, build the paclet and draw the pictures of this page |
 | `PacletInfo.wl` | the paclet: the repository can be loaded as it is |
+| `index.html` | the landing page of the [GitHub Pages site](https://n4sd4q.github.io/FunctionalDiagrams/) |
 | `CHANGELOG.md`, `CITATION.cff`, `CONTRIBUTING.md`, `LICENSE`, `NOTICE` | the history, how to cite, how to report a problem or contribute, the text of the license, the copyright and the additional terms |
 
 </details>
@@ -314,6 +322,12 @@ If you use FunctionalDiagrams in published work, please cite it as described in 
 
 The history of the package is in [`CHANGELOG.md`](CHANGELOG.md). Problems, questions and suggestions are welcome as
 issues: see [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+## Star history
+
+<p align="center"><a href="https://star-history.com/#n4sd4q/FunctionalDiagrams&amp;Date"><img
+src="https://api.star-history.com/svg?repos=n4sd4q/functionaldiagrams&amp;type=Date" width="600" alt="Star history
+of FunctionalDiagrams: the number of stars of the repository over time"></a></p>
 
 ## License
 
