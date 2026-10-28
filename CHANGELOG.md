@@ -82,11 +82,16 @@
   (Hedin), the Nambu kernel follows its derivative, and the orders left out of a picture are said. The left-hand side
   of a sum written order by order no longer stays alone at the foot of a page, and a plain sum of pictures, like a
   displayed formula, no longer starts a page apart from the line that introduces it. Run as printed, in order and in
-  one session, every code block now runs and gives what follows it: the free generating functionals of the phonons, of
-  disorder and of the field σ were written over two lines that Mathematica reads as two inputs (the boson part was
-  lost), `upTo` and the coefficient of a Dirac structure were functions of the script (now defined in the code, and
-  the built-in `Coefficient`), the trees reused the name `W` of section 1 (now `connectedW`), and the check of Hedin's
-  equations used objects that the code did not define. The sections on dimensional regularization and QED show their
+  one session, every code block now runs and gives what follows it, but the check of the moments of φ⁴ by the
+  cumulants, whose W[J] and Z[J] a comment defines: the free generating functionals of the phonons, of disorder and of
+  the field σ were written over two lines that Mathematica reads as two inputs (the boson part was lost), `upTo` and
+  the coefficient of a Dirac structure were functions of the script (now defined in the code, and the built-in
+  `Coefficient`), the trees reused the name `W` of section 1 (now `connectedW`), the check of Hedin's equations used
+  objects that the code did not define, the fermion four-point function and F were drawn without arrows (their
+  propagators were declared directed only further on, now where they are first used), Potthoff's functional was called
+  `omega`, the frequency of the Migdal self-energy further on (now `omegaSigma`), and the check that the vacuum bubbles
+  of ⟨φφ⟩ factor out also gave the orders beyond λ³ of the product of two truncated series (now cut at λ³, as the text
+  says). The sections on dimensional regularization and QED show their
   results as their code writes them, no longer rewritten: the code puts in κ = 1/16π² and α = e²/4π (the rules
   `toKappa` and `toAlpha`, κ a symbol in the Z factors) and collects or simplifies; the self-energy is the list {A, B} of
   its poles, Σ₂ = mA + p̸B; the pole parts of the rearranged Γ⁽⁴⁾ are the list that `Tally` gives, with the numbers of

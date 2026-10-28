@@ -626,7 +626,7 @@ $Z_0[\eta,\bar\eta]=\exp(-\bar\eta\cdot G_0\cdot\eta)$, and the fields stand for
 $\psi\leftrightarrow\delta/\delta\bar\eta$, $\bar\psi\leftrightarrow-\delta/\delta\eta$. The sign of the exchange term is not
 put in by hand: it comes out of the Grassmann algebra.
 \begin{code}
-DeclareGrassmannSource[eta, etabar];
+DeclareGrassmannSource[eta, etabar]; DeclareDirectedPropagator[BareGreenFunction];
 DeclareField[psi, etabar]; DeclareField[psibar, eta, -1];
 FreeFermionGeneratingFunctional = Exp[-IntegralOver[
     BareGreenFunction[x, y] etabar[x] ** eta[y], {x, y}]];
@@ -770,8 +770,8 @@ numerator = SetSourcesToZero[FunctionalDerivative[FreeBosonGeneratingFunctional 
     firstOrder + secondOrder/2 + thirdOrder/6, J[a], J[b]]];
 phi4Propagator = PerturbativeCorrelationFunction[FreeBosonGeneratingFunctional,
     {phi[a], phi[b]}, Phi4Vertex, 3]
-SimplifyDiagrams[numerator - DropVacuumBubbles[numerator, {a, b}]
-    (1 + vacuum1 + vacuum2 + vacuum3)]
+SimplifyDiagrams[OrderPart[numerator - DropVacuumBubbles[numerator, {a, b}]
+    (1 + vacuum1 + vacuum2 + vacuum3), lambda, {0, 1, 2, 3}]]
 \end{code}
 \begin{ordersum}{\langle\phi_a\phi_b\rangle}
 \orderrow{\lambda^0}{phi4_propagator_0}
@@ -795,7 +795,6 @@ $Z_0[\eta,\bar\eta]$, give the vacuum diagrams, disconnected ones included: \val
 loop with a factor $-1$:
 \begin{code}
 DeclareSymmetric[InteractionPotential]; DeclareInteractionLine[InteractionPotential];
-DeclareDirectedPropagator[BareGreenFunction];
 CoulombVertex = 1/2 IntegralOver[InteractionPotential[x, y]
     psibar[x] ** psibar[y] ** psi[y] ** psi[x], {x, y}];   (* S_int, used below *)
 applyInteraction[F_] := SimplifyDiagrams[-1/2 IntegralOver[InteractionPotential[u, v]
@@ -1785,6 +1784,7 @@ $\Gamma[\bar\Psi,\Psi]$ of section~\ref{sec:onepifermions} (the rightmost deriva
 here to second order (section~\ref{sec:twoparticle} checks the Bethe--Salpeter equation with it to the third, where it has
 \val{CountsF3} diagrams):
 \begin{code}
+DeclareDirectedPropagator[DressedGreenFunction];
 fullVertex = SkeletonDiagrams[SetSourcesToZero[FunctionalDerivative[gammaPsi1PI,
     MeanPsibar[x1], MeanPsi[x2], MeanPsibar[x3], MeanPsi[x4]]], {x1, x2, x3, x4},
     {BareGreenFunction}] /. BareGreenFunction -> DressedGreenFunction
@@ -1896,7 +1896,6 @@ $\Lambda_2^{\rm int}+\frac{\lambda}{24}\int\bar\phi^4+\frac{\lambda}{4}\int\bar\
 \subsection{The electron gas to \texorpdfstring{$V^3$}{V3}}\label{sec:twopifermions}
 
 \begin{code}
-DeclareDirectedPropagator[DressedGreenFunction];
 gammaPsiG = EffectiveAction2PI[FreeFermionGeneratingFunctional, CoulombVertex, 3,
     BareGreenFunction -> DressedGreenFunction,
     "MeanFields" -> {psi -> MeanPsi, psibar -> MeanPsibar}]
@@ -3085,9 +3084,9 @@ $\mathcal F[\Sigma]=\Phi[G[\Sigma]]-{\rm Tr}(\Sigma\,G[\Sigma])$, with $G[\Sigma
 $\Omega_{G_0}[\Sigma]=\mathcal F[\Sigma]-{\rm Tr}\ln(-(G_0^{-1}-\Sigma))$~\cite{Potthoff2003} (he writes $\Omega_t[\Sigma]$, with $t$ the
 one-body part):
 \begin{code}
-omega = SelfEnergyFunctional[luttingerWard, BareGreenFunction -> TrialSelfEnergy,
+omegaSigma = SelfEnergyFunctional[luttingerWard, BareGreenFunction -> TrialSelfEnergy,
     DressedGreenFunction]
-FunctionalDerivative[omega, TrialSelfEnergy[x, y]]
+FunctionalDerivative[omegaSigma, TrialSelfEnergy[x, y]]
 \end{code}
 \[
 \Omega_{G_0}[\Sigma]=\formula{ea_self_energy_functional},\qquad
