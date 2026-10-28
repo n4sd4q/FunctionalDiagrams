@@ -177,11 +177,12 @@ tikzLine[{"E", path_, style_}, t_, scale_, lw_ : 0.7, crossings_List : {}] := Mo
      If[anomalousStyleQ[style], StringJoin[tikzArrowHead[#[[1]], #[[2]], scale, lw] & /@ anomalousArrowHeads[path, style]], ""] <>
      If[style === "Impurity", "  \\draw " <> tikzCross[First[pathPoints[path, {0.5}, 0.]], $impurityCross] <> ";\n", ""]]];
 
-(* a declared blob: the shape filled, the hatching as explicit chords (no patterns library), the label, the outline. On a
-   hatched blob the label sits in a white clearing with rounded corners, a little larger than the glyphs, so that no
-   hatch line runs through or touches them; the clearing is clipped to the blob and the outline drawn over it, so that a
-   wide label never cuts the outline *)
+(* a declared blob: the shape filled, the hatching as explicit chords and the dots as small discs (no patterns library),
+   the label, the outline. On a hatched or dotted blob the label sits in a white clearing with rounded corners, a little
+   larger than the glyphs, so that no hatch line or dot runs through or touches them; the clearing is clipped to the blob
+   and the outline drawn over it, so that a wide label never cuts the outline *)
 tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := Module[{shapeString, hatches = blobHatchesOf[p, spec],
+    dots = blobDotsOf[p, spec],
     at = coordinateString[blobLabelPoint[p, spec]],
     (* the label of a triangle is smaller (blobLabelScale): the node scaled, its clearing with it *)
     scaleString = If[blobLabelScale[shape] == 1., "", ", scale=" <> numberString[blobLabelScale[shape]]]},
@@ -192,7 +193,10 @@ tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := 
    "  \\fill[" <> If[fill === "Grey", "black!20", "white"] <> "] " <> shapeString <> ";\n" <>
     If[hatches === {}, "", "  \\draw[line width=" <> numberString[0.55 lw] <> "pt] " <>
       joinStrings[Table[coordinateString[hs[[1]]] <> " -- " <> coordinateString[hs[[2]]], {hs, hatches}], " "] <> ";\n"] <>
-    If[MemberQ[{"Hatched", "CrossHatched"}, fill],
+    (* the dots 1.4 line widths across (the hatch lines are 0.55), so that they read as dots in print *)
+    If[dots === {}, "", "  \\fill " <> joinStrings[Table[coordinateString[q] <> " circle (" <> numberString[0.7 lw] <> "pt)", {q, dots}], " "] <>
+      ";\n"] <>
+    If[texturedFillQ[fill],
      "  \\begin{scope}\n  \\clip " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <>
       ", inner sep=1.2pt, fill=white, rounded corners=2pt] at " <> at <> " {$" <> label <> "$};\n  \\end{scope}\n" <>
       "  \\draw " <> shapeString <> ";\n",

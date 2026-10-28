@@ -21,7 +21,7 @@ drawingOption[opts_List, name_String] := optionValue[opts, $drawingDefaults, nam
 
 (* the colours of the pictures of Mathematica (the TikZ code is for white pages and has none), as {light, dark}: the
    lines and the text, the paper (what hides the lines under it: the inside of a blob, of an external point or of a
-   source, the clearing behind the label of a hatched blob), the fill "Grey" of a blob, the grey vertex blobs and the
+   source, the clearing behind the label of a hatched or dotted blob), the fill "Grey" of a blob, the grey vertex blobs and the
    frames of the cells of DiagramPlot. "Appearance" -> Automatic follows the notebook (dark lines on a light notebook,
    light ones on a dark notebook) through LightDarkSwitched, of Mathematica 14.3 or later, the paper being then the
    background of the notebook itself; before 14.3 the light colours. "Light" and "Dark" force one of them, on a
@@ -1899,8 +1899,10 @@ $blobLabelEm = 0.6;
    to two of them is as wide as the side between them (pictureBlobSize), so that a larger triangle would make it large *)
 $triangleLabelScale = 0.8;
 blobLabelScale[shape_] := If[MemberQ[{"Triangle", "TriangleUp"}, shape], $triangleLabelScale, 1.];
-blobClearingEm[fill_] := If[MemberQ[{"Hatched", "CrossHatched"}, fill], 0.135, 0.07];
-blobLabelMargin[fill_] := If[MemberQ[{"Hatched", "CrossHatched"}, fill], 0.1, 0.06];
+(* the fills drawn with lines or dots, on which the label sits in a clearing *)
+texturedFillQ[fill_] := MemberQ[{"Hatched", "CrossHatched", "Dotted"}, fill];
+blobClearingEm[fill_] := If[texturedFillQ[fill], 0.135, 0.07];
+blobLabelMargin[fill_] := If[texturedFillQ[fill], 0.1, 0.06];
 (* the box {width, height, depth} of a LaTeX label in units of its font size: the glyphs of Palatino and Computer Modern
    (the wider of the two), scripts at 0.7 (0.5 in scripts) shifted as TeX shifts them, accents and bars above. An
    estimate on the safe side, enough to size a blob *)
@@ -2249,6 +2251,21 @@ blobHatchesOf[p_, {_, shape_, fill_, h_}] := Switch[fill,
    "Hatched", blobHatchSegments[p, shape, h, 1],
    "CrossHatched", Join[blobHatchSegments[p, shape, h, 1], blobHatchSegments[p, shape, h, -1]],
    _, {}];
+(* the fill "Dotted", sparser than the hatching: dots on a square grid turned by 45 degrees (staggered rows), centred on
+   the blob, $dotFillSpacing apart (the hatching is $hatchSpacing apart), those at least $dotFillMargin inside the outline;
+   the pattern is symmetric about the centre and the two axes, as the blob *)
+$dotFillSpacing = 0.14; $dotFillMargin = 0.06;
+insideBlobOutlineQ[q_, p_, shape_, h_, m_] := Switch[shape,
+   "Box", Max[Abs[q - p]] <= h - m,
+   (* the corners counterclockwise: the inward normal of each edge on its left *)
+   "Triangle" | "TriangleUp" | "Diamond", With[{c = triangleCorners[p, h, shape]},
+    AllTrue[Range[Length[c]], Function[i, With[{e = c[[Mod[i, Length[c]] + 1]] - c[[i]]},
+       {-e[[2]], e[[1]]} . (q - c[[i]])/vectorNorm[e] >= m]]]],
+   _, vectorNorm[q - p] <= h - m];
+blobDotsOf[p_, {_, shape_, "Dotted", h_}] := With[{n = Ceiling[2.5 h/$dotFillSpacing] + 1},
+   Select[Flatten[Table[p + $dotFillSpacing {i + j, i - j}/Sqrt[2.], {i, -n, n}, {j, -n, n}], 1],
+    insideBlobOutlineQ[#, p, shape, h, $dotFillMargin] &]];
+blobDotsOf[_, _] := {};
 (* the label of a blob as plain text, for the pictures of Mathematica: Greek letters, without the LaTeX markup; a tilde
    or a hat over the letter that follows it, as an accent written above the letter (a combining character would be small
    and close to it) *)
@@ -2267,9 +2284,10 @@ declaredBlobPrimitives[p_, spec : {label_, shape_, fill_, h_}, a_ : Automatic] :
    If[fill === "Grey", diagramColor[a, "GreyFill"], diagramColor[a, "Paper"]],
    Switch[shape, "Box", Rectangle[p - {h, h}, p + {h, h}], "Triangle" | "TriangleUp" | "Diamond", Polygon[triangleCorners[p, h, shape]], _, Disk[p, h]],
    diagramColor[a, "Foreground"], {AbsoluteThickness[0.6], Line /@ blobHatchesOf[p, spec]},
-   (* on a hatched blob the label sits in a clearing of the paper colour with rounded corners, the outline drawn over it
-      (as in TikZ) *)
-   Text[If[MemberQ[{"Hatched", "CrossHatched"}, fill],
+   With[{dots = blobDotsOf[p, spec]}, If[dots === {}, {}, {AbsolutePointSize[1.3], Point[dots]}]],
+   (* on a hatched or dotted blob the label sits in a clearing of the paper colour with rounded corners, the outline drawn
+      over it (as in TikZ) *)
+   Text[If[texturedFillQ[fill],
      Framed[Style[plainBlobLabel[label], blobLabelScale[shape] $fontPixels], Background -> diagramColor[a, "Paper"],
       FrameStyle -> diagramColor[a, "Paper"], RoundingRadius -> 3,
       FrameMargins -> {{2, 2}, {1, 2}}],

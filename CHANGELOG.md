@@ -11,6 +11,11 @@
   cross least. The parquet decomposition is drawn channel by channel with it: `DiagramPlot[ParquetDecomposition[...]["t"],
   {a, b, c, d}, "ExternalOrder" -> "Uncrossed"]` for φ⁴ theory, `"ExternalOrder" -> {"Uncrossed", {x4, x2, x3, x1}}` for
   the particle–particle ladders of the electron gas (the incoming legs on the left).
+- **`"Fill" -> "Dotted"`** for `DeclareBlob`: dots on a square grid turned by 45 degrees (staggered rows), 0.14 units
+  apart, centred on the blob and kept inside its outline, a fill sparser than the hatching (0.1 units apart). It is
+  drawn in the Graphics of Mathematica as points (light and dark, as the hatching) and in TikZ as small discs, without
+  the patterns library; the label sits in a white clearing with a band of the fill around it, as on a hatched blob, and
+  the blob has the size of a hatched one. The documents draw the fully irreducible vertex Γ_irr with it (before, grey).
 
 ### Pictures
 

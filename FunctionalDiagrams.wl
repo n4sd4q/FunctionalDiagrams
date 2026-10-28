@@ -61,7 +61,7 @@ DeclareInteractionLine::usage = "DeclareInteractionLine[V, ...] declares interac
 DeclareCoupling::usage = "DeclareCoupling[lambda, ...] declares couplings of local interactions, such as lambda in S_int = lambda/4! \[Integral] phi^4 or g in g \[Integral] phi psibar psi. In the weight written with a picture they are absorbed into the vertices, each of which stands for minus its coupling: lambda^n in the coefficient of a term becomes (-1)^n, so that the tadpole -lambda/2 G(a, z) G(z, z) G(z, b) has the weight 1/2. The expressions are not changed.";
 DeclareLocalVertex::usage = "DeclareLocalVertex[h, ...] declares heads of local vertices: kernels such as the quark-gluon vertex h[x, y, z] or the three-gluon vertex, whose labels carry different indices (Lorentz, colour, spinor) at one point of space-time. The pictures draw h[x, y, ...] as one point, at which its lines meet, instead of a grey blob; in the weight written with a picture the vertex stands for minus its kernel, -h (the sign of exp(-S_int)).";
 DeclareDisplayName::usage = "DeclareDisplayName[h, name] displays h[x, y, ...] as name with the subscript x y ..., for example DeclareDisplayName[BareGreenFunction, \"G0\"]: input keeps the explicit name, output is compact.";
-DeclareBlob::usage = "DeclareBlob[h, label] draws a factor h[x1, ..., xn] (n >= 2, a self-energy h[x, y] included) as a blob with label (a LaTeX string, e.g. \"\\\\Sigma\") written inside; its legs leave it counterclockwise from the top left, at the corners of a square for n = 4, and its lines leave from these corners, as from those of a triangle (a point that is twice an argument, h[z, z, w, w], stands outside two corners, joined to each); a box joined by single lines from three of its corners to one vertex (the four-point vertex in the Schwinger-Dyson equation of phi^4 theory) is turned by 45 degrees, the vertex on the diagonal through the fourth corner, the lines to the two other corners arcs symmetric about it, the label upright. Options: \"Shape\" -> \"Circle\" (default), \"Box\" or \"Triangle\" (equilateral, three legs at its corners, two on the left and one on the right: the vertex of a one-body operator), or \"TriangleUp\" (the same triangle with two legs at the bottom and one at the top), \"Diamond\" (a square turned by 45 degrees, legs at the left, bottom, right and top corners); \"AxialPorts\" -> {k1, ...}: the lines and legs of these ports leave horizontally, so that a self-energy can be drawn with its fermion line on an axis (the default for \"TriangleUp\" is {1, 2}); \"Fill\" -> \"Hatched\" (default), \"CrossHatched\", \"Grey\" or \"White\". A blob is as large as its label needs: the label (on a hatched blob in a white clearing, with a band of hatching left around it) sits at the centre, or near the incentre of a triangle, and a label with an accent, a subscript or a superscript makes the blob a little larger, never the label smaller; in one picture, and in all the terms of a sum drawn together, the blobs of one shape have one size. Blobs joined by lines are drawn side by side, as in the exact equations of many-body theory (Dyson, Schwinger-Dyson, Bethe-Salpeter, parquet).";
+DeclareBlob::usage = "DeclareBlob[h, label] draws a factor h[x1, ..., xn] (n >= 2, a self-energy h[x, y] included) as a blob with label (a LaTeX string, e.g. \"\\\\Sigma\") written inside; its legs leave it counterclockwise from the top left, at the corners of a square for n = 4, and its lines leave from these corners, as from those of a triangle (a point that is twice an argument, h[z, z, w, w], stands outside two corners, joined to each); a box joined by single lines from three of its corners to one vertex (the four-point vertex in the Schwinger-Dyson equation of phi^4 theory) is turned by 45 degrees, the vertex on the diagonal through the fourth corner, the lines to the two other corners arcs symmetric about it, the label upright. Options: \"Shape\" -> \"Circle\" (default), \"Box\" or \"Triangle\" (equilateral, three legs at its corners, two on the left and one on the right: the vertex of a one-body operator), or \"TriangleUp\" (the same triangle with two legs at the bottom and one at the top), \"Diamond\" (a square turned by 45 degrees, legs at the left, bottom, right and top corners); \"AxialPorts\" -> {k1, ...}: the lines and legs of these ports leave horizontally, so that a self-energy can be drawn with its fermion line on an axis (the default for \"TriangleUp\" is {1, 2}); \"Fill\" -> \"Hatched\" (default), \"CrossHatched\", \"Dotted\" (dots on a staggered grid, sparser than the hatching), \"Grey\" or \"White\"; the documents fill a vertex function the more densely the more diagrams it contains (the fully irreducible vertex dotted, the irreducible parts hatched, the full vertex functions cross-hatched) and leave the correlation and response functions white. A blob is as large as its label needs: the label (on a hatched, cross-hatched or dotted blob in a white clearing, with a band of the fill left around it) sits at the centre, or near the incentre of a triangle, and a label with an accent, a subscript or a superscript makes the blob a little larger, never the label smaller; in one picture, and in all the terms of a sum drawn together, the blobs of one shape have one size. Blobs joined by lines are drawn side by side, as in the exact equations of many-body theory (Dyson, Schwinger-Dyson, Bethe-Salpeter, parquet).";
 ResetDeclarations::usage = "ResetDeclarations[] removes all declarations (sources, fields, symmetries, derivative rules, line styles, interaction lines, couplings, local vertices, blobs, Matsubara frequencies): symmetric heads lose the attribute Orderless and antisymmetric ones their sign rules; display formats remain.";
 
 (* ---------------------------------------------------------------- calculus *)
@@ -318,7 +318,7 @@ localVertexQ[f_] := ! AtomQ[f] && MemberQ[$localVertexHeads, Head[f]];
 
 (* blobs: factors h[x1, ..., xn] drawn as a circle or a square with a label inside (a LaTeX string), even for n = 2, e.g.
    a self-energy; {head, label, shape, fill, axial ports} *)
-$blobShapes = {"Circle", "Box", "Triangle", "TriangleUp", "Diamond"}; $blobFills = {"Hatched", "CrossHatched", "Grey", "White"};
+$blobShapes = {"Circle", "Box", "Triangle", "TriangleUp", "Diamond"}; $blobFills = {"Hatched", "CrossHatched", "Dotted", "Grey", "White"};
 DeclareBlob::opt = "Unknown value `1` of the option `2` of DeclareBlob; use one of `3`.";
 DeclareBlob[head_Symbol, label_String, opts___Rule] := Module[
    {shape = optionValue[{opts}, {"Shape" -> "Circle"}, "Shape"], fill = optionValue[{opts}, {"Fill" -> "Hatched"}, "Fill"],
@@ -2062,7 +2062,7 @@ drawingOption[opts_List, name_String] := optionValue[opts, $drawingDefaults, nam
 
 (* the colours of the pictures of Mathematica (the TikZ code is for white pages and has none), as {light, dark}: the
    lines and the text, the paper (what hides the lines under it: the inside of a blob, of an external point or of a
-   source, the clearing behind the label of a hatched blob), the fill "Grey" of a blob, the grey vertex blobs and the
+   source, the clearing behind the label of a hatched or dotted blob), the fill "Grey" of a blob, the grey vertex blobs and the
    frames of the cells of DiagramPlot. "Appearance" -> Automatic follows the notebook (dark lines on a light notebook,
    light ones on a dark notebook) through LightDarkSwitched, of Mathematica 14.3 or later, the paper being then the
    background of the notebook itself; before 14.3 the light colours. "Light" and "Dark" force one of them, on a
@@ -3940,8 +3940,10 @@ $blobLabelEm = 0.6;
    to two of them is as wide as the side between them (pictureBlobSize), so that a larger triangle would make it large *)
 $triangleLabelScale = 0.8;
 blobLabelScale[shape_] := If[MemberQ[{"Triangle", "TriangleUp"}, shape], $triangleLabelScale, 1.];
-blobClearingEm[fill_] := If[MemberQ[{"Hatched", "CrossHatched"}, fill], 0.135, 0.07];
-blobLabelMargin[fill_] := If[MemberQ[{"Hatched", "CrossHatched"}, fill], 0.1, 0.06];
+(* the fills drawn with lines or dots, on which the label sits in a clearing *)
+texturedFillQ[fill_] := MemberQ[{"Hatched", "CrossHatched", "Dotted"}, fill];
+blobClearingEm[fill_] := If[texturedFillQ[fill], 0.135, 0.07];
+blobLabelMargin[fill_] := If[texturedFillQ[fill], 0.1, 0.06];
 (* the box {width, height, depth} of a LaTeX label in units of its font size: the glyphs of Palatino and Computer Modern
    (the wider of the two), scripts at 0.7 (0.5 in scripts) shifted as TeX shifts them, accents and bars above. An
    estimate on the safe side, enough to size a blob *)
@@ -4290,6 +4292,21 @@ blobHatchesOf[p_, {_, shape_, fill_, h_}] := Switch[fill,
    "Hatched", blobHatchSegments[p, shape, h, 1],
    "CrossHatched", Join[blobHatchSegments[p, shape, h, 1], blobHatchSegments[p, shape, h, -1]],
    _, {}];
+(* the fill "Dotted", sparser than the hatching: dots on a square grid turned by 45 degrees (staggered rows), centred on
+   the blob, $dotFillSpacing apart (the hatching is $hatchSpacing apart), those at least $dotFillMargin inside the outline;
+   the pattern is symmetric about the centre and the two axes, as the blob *)
+$dotFillSpacing = 0.14; $dotFillMargin = 0.06;
+insideBlobOutlineQ[q_, p_, shape_, h_, m_] := Switch[shape,
+   "Box", Max[Abs[q - p]] <= h - m,
+   (* the corners counterclockwise: the inward normal of each edge on its left *)
+   "Triangle" | "TriangleUp" | "Diamond", With[{c = triangleCorners[p, h, shape]},
+    AllTrue[Range[Length[c]], Function[i, With[{e = c[[Mod[i, Length[c]] + 1]] - c[[i]]},
+       {-e[[2]], e[[1]]} . (q - c[[i]])/vectorNorm[e] >= m]]]],
+   _, vectorNorm[q - p] <= h - m];
+blobDotsOf[p_, {_, shape_, "Dotted", h_}] := With[{n = Ceiling[2.5 h/$dotFillSpacing] + 1},
+   Select[Flatten[Table[p + $dotFillSpacing {i + j, i - j}/Sqrt[2.], {i, -n, n}, {j, -n, n}], 1],
+    insideBlobOutlineQ[#, p, shape, h, $dotFillMargin] &]];
+blobDotsOf[_, _] := {};
 (* the label of a blob as plain text, for the pictures of Mathematica: Greek letters, without the LaTeX markup; a tilde
    or a hat over the letter that follows it, as an accent written above the letter (a combining character would be small
    and close to it) *)
@@ -4308,9 +4325,10 @@ declaredBlobPrimitives[p_, spec : {label_, shape_, fill_, h_}, a_ : Automatic] :
    If[fill === "Grey", diagramColor[a, "GreyFill"], diagramColor[a, "Paper"]],
    Switch[shape, "Box", Rectangle[p - {h, h}, p + {h, h}], "Triangle" | "TriangleUp" | "Diamond", Polygon[triangleCorners[p, h, shape]], _, Disk[p, h]],
    diagramColor[a, "Foreground"], {AbsoluteThickness[0.6], Line /@ blobHatchesOf[p, spec]},
-   (* on a hatched blob the label sits in a clearing of the paper colour with rounded corners, the outline drawn over it
-      (as in TikZ) *)
-   Text[If[MemberQ[{"Hatched", "CrossHatched"}, fill],
+   With[{dots = blobDotsOf[p, spec]}, If[dots === {}, {}, {AbsolutePointSize[1.3], Point[dots]}]],
+   (* on a hatched or dotted blob the label sits in a clearing of the paper colour with rounded corners, the outline drawn
+      over it (as in TikZ) *)
+   Text[If[texturedFillQ[fill],
      Framed[Style[plainBlobLabel[label], blobLabelScale[shape] $fontPixels], Background -> diagramColor[a, "Paper"],
       FrameStyle -> diagramColor[a, "Paper"], RoundingRadius -> 3,
       FrameMargins -> {{2, 2}, {1, 2}}],
@@ -5456,11 +5474,12 @@ tikzLine[{"E", path_, style_}, t_, scale_, lw_ : 0.7, crossings_List : {}] := Mo
      If[anomalousStyleQ[style], StringJoin[tikzArrowHead[#[[1]], #[[2]], scale, lw] & /@ anomalousArrowHeads[path, style]], ""] <>
      If[style === "Impurity", "  \\draw " <> tikzCross[First[pathPoints[path, {0.5}, 0.]], $impurityCross] <> ";\n", ""]]];
 
-(* a declared blob: the shape filled, the hatching as explicit chords (no patterns library), the label, the outline. On a
-   hatched blob the label sits in a white clearing with rounded corners, a little larger than the glyphs, so that no
-   hatch line runs through or touches them; the clearing is clipped to the blob and the outline drawn over it, so that a
-   wide label never cuts the outline *)
+(* a declared blob: the shape filled, the hatching as explicit chords and the dots as small discs (no patterns library),
+   the label, the outline. On a hatched or dotted blob the label sits in a white clearing with rounded corners, a little
+   larger than the glyphs, so that no hatch line or dot runs through or touches them; the clearing is clipped to the blob
+   and the outline drawn over it, so that a wide label never cuts the outline *)
 tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := Module[{shapeString, hatches = blobHatchesOf[p, spec],
+    dots = blobDotsOf[p, spec],
     at = coordinateString[blobLabelPoint[p, spec]],
     (* the label of a triangle is smaller (blobLabelScale): the node scaled, its clearing with it *)
     scaleString = If[blobLabelScale[shape] == 1., "", ", scale=" <> numberString[blobLabelScale[shape]]]},
@@ -5471,7 +5490,10 @@ tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := 
    "  \\fill[" <> If[fill === "Grey", "black!20", "white"] <> "] " <> shapeString <> ";\n" <>
     If[hatches === {}, "", "  \\draw[line width=" <> numberString[0.55 lw] <> "pt] " <>
       joinStrings[Table[coordinateString[hs[[1]]] <> " -- " <> coordinateString[hs[[2]]], {hs, hatches}], " "] <> ";\n"] <>
-    If[MemberQ[{"Hatched", "CrossHatched"}, fill],
+    (* the dots 1.4 line widths across (the hatch lines are 0.55), so that they read as dots in print *)
+    If[dots === {}, "", "  \\fill " <> joinStrings[Table[coordinateString[q] <> " circle (" <> numberString[0.7 lw] <> "pt)", {q, dots}], " "] <>
+      ";\n"] <>
+    If[texturedFillQ[fill],
      "  \\begin{scope}\n  \\clip " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <>
       ", inner sep=1.2pt, fill=white, rounded corners=2pt] at " <> at <> " {$" <> label <> "$};\n  \\end{scope}\n" <>
       "  \\draw " <> shapeString <> ";\n",

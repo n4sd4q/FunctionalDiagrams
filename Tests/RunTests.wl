@@ -332,6 +332,25 @@ check["DeclareBlob: a two-label blob is drawn as a blob with its label, not as a
     occurrences[t, "\\fill[white]"]}], {1, 1}];
 check["DeclareBlob: hatching drawn as chords, without the patterns library",
   With[{t = DiagramToTikZ[FBx[a, b, c, d], {a, b, c, d}]}, {StringFreeQ[t, "pattern"], occurrences[t, "rectangle"] >= 2}], {True, True}];
+(* "Fill" -> "Dotted", sparser than the hatching: dots on a staggered grid inside the blob *)
+DeclareBlob[DotBx, "\\Gamma_{\\rm irr}", "Shape" -> "Box", "Fill" -> "Dotted"];
+DeclareBlob[DotTr, "\\Gamma_{\\rm irr}", "Shape" -> "Triangle", "Fill" -> "Dotted"];
+dotsOf[h_] := With[{sp = FunctionalDiagrams`Private`blobSpecOf[h]}, {FunctionalDiagrams`Private`blobDotsOf[{0., 0.}, sp], sp}];
+check["DeclareBlob: \"Fill\" -> \"Dotted\": dots 0.14 apart on a grid turned by 45 degrees, inside the box and the triangle, symmetric about the centre and the axes of the box",
+  With[{bx = dotsOf[DotBx], tr = dotsOf[DotTr]},
+   {Length[bx[[1]]] > 20, Max[Abs[Flatten[bx[[1]]]]] < bx[[2, 4]] - 0.05,
+    Round[1000 Min[Flatten[Table[If[i < j, Norm[bx[[1, i]] - bx[[1, j]]], 1.], {i, Length[bx[[1]]]}, {j, Length[bx[[1]]]}]]]],
+    Sort[Round[1000 bx[[1]]]] === Sort[Round[-1000 bx[[1]]]] === Sort[Round[1000 ({-1, 1} #) & /@ bx[[1]]]],
+    Length[tr[[1]]] > 20, AllTrue[tr[[1]], FunctionalDiagrams`Private`insideBlobOutlineQ[#, {0., 0.}, "Triangle", tr[[2, 4]], 0.05] &]}],
+  {True, True, 140, True, True, True}];
+check["DeclareBlob: \"Fill\" -> \"Dotted\": discs in TikZ (no patterns library), points in the Graphics, the label in a white clearing, the blob as large as a hatched one",
+  With[{t = DiagramToTikZ[DotBx[a, b, c, d], {a, b, c, d}], n = Length[First[dotsOf[DotBx]]]},
+   {StringFreeQ[t, "pattern"], occurrences[t, "pt)"] == n, occurrences[t, "fill=white, rounded corners"],
+    Cases[DrawDiagram[DotBx[a, b, c, d], {a, b, c, d}], Point[p_?MatrixQ] :> Length[p], Infinity] == {n},
+    Check[Head[DiagramPlot[DotTr[a, b, c], {a, b, c}, "Appearance" -> "Dark"]], "message"],
+    FunctionalDiagrams`Private`declaredBlobSize["\\Gamma_{\\rm irr}", "Box", "Dotted"] ==
+     FunctionalDiagrams`Private`declaredBlobSize["\\Gamma_{\\rm irr}", "Box", "Hatched"]}],
+  {True, True, 1, True, Graphics, True}];
 check["DeclareBlob: a four-point box has its legs at its corners",
   Sort[Cases[geometryItems[FBx[a, b, c, d], {a, b, c, d}], {"L", q_, __} :> Round[q/FunctionalDiagrams`Private`$declaredBlobSize]]],
   {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}}];

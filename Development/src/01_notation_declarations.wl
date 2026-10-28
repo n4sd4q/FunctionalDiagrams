@@ -116,7 +116,7 @@ localVertexQ[f_] := ! AtomQ[f] && MemberQ[$localVertexHeads, Head[f]];
 
 (* blobs: factors h[x1, ..., xn] drawn as a circle or a square with a label inside (a LaTeX string), even for n = 2, e.g.
    a self-energy; {head, label, shape, fill, axial ports} *)
-$blobShapes = {"Circle", "Box", "Triangle", "TriangleUp", "Diamond"}; $blobFills = {"Hatched", "CrossHatched", "Grey", "White"};
+$blobShapes = {"Circle", "Box", "Triangle", "TriangleUp", "Diamond"}; $blobFills = {"Hatched", "CrossHatched", "Dotted", "Grey", "White"};
 DeclareBlob::opt = "Unknown value `1` of the option `2` of DeclareBlob; use one of `3`.";
 DeclareBlob[head_Symbol, label_String, opts___Rule] := Module[
    {shape = optionValue[{opts}, {"Shape" -> "Circle"}, "Shape"], fill = optionValue[{opts}, {"Fill" -> "Hatched"}, "Fill"],
