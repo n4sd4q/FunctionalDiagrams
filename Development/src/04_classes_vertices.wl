@@ -739,7 +739,20 @@ fermionLineFactor[f_, comp_] := f /. {
 lineVertex[args___] /; halfUnsortedQ[{args}] := halfAntisymmetricForm[lineVertex, {args}];
 fermionLinesFromSuperfield[e_, external_List] := SimplifyDiagrams[Total[
      (# /. IntegralOver[f_, d_] :> IntegralOver[Total[Table[fermionLineFactor[f, Function[x, x /. Join[external, Thread[d -> tuple]]]],
-           {tuple, Tuples[{1, 2}, Length[d]]}]], d]) & /@ DiagramTerms[e]]];
+           {tuple, liveComponentTuples[f, d, external]}]], d]) & /@ DiagramTerms[e]]];
+(* the components of the variables d, the tuples of Tuples[{1, 2}, Length[d]] in their order, but those for which a
+   line or a vertex of f vanishes: a partial assignment is dropped as soon as a factor whose labels are all assigned
+   vanishes. All the tuples when f has other factors with lines or vertices (a power, an inverse) *)
+liveComponentTuples[f_, d_List, external_List] := Module[{factors = factorList[f], last, search},
+   If[! AllTrue[factors, MatchQ[#, _FullPropagator | _VertexFunction] || FreeQ[#, FullPropagator | VertexFunction] &],
+    Tuples[{1, 2}, Length[d]],
+    factors = Select[factors, MatchQ[#, _FullPropagator | _VertexFunction] &];
+    (* the factor is checked once its last variable (in the order of d) has its component; 0: no variable *)
+    last = Table[Max[0, Flatten[Position[d, #, {1}] & /@ List @@ g]], {g, factors}];
+    search[k_, tuple_List] := If[AllTrue[Pick[factors, last, k],
+        fermionLineFactor[#, Function[x, x /. Join[external, Thread[Take[d, k] -> tuple]]]] =!= 0 &],
+      If[k == Length[d], Sow[tuple], search[k + 1, Append[tuple, 1]]; search[k + 1, Append[tuple, 2]]]];
+    With[{r = Reap[search[0, {}]][[2]]}, If[r === {}, {}, First[r]]]]];
 
 (* the results with fermion lines: FullPropagator directed, VertexFunction antisymmetric within its outs and its ins *)
 setupTreeRules["FermionLines"] := (
