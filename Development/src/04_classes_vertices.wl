@@ -421,9 +421,10 @@ BetheSalpeterLadder[left_, right_, labels : {x1_, x2_, x3_, x4_}, channel_String
 BetheSalpeterLadder[left_, right_, labels : {x1_, x2_, x3_, x4_}, channel_String, g_Symbol, opts___Rule] :=
   SimplifyDiagrams[ladderIntegral[left, right, labels, channel, g, statisticsOption[{opts}, $parquetStatistics]]];
 
-(* the parts of order 0, 1, ..., n of the canonical terms (as OrderPart, whose order of a term is termOrder) *)
+(* the parts of order 0, 1, ..., n of the canonical terms (as OrderPart, whose order of a term is termOrder; a term of
+   symbolic order, x^m, is in none of them) *)
 orderPartsOfTerms[terms_List, x_, headQ_, n_Integer] := With[{orders = termOrder[#, x, headQ] & /@ terms},
-   Table[Pick[terms, (# == k &) /@ orders], {k, 0, n}]];
+   Table[Pick[terms, (TrueQ[# == k] &) /@ orders], {k, 0, n}]];
 (* OrderPart[e, x, k] for k = 0, ..., n, with one canonical form of e *)
 orderParts[e_, x_, n_Integer] := termListToExpression /@ orderPartsOfTerms[canonicalTermsOf[e], x, ! FreeQ[e, x[___]], n];
 (* the ladder of the parts of order k1 of the left vertex and k2 of the right one, k1 + k2 <= n (lists of the parts of

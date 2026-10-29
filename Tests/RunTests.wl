@@ -180,6 +180,94 @@ checkZero["tree expansion with fermion lines = the electron gas at second order"
      {FullPropagator -> G0, VertexFunction[o1_, o2_, i1_, i2_] :> (bareGamma4 /. {x1 -> o1, x3 -> o2, x2 -> i1, x4 -> i2})})];
 
 (* ------------------------------------------------------------------------- *)
+(* The fast routes of the package against plain ones, on random terms (a fixed seed, the random state of the rest of
+   the suite untouched): the cut tests on integer graphs (compiled) against the components of Graph, the colour
+   refinement on integers (compiled) against the one on descriptors, the canonical forms of the copies of a term against
+   one canonical form per term, the deltas integrated on their own against one at a time in the whole term, the
+   components of the fermion lines against all their tuples *)
+section["fast routes against plain ones"];
+DeclareSymmetric[fastS]; DeclareAntisymmetric[fastA];
+fastRandomTerm[] := Module[{points, dummies = Table[Unique["fastV"], {RandomInteger[{1, 7}]}], externals = RandomSample[{fa, fb, fc, fd}, RandomInteger[{0, 4}]]},
+   points = Join[externals, dummies];
+   {FunctionalDiagrams`Private`diagramTerm[RandomChoice[{1, -1/2}] Times @@ Table[Switch[RandomInteger[{1, 9}],
+        1 | 2 | 3 | 4 | 5, fastG @@ RandomChoice[points, 2], 6, fastW @@ RandomChoice[points, 2], 7, fastVx @@ RandomChoice[points, 3],
+        8, (fastG @@ RandomChoice[points, 2])^2, 9, fastG[RandomChoice[points], fq]], {RandomInteger[{1, 11}]}], {}, dummies], externals}];
+(* the graph without the edges of s: connected; its components *)
+fastComponents[n_, edges_, s_] := ConnectedComponents[Graph[Range[n], UndirectedEdge @@@ If[s === {}, edges, Delete[edges, List /@ s]]]];
+fastCuts[edges_, k_] := Join @@ Table[Subsets[Select[Range[Length[edges]], edges[[#, 1]] =!= edges[[#, 2]] &], {j}], {j, 1, k}];
+fastPI[{n_, edges_, _, _}, k_] := n > 0 && AllTrue[Prepend[fastCuts[edges, k], {}], Length[fastComponents[n, edges, #]] == 1 &];
+fastSkeleton[{n_, edges_, ext_, _}] := n > 0 && AllTrue[Prepend[fastCuts[edges, 1], {}], Length[fastComponents[n, edges, #]] == 1 &] &&
+   AllTrue[Select[fastCuts[edges, 2], Length[#] == 2 &], If[ext === {}, Length[fastComponents[n, edges, #]] == 1,
+      AllTrue[fastComponents[n, edges, #], Intersection[#, ext] =!= {} &]] &];
+fastSeparated[{n_, edges_, _, rules_}, {left_, right_}, k_] := With[{l = Union[left /. rules], r = Union[right /. rules]},
+   Intersection[l, r] === {} && AllTrue[Join[l, r], IntegerQ] && AnyTrue[fastCuts[edges, k], Function[s,
+     With[{cl = Select[fastComponents[n, edges, s], Intersection[#, l] =!= {} &], cr = Select[fastComponents[n, edges, s], Intersection[#, r] =!= {} &]},
+      Length[cl] == 1 && Length[cr] == 1 && cl =!= cr && Complement[l, cl[[1]]] === {} && Complement[r, cr[[1]]] === {}]]]];
+check["cut tests: the graph of a term (legs, points glued by the factors that are not lines, a self-loop)",
+  With[{g = FunctionalDiagrams`Private`graphForCuts[First[FunctionalDiagrams`Private`toTermList[IntegralOver[fastG[fa, fu1] fastG[fu1, fu2] fastW[fu1, fu2] fastG[fu2, fu3] fastVx[fu3, fu4, fu5] fastG[fu4, fb], {fu1, fu2, fu3, fu4, fu5}]]],
+      {fa, fb}, {fastG}]}, {g[[1]], Sort[Sort /@ g[[2]]], g[[3]], {fa, fb} /. g[[4]]}],
+  {2, {{1, 1}, {1, 2}}, {1, 2}, {1, 2}}];
+check["cut tests: 400 random terms, compiled = the components of Graph (1, 2 and 3 lines; skeletons; separations)",
+  BlockRandom[SeedRandom[20261029]; Quiet[Count[Table[Module[{t, ext, heads = RandomChoice[{{fastG}, {fastG, fastW}}], k = RandomInteger[{0, 3}], g, groups},
+       {t, ext} = fastRandomTerm[];
+       g = FunctionalDiagrams`Private`graphForCuts[t, ext, heads];
+       groups = If[Length[ext] >= 2, TakeDrop[RandomSample[ext], RandomInteger[{1, Length[ext] - 1}]], None];
+       {FunctionalDiagrams`Private`particleIrreducibleTermQ[t, k, ext, heads], FunctionalDiagrams`Private`skeletonTermQ[t, ext, heads],
+         If[groups === None, None, FunctionalDiagrams`Private`cutReducibleGraphQ[g, groups, k]]} ===
+        {fastPI[g, k], fastSkeleton[g], If[groups === None, None, fastSeparated[g, groups, k]]}], {400}], False], FunctionalDiagrams::lineargs]],
+  0];
+(* flat factors with constants of every kind (integers, rationals, complex numbers, strings, symbols, two named SELF and
+   COLOUR as the markers of the descriptors) and colourings as the individualisation makes them; and, for every constant
+   c, a variable next to c against one next to itself, h[v1, c] h[v2, v2] h[v1, v2], which the codes of c and of the
+   marker of the variable itself must tell apart *)
+check["colour refinement: 300 random terms and a variable next to each constant, compiled = descriptors (most compiled)",
+  BlockRandom[SeedRandom[20261029]; Module[{pool = {0, 1, -2, 10^25, 1/2, 2 + I, "s", "SELF", fa, SELF, COLOUR, Pi, True, zz}, compiled = 0, wrong = 0},
+    Do[With[{data = FunctionalDiagrams`Private`refinementData[FunctionalDiagrams`Private`inertForm /@ {h[fu1, c], h[fu2, fu2], h[fu1, fu2]}, {fu1, fu2}]},
+      If[FunctionalDiagrams`Private`colourRefinement[data, {1, 1}] =!= FunctionalDiagrams`Private`colourRefinementOfDescriptors[data, {1, 1}], wrong++]],
+     {c, pool}, {h, {fastG, fastS}}];
+    Do[Module[{d = Table[Unique["fastV"], {RandomInteger[{1, 7}]}], inerts, data},
+      inerts = FunctionalDiagrams`Private`inertForm /@ Select[Table[RandomChoice[{fastG, fastS, fastA, fastVx}] @@
+           Table[If[RandomReal[] < 0.7, RandomChoice[d], RandomChoice[pool]], {RandomInteger[{1, 4}]}], {RandomInteger[{1, 8}]}], ! FreeQ[#, Alternatives @@ d] &];
+      If[inerts =!= {}, data = FunctionalDiagrams`Private`refinementData[inerts, d];
+       If[data[[8]] =!= None, compiled++];
+       Do[If[FunctionalDiagrams`Private`colourRefinement[data, c0] =!= FunctionalDiagrams`Private`colourRefinementOfDescriptors[data, c0], wrong++],
+        {c0, {ConstantArray[1, Length[d]], RandomInteger[{1, 3}, Length[d]], RandomInteger[{1, 60}, Length[d]],
+          2 RandomInteger[{1, 4}, Length[d]] - RandomInteger[{0, 1}, Length[d]]}}]]], {300}];
+    {wrong, compiled > 200}]],
+  {0, True}];
+check["copies of a term: 200 random sums, the canonical forms from the first copy = one per term",
+  BlockRandom[SeedRandom[20261029]; Count[Table[Module[{n = RandomInteger[{1, 5}], d, base, terms},
+      d = Table[Unique["fastV"], {n}];
+      base = Times @@ Table[RandomChoice[{fastG, fastS, fastA, fastW}] @@ RandomChoice[Join[d, {fa, fb}], RandomChoice[{2, 2, 3}]], {RandomInteger[{1, 5}]}];
+      terms = Join @@ Table[With[{new = Table[Unique["fastV"], {n}]}, FunctionalDiagrams`Private`toTermList[IntegralOver[
+           RandomChoice[{1, 2, -3, 1/2, I, 2.5, Sqrt[2]}] (base /. Thread[d -> new]) ** If[RandomReal[] < 0.4, eta[First[new]] ** eta[Last[new]], 1], new]]],
+        {RandomInteger[{1, 4}]}];
+      FunctionalDiagrams`Private`canonicalTermsOfCopies[terms, MapIndexed[FunctionalDiagrams`Private`copyKey[#1, First[#2]] &, terms], 1] ===
+       (FunctionalDiagrams`Private`canonicalTerm[#, 1] & /@ terms)], {200}], False]],
+  0];
+check["delta functions: 300 random terms, integrated on their own = one at a time in the whole term (discrete values, powers)",
+  BlockRandom[SeedRandom[20261029]; Count[Table[Module[{d = Table[Unique["fastV"], {RandomInteger[{1, 5}]}], points, t},
+      points = Join[d, {fa, fb, up, down}];
+      t = FunctionalDiagrams`Private`diagramTerm[Times @@ Table[RandomChoice[{DeltaFunction @@ RandomChoice[points, 2], (DeltaFunction @@ RandomChoice[points, 2])^2,
+           fastG @@ RandomChoice[points, 2], fastA @@ RandomChoice[points, 2], fastS @@ RandomChoice[points, 2]}], {RandomInteger[{1, 7}]}],
+        If[RandomReal[] < 0.4, {eta[RandomChoice[points]], eta[RandomChoice[points]]}, {}], d];
+      FunctionalDiagrams`Private`integrateDeltaFunctions[t] === FunctionalDiagrams`Private`integrateDeltaFunctionsInTerm[t]], {300}], False]],
+  0];
+(* the components kept: every tuple that does not vanish, in the order of Tuples, with the sum over all of them (all the
+   tuples for a power of a line) *)
+check["fermion lines: the components of 200 random products, without the vanishing ones, give the sum over all",
+  BlockRandom[SeedRandom[20261029]; Count[Table[Module[{d = Table[Unique["fastV"], {RandomInteger[{1, 6}]}], external, labels, f, value, live, all},
+      external = Thread[{fa, fb, fc} -> RandomInteger[{1, 2}, 3]]; labels = Join[d, {fa, fb, fc}];
+      f = Times @@ Table[If[RandomReal[] < 0.6, FullPropagator @@ RandomChoice[labels, 2], VertexFunction @@ RandomChoice[labels, RandomChoice[{2, 4}]]], {RandomInteger[{1, 6}]}];
+      value[tuple_] := FunctionalDiagrams`Private`fermionLineFactor[f, Function[x, x /. Join[external, Thread[d -> tuple]]]];
+      live = FunctionalDiagrams`Private`liveComponentTuples[f, d, external]; all = Tuples[{1, 2}, Length[d]];
+      f === 0 || (OrderedQ[live] && SubsetQ[live, Select[all, value[#] =!= 0 &]] && Total[value /@ live] === Total[value /@ all])], {200}], False]],
+  0];
+check["the parts of each order: a term of symbolic order in none of them",
+  quietCheck[FunctionalDiagrams`Private`orderParts[fastG[fa, fb] + lambda fastG[fa, fa] + lambda^fm fastG[fb, fb], lambda, 1], "message"],
+  {fastG[fa, fb], lambda fastG[fa, fa]}];
+
+(* ------------------------------------------------------------------------- *)
 section["pictures"];
 DeclareDirectedPropagator[G]; DeclareInteractionLine[V];
 picture = DiagramPlot[selfEnergy, {a, b}];
