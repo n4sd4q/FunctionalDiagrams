@@ -132,7 +132,7 @@ free energy.
 
 ## Speed
 
-- The test suite takes about a minute alone on two cores (861 checks: 64 s; 80 s before the speed work of October
+- The test suite takes about a minute alone on two cores (862 checks: 64 s; 80 s before the speed work of October
   2026, 125 s before the third round), two thirds of it in `Tests/EffectiveActions.wl`. The slowest checks left are
   those of `EffectiveAction1PI` for Γ[φ̄] (10 s, with Γ⁽⁴⁾ to λ³), the one-site model and the exact effective actions of
   φ³ + φ⁴ in zero dimensions (4 s each); the fully irreducible vertices of the parquet check are stored
@@ -176,6 +176,9 @@ free energy.
   vertices (`freeEndTreeLayout`), but a tree of blobs declared with `DeclareBlob` (their ports are points of their own)
   whose leaves are free ends is still drawn by the general layout, the blobs in a row with the leaves sticking up; with
   labelled leaves `blobLayoutWithExternals` draws it, and could take the free ends as its external points.
+- **An external label that is only a port of an undeclared blob** (z in `IntegralOver[G0[x, u] G0[u, y] h[u, z, w]
+  G0[w, x2], {u, w}]` with `G0` directed) is drawn as a leg with a dot and an arrow, without the circle of an external
+  point. No document has such a picture.
 - **Scripts in the names of blobs in Mathematica.** In the Graphics of `DiagramPlot` the label of a blob is plain text
   read from its LaTeX (`plainBlobLabel`): the scripts are written on the line (Γirr, Γ(4), W(4)), while TikZ sets them as
   scripts. Writing them as `Subscript` and `Superscript` boxes would match the printed pictures; the clearing and the
@@ -204,7 +207,7 @@ free energy.
 
 ## Repository
 
-- **Size of the history (review).** The two PDFs (showcase 1.6 MB, manual 0.65 MB) stay tracked (the README links
+- **Size of the history (review).** The two PDFs (showcase 2.7 MB, manual 0.8 MB) stay tracked (the README links
   them), and every rebuild that is committed adds a full copy of them to the history. Commit them only when their
   content changes (a rebuild that only changes the timings can be undone with `git checkout`), or only for releases, or
   publish them as release assets.
