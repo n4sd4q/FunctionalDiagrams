@@ -18,8 +18,8 @@
 </p>
 
 <p align="center">
-  <a href="Showcase/FunctionalDiagrams_Showcase.pdf"><b>Showcase</b></a>
-  ·&nbsp;<a href="Documentation/FunctionalDiagrams_Manual.pdf"><b>Manual</b></a>
+  <a href="https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf"><b>Showcase</b></a>
+  ·&nbsp;<a href="https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf"><b>Manual</b></a>
   ·&nbsp;<a href="Examples.wl"><b>Guided&nbsp;tour</b></a>
   ·&nbsp;<a href="https://github.com/n4sd4q/FunctionalDiagrams/wiki"><b>Wiki</b></a>
   ·&nbsp;<a href="#installation"><b>Installation</b></a>
@@ -107,7 +107,7 @@ are x₁ (out), x₂ (in), x₃ (out), x₄ (in), counterclockwise from the top 
 The [guided tour](Examples.nb) ([`Examples.wl`](Examples.wl), the same as a script, can be read on GitHub) goes on from
 here in thirteen short sections: the effective actions, the Bethe–Salpeter and parquet equations, pairing, Hedin's
 equations and *GW*, and then linear response, Matsubara sums, phonons, disorder, dimensional regularization, QED and
-QCD. The [showcase](Showcase/FunctionalDiagrams_Showcase.pdf) covers everything in more depth; every picture and number
+QCD. The [showcase](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) covers everything in more depth; every picture and number
 in it is computed by the package.
 
 ## Gallery
@@ -143,8 +143,8 @@ one-loop gluon self-energy.</p>
 
 | Document | Contents |
 |---|---|
-| [**Showcase**](Showcase/FunctionalDiagrams_Showcase.pdf) | an introduction to the diagrammatic methods through the package, in three parts. Many-body theory: perturbation theory, the self-energy, linear response, Matsubara sums, the 1PI and 2PI effective actions, the grand potential, the Bethe–Salpeter equation from the response to a one-body source, vertices and response functions, the parquet equations from the derivatives of the 2PI action, pairing with the superfield of Nambu and Gor'kov, Hedin's equations, Hubbard–Stratonovich and *GW*, Potthoff's functional and divergent vertices, phonons and disorder. Quantum field theory: dimensional regularization, one-loop QED, the vertices of QCD. Tools: pictures and formulas, and what the package does under the hood |
-| [**Manual**](Documentation/FunctionalDiagrams_Manual.pdf) | every function, option and convention, with examples computed by the package |
+| [**Showcase**](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) | an introduction to the diagrammatic methods through the package, in three parts. Many-body theory: perturbation theory, the self-energy, linear response, Matsubara sums, the 1PI and 2PI effective actions, the grand potential, the Bethe–Salpeter equation from the response to a one-body source, vertices and response functions, the parquet equations from the derivatives of the 2PI action, pairing with the superfield of Nambu and Gor'kov, Hedin's equations, Hubbard–Stratonovich and *GW*, Potthoff's functional and divergent vertices, phonons and disorder. Quantum field theory: dimensional regularization, one-loop QED, the vertices of QCD. Tools: pictures and formulas, and what the package does under the hood |
+| [**Manual**](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf) | every function, option and convention, with examples computed by the package |
 | [**Guided tour**](Examples.nb) | a notebook to run in Mathematica (GitHub shows its source: download it with *Download raw file*); [`Examples.wl`](Examples.wl) is the same as a script, readable on GitHub |
 | [**Wiki**](https://github.com/n4sd4q/FunctionalDiagrams/wiki) | practical guides and a FAQ: installing and updating, the conventions in one place, declaring a theory, reading the weights, exact equations, evaluating diagrams, pictures in LaTeX, scripts |
 
@@ -203,18 +203,18 @@ phonons, disorder and QCD (quarks, gluons, ghosts).
 
 ## Map of the functions
 
-<p align="center"><img src="Documentation/function_map.svg" width="100%" alt="Map of the public functions of
-FunctionalDiagrams in six stages of a calculation: declare the symbols, write a functional, differentiate it with
-FunctionalDerivative (the hub, with the functions built on it hanging from it), then classify and check, draw and
-evaluate the diagrams"></p>
+<p align="center"><a href="https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html"><img
+src="Documentation/function_map.svg" width="100%" alt="Map of the public functions of FunctionalDiagrams in six stages
+of a calculation: declare the symbols, write a functional, differentiate it with FunctionalDerivative (the hub, with
+the functions built on it hanging from it), then classify and check, draw and evaluate the diagrams. Click to open the
+interactive map"></a></p>
 
 The public functions by their role in a calculation: declare the symbols, write a functional, differentiate it, then
 classify, draw and evaluate the diagrams. The colour of a name is its group in the manual; dashed names are inert heads
-used as data. A name indented under another is built on it, and *uses* lists the other names it uses. The
-[interactive version](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html) has every
+used as data. A name indented under another is built on it, and *uses* lists the other names it uses. Click the map for
+the [interactive version](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html), with every
 dependency: select a name to read its usage message and to see the lines to the names it uses and from the names that
-use it (the file is [`Documentation/function_map.html`](Documentation/function_map.html): GitHub shows only its source,
-so download it and open it in a browser).
+use it (in a clone, open [`Documentation/function_map.html`](Documentation/function_map.html) in a browser).
 
 ## Checks
 
