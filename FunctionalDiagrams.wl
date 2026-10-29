@@ -1194,52 +1194,128 @@ selectTerms[e_, test_] := termListToExpression[selectCanonicalTerms[e, test]];
 
 expandIntegerPowers[factors_List] := Flatten[If[Head[#] === Power && IntegerQ[#[[2]]] && #[[2]] > 0, Table[#[[1]], {#[[2]]}], {#}] & /@ factors];
 
+(* ---- connectivity of graphs with nodes 1..n and edges {a, b} (a packed integer matrix), compiled (the virtual
+   machine of Compile: no C compiler needed); a union-find over the edges, the roots found by their parent pointers ---- *)
+$cutCompileOptions = {CompilationTarget -> "WVM", CompilationOptions -> {"InlineCompiledFunctions" -> True, "InlineExternalDefinitions" -> True}};
+(* the classes of the points 1..n joined by the pairs: the root (smallest point) of the class of each point *)
+cGlueRoots = Compile[{{n, _Integer}, {pairs, _Integer, 2}},
+   Module[{parent = Range[n], ra = 0, rb = 0},
+    Do[ra = pairs[[e, 1]]; While[parent[[ra]] != ra, ra = parent[[ra]]];
+     rb = pairs[[e, 2]]; While[parent[[rb]] != rb, rb = parent[[rb]]];
+     If[ra != rb, If[ra < rb, parent[[rb]] = ra, parent[[ra]] = rb]], {e, Length[pairs]}];
+    Table[ra = v; While[parent[[ra]] != ra, ra = parent[[ra]]]; ra, {v, n}]], CompilationTarget -> "WVM"];
+(* the graph without the edges numbered s1 and s2 (0: none) is connected *)
+cConnectedWithout = Compile[{{n, _Integer}, {edges, _Integer, 2}, {s1, _Integer}, {s2, _Integer}},
+   Module[{parent = Range[n], components = n, ra = 0, rb = 0},
+    Do[If[e != s1 && e != s2,
+      ra = edges[[e, 1]]; While[parent[[ra]] != ra, ra = parent[[ra]]];
+      rb = edges[[e, 2]]; While[parent[[rb]] != rb, rb = parent[[rb]]];
+      If[ra != rb, parent[[rb]] = ra; components--]], {e, Length[edges]}];
+    components <= 1], CompilationTarget -> "WVM"];
+(* every component of the graph without the edges s1, s2 holds a node marked in external (0 or 1 for each node) *)
+cEveryComponentExternalWithout = Compile[{{n, _Integer}, {edges, _Integer, 2}, {external, _Integer, 1}, {s1, _Integer}, {s2, _Integer}},
+   Module[{parent = Range[n], hasExternal = Table[0, {n}], ra = 0, rb = 0, ok = True},
+    Do[If[e != s1 && e != s2,
+      ra = edges[[e, 1]]; While[parent[[ra]] != ra, ra = parent[[ra]]];
+      rb = edges[[e, 2]]; While[parent[[rb]] != rb, rb = parent[[rb]]];
+      If[ra != rb, parent[[rb]] = ra]], {e, Length[edges]}];
+    Do[ra = v; While[parent[[ra]] != ra, ra = parent[[ra]]]; If[external[[v]] == 1, hasExternal[[ra]] = 1], {v, n}];
+    Do[If[parent[[v]] == v && hasExternal[[v]] == 0, ok = False], {v, n}];
+    ok], CompilationTarget -> "WVM"];
+(* without the edges s1, s2 the nodes of left (not empty) are in one component and those of right in another one *)
+cSeparatesWithout = Compile[{{n, _Integer}, {edges, _Integer, 2}, {left, _Integer, 1}, {right, _Integer, 1}, {s1, _Integer}, {s2, _Integer}},
+   Module[{parent = Range[n], ra = 0, rb = 0, rl = 0, rr = 0, ok = True},
+    Do[If[e != s1 && e != s2,
+      ra = edges[[e, 1]]; While[parent[[ra]] != ra, ra = parent[[ra]]];
+      rb = edges[[e, 2]]; While[parent[[rb]] != rb, rb = parent[[rb]]];
+      If[ra != rb, parent[[rb]] = ra]], {e, Length[edges]}];
+    rl = left[[1]]; While[parent[[rl]] != rl, rl = parent[[rl]]];
+    rr = right[[1]]; While[parent[[rr]] != rr, rr = parent[[rr]]];
+    If[rl == rr, ok = False];
+    Do[If[ok, ra = v; While[parent[[ra]] != ra, ra = parent[[ra]]]; If[ra != rl, ok = False]], {v, left}];
+    Do[If[ok, ra = v; While[parent[[ra]] != ra, ra = parent[[ra]]]; If[ra != rr, ok = False]], {v, right}];
+    ok], CompilationTarget -> "WVM"];
+(* the graph stays connected when any k <= 2 of the edges listed in cut are removed *)
+cConnectedAfterCuts = Compile[{{n, _Integer}, {edges, _Integer, 2}, {cut, _Integer, 1}, {k, _Integer}},
+   Module[{ok = True, m = Length[cut]},
+    ok = cConnectedWithout[n, edges, 0, 0];
+    If[ok && k >= 1, Do[If[ok, ok = cConnectedWithout[n, edges, cut[[i]], 0]], {i, m}]];
+    If[ok && k >= 2, Do[If[ok, ok = cConnectedWithout[n, edges, cut[[i]], cut[[j]]]], {i, m}, {j, i + 1, m}]];
+    ok], Evaluate[Sequence @@ $cutCompileOptions]];
+(* the skeleton test of a connected graph: no single edge of cut disconnects it, and no pair of them leaves a component
+   without an external node (hasExternal 1) or disconnects it (hasExternal 0) *)
+cSkeletonCuts = Compile[{{n, _Integer}, {edges, _Integer, 2}, {cut, _Integer, 1}, {external, _Integer, 1}, {hasExternal, _Integer}},
+   Module[{ok = True, m = Length[cut]},
+    Do[If[ok, ok = cConnectedWithout[n, edges, cut[[i]], 0]], {i, m}];
+    Do[If[ok, ok = If[hasExternal == 0, cConnectedWithout[n, edges, cut[[i]], cut[[j]]],
+        cEveryComponentExternalWithout[n, edges, external, cut[[i]], cut[[j]]]]], {i, m}, {j, i + 1, m}];
+    ok], Evaluate[Sequence @@ $cutCompileOptions]];
+(* some k <= 2 of the edges listed in cut separate left from right *)
+cSeparatedByCuts = Compile[{{n, _Integer}, {edges, _Integer, 2}, {cut, _Integer, 1}, {left, _Integer, 1}, {right, _Integer, 1}, {k, _Integer}},
+   Module[{found = False, m = Length[cut]},
+    If[k >= 1, Do[If[! found, found = cSeparatesWithout[n, edges, left, right, cut[[i]], 0]], {i, m}]];
+    If[k >= 2, Do[If[! found, found = cSeparatesWithout[n, edges, left, right, cut[[i]], cut[[j]]]], {i, m}, {j, i + 1, m}]];
+    found], Evaluate[Sequence @@ $cutCompileOptions]];
+(* the edges as the compiled functions take them; a self-loop, which joins nothing, stands for no edge (n >= 1) *)
+packedEdges[edges_List] := Developer`ToPackedArray[If[edges === {}, {{1, 1}}, edges]];
+
 (* The graph used for cuts. Points are the integration variables and the external labels; factors that are not lines
    (vertices, interaction lines, delta functions) glue their points into one node. An external label that ends a single
    line coming from an integration variable is an external leg: the leg is not a line of the graph, and the node it
    ends on is marked as external. Any other external label is a point of the graph (amputated vertex functions).
-   Result: {nodes (lists of points), edges {i, j} between node indices, indices of the external nodes,
-   rules external label -> node index}. *)
+   Result: {number of nodes n, edges {i, j} between the nodes 1..n (in the order of the lines), the external nodes,
+   rules external label -> node}. The points are numbered by an association, the arguments of all the factors looked up
+   at once, the points glued by a compiled union-find; the nodes are numbered in the order of their first point. *)
 FunctionalDiagrams::lineargs = "Lines are functions of two labels, but `1` has `2` arguments, and it is treated as a vertex: put internal indices such as spin into the head (Gup, Gdown) or sum over them explicitly.";
-graphForCuts[diagramTerm[c_, o_, d_], externals_List, lineHeads_List] := Module[{factors = expandIntegerPowers[Join[factorList[c], o]],
-    occurrences, legEnds = {}, legFactors = {}, vertexExternals, points, groups = {}, lines = {}, nodes, nodeOf, edges,
-    externalNodes},
-   Scan[If[! AtomQ[#] && MemberQ[lineHeads, Head[#]] && Length[#] =!= 2, Message[FunctionalDiagrams::lineargs, userForm[#], Length[#]]] &,
-    factors];
+graphForCuts[diagramTerm[c_, o_, d_], externals_List, lineHeads_List] := Module[{factors = Join[factorList[c], o], compound,
+    lengths, lineHead, occurrences, legEnds = {}, legFactors = {}, vertexExternals, points, np, index, kept, keptLengths, args,
+    lineQ, glue, roots, seen, present, presentRoots, renumber, node, rules},
+   If[! FreeQ[factors, Power], factors = expandIntegerPowers[factors]];
+   compound = Pick[factors, AtomQ /@ factors, False];
+   lengths = Length /@ compound;
+   lineHead = (MemberQ[lineHeads, #] &) /@ (Head /@ compound);
+   Do[If[lengths[[i]] =!= 2, Message[FunctionalDiagrams::lineargs, userForm[compound[[i]]], lengths[[i]]]], {i, Pick[Range[Length[compound]], lineHead]}];
    (* external legs *)
-   Do[occurrences = Select[Range[Length[factors]], ! FreeQ[factors[[#]], e] &];
+   Do[occurrences = DeleteCases[Union[Position[factors, e, {1, Infinity}][[All, 1]]], 0];
     If[Length[occurrences] == 1, With[{f = factors[[occurrences[[1]]]]},
       If[! AtomQ[f] && MemberQ[lineHeads, Head[f]] && Length[f] == 2 && Count[List @@ f, e] == 1 &&
         MemberQ[d, First[DeleteCases[List @@ f, e]]],
        AppendTo[legEnds, {e, First[DeleteCases[List @@ f, e]]}]; AppendTo[legFactors, occurrences[[1]]]]]], {e, externals}];
    vertexExternals = Complement[externals, legEnds[[All, 1]]];
-   points = Join[vertexExternals, d];
-   Do[If[! MemberQ[legFactors, i] && ! AtomQ[factors[[i]]],
-     With[{f = factors[[i]]}, With[{labels = Select[List @@ f, MemberQ[points, #] &]},
-       Which[
-        labels === {}, Null,
-        MemberQ[lineHeads, Head[f]] && Length[labels] == 2 && Length[f] == 2, AppendTo[lines, labels],
-        True, AppendTo[groups, Union[labels]]]]]], {i, Length[factors]}];
-   nodes = mergeOverlapping[List /@ Select[points, ! FreeQ[{c, o}, #] &], groups];
-   nodeOf[x_] := First[First[Position[nodes, x]]];
-   edges = Map[nodeOf, lines, {2}];
-   externalNodes = Union[Join[nodeOf /@ Select[vertexExternals, ! FreeQ[nodes, #] &], nodeOf /@ legEnds[[All, 2]]]];
-   {nodes, edges, externalNodes,
-    Join[(# -> nodeOf[#] &) /@ Select[vertexExternals, ! FreeQ[nodes, #] &], (#[[1]] -> nodeOf[#[[2]]] &) /@ legEnds]}];
+   points = Join[vertexExternals, d]; np = Length[points];
+   index = AssociationThread[points -> Range[np]];
+   (* the factors of the graph: not atoms, not legs *)
+   If[legFactors === {}, kept = compound; keptLengths = lengths,
+    With[{mask = (! MemberQ[legFactors, #] &) /@ Pick[Range[Length[factors]], AtomQ /@ factors, False]},
+     kept = Pick[compound, mask]; keptLengths = Pick[lengths, mask]; lineHead = Pick[lineHead, mask]]];
+   (* the point of every argument of every factor (0: not a point); a line: a line head with two points *)
+   args = TakeList[Lookup[index, Join @@ (List @@@ kept), 0], keptLengths];
+   lineQ = MapThread[#1 && #2 == 2 && FreeQ[#3, 0] &, {lineHead, keptLengths, args}];
+   glue = Join @@ (With[{l = DeleteCases[#, 0]}, If[Length[l] < 2, {}, Thread[{First[l], Rest[l]}]]] &) /@ Pick[args, lineQ, False];
+   roots = If[glue === {}, Range[np], cGlueRoots[np, glue]];
+   (* the nodes: the classes of the points that occur *)
+   seen = DeleteCases[Union[Flatten[args]], 0];
+   present = If[Length[seen] == np, seen, Union[seen, Select[Complement[Range[np], seen], ! FreeQ[{c, o}, points[[#]]] &]]];
+   presentRoots = DeleteDuplicates[roots[[present]]];
+   renumber = ConstantArray[0, np]; If[presentRoots =!= {}, renumber[[presentRoots]] = Range[Length[presentRoots]]];
+   node = renumber[[roots[[index[#]]]]] &;
+   rules = Join[(# -> node[#] &) /@ Select[vertexExternals, ! FreeQ[{c, o}, #] &], (#[[1]] -> node[#[[2]]] &) /@ legEnds];
+   {Length[presentRoots], Partition[renumber[[roots[[Flatten[Pick[args, lineQ]]]]]], 2], Union[rules[[All, 2]]], rules}];
 
 (* connected components of a graph with nodes 1..n *)
 graphComponents[n_Integer, edges_List] := mergeOverlapping[List /@ Range[n], edges];
-connectedGraphQ[n_Integer, edges_List] := Length[graphComponents[n, edges]] <= 1;
 
 (* removable lines: self-loops never disconnect anything *)
-cuttableLines[edges_List] := Select[Range[Length[edges]], edges[[#, 1]] =!= edges[[#, 2]] &];
+cuttableLines[edges_List] := If[edges === {}, {}, Pick[Range[Length[edges]], Unitize[edges[[All, 1]] - edges[[All, 2]]], 1]];
 
 particleIrreducibleTermQ[t_diagramTerm, n_Integer, externals_List, lineHeads_List] := Module[{nodes, edges, ext, rules, cut},
    {nodes, edges, ext, rules} = graphForCuts[t, externals, lineHeads];
-   If[nodes === {}, Return[False]];
+   If[nodes == 0, Return[False]];
    cut = cuttableLines[edges];
-   connectedGraphQ[Length[nodes], edges] && And @@ Flatten[Table[
-       connectedGraphQ[Length[nodes], Delete[edges, List /@ subset]], {k, 1, Min[n, Length[cut]]}, {subset, Subsets[cut, {k}]}]]];
+   If[n <= 2, cConnectedAfterCuts[nodes, packedEdges[edges], cut, n],
+    (* more than two lines: every subset, each tested by the compiled connectivity *)
+    cConnectedWithout[nodes, packedEdges[edges], 0, 0] && AllTrue[Join @@ Table[Subsets[cut, {k}], {k, 1, Min[n, Length[cut]]}],
+      cConnectedWithout[nodes, packedEdges[Delete[edges, List /@ #]], 0, 0] &]]];
 
 (* the external labels must occur in the expression as arguments of its functions: a label that does not is a misprint,
    or the arguments are in the order of version 1 (line heads before labels) *)
@@ -1257,15 +1333,12 @@ ParticleIrreducibleDiagrams[e_, n_Integer, externals_List, lineHeads_List] := (c
 (* Skeleton: one-particle irreducible, and no two lines cut off a part without external points (a self-energy
    insertion). For a two-point function with external legs this is the lemma "closing the legs gives a 2PI vacuum
    graph"; for amputated vertex functions it is the usual definition. *)
-skeletonTermQ[t_diagramTerm, externals_List, lineHeads_List] := Module[{nodes, edges, ext, rules, cut, n},
-   {nodes, edges, ext, rules} = graphForCuts[t, externals, lineHeads];
-   n = Length[nodes];
-   If[nodes === {} || ! connectedGraphQ[n, edges], Return[False]];
-   cut = cuttableLines[edges];
-   AllTrue[cut, connectedGraphQ[n, Delete[edges, #]] &] &&
-    (* without external points (vacuum diagrams) a skeleton is two-particle irreducible *)
-    AllTrue[Subsets[cut, {2}], Function[pair, If[ext === {}, connectedGraphQ[n, Delete[edges, List /@ pair]],
-       AllTrue[graphComponents[n, Delete[edges, List /@ pair]], Intersection[#, ext] =!= {} &]]]]];
+skeletonTermQ[t_diagramTerm, externals_List, lineHeads_List] := Module[{n, edges, ext, rules, marks},
+   {n, edges, ext, rules} = graphForCuts[t, externals, lineHeads];
+   If[n == 0 || ! cConnectedWithout[n, packedEdges[edges], 0, 0], Return[False]];
+   marks = ConstantArray[0, n]; If[ext =!= {}, marks[[ext]] = 1];
+   (* without external points (vacuum diagrams) a skeleton is two-particle irreducible *)
+   cSkeletonCuts[n, packedEdges[edges], cuttableLines[edges], marks, If[ext === {}, 0, 1]]];
 
 SkeletonDiagrams[e_, externals_List, lineHeads_List] := (checkLabels[e, externals];
    termListToExpression[selectCanonicalTerms[e, skeletonTermQ[#, externals, lineHeads] &]]);
@@ -1469,15 +1542,15 @@ TwoParticleReducibleQ[t_, pairs : {_List, _List}, lineHeads_List] := With[{ts = 
 cutReducibleTermQ[t_diagramTerm, {left_List, right_List}, n_Integer, lineHeads_List] :=
   cutReducibleGraphQ[graphForCuts[t, Join[left, right], lineHeads], {left, right}, n];
 (* the graph does not depend on the order of the external labels: it is computed once for all the channels *)
-cutReducibleGraphQ[{nodes_, edges_, ext_, rules_}, {left_List, right_List}, n_Integer] := Module[{cut, m, l, r},
-   m = Length[nodes];
+cutReducibleGraphQ[{m_Integer, edges_, ext_, rules_}, {left_List, right_List}, n_Integer] := Module[{cut, l, r},
    l = Union[left /. rules]; r = Union[right /. rules];
    If[Intersection[l, r] =!= {} || ! AllTrue[Join[l, r], IntegerQ], Return[False]];
+   If[edges === {} || l === {} || r === {}, Return[False]];
    cut = cuttableLines[edges];
-   AnyTrue[Join @@ Table[Subsets[cut, {k}], {k, 1, Min[n, Length[cut]]}], Function[subset,
-     With[{components = graphComponents[m, Delete[edges, List /@ subset]]},
-      With[{cl = Select[components, Intersection[#, l] =!= {} &], cr = Select[components, Intersection[#, r] =!= {} &]},
-       Length[cl] == 1 && Length[cr] == 1 && cl =!= cr && Complement[l, cl[[1]]] === {} && Complement[r, cr[[1]]] === {}]]]]];
+   If[n <= 2, cSeparatedByCuts[m, packedEdges[edges], cut, l, r, n],
+    (* more than two lines: every subset, each tested by the compiled separation *)
+    AnyTrue[Join @@ Table[Subsets[cut, {k}], {k, 1, Min[n, Length[cut]]}],
+     cSeparatesWithout[m, packedEdges[Delete[edges, List /@ #]], l, r, 0, 0] &]]];
 ReducibleDiagrams[e_, groups : {_List, _List}, n_Integer, lineHeads_List] := (checkLabels[e, groups];
    selectTerms[e, cutReducibleTermQ[#, groups, n, lineHeads] &]);
 IrreducibleDiagrams[e_, groups : {_List, _List}, n_Integer, lineHeads_List] := (checkLabels[e, groups];
