@@ -6,7 +6,7 @@
 
 PacletObject[<|
   "Name" -> "FunctionalDiagrams",
-  "Version" -> "2.4.0",
+  "Version" -> "2.5.0",
   "WolframVersion" -> "12.1+",
   "Description" -> "Functional derivatives and Feynman diagrams: perturbation theory, effective actions and many-body physics",
   "Creator" -> "Nazzareno Africani",

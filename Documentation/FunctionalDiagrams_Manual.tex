@@ -162,7 +162,7 @@
   \node[anchor=north west, text=white, font=\sffamily\Large, text width=12.2cm] at ([xshift=2.2cm, yshift=-2.9cm]current page.north west)
     {Reference manual\\[2pt]\large functional derivatives and Feynman diagrams in Mathematica};
   \node[anchor=north west, text=accentlight, font=\sffamily\normalsize] at ([xshift=2.2cm, yshift=-4.7cm]current page.north west)
-    {Nazzareno Africani \textperiodcentered{} SISSA \textperiodcentered{} version 2.4.0 \textperiodcentered{} October 2026};
+    {Nazzareno Africani \textperiodcentered{} SISSA \textperiodcentered{} version 2.5.0 \textperiodcentered{} October 2026};
   \IfFileExists{../Logo/FunctionalDiagrams_logo_white.pdf}{\node[anchor=north east] at ([xshift=-2.0cm, yshift=-1.2cm]current page.north east)
     {\includegraphics[height=3.6cm]{../Logo/FunctionalDiagrams_logo_white.pdf}};}{}
 \end{tikzpicture}
@@ -241,11 +241,11 @@ paclet manager that loads it).
 The recommended installation is the paclet of a release, which also contains the showcase, this manual and the guided
 tour:
 \begin{code}
-PacletInstall["/path/to/FunctionalDiagrams-2.4.0.paclet"]   (* once *)
+PacletInstall["/path/to/FunctionalDiagrams-2.5.0.paclet"]   (* once *)
 Needs["FunctionalDiagrams`"]
 \end{code}
 (\pkg{PacletInstall} also takes the address of the paclet on the page of the release.) This manual describes
-version~2.4.0, the latest release. A clone of the repository is a
+version~2.5.0, the latest release. A clone of the repository is a
 paclet too, loaded by \pkg{PacletDirectoryLoad} of its folder and then \pkg{Needs}.
 Without the paclet, load the file with
 \begin{code}
@@ -256,7 +256,7 @@ or copy it into the folder \pkg{Applications} of \pkg{\$UserBaseDirectory} and l
 Needs["FunctionalDiagrams`"]
 \end{code}
 The functions are in the context \pkg{FunctionalDiagrams`}; \pkg{?FunctionalDiagrams`*} lists them and \pkg{?Name}
-shows their usage. \pkg{\$FunctionalDiagramsVersion} is the version, \pkg{"2.4.0"}. Loading the
+shows their usage. \pkg{\$FunctionalDiagramsVersion} is the version, \pkg{"2.5.0"}. Loading the
 package again in the same session starts afresh: the definitions of the package and its record of declarations are
 cleared (attributes that the declarations gave to your own symbols, such as \pkg{Orderless} for a symmetric function,
 remain).
@@ -344,7 +344,7 @@ attribution to the author must be kept, and modified versions must say that they
 file \pkg{NOTICE}, with the copyright and the terms; the text of the license is in \pkg{LICENSE}). If you use the package
 in published work, please cite it, for instance as
 \begin{quote}
-N.~Africani, \emph{FunctionalDiagrams: functional derivatives and Feynman diagrams in Mathematica}, version 2.4.0 (2026).
+N.~Africani, \emph{FunctionalDiagrams: functional derivatives and Feynman diagrams in Mathematica}, version 2.5.0 (2026).
 \end{quote}
 The file \pkg{CITATION.cff} in the repository has the same information in a machine-readable form.
 

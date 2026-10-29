@@ -1,6 +1,16 @@
 # Changelog
 
-## Unreleased
+## 2.5.0 (2026-10-29)
+
+Since 2.4.0: one new function, `FunctionalDiagramsUpdateCheck`, with its setting `$FunctionalDiagramsUpdateCheck` (133
+public names in all), and two new values of options, `"ExternalOrder" -> "Uncrossed"` and `"Fill" -> "Dotted"`; no public
+name removed or renamed, 862 tests. The expressions are the same as in 2.4.0, computed faster (the benchmark in half the
+time). In short: a notebook is told when a newer release is out, four external points stay at the corners in the order
+given, and the blobs follow one rule of fills. The pictures that look different: the four-point functions whose channel
+joins opposite corners (drawn crossed, where the general layout of bosons exchanged two labels), the trees of vertex
+functions (cross-hatched discs; trees with free leaves drawn as trees; the arrows of their fermion lines), the lines of a
+box (from its corners), a box joined by three corners to one vertex (a diamond), the names of the blobs in the pictures of
+Mathematica, and the fills of the blobs in the documents.
 
 ### New
 
@@ -9,7 +19,7 @@
   that release is newer than `$FunctionalDiagramsVersion`, the banner gets a third line: its version, a link to what is
   new and the `PacletInstall` line of its paclet, ready to copy. The date of the last check is kept in
   `LastUpdateCheck.txt`, in the folder `ApplicationData/FunctionalDiagrams` of `$UserBaseDirectory`; every failure (no
-  connection, a proxy, the rate limit of GitHub) is silent. `$FunctionalDiagramsUpdateCheck = False` before `Needs`
+  connection, a proxy, the rate limit of GitHub) is silent, and nothing is asked when `$AllowInternet` is False. `$FunctionalDiagramsUpdateCheck = False` before `Needs`
   turns it off (the setting is kept when the package is loaded again), and the new function
   `FunctionalDiagramsUpdateCheck[]` checks by hand: it gives the version loaded, the latest release and the line that
   installs it, and prints that line when the release is newer.
@@ -29,13 +39,14 @@
 
 ### Faster
 
-The same results, every one: the benchmark of `Development/benchmark.wl`, the test suite, the figures of the showcase
-and the examples of the manual are unchanged byte for byte. Altogether (the minimum of three runs, alone on two cores):
+The same results, every one: the 48 cases of `Development/benchmark.wl`, the outputs of the test suite, the figures of
+the showcase and the examples of the manual are unchanged byte for byte, timings aside. Altogether (the minimum of three runs, alone on two cores):
 the test suite takes 64 s instead of 80, the showcase script 132 s instead of 155, the guided tour 12 s instead of 14
 and the examples of the manual 10.5 s instead of 11.5; the 48 cases of the benchmark half the time, 68 s instead of 137,
 the slowest of them, Φ of the Nambu field with the pairing terms at fourth order, 20 s instead of 75, and the full
 vertex of the electron gas at fourth order 10.5 s instead of 14; the Green function of the electron gas at fifth order
-(8162 diagrams) takes 18.5 s instead of 25.4.
+(8162 diagrams) takes 18.5 s instead of 25.4. The README, the manual, the wiki and the guided tour give the times
+measured again.
 
 - **Cut tests on integer graphs.** The tests of one- and two-particle irreducibility, of skeletons and of the channels
   of the parquet decomposition build the graph of a term with integer nodes and remove its lines inside compiled
@@ -221,6 +232,8 @@ vertex of the electron gas at fourth order 10.5 s instead of 14; the Green funct
   order by order: Γ₁ against the 1PI vacuum diagrams of `ConnectedVacuumDiagrams` (φ⁴), the diagrams with one loop and
   with two or more against the expanded one loop and Γ₁ (φ⁴, the superfield, the electron gas through the components of
   the superfield), Γ₂ at G = S''⁻¹ against Γ₁ (φ⁴, the superfield).
+- **The README** gives the installation, one command to copy per box, before the first example, and links the wiki
+  among the documents.
 - **A wiki.** The [wiki](https://github.com/n4sd4q/FunctionalDiagrams/wiki) of the repository has practical guides
   and a FAQ, beside the README, the showcase and the manual: installing and updating, the conventions in one place
   (the 1PI and 2PI actions with the notation above), declaring a theory, reading the weights, orders and

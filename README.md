@@ -53,7 +53,7 @@ The package needs Mathematica 12.1 or later. Install the paclet of the latest
 line):
 
 ```mathematica
-PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.4.0/FunctionalDiagrams-2.4.0.paclet"]
+PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.5.0/FunctionalDiagrams-2.5.0.paclet"]
 ```
 
 then load it in every session:
@@ -62,7 +62,7 @@ then load it in every session:
 Needs["FunctionalDiagrams`"]
 ```
 
-The paclet also contains the showcase, the manual and the guided tour. The latest release is 2.4.0, which this page and
+The paclet also contains the showcase, the manual and the guided tour. The latest release is 2.5.0, which this page and
 the documents describe (see the [changelog](CHANGELOG.md)). One can also download the `.paclet` file of the release
 and pass its path to `PacletInstall`. A clone of the repository works as it is, with
 `PacletDirectoryLoad["/path/to/FunctionalDiagrams"]` and ``Needs["FunctionalDiagrams`"]``, or simply

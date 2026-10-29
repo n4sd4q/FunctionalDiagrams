@@ -214,4 +214,4 @@ $FunctionalDiagramsUpdateCheck::usage = "$FunctionalDiagramsUpdateCheck is True 
 
 Begin["`Private`"];
 
-$FunctionalDiagramsVersion = "2.4.0";
+$FunctionalDiagramsVersion = "2.5.0";

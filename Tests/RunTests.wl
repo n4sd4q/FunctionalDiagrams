@@ -1971,7 +1971,7 @@ Get[FileNameJoin[{testDirectory, "Superfields.wl"}]];
 (* ------------------------------------------------------------------------- *)
 section["loading twice"];
 Get[FileNameJoin[{testDirectory, "..", "FunctionalDiagrams.wl"}]];
-check["package loaded again", $FunctionalDiagramsVersion, "2.4.0"];
+check["package loaded again", $FunctionalDiagramsVersion, "2.5.0"];
 (* the banner printed when the package is loaded in a notebook (never by a script): built here without printing it *)
 With[{banner = FunctionalDiagrams`Private`loadBanner[]},
   check["load banner: logo, the attribution of term (b) of NOTICE, version, license and links",
@@ -1993,8 +1993,9 @@ With[{full = FunctionalDiagrams`Private`packageLogo[64, False], small = Function
 
 (* ------------------------------------------------------------------------- *)
 (* the update check at load (section 21 of the package), without the network: the versions compared, the answer of
-   GitHub read from a saved one (LatestRelease.json, trimmed; its text is UTF-8, with an em dash), the line of a newer
-   release, the once-a-day rule in a temporary directory, and loading in a script, which never checks *)
+   GitHub read from a saved one (LatestRelease.json, the release 2.4.0, trimmed; its text is UTF-8, with an em dash), the
+   line of a newer release (the next patch of the version loaded, made from the saved answer), the once-a-day rule in a
+   temporary directory, and loading in a script, which never checks *)
 section["update check"];
 check["update check: versions compared number by number; a pre-release or a malformed version is never newer",
   FunctionalDiagrams`Private`newerVersionQ @@@ {{"2.10.0", "2.9.0"}, {"2.9.0", "2.10.0"}, {"v2.4.0", "2.4.0"},
@@ -2017,16 +2018,22 @@ check["update check: no release for a draft, a pre-release, a malformed tag, a p
     "{\"message\": \"API rate limit exceeded\", \"documentation_url\": \"https://docs.github.com/rest\"}",
     "<html>offline</html>", $Failed},
   Table[$Failed, 8]];
-check["update check: the line of a newer release under the banner (the release's page, the line that installs it) and as text",
-  {Cases[FunctionalDiagrams`Private`loadBanner[], Column[lines_List, ___] :> Length[lines], Infinity],
-   Cases[FunctionalDiagrams`Private`loadBanner[latestRelease], Column[lines_List, ___] :> Length[lines], Infinity],
-   Cases[FunctionalDiagrams`Private`updateNotice[latestRelease], Hyperlink[_, url_] :> url, Infinity],
-   Cases[FunctionalDiagrams`Private`updateNotice[latestRelease], Defer[e_] :> HoldForm[e], Infinity],
-   FunctionalDiagrams`Private`updateNoticeText[latestRelease]},
-  {{2}, {3}, {"https://github.com/n4sd4q/FunctionalDiagrams/releases/tag/v2.4.0"},
-   {HoldForm[PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.4.0/FunctionalDiagrams-2.4.0.paclet"]]},
-   "FunctionalDiagrams 2.4.0 is available (2.4.0 is loaded): " <>
-    "PacletInstall[\"https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.4.0/FunctionalDiagrams-2.4.0.paclet\"]"}];
+nextVersion = StringRiffle[ToString /@ (FunctionalDiagrams`Private`versionNumbers[$FunctionalDiagramsVersion] + {0, 0, 1}), "."];
+newerRelease = FunctionalDiagrams`Private`latestReleaseOf[StringReplace[latestAnswer, "2.4.0" -> nextVersion]];
+With[{page = "https://github.com/n4sd4q/FunctionalDiagrams/releases/tag/v" <> nextVersion,
+   paclet = "https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v" <> nextVersion <>
+     "/FunctionalDiagrams-" <> nextVersion <> ".paclet"},
+  check["update check: the line of a newer release under the banner (the release's page, the line that installs it) and as text; the saved release is not newer than the one loaded",
+    {FunctionalDiagrams`Private`newerVersionQ[newerRelease["Version"], $FunctionalDiagramsVersion],
+     FunctionalDiagrams`Private`newerVersionQ[latestRelease["Version"], $FunctionalDiagramsVersion],
+     Cases[FunctionalDiagrams`Private`loadBanner[], Column[lines_List, ___] :> Length[lines], Infinity],
+     Cases[FunctionalDiagrams`Private`loadBanner[newerRelease], Column[lines_List, ___] :> Length[lines], Infinity],
+     Cases[FunctionalDiagrams`Private`updateNotice[newerRelease], Hyperlink[_, url_] :> url, Infinity],
+     Cases[FunctionalDiagrams`Private`updateNotice[newerRelease], Defer[e_] :> HoldForm[e], Infinity],
+     FunctionalDiagrams`Private`updateNoticeText[newerRelease]},
+    {True, False, {2}, {3}, {page}, {HoldForm[PacletInstall[paclet]]},
+     "FunctionalDiagrams " <> nextVersion <> " is available (" <> $FunctionalDiagramsVersion <> " is loaded): " <>
+      "PacletInstall[\"" <> paclet <> "\"]"}]];
 With[{dir = CreateDirectory[]},
   check["update check: at most once a day, the date kept in a file of a directory made on demand",
     {FunctionalDiagrams`Private`updateCheckDueQ[FileNameJoin[{dir, "a"}], "2026-10-29"],

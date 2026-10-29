@@ -26,7 +26,7 @@ With Mathematica 12.1 or later, once:
 
 <!-- not run: it downloads the paclet -->
 ```mathematica
-PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.4.0/FunctionalDiagrams-2.4.0.paclet"];
+PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.5.0/FunctionalDiagrams-2.5.0.paclet"];
 ```
 
 and then in every session:
@@ -62,4 +62,4 @@ gives exactly what is shown after it. Outputs are shown as a terminal session pr
 quotes, fractions over two lines); a notebook shows the same in its compact form, with the integrals as ∫ and the delta
 functions as δ. Pictures are what `DiagramPlot` draws, typeset from the TikZ code of the same call. The few blocks that
 cannot run as they stand (they download, install or remove the paclet, open a file, depend on your machine, or show a
-fragment) are only checked to be valid code. The pages describe version 2.4.0.
+fragment) are only checked to be valid code. The pages describe version 2.5.0.

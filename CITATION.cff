@@ -6,8 +6,8 @@ authors:
   - family-names: Africani
     given-names: Nazzareno
     affiliation: "SISSA, Trieste"
-version: 2.4.0
-date-released: "2026-10-26"
+version: 2.5.0
+date-released: "2026-10-29"
 license: GPL-3.0-or-later
 repository-code: "https://github.com/n4sd4q/FunctionalDiagrams"
 url: "https://github.com/n4sd4q/FunctionalDiagrams"

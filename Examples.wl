@@ -27,7 +27,7 @@ With[{folder = Quiet[If[$InputFileName =!= "", DirectoryName[$InputFileName], No
     Needs["FunctionalDiagrams`"]]];
 
 $FunctionalDiagramsVersion
-(* the version of the package, e.g. "2.4.0" *)
+(* the version of the package, e.g. "2.5.0" *)
 
 (* ::Subsection:: *)
 (*The road map*)
