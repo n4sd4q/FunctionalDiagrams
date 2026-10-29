@@ -165,7 +165,8 @@ headsDependingOn[source_] := Union[{Head[source]}, Cases[$derivativePairs, {h_, 
 dependsOnSourceQ[f_, source_] := Or @@ (! FreeQ[f, #[___]] & /@ headsDependingOn[source]);
 declaredDerivativeAtomQ[f_] := ! AtomQ[f] && MemberQ[$derivativePairs[[All, 1]], Head[f]];
 
-freshSymbols[n_Integer] := Table[Unique["FunctionalDiagrams`Private`x"], {n}];
+(* working symbols: Temporary, so that the kernel removes them once no expression refers to them *)
+freshSymbols[n_Integer] := Table[Unique["FunctionalDiagrams`Private`x", {Temporary}], {n}];
 
 (* option lookup that accepts strings and symbols as option names *)
 optionKey[k_String] := k;

@@ -189,9 +189,11 @@ wickPairingSum[z0_, externalFields_List, vertices_List, mode_String] := Module[{
    Do[If[Intersection[pointLabelsOf[externalFields[[i]]], pointLabelsOf[externalFields[[j]]]] =!= {},
       With[{ri = findRoot[initialParent, i], rj = findRoot[initialParent, j]}, If[ri =!= rj, initialParent[[rj]] = ri]]],
     {i, Length[externalFields]}, {j, i + 1, Length[externalFields]}];
-   If[! matchableQ[Table[Count[slotClass, k], {k, Length[slotClasses]}]], Return[{}]];
-   results = Reap[enumerate[Range[Length[slots]], 1, {}, Table[False, {nGroups}], Table[findRoot[initialParent, g], {g, nGroups}],
-       Length /@ groupSlots]][[2]];
+   results = If[! matchableQ[Table[Count[slotClass, k], {k, Length[slotClasses]}]], {},
+     Reap[enumerate[Range[Length[slots]], 1, {}, Table[False, {nGroups}], Table[findRoot[initialParent, g], {g, nGroups}],
+        Length /@ groupSlots]][[2]]];
+   (* the local functions removed, with the variables they hold: a memo would keep them in the kernel *)
+   Remove[enumerate, contraction, contractionTable, orbitMemo, orbitMultiplicities, matchableQ, stuckQ];
    If[results === {}, {}, First[results]]];
 
 (* a vertex of the interaction: {coefficient (without the fields), fields in order, integration variables} *)
