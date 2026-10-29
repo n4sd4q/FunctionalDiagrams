@@ -203,23 +203,100 @@ rankOfEach[descriptors_List] := With[{u = Union[descriptors]}, If[Precision[desc
    positions in d; for each variable the factors that contain it. A flat factor (an atomic head with atomic arguments,
    which most factors are) is also stored as its head, whether the head is symmetric, and a template: the indices of
    its arguments in the list of values Join[colours of d, constants]. *)
-refinementData[inerts_, d_] := Module[{n = Length[d], marked, positions, flat, constants, rules},
+refinementData[inerts_, d_] := Module[{n = Length[d], marked, positions, incidence, flat, flatData, constants, rules},
    marked = inerts /. Thread[d -> Table[refinementVariable[j], {j, n}]];
    positions = Table[Union[Cases[f, refinementVariable[j_] :> j, {0, Infinity}]], {f, marked}];
+   incidence = Table[First /@ Position[positions, i, {2}], {i, n}];
    flat = Table[MatchQ[f, inert[_?AtomQ, {___?AtomQ}]], {f, inerts}];
    constants = Union[Select[Flatten[Table[If[flat[[k]], marked[[k, 2]], {}], {k, Length[inerts]}]], AtomQ]];
    rules = Join[{refinementVariable[j_] :> j}, Thread[constants -> n + Range[Length[constants]]]];
-   {inerts, d, positions, Table[First /@ Position[positions, i, {2}], {i, n}], flat,
-    Table[If[flat[[k]], {inerts[[k, 1]], symmetricHeadQ[inerts[[k, 1]]], Replace[marked[[k, 2]], rules, {1}]}, None], {k, Length[inerts]}],
-    constants}];
+   flatData = Table[If[flat[[k]], {inerts[[k, 1]], symmetricHeadQ[inerts[[k, 1]]], Replace[marked[[k, 2]], rules, {1}]}, None], {k, Length[inerts]}];
+   {inerts, d, positions, incidence, flat, flatData, constants, refinementArrays[n, incidence, flat, flatData, constants]}];
+
+(* The refinement on integers, compiled, for a term whose factors are all flat. A descriptor inert[h, values] is the tuple
+   {rank of h among the heads of the term, number of values, codes of the values (sorted for a symmetric head), 0, ...}:
+   the code of an atom is its rank among SELF and the constants (in the canonical order), the code of COLOUR[c] the
+   number of atoms plus c (an atom comes before a compound expression); the descriptor of a variable is {colour, number of
+   its factors, the ranks of their tuples sorted, 0, ...}. The canonical order of the descriptors (inert by its head, then
+   its values; lists by their length, then element by element) is the order of the tuples, read as numbers in a base
+   above every entry: the ranks, hence the colours, are those of the descriptors. refinementArrays gives the arrays of a
+   term, once per term: the templates of the factors (indices of their values in Join[colours, constants]), their
+   lengths, symmetry (0 or 1) and head ranks, the number of factors of each variable and the factors themselves (in the
+   order of the variables), the codes of the constants and of SELF, the number of atoms and of heads, the largest number
+   of values of a factor and of factors of a variable, the number of incidences; None for a term with a factor that is not
+   flat, an inexact constant or head (machine reals that Union takes as equal), or no incidence. The bases are chosen
+   per call from the largest colour, and a call whose numbers could exceed a machine integer takes the descriptors *)
+refinementArrays[n_, incidence_, flat_, flatData_, constants_] := Module[{heads, templates, selfCode, nc = Length[constants]},
+   If[! (And @@ flat) || Flatten[incidence] === {}, Return[None]];
+   heads = Union[flatData[[All, 1]]];
+   templates = flatData[[All, 3]];
+   If[Precision[{heads, constants}] =!= Infinity || ! VectorQ[Flatten[templates], IntegerQ], Return[None]];
+   selfCode = 1 + LengthWhile[constants, Order[#, SELF] == 1 &];
+   Join[Developer`ToPackedArray /@ {Flatten[templates], Length /@ templates, Boole[flatData[[All, 2]]],
+      Lookup[AssociationThread[heads -> Range[Length[heads]]], flatData[[All, 1]]], Length /@ incidence, Flatten[incidence],
+      Range[nc] + UnitStep[Range[nc] - selfCode]},
+    {selfCode, nc + 1, Length[heads], Max[Length /@ templates], Max[Length /@ incidence], Length[Flatten[incidence]]}]];
+(* the templates are concatenated (the factor f from offset[[f]] + 1 on); an incidence p is the variable pvar[[p]] (each
+   variable i counts[[i]] times, in order) in the factor pfac[[p]] *)
+cColourRefinement = Compile[{{n, _Integer}, {colours0, _Integer, 1}, {tmpl, _Integer, 1}, {len, _Integer, 1}, {sym, _Integer, 1},
+    {head, _Integer, 1}, {counts, _Integer, 1}, {pfac, _Integer, 1}, {constCodes, _Integer, 1}, {selfCode, _Integer}, {nAtoms, _Integer},
+    {base1, _Integer}, {base2, _Integer}, {maxFactors, _Integer}},
+   Module[{colours = colours0, new = colours0, nPairs = Length[pfac], w = Max[len], values = Table[0, {n + Length[constCodes]}],
+     offset = Table[0, {Length[len]}], pvar = Table[0, {Length[pfac]}], count = Table[0, {1}], keys = Table[0, {Length[pfac]}],
+     sorted = Table[0, {Length[pfac]}], distinct = Table[0, {Length[pfac]}], ranks = Table[0, {Length[pfac]}], row = Table[0, {Max[len]}],
+     varKeys = Table[0, {n}], sortedVar = Table[0, {n}], factorRanks = Table[0, {maxFactors}], again = True, f = 0, v = 0, x = 0, q = 0,
+     m = 0, lo = 0, hi = 0, mid = 0, tmp = 0, key = 0, nDistinct = 0, nOld = 0, start = 1},
+    Do[values[[n + j]] = constCodes[[j]], {j, Length[constCodes]}];
+    Do[offset[[g]] = key; key += len[[g]], {g, Length[len]}];
+    Do[Do[m++; pvar[[m]] = i, {counts[[i]]}], {i, n}];
+    While[again,
+     count = Table[0, {Max[colours]}];
+     Do[count[[colours[[i]]]] += 1; values[[i]] = nAtoms + colours[[i]], {i, n}];
+     (* the tuples of the factors of the variables in shared colours, as numbers in the base base1 *)
+     Do[If[count[[colours[[pvar[[p]]]]]] > 1,
+       f = pfac[[p]]; v = pvar[[p]];
+       Do[x = tmpl[[offset[[f]] + j]]; row[[j]] = If[x == v, selfCode, values[[x]]], {j, len[[f]]}];
+       If[sym[[f]] == 1, Do[tmp = row[[j]]; q = j - 1; While[q >= 1 && row[[q]] > tmp, row[[q + 1]] = row[[q]]; q--]; row[[q + 1]] = tmp, {j, 2, len[[f]]}]];
+       key = head[[f]] base1 + len[[f]];
+       Do[key = key base1 + If[j <= len[[f]], row[[j]], 0], {j, w}];
+       keys[[p]] = key,
+       keys[[p]] = -1], {p, nPairs}];
+     (* their ranks among the distinct ones *)
+     sorted = Sort[keys]; nDistinct = 0;
+     Do[If[sorted[[p]] >= 0 && (nDistinct == 0 || sorted[[p]] != distinct[[nDistinct]]), nDistinct++; distinct[[nDistinct]] = sorted[[p]]], {p, nPairs}];
+     Do[If[keys[[p]] >= 0,
+       lo = 1; hi = nDistinct; While[lo < hi, mid = Quotient[lo + hi, 2]; If[distinct[[mid]] < keys[[p]], lo = mid + 1, hi = mid]];
+       ranks[[p]] = lo, ranks[[p]] = 0], {p, nPairs}];
+     (* the tuples of the variables, as numbers in the base base2, and their ranks: the new colours *)
+     start = 1;
+     Do[m = 0;
+      While[start <= nPairs && pvar[[start]] == i, If[ranks[[start]] > 0, m++; factorRanks[[m]] = ranks[[start]]]; start++];
+      Do[tmp = factorRanks[[j]]; q = j - 1; While[q >= 1 && factorRanks[[q]] > tmp, factorRanks[[q + 1]] = factorRanks[[q]]; q--]; factorRanks[[q + 1]] = tmp, {j, 2, m}];
+      key = colours[[i]] base2 + m;
+      Do[key = key base2 + If[j <= m, factorRanks[[j]], 0], {j, maxFactors}];
+      varKeys[[i]] = key, {i, n}];
+     sortedVar = Sort[varKeys]; nDistinct = 0;
+     Do[If[nDistinct == 0 || sortedVar[[i]] != sortedVar[[nDistinct]], nDistinct++; sortedVar[[nDistinct]] = sortedVar[[i]]], {i, n}];
+     Do[lo = 1; hi = nDistinct; While[lo < hi, mid = Quotient[lo + hi, 2]; If[sortedVar[[mid]] < varKeys[[i]], lo = mid + 1, hi = mid]];
+      new[[i]] = lo, {i, n}];
+     nOld = 0; Do[If[count[[c]] > 0, nOld++], {c, Length[count]}];
+     again = nDistinct > nOld && nDistinct < n;
+     colours = new];
+    colours], CompilationTarget -> "WVM"];
 
 (* The descriptor of the variable i: its colour and the factors that contain it, with i marked SELF and the other variables
    replaced by their colours (normalizedInertForm[f /. {d[[i]] -> SELF, d[[j]] -> COLOUR[colours[[j]]]}], computed directly
    for the flat factors from values = Join[COLOUR /@ colours, constants], made once per round). The descriptors are ordered
    by the colour first, so that a variable alone in its colour keeps its place whatever its factors: they are not computed
    for it. Once every variable has a colour of its own, a further round gives the same colours: the refinement stops
-   without it *)
-colourRefinement[{inerts_, d_, positions_, incidence_, flat_, flatData_, constants_}, colours0_] := Module[{colours = colours0, new,
+   without it. On the integers of refinementArrays when the term has them (compiled, the same colours) *)
+colourRefinement[data_, colours0_] := With[{a = data[[8]]},
+   If[a === None, colourRefinementOfDescriptors[data, colours0],
+    With[{c = Max[Max[colours0], Length[colours0]]}, With[{base1 = Max[a[[9]] + c, a[[10]], a[[11]]] + 1, base2 = Max[c, a[[12]], a[[13]]] + 1},
+      If[base1^(a[[11]] + 2) < 2^62 && base2^(a[[12]] + 2) < 2^62,
+       cColourRefinement[Length[colours0], colours0, a[[1]], a[[2]], a[[3]], a[[4]], a[[5]], a[[6]], a[[7]], a[[8]], a[[9]], base1, base2, a[[12]]],
+       colourRefinementOfDescriptors[data, colours0]]]]]];
+colourRefinementOfDescriptors[{inerts_, d_, positions_, incidence_, flat_, flatData_, constants_, _}, colours0_] := Module[{colours = colours0, new,
     again = True, values, mine, shared},
    While[again,
     values = Join[COLOUR /@ colours, constants];
