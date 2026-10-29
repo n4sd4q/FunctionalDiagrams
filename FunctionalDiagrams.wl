@@ -937,8 +937,9 @@ pointLabelsOf[field_] := Select[List @@ field, ! discreteIndexValueQ[#] &];
    mode: "All", "NoVacuumBubbles" (components without external fields are discarded) or "Connected". *)
 
 wickPairingSum[z0_, externalFields_List, vertices_List, mode_String] := Module[{slots = {}, slotGroup = {}, groupType = {},
-    groupSlots, orbitId = {}, orbitSize = {}, nGroups, external, odd, contraction, results, fieldOf, enumerate, cache = {}, initialParent,
-    slotGroups = {}, orbitCache = {}, openedOrbits, contractionTable, slotClasses, slotClass, classCompatible, stuckQ, orbitMemo, matchableQ, roots},
+    groupSlots, orbitId = {}, orbitSize = {}, nGroups, external, odd, oddCount, contraction, results, enumerate, initialParent,
+    slotGroups = {}, contractionTable, slotClasses, slotClass, classCompatible, compatible, stuckQ, orbitMemo,
+    orbitMultiplicities, matchableQ, groupsOfType},
    (* slots *)
    Do[AppendTo[slots, externalFields[[i]]]; AppendTo[slotGroup, i]; AppendTo[groupType, -i];
     AppendTo[orbitId, 0]; AppendTo[orbitSize, 1]; AppendTo[slotGroups, $Failed], {i, Length[externalFields]}];
@@ -953,12 +954,16 @@ wickPairingSum[z0_, externalFields_List, vertices_List, mode_String] := Module[{
    nGroups = Length[groupType];
    groupSlots = Table[Select[Range[Length[slots]], slotGroup[[#]] == g &], {g, nGroups}];
    external = Table[g <= Length[externalFields], {g, nGroups}];
-   odd = fieldParityOdd /@ slots;
-   (* the orbits of the free slots of an opened vertex under its automorphisms that fix its contracted slots: only the
-      first slot of each orbit is contracted, with the size of the orbit as multiplicity *)
-   openedOrbits[g_, fixedLocal_List] := orbitMemo[groupType[[g]], fixedLocal];
+   odd = fieldParityOdd /@ slots; oddCount = Boole[odd];
+   (* the groups of each vertex type *)
+   groupsOfType = Association[(# -> Select[Range[nGroups], Function[g, groupType[[g]] === #]] &) /@ DeleteDuplicates[groupType]];
+   (* the orbits of the free slots of an opened vertex of type t under its automorphisms that fix its contracted slots
+      (local slot numbers): only the first slot of each orbit is contracted, with the size of the orbit as multiplicity;
+      orbitMultiplicities: that multiplicity for every local slot (0 for the others) *)
    orbitMemo[t_, fixedLocal_] := orbitMemo[t, fixedLocal] =
      stabiliserOrbits[slotGroups[[First[Select[Range[nGroups], groupType[[#]] === t &, 1]]]], fixedLocal];
+   orbitMultiplicities[t_, fixedLocal_, size_] := orbitMultiplicities[t, fixedLocal, size] = Module[{m = ConstantArray[0, size]},
+      Scan[(m[[First[#]]] = Length[#]) &, Reverse[orbitMemo[t, fixedLocal]]]; m];
    contractionTable = Table[Null, {Length[slots]}, {Length[slots]}];
    contraction[i_, j_] := With[{known = contractionTable[[i, j]]}, If[known =!= Null, known,
       contractionTable[[i, j]] = If[odd[[i]] =!= odd[[j]], 0, contractionValue[z0, slots[[i]], slots[[j]]]]]];
@@ -967,26 +972,31 @@ wickPairingSum[z0_, externalFields_List, vertices_List, mode_String] := Module[{
    slotClass = Table[First[First[Position[slotClasses, {Head[s], Length[s], fieldParityOdd[s]}, {1}]]], {s, slots}];
    classCompatible = Table[c1[[3]] === c2[[3]] &&
       contractionValue[z0, c1[[1]] @@ freshSymbols[c1[[2]]], c2[[1]] @@ freshSymbols[c2[[2]]]] =!= 0, {c1, slotClasses}, {c2, slotClasses}];
+   compatible = Boole[classCompatible];
    (* a component with free slots none of which can be contracted with a free slot outside it can only close: it is
       discarded if it is not the whole diagram ("Connected") or if it has no external field ("NoVacuumBubbles") *)
-   (* (only the component just joined is checked: roots = the root of every group, members = the groups of the component) *)
-   stuckQ[free_List, roots_List, root_, members_List] := Module[{inside, outside},
-     inside = Union[slotClass[[Select[free, roots[[slotGroup[[#]]]] === root &]]]];
-     outside = Union[slotClass[[Select[free, roots[[slotGroup[[#]]]] =!= root &]]]];
-     inside =!= {} && ! AnyTrue[inside, Function[ci, AnyTrue[outside, classCompatible[[ci, #]] &]]] &&
-      If[mode === "Connected", Length[members] < nGroups, ! AnyTrue[members, external[[#]] &]]];
+   (* (only the component just joined is checked: comp = the component of every group, root = its label, members = its
+      groups) *)
+   stuckQ[free_List, comp_List, root_, members_List] := With[{labels = comp[[slotGroup[[free]]]]},
+     With[{inside = slotClass[[Pick[free, labels, root]]], outside = slotClass[[Pick[free, Unitize[labels - root], 1]]]},
+      inside =!= {} && (outside === {} || Max[compatible[[Union[inside], Union[outside]]]] == 0) &&
+       If[mode === "Connected", Length[members] < nGroups, ! AnyTrue[members, external[[#]] &]]]];
    (* a complete pairing exists only if the numbers of slots of each class can be matched (e.g. an even number of
       gluons, as many quarks as antiquarks): checked once, on the numbers of slots of each class *)
    matchableQ[counts_List] := matchableQ[counts] = With[{nonzero = Select[Range[Length[counts]], counts[[#]] > 0 &]},
      If[nonzero === {}, True,
       With[{c = First[nonzero]}, AnyTrue[nonzero, Function[d, classCompatible[[c, d]] && (d =!= c || counts[[c]] >= 2) &&
           matchableQ[ReplacePart[counts, If[d === c, {c -> counts[[c]] - 2}, {c -> counts[[c]] - 1, d -> counts[[d]] - 1}]]]]]]]];
-   enumerate[free_List, weight_, factors_List, opened_List, parent_List] := Module[{a, rest, ga, candidates = {}, firstUnopened = {},
-      usedOrbits = {}, usedIdentical = {}, unopenedCount, gb, multiplicity, value, sign, newFree, newParent, root, members,
-      groupsWithFree, newOpened},
+   (* comp: the component of every group, an integer label (on a merge the label of the first slot's component is kept);
+      freeCount: the number of free slots of every group *)
+   enumerate[free_List, weight_, factors_List, opened_List, comp_List, freeCount_List] := Module[{a, rest, ga, firstUnopened = {},
+      usedOrbits = {}, usedIdentical = {}, unopenedCount, gb, multiplicity, value, sign, oddBefore, newFree, newComp, newFreeCount,
+      root, cb, members, newOpened},
      If[free === {}, Sow[{weight, factors}],
       a = First[free]; rest = Rest[free]; ga = slotGroup[[a]];
       newOpened = ReplacePart[opened, ga -> True];
+      (* the number of odd slots of rest before each one *)
+      oddBefore = If[odd[[a]] && rest =!= {}, Prepend[Most[Accumulate[oddCount[[rest]]]], 0], {}];
       Do[With[{b = rest[[j]]},
        gb = slotGroup[[b]];
        value = contraction[a, b];
@@ -1000,33 +1010,32 @@ wickPairingSum[z0_, externalFields_List, vertices_List, mode_String] := Module[{
            If[f === {} || f[[1, 2]] === gb,
             If[! MemberQ[usedOrbits, {gb, orbitId[[b]]}],
              AppendTo[usedOrbits, {gb, orbitId[[b]]}];
-             unopenedCount = Count[Range[nGroups], g_ /; groupType[[g]] === t && ! newOpened[[g]]];
+             unopenedCount = Count[newOpened[[groupsOfType[t]]], False];
              multiplicity = unopenedCount orbitSize[[b]]]]]],
          (* an opened vertex: slots related by the automorphisms that fix its contracted slots are interchangeable *)
          If[slotGroups[[gb]] =!= $Failed,
           With[{offset = First[groupSlots[[gb]]] - 1},
-           With[{orbit = First[Select[openedOrbits[gb, Complement[groupSlots[[gb]], rest] - offset], MemberQ[#, b - offset] &, 1]]},
-            multiplicity = If[b - offset === First[orbit], Length[orbit], 0]]],
+           multiplicity = orbitMultiplicities[groupType[[gb]], Complement[groupSlots[[gb]], rest] - offset,
+              Length[groupSlots[[gb]]]][[b - offset]]],
          (* an external field: identical commuting fields are interchangeable *)
          If[odd[[b]], multiplicity = 1,
           If[! MemberQ[usedIdentical, {gb, slots[[b]]}],
            AppendTo[usedIdentical, {gb, slots[[b]]}];
            multiplicity = Count[rest, s_ /; slotGroup[[s]] == gb && slots[[s]] === slots[[b]]]]]]];
         If[multiplicity > 0,
-         sign = If[odd[[a]], (-1)^Count[Take[rest, j - 1], s_ /; odd[[s]]], 1];
-         newFree = DeleteCases[rest, b];
-         newParent = parent;
-         With[{ra = findRoot[parent, ga], rb = findRoot[parent, gb]}, If[ra =!= rb, newParent[[rb]] = ra]];
-         roots = Table[findRoot[newParent, gg], {gg, nGroups}];
-         root = roots[[ga]];
-         members = Flatten[Position[roots, root, {1}]];
-         groupsWithFree = Union[slotGroup[[newFree]]];
+         sign = If[odd[[a]], (-1)^oddBefore[[j]], 1];
+         newFree = Delete[rest, j];
+         root = comp[[ga]]; cb = comp[[gb]];
+         newComp = If[root === cb, comp, comp + (root - cb) (1 - Unitize[comp - cb])];
+         members = Pick[Range[nGroups], newComp, root];
+         newFreeCount = freeCount; newFreeCount[[ga]]--; newFreeCount[[gb]]--;
          If[Which[
-           Intersection[members, groupsWithFree] =!= {}, True,          (* the component is still open *)
+           Total[newFreeCount[[members]]] > 0, True,                  (* the component is still open *)
            mode === "NoVacuumBubbles", AnyTrue[members, external[[#]] &],
            mode === "Connected", newFree === {},
-           True, True] && (mode === "All" || newFree === {} || ! stuckQ[newFree, roots, root, members]),
-          enumerate[newFree, weight multiplicity sign, Append[factors, value], ReplacePart[newOpened, gb -> True], newParent]]]]],
+           True, True] && (mode === "All" || newFree === {} || ! stuckQ[newFree, newComp, root, members]),
+          enumerate[newFree, weight multiplicity sign, Append[factors, value], ReplacePart[newOpened, gb -> True], newComp,
+           newFreeCount]]]]],
        {j, Length[rest]}]]];
    (* external fields at the same point (e.g. the two fields of a density psibar(a) psi(a)) are connected from the start *)
    initialParent = Range[nGroups];
@@ -1034,7 +1043,8 @@ wickPairingSum[z0_, externalFields_List, vertices_List, mode_String] := Module[{
       With[{ri = findRoot[initialParent, i], rj = findRoot[initialParent, j]}, If[ri =!= rj, initialParent[[rj]] = ri]]],
     {i, Length[externalFields]}, {j, i + 1, Length[externalFields]}];
    If[! matchableQ[Table[Count[slotClass, k], {k, Length[slotClasses]}]], Return[{}]];
-   results = Reap[enumerate[Range[Length[slots]], 1, {}, Table[False, {nGroups}], initialParent]][[2]];
+   results = Reap[enumerate[Range[Length[slots]], 1, {}, Table[False, {nGroups}], Table[findRoot[initialParent, g], {g, nGroups}],
+       Length /@ groupSlots]][[2]];
    If[results === {}, {}, First[results]]];
 
 (* a vertex of the interaction: {coefficient (without the fields), fields in order, integration variables} *)
@@ -1055,11 +1065,13 @@ vertexMultisets[interactionTerms_List, k_Integer] := Module[{types = Range[Lengt
         With[{new = freshSymbols[Length[v[[3]]]]}, {m[[i]], v[[1]] /. Thread[v[[3]] -> new], v[[2]] /. Thread[v[[3]] -> new], new}]],
        {i, Length[m]}]}], {m, multisets}]];
 
-(* a pairing whose factors are all plain is one term directly (the vertex variables are fresh symbols already) *)
+(* a pairing whose factors are all plain is one term directly (the vertex variables are fresh symbols already); the
+   pairings share a few distinct factors, each tested once *)
 pairingTermsToTermList[pairs_List, vertices_List] := Module[{coefficient = Times @@ vertices[[All, 2]],
-    dummies = Join @@ vertices[[All, 4]]},
+    dummies = Join @@ vertices[[All, 4]], plain = <||>, plainQ},
+   plainQ[f_] := Lookup[plain, Key[f], plain[f] = plainFactorQ[f]];
    Join @@ Table[With[{c = p[[1]] coefficient Times @@ p[[2]]},
-      If[AllTrue[factorList[c], plainFactorQ], If[c === 0, {}, {diagramTerm[c, {}, dummies]}],
+      If[AllTrue[factorList[c], plainQ], If[c === 0, {}, {diagramTerm[c, {}, dummies]}],
        toTermList[If[dummies === {}, c, IntegralOver[c, dummies]]]]], {p, pairs}]];
 
 GaussianExpectationValue::method = "Method `1` is not available; using \"Differentiation\".";
