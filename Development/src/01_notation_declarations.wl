@@ -173,6 +173,8 @@ freshSymbols[n_Integer] := Table[Unique["FunctionalDiagrams`Private`x"], {n}];
 optionKey[k_String] := k;
 optionKey[k_Symbol] := SymbolName[k];
 optionKey[k_] := ToString[k];
-optionValue[options_List, defaults_List, name_String] := Module[{m = Select[Flatten[options],
-      (Head[#] === Rule || Head[#] === RuleDelayed) && optionKey[#[[1]]] === name &]},
-   If[m === {}, name /. defaults, m[[1, 2]]]];
+(* the first rule whose key is name (a string, a symbol of that name, or anything whose ToString is name), a string key
+   tested first *)
+optionValue[options_List, defaults_List, name_String] := With[{r = FirstCase[Flatten[options],
+      rule : (Rule | RuleDelayed)[k_, _] /; (k === name || (! StringQ[k] && optionKey[k] === name)) :> rule, None, {1}]},
+   If[r === None, name /. defaults, r[[2]]]];
