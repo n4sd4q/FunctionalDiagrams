@@ -587,7 +587,7 @@ expressions are not changed.
 \end{function}
 Declares heads of local vertices: kernels such as the quark--gluon vertex \pkg{h[x, y, z]} or the three- and four-gluon
 vertices, whose labels carry different indices (Lorentz, colour, spinor) at one point of space-time. A picture draws
-\pkg{h[x, y, \dots]} as one point at which its lines meet, instead of a grey blob; the cuts already treat any factor of
+\pkg{h[x, y, \dots]} as one point at which its lines meet, instead of a blob; the cuts already treat any factor of
 several labels as one vertex. In the weight written with a picture a local vertex stands for minus its kernel, $-h$, as
 an interaction line does (section~\ref{sec:weights}). The one-loop gluon self-energy of QCD, with the four vertices of the theory
 (\pkg{"Curly"} gluons, \pkg{"DottedArrow"} ghosts):
@@ -628,6 +628,8 @@ The documents of the package fill the blobs by one rule: a vertex function the m
 --- the fully irreducible vertex $\Gamma_{\rm irr}$ dotted, the irreducible parts ($\Sigma$, $\Delta$, $P$, $\Gamma^0$,
 the $\Gamma_r$ irreducible in one channel, $\Gamma_{\rm xc}$, $\tilde\Lambda$) hatched, the full vertex functions ($F$,
 $\Lambda$, $\Gamma^{(4)}$) cross-hatched --- and the correlation and response functions ($W^{(4)}$, $L$, $\chi$) white.
+The blobs without a name follow it too: a factor of three or more labels that is not declared is a small hatched disc,
+and the vertices $\Gamma^{(n)}$ of the trees (\fnref{VertexFunction}, section~\ref{sec:trees}) are cross-hatched discs.
 The three fills of the vertices in the vertex irreducible in the particle--particle channel,
 $\Gamma_{\pp}=\Gamma_{\rm irr}+R_{\ph}+R_{\phbar}$ (section~\ref{sec:parquet}), with $F$ and the propagator above:
 \excode{blobs_fills}
@@ -1884,7 +1886,8 @@ The full propagator (connected two-point function), displayed $G_{xy}$.
 \begin{function}{VertexFunction}
 \syntax{VertexFunction[x1, \dots, xn]}
 \end{function}
-The one-particle-irreducible vertex $\Gamma^{(n)}$, displayed with its labels; drawn as a grey blob.
+The one-particle-irreducible vertex $\Gamma^{(n)}$, displayed with its labels; drawn as a cross-hatched disc, as the full
+vertex functions are (\fnref{DeclareBlob}).
 
 \begin{function}{MeanField}
 \syntax{MeanField[x]}
@@ -1916,7 +1919,7 @@ The weights are those of section~\ref{sec:weights}.
 In a notebook the pictures follow its appearance. With Mathematica 14.3 or later, through \pkg{LightDarkSwitched}, the
 lines and the text are dark on a light notebook and light on a dark one; what hides the lines under it (the inside of a blob, of an
 external point or of a source insertion, the clearing behind the label of a hatched or dotted blob) has the colour of the
-background of the notebook, and the grey fills are a darker grey there. Before 14.3 the pictures have the colours of a
+background of the notebook, and the fill \opt{Grey} of a blob is a darker grey there. Before 14.3 the pictures have the colours of a
 light notebook. \pkg{"Appearance" -> "Light"} or \pkg{"Dark"} forces one of them, on a background of its own (white, or
 the dark grey of a dark notebook), for a picture exported for a page of the other kind;
 \pkg{SetOptions[\{DiagramPlot, DrawDiagram\}, "Appearance" -> "Dark"]} does it for a session. The TikZ code of
@@ -1967,8 +1970,9 @@ pictures fix a term up to the order of its labels, and the weight refers to the 
 
 \begin{itemize}
 \item Two-label factors are lines, drawn in the style of their head (\fnref{DeclareLineStyle}); a directed line
-  \pkg{G[x, y]} runs from \pkg{y} to \pkg{x}. Factors with three or more labels are grey blobs (vertex functions), with
-  the lines that end on them drawn to the blob. Factors with one label are source insertions, a crossed circle.
+  \pkg{G[x, y]} runs from \pkg{y} to \pkg{x}. Factors with three or more labels are blobs, with
+  the lines that end on them drawn to the blob: one not declared with \fnref{DeclareBlob} is a small disc without a name,
+  hatched as the default of \fnref{DeclareBlob}, and a vertex function \fnref{VertexFunction} a cross-hatched one. Factors with one label are source insertions, a crossed circle.
 \item Labels joined by \pkg{DeltaFunction} are one point.
 \item An external label alone at the end of a single line (a propagator or an interaction line) is an external point of a
   correlation function, drawn as an open circle. Any other external label sits on a vertex of an amputated function

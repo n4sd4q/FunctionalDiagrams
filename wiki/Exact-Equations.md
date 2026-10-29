@@ -30,7 +30,7 @@ function is white.
 |---|---|
 | `"Dotted"` | the fully irreducible vertex Γ_irr |
 | `"Hatched"` (the default) | the irreducible parts: Σ, Δ, P, Γ⁰, Γ_ph, Γ_ph̄, Γ_pp, Γ_xc, Λ̃ |
-| `"CrossHatched"` | the full vertex functions: F, Λ, Γ⁽⁴⁾ |
+| `"CrossHatched"` | the full vertex functions: F, Λ, Γ⁽⁴⁾, and the vertices Γ⁽ⁿ⁾ of the trees (`VertexFunction`, drawn without a name) |
 | `"White"` | the correlation and response functions: W⁽⁴⁾, L, χ |
 
 The Bethe–Salpeter equation F = Γ⁰ + Γ⁰L₀F, the irreducible vertex hatched and the full one cross-hatched; every line

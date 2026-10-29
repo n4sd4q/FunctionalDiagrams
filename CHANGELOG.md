@@ -94,7 +94,8 @@
   where the first blob appears, W⁽⁴⁾, with a legend of the four fills; the manual at `DeclareBlob`, with the vertex
   irreducible in the particle–particle channel, Γ_pp = Γ_irr + R_ph + R_ph̄, drawn with the three fills of the vertices;
   the wiki on exact equations, with the Bethe–Salpeter equation. Every blob with a name in the showcase, the manual, the
-  README and the demo video is drawn so, and the code shown declares the fill drawn.
+  README and the demo video is drawn so, and the code shown declares the fill drawn; the vertex functions of the trees,
+  discs without a name, are cross-hatched (see Pictures).
 - **Four-point functions with the new option.** The showcase draws Γ⁽⁴⁾ of φ⁴ theory as `DiagramPlot` draws it (the
   diagrams of the channel t with the legs c and d crossing) and then with `"ExternalOrder" -> "Uncrossed"`; the parts of
   Γ⁰ of the electron gas reducible in pp, and the T-matrix, with `{"Uncrossed", {x4, x2, x3, x1}}` (the same pictures

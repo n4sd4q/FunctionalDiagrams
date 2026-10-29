@@ -941,11 +941,12 @@ expW = Exp[1/2 IntegralOver[ConnectedTwoPoint[x, y] J[x] J[y], {x, y}] +
 FieldExpectationValue[expW, {phi[a], phi[b], phi[c], phi[d]}]
 \end{code}
 \figuresum{\langle\phi_a\phi_b\phi_c\phi_d\rangle}{phi4_partitions}
-Here $W^{(4)}$ is a blob (\pkg{DeclareBlob}), with its name written inside. All the blobs with a name in this document are filled
+Here $W^{(4)}$ is a blob (\pkg{DeclareBlob}), with its name written inside. All the blobs in this document are filled
 by one rule: a vertex function the more densely the more diagrams it contains --- the fully irreducible vertex dotted,
 the irreducible parts hatched, the full vertex functions cross-hatched~--- and a correlation or response function white
 (the values \pkg{"Dotted"}, \pkg{"Hatched"}, the default, \pkg{"CrossHatched"} and \pkg{"White"} of the option
-\pkg{"Fill"} of \pkg{DeclareBlob}; the objects are defined in the sections that follow):
+\pkg{"Fill"} of \pkg{DeclareBlob}; the objects are defined in the sections that follow; the vertex functions
+$\Gamma^{(n)}$ of the trees, section~\ref{sec:trees}, are small cross-hatched discs without a name):
 \begin{center}
 \begin{tabular}{@{}*{4}{>{\centering\arraybackslash}p{0.225\linewidth}}@{}}
 \inputfigure{fill_legend_dotted} & \inputfigure{fill_legend_hatched} & \inputfigure{fill_legend_crosshatched} &
@@ -1659,8 +1660,8 @@ $\Gamma^{(n)}=\delta^n\Gamma/\delta\bar\phi^n$ the vertices, at $\bar\phi=\bar\p
 \text{(R3)}\quad\frac{\delta\Gamma^{(n)}_{a_1\cdots a_n}}{\delta J_b}=\Gamma^{(n+1)}_{a_1\cdots a_nc}\,G_{cb}.
 \]
 (R1) is the definition of $G$; (R3) is the chain rule together with (R1); (R2) follows from
-$\delta G=-G\,\delta(G^{-1})\,G$, since $G^{-1}=\Gamma^{(2)}$, and (R3). In pictures, with lines $G$ and grey blobs
-$\Gamma^{(n)}$: differentiating a line inserts a three-vertex that carries the new leg (R2),
+$\delta G=-G\,\delta(G^{-1})\,G$, since $G^{-1}=\Gamma^{(2)}$, and (R3). In pictures, with lines $G$ and cross-hatched
+discs $\Gamma^{(n)}$ (full vertex functions): differentiating a line inserts a three-vertex that carries the new leg (R2),
 \[
 \frac{\delta}{\delta J_c}\;\inputfigure{tree_rule_line_lhs}\;=\;\inputfigure{tree_rule_line}\;,
 \]
@@ -4225,7 +4226,7 @@ from the diagram, by a few rules chosen to reproduce the way diagrams are drawn 
   in the middle; chains of vertices are straight, the legs at the ends of a chain fanned outwards and those along it
   perpendicular to it.
 \item Points joined by delta functions are drawn as one vertex; source insertions are crossed circles, vertex functions
-  grey blobs. Other diagrams (bosons, $\phi^4$ theory) are drawn with the external points on a circle and the rest
+  cross-hatched discs and other factors of three or more labels that are not declared hatched ones. Other diagrams (bosons, $\phi^4$ theory) are drawn with the external points on a circle and the rest
   placed by a barycentric embedding.
 \end{itemize}
 

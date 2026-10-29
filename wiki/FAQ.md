@@ -139,7 +139,8 @@ is `0` exactly when they are the same sum of diagrams; see
 
 The pictures draw what the declarations say: an arrow for a propagator declared with `DeclareDirectedPropagator`, a
 wavy line for `DeclareInteractionLine`, a dashed one for `DeclareLineStyle[h, "Dashed"]`, and so on. A two-label factor
-that is not declared is a plain line, and a factor of three or more labels a grey blob:
+that is not declared is a plain line, and a factor of three or more labels a small hatched disc (a vertex function
+`VertexFunction` a cross-hatched one):
 
 ```mathematica
 fock = IntegralOver[Gx[x, u] Vx[u, v] Gx[u, v] Gx[v, y], {u, v}];
