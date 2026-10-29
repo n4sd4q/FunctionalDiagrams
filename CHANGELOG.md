@@ -27,6 +27,29 @@
   the patterns library; the label sits in a white clearing with a band of the fill around it, as on a hatched blob, and
   the blob has the size of a hatched one. The documents draw the fully irreducible vertex Γ_irr with it (before, grey).
 
+### Faster
+
+The same results, every one: the benchmark of `Development/benchmark.wl`, the test suite, the figures of the showcase
+and the examples of the manual are unchanged byte for byte.
+
+- **Cut tests on integer graphs.** The tests of one- and two-particle irreducibility, of skeletons and of the channels
+  of the parquet decomposition build the graph of a term with integer nodes and remove its lines inside compiled
+  functions (`Compile`, no C compiler needed): Φ and Γ₂ of the electron gas and of φ⁴ theory at fourth order and the
+  pairing Φ of the Nambu field at fourth order take less than half the time, the parquet decomposition at V⁴ a third
+  less.
+- **Wick sums.** The enumeration of the pairings keeps the components and the free slots of the vertices as it goes:
+  the Wick sums of the documents take 10-25 % less time.
+- **Copies of a term.** A term that is a copy of an earlier one in the same sum (the Wick sums of real fields,
+  `SuperfieldComponents`, the derivatives of exp(½ J G J)) takes its canonical form from it: the connected vacuum
+  diagrams of φ⁴ theory at fourth order take half the time, Z[J], the cumulants and the full vertex of φ⁴ theory about
+  30 % less.
+- **Delta functions** are integrated with the substitutions found on the deltas alone: the derivatives with respect to
+  propagators and the exact equations take 10-17 % less time.
+- **Fermion lines** of the trees of `ConnectedFunctionFromVertices`: the components that vanish are dropped as soon as
+  a line or a vertex vanishes (six points in a third of the time); `ExpandTrace` and the options with less work.
+- **Memory.** The working symbols of the package are removed once nothing refers to them: one full vertex of the
+  electron gas at fourth order left 98 000 symbols and 37 MB in the kernel, now a few symbols and a few MB.
+
 ### Pictures
 
 - **Four external points are at the corners in the order given, for bosons too.** The labels of a four-point function
