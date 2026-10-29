@@ -24,15 +24,15 @@ showcase script and took a third off the test suite.
 - **Cutting rules.** The finite-temperature cutting rules are checked for chains of lines; vertex corrections (the
   circling rules of Kobes and Semenoff) are not covered.
 - **Speed with the full Wolfram Language.** Profiled (October 2026, `Development/benchmark.wl` and a sampling profiler)
-  over the suite and the scripts of the showcase and the manual; the hot spots, by their share: the canonical form (02
-  §6, a third to two fifths of the time: colour refinement and individualisation on symbolic expressions, ranks by
-  `Replace` with lists of rules, a `Module` per node; an integer encoding would help, with the same canonical
-  representatives), the TikZ export and the layout (two fifths of the showcase script: options looked up by `Select` at
-  every use, numbers formatted one at a time, crossings counted candidate by candidate), the Wick enumeration
-  (`wickPairingSum`: a `Module` and the roots of all the groups at every node), the cut tests of 04 §10
-  (`mergeOverlapping` after removing every subset of lines, on the raw terms: 70 % of Φ with pairing terms at V⁴; a
-  compiled union-find is about 40 times faster), delta functions integrated one at a time, the Dirac rules applied by
-  `//.` to whole expressions.
+  over the suite and the scripts of the showcase and the manual. Done since, with the same outputs: the cut tests on
+  integer graphs (a compiled union-find), the Wick enumeration, the copies of a term, the delta functions, the colour
+  refinement on integers (compiled) for the terms whose factors are flat. Left: the TikZ export and the layout (two
+  fifths of the showcase script: options looked up at every use, numbers formatted one at a time, crossings counted
+  candidate by candidate, a second canonical form in `termsForDrawing`); the terms with a power of a line or another
+  factor that is not flat (a sixth of the terms, 2-3 % of the canonical form), which take the symbolic refinement; the
+  Dirac rules applied by `//.` to whole expressions (the product rules of the first `diracLinear` are most of
+  `DiracSimplify`: applied once to each distinct product, trace or chain, `diracLinear` is 15 % faster, but the fresh
+  loop momenta get other names; a term at a time changes their order).
 - **Options.** Functions of 07, 09 and 10 check the names of their options (`checkOptionNames`) without `Options[f]`;
   those of 03, 04 and 11 have `Options[f]` with literal defaults and no check, so a misspelt `"Statistics"`, `"Channel"`
   or `"MaximumOrder"` is ignored silently and `SetOptions` has no effect on most. One helper (names checked, defaults
@@ -138,8 +138,8 @@ free energy.
 - **Review.** `ZeroDimensionalValue` on the raw terms (no canonical form) is ten times faster on vacuum expressions,
   but wrong with sources left (private variables, unexpanded exponentials) or antisymmetric kernels with scalar values
   (terms that vanish by an odd automorphism): only with a guard (no sources, no antisymmetric heads). The derivatives
-  with respect to several sources could share one fold with `SetSourcesToZero` and `"MaximumOrder"` (no measurable
-  gain alone).
+  with respect to several sources could share one fold with `SetSourcesToZero` and `"MaximumOrder"` (the same results,
+  but 2-4 % faster on four derivatives in J or in eta, etabar: not worth a second route).
 
 ## Pictures
 

@@ -39,6 +39,10 @@ and the examples of the manual are unchanged byte for byte.
   less.
 - **Wick sums.** The enumeration of the pairings keeps the components and the free slots of the vertices as it goes:
   the Wick sums of the documents take 10-25 % less time.
+- **Canonical form.** The colour refinement of the integration variables runs on integers, in a compiled function, for
+  every term whose factors are lines and vertices with plain labels (the others, with a power of a line or an operator
+  kernel, as before): the canonical forms take a sixth less time, the connected vacuum diagrams of the electron gas and
+  Φ of the Nambu field at fourth order two fifths less.
 - **Copies of a term.** A term that is a copy of an earlier one in the same sum (the Wick sums of real fields,
   `SuperfieldComponents`, the derivatives of exp(½ J G J)) takes its canonical form from it: the connected vacuum
   diagrams of φ⁴ theory at fourth order take half the time, Z[J], the cumulants and the full vertex of φ⁴ theory about
