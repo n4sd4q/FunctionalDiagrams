@@ -257,8 +257,11 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   diagrams it contains, the fully irreducible vertex Γ_irr `"Dotted"` (staggered dots about 0.14 units apart, the grid
   fitted to a box or a diamond so that its outermost dots are 0.06 inside every side; `blobDotsOf`), the irreducible parts
   (Σ, Δ, P, Γ⁰, Γ_ph, Γ_ph̄, Γ_pp, Γ_xc, Λ̃) `"Hatched"`, the full vertex functions (F, Λ, Γ⁽⁴⁾) `"CrossHatched"`, and the
-  correlation and response functions (W⁽⁴⁾, L, χ) `"White"`; `"Grey"` is left unused. The rule is for the blobs with a
-  name: the vertex functions Γ⁽ⁿ⁾ of the trees (`VertexFunction`, not declared) stay small grey discs. A blob is as
+  correlation and response functions (W⁽⁴⁾, L, χ) `"White"`; `"Grey"` is left unused (a value of `"Fill"`, drawn
+  nowhere by default). The blobs without a name follow the same rule: a factor of three or more labels that is not
+  declared is a disc of radius 0.2 (`$blobRadius`, four hatch spacings across), hatched as the default of `DeclareBlob`,
+  and the vertex functions Γ⁽ⁿ⁾ of the trees (`VertexFunction`, full vertex functions) cross-hatched (`unnamedBlobSpec`,
+  drawn by `declaredBlobPrimitives` and `tikzDeclaredBlob` without a label or a clearing). A blob is as
   large as its label needs (`declaredBlobSize`, from `blobLabelExtent`, an estimate of the LaTeX box, with the label font
   taken as `$blobLabelEm` = 0.6 units): the label, in a white clearing on a hatched, cross-hatched or dotted blob, lies
   inside the blob with a band of the fill (0.1 units) all around it, at the centre or on the axis of a triangle near its incentre

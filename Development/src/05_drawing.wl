@@ -6,11 +6,12 @@
 (*                                                                           *)
 (*  A term is drawn as follows. Labels joined by a DeltaFunction are one     *)
 (*  point. Two-label factors are lines (propagators or interaction lines),   *)
-(*  factors with three or more labels are gray blobs, one-label factors are  *)
-(*  source insertions. An external label that ends a single propagator is   *)
-(*  an external point of a correlation function (open circle); any other     *)
-(*  external label sits on a vertex of an amputated function (self-energy,   *)
-(*  vertex) and gets an external leg, with an arrow for fermions.            *)
+(*  factors with three or more labels are blobs (hatched; a vertex function  *)
+(*  VertexFunction cross-hatched), one-label factors are source insertions.  *)
+(*  An external label that ends a single propagator is an external point of  *)
+(*  a correlation function (open circle); any other external label sits on a *)
+(*  vertex of an amputated function (self-energy, vertex) and gets an        *)
+(*  external leg, with an arrow for fermions.                                *)
 (* ========================================================================= *)
 
 $drawingDefaults = {"VertexLabels" -> Automatic, "Interactions" -> {}, "Directed" -> {}, "InteractionStyle" -> Automatic,
@@ -21,14 +22,13 @@ drawingOption[opts_List, name_String] := optionValue[opts, $drawingDefaults, nam
 
 (* the colours of the pictures of Mathematica (the TikZ code is for white pages and has none), as {light, dark}: the
    lines and the text, the paper (what hides the lines under it: the inside of a blob, of an external point or of a
-   source, the clearing behind the label of a hatched or dotted blob), the fill "Grey" of a blob, the grey vertex blobs and the
-   frames of the cells of DiagramPlot. "Appearance" -> Automatic follows the notebook (dark lines on a light notebook,
+   source, the clearing behind the label of a hatched or dotted blob), the fill "Grey" of a blob and the frames of the cells
+   of DiagramPlot. "Appearance" -> Automatic follows the notebook (dark lines on a light notebook,
    light ones on a dark notebook) through LightDarkSwitched, of Mathematica 14.3 or later, the paper being then the
    background of the notebook itself; before 14.3 the light colours. "Light" and "Dark" force one of them, on a
    background of the paper colour (for a picture exported or shown on a page of the other kind) *)
 $diagramPalette = <|"Foreground" -> {GrayLevel[0], GrayLevel[0.9]}, "Paper" -> {GrayLevel[1], GrayLevel[0.1]},
-    "GreyFill" -> {GrayLevel[0.8], GrayLevel[0.42]}, "VertexBlob" -> {GrayLevel[0.75], GrayLevel[0.48]},
-    "CellFrame" -> {GrayLevel[0.85], GrayLevel[0.3]}|>;
+    "GreyFill" -> {GrayLevel[0.8], GrayLevel[0.42]}, "CellFrame" -> {GrayLevel[0.85], GrayLevel[0.3]}|>;
 (* a colour for light notebooks and one for dark notebooks (LightDarkSwitched, Mathematica 14.3 or later; dark ->
    Automatic: the dark variant chosen by the front end) *)
 lightDarkColor[light_, dark_] := If[Names["System`LightDarkSwitched"] =!= {}, Symbol["LightDarkSwitched"][light, dark],
@@ -1851,6 +1851,12 @@ blobHeadOf[v_, blobs_] := First[Cases[blobs, {v, _, h_} :> h], None];
 (* the spec {label, shape, fill, size} of a declared blob: its size is $declaredBlobSize, or larger when its label needs it
    (declaredBlobSize) *)
 blobSpecOf[h_] := First[Cases[$blobDeclarations, {h, l_, s_, f_, ___} :> {l, s, f, pictureBlobSize[l, s, f]}], None];
+(* a factor of three or more labels that is not declared is a disc of radius $blobRadius without a name, filled by the rule
+   of the declared blobs: a vertex function VertexFunction (Gamma^(n) of the tree expansion, a full 1PI vertex)
+   cross-hatched, any other factor hatched, the default of DeclareBlob. Its node is {"N", p, kind} *)
+unnamedBlobKind[h_] := If[h === VertexFunction, "vertexFunction", "blob"];
+unnamedBlobKindQ[k_] := k === "blob" || k === "vertexFunction";
+unnamedBlobSpec[k_] := {"", "Circle", If[k === "vertexFunction", "CrossHatched", "Hatched"], $blobRadius};
 (* within one picture the blobs of one shape have one size, the largest their labels need: F beside Gamma_ph is as large
    as it, so that the lines between them are parallel; so do those of all the terms of a sum drawn together, so that a
    blob looks the same in every term (Gamma0 alone and beside Gamma4 in Gamma4 = Gamma0 - Gamma0 L0 Gamma4/2).
@@ -2325,12 +2331,12 @@ declaredBlobPrimitives[p_, spec : {label_, shape_, fill_, h_}, a_ : Automatic] :
    diagramColor[a, "Foreground"], {AbsoluteThickness[0.6], Line /@ blobHatchesOf[p, spec]},
    With[{dots = blobDotsOf[p, spec]}, If[dots === {}, {}, {AbsolutePointSize[1.3], Point[dots]}]],
    (* on a hatched or dotted blob the label sits in a clearing of the paper colour with rounded corners, the outline drawn
-      over it (as in TikZ) *)
-   Text[If[texturedFillQ[fill],
+      over it (as in TikZ); a blob without a name (unnamedBlobSpec) has neither *)
+   If[label === "", {}, Text[If[texturedFillQ[fill],
      Framed[Style[plainBlobLabel[label], blobLabelScale[shape] $fontPixels], Background -> diagramColor[a, "Paper"],
       FrameStyle -> diagramColor[a, "Paper"], RoundingRadius -> 3,
       FrameMargins -> {{2, 2}, {1, 2}}],
-     Style[plainBlobLabel[label], blobLabelScale[shape] $fontPixels]], blobLabelPoint[p, spec]],
+     Style[plainBlobLabel[label], blobLabelScale[shape] $fontPixels]], blobLabelPoint[p, spec]]],
    Switch[shape, "Box", Line[{p + {-h, -h}, p + {h, -h}, p + {h, h}, p + {-h, h}, p + {-h, -h}}],
     "Triangle" | "TriangleUp" | "Diamond", Line[Append[triangleCorners[p, h, shape], First[triangleCorners[p, h, shape]]]], _, Circle[p, h]]};
 
@@ -2508,7 +2514,7 @@ labelBox[x_] := {0.62 $fontPixels StringLength[labelString[x]], 0.75 $fontPixels
 
 (* geometry of one frame (the part with the external labels, or one vacuum component). Items:
    {"E", path, style} lines; {"L", node point, end point, direction} legs; {"S", {p, q}} source insertions;
-   {"N", p, kind} nodes ("dot", "ext", "blob"); {"T", p, label, a, angle} labels centred at p, or attached at a in the direction angle. *)
+   {"N", p, kind} nodes ("dot", "ext", and "blob" or "vertexFunction" for a blob without a name); {"T", p, label, a, angle} labels centred at p, or attached at a in the direction angle. *)
 (* the circle through three points: {centre, radius}, or None if they are (nearly) on one line *)
 circleThrough[p1_, p2_, p3_] := Module[{a = p2 - p1, b = p3 - p1, d},
    d = 2 (a[[1]] b[[2]] - a[[2]] b[[1]]);
@@ -2781,7 +2787,7 @@ frameItems[frameNodes_, positions_, lines_, blobs_, stubs_, ext_, amputatedExt_,
       (* the shape and size of the blob as laid out: a turned box is a diamond *)
       Head[v] === blob && declaredBlobHeadQ[blobHeadOf[v, blobs]], AppendTo[items, {"B", p, With[{sp = blobSpecOf[blobHeadOf[v, blobs]],
           dk = If[mode[[1]] === "blob", Select[mode[[2]], vectorNorm[#[[1]] - p] < 10.^-6 &, 1], {}]}, If[dk === {}, sp, ReplacePart[sp, {2 -> dk[[1, 2]], 4 -> dk[[1, 3]]}]]]}],
-      Head[v] === blob, AppendTo[items, {"N", p, "blob"}],
+      Head[v] === blob, AppendTo[items, {"N", p, unnamedBlobKind[blobHeadOf[v, blobs]]}],
       (* a port of a declared blob, on its boundary, joined to at most one line: no dot (a point twice a port of a blob is
          outside it, joined to two of its corners) *)
       MemberQ[ports, v] && Count[frameLines, {a_, b_, _, _} /; a =!= b && (a === v || b === v)] <= 1 &&
@@ -2820,7 +2826,7 @@ lineCoarsePoints[path_] := With[{k = If[path[[1]] === "segment", 1, Max[4, Ceili
 itemPoints[items_] := Join[Flatten[Cases[items, {"E", path_, _} :> lineCoarsePoints[path]], 1], Flatten[Cases[items, {"S", q_} :> q], 1],
    Flatten[Cases[items, {"L", p_, q_, _} :> {p, q}], 1],
    Flatten[Cases[items, {"T", p_, label_, ___} :> With[{b = labelBox[label]/2}, {p - b, p + b}]], 1],
-   Flatten[Cases[items, {"N", p_, k_} :> With[{r = If[k === "blob", $blobRadius, $externalPointRadius]}, {p - {r, r}, p + {r, r}}]], 1],
+   Flatten[Cases[items, {"N", p_, k_} :> With[{r = If[unnamedBlobKindQ[k], $blobRadius, $externalPointRadius]}, {p - {r, r}, p + {r, r}}]], 1],
    Flatten[Cases[items, {"B", p_, spec_} :> {p - {spec[[4]], spec[[4]]}, p + {spec[[4]], spec[[4]]}}], 1]];
 boundingBox[items_] := With[{pts = itemPoints[items]}, If[pts === {}, {{-0.5, 0.5}, {-0.5, 0.5}},
     {{Min[pts[[All, 1]]], Max[pts[[All, 1]]]}, {Min[pts[[All, 2]]], Max[pts[[All, 2]]]}}]];
@@ -3186,7 +3192,7 @@ itemPrimitives[items_, opts_List, a_ : Automatic] := With[{fg = diagramColor[a, 
    legPrimitives /@ Cases[items, {"L", __}],
    Cases[items, {"S", {p_, q_}} :> {Line[{p, q}], {EdgeForm[{fg, AbsoluteThickness[1.]}], paper, Disk[q, 0.1]},
       AbsoluteThickness[1.], crossAt[q, 0.07]}],
-   Cases[items, {"N", p_, "blob"} :> {EdgeForm[{fg, AbsoluteThickness[1.]}], diagramColor[a, "VertexBlob"], Disk[p, $blobRadius]}],
+   Cases[items, {"N", p_, k_?unnamedBlobKindQ} :> declaredBlobPrimitives[p, unnamedBlobSpec[k], a]],
    Cases[items, {"B", p_, spec_} :> declaredBlobPrimitives[p, spec, a]],
    Cases[items, {"N", p_, "dot"} :> Disk[p, $dotRadius]],
    Cases[items, {"N", p_, "ext"} :> {EdgeForm[{fg, AbsoluteThickness[1.]}], paper, Disk[p, $externalPointRadius]}],

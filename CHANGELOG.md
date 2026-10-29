@@ -75,6 +75,14 @@
   Γ_ph̄ was written as Γ_ph. The commands of style, font and spacing are now dropped, every Greek letter is a character,
   and a bar or an overline is drawn over its whole group (Γph̄), as a tilde or a hat over its letter. The TikZ code
   is unchanged.
+- **The blobs without a name follow the rule of the fills.** A factor of three or more labels that is not declared was
+  a small grey disc, and so were the vertex functions Γ⁽ⁿ⁾ of the trees (`VertexFunction`, from
+  `ConnectedFunctionFromVertices`). The vertex functions are now cross-hatched, as the full vertex functions declared
+  with `DeclareBlob`, and any other such factor is hatched, the default of `DeclareBlob`: the hatching of the declared
+  blobs, in the Graphics of Mathematica (light and dark) and in TikZ, on a disc of the same size as before (0.2 units,
+  four spacings of the hatching across), without a label. A grey blob is now drawn only for `"Fill" -> "Grey"`. The
+  trees of the showcase, the manual and the examples are drawn so, and the usage messages of `DrawDiagram` and
+  `VertexFunction` say it.
 
 ### Documents
 

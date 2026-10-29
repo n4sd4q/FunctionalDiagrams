@@ -177,10 +177,11 @@ tikzLine[{"E", path_, style_}, t_, scale_, lw_ : 0.7, crossings_List : {}] := Mo
      If[anomalousStyleQ[style], StringJoin[tikzArrowHead[#[[1]], #[[2]], scale, lw] & /@ anomalousArrowHeads[path, style]], ""] <>
      If[style === "Impurity", "  \\draw " <> tikzCross[First[pathPoints[path, {0.5}, 0.]], $impurityCross] <> ";\n", ""]]];
 
-(* a declared blob: the shape filled, the hatching as explicit chords and the dots as small discs (no patterns library),
-   the label, the outline. On a hatched or dotted blob the label sits in a white clearing with rounded corners, a little
-   larger than the glyphs, so that no hatch line or dot runs through or touches them; the clearing is clipped to the blob
-   and the outline drawn over it, so that a wide label never cuts the outline *)
+(* a declared blob, or one without a name (unnamedBlobSpec, label ""): the shape filled, the hatching as explicit chords
+   and the dots as small discs (no patterns library), the label, the outline. On a hatched or dotted blob the label sits
+   in a white clearing with rounded corners, a little larger than the glyphs, so that no hatch line or dot runs through
+   or touches them; the clearing is clipped to the blob and the outline drawn over it, so that a wide label never cuts
+   the outline *)
 tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := Module[{shapeString, hatches = blobHatchesOf[p, spec],
     dots = blobDotsOf[p, spec],
     at = coordinateString[blobLabelPoint[p, spec]],
@@ -197,11 +198,14 @@ tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := 
        units of the line width of the picture, so that they follow it when the line width is changed *)
     If[dots === {}, "", "  \\fill " <> joinStrings[Table[coordinateString[q] <> " circle (0.7\\pgflinewidth)", {q, dots}], " "] <>
       ";\n"] <>
-    If[texturedFillQ[fill],
+    Which[
+     (* a blob without a name (unnamedBlobSpec): the fill and the outline *)
+     label === "", "  \\draw " <> shapeString <> ";\n",
+     texturedFillQ[fill],
      "  \\begin{scope}\n  \\clip " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <>
       ", inner sep=1.2pt, fill=white, rounded corners=2pt] at " <> at <> " {$" <> label <> "$};\n  \\end{scope}\n" <>
       "  \\draw " <> shapeString <> ";\n",
-     "  \\draw " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <> ", inner sep=0.6pt] at " <> at <> " {$" <> label <> "$};\n"]];
+     True, "  \\draw " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <> ", inner sep=0.6pt] at " <> at <> " {$" <> label <> "$};\n"]];
 
 tikzItems[items_, opts_List] := Module[{scale = tikzScale[opts], rules = Flatten[{drawingOption[opts, "Labels"]}], es,
     lw = tikzLineWidth[opts], font = drawingOption[opts, "LabelFont"]},
@@ -215,7 +219,7 @@ tikzItems[items_, opts_List] := Module[{scale = tikzScale[opts], rules = Flatten
     Cases[items, {"S", {p_, q_}} :> If[p === q, "", "  \\draw " <> coordinateString[p] <> " -- " <> coordinateString[q] <> ";\n"] <>
        "  \\draw[fill=white] " <> coordinateString[q] <> " circle (" <> numberString[0.1] <> ");\n" <>
        "  \\draw[line width=" <> numberString[0.71 lw] <> "pt] " <> tikzCross[q, 0.07] <> ";\n"],
-    Cases[items, {"N", p_, "blob"} :> "  \\draw[fill=black!22] " <> coordinateString[p] <> " circle (" <> numberString[$blobRadius] <> ");\n"],
+    Cases[items, {"N", p_, k_?unnamedBlobKindQ} :> tikzDeclaredBlob[p, unnamedBlobSpec[k], lw, font, rules]],
     Cases[items, {"B", p_, spec_} :> tikzDeclaredBlob[p, spec, lw, font, rules]],
     Cases[items, {"N", p_, "dot"} :> "  \\fill " <> coordinateString[p] <> " circle (" <> numberString[0.85 $dotRadius] <> ");\n"],
     Cases[items, {"N", p_, "ext"} :> "  \\draw[fill=white] " <> coordinateString[p] <> " circle (" <> numberString[$externalPointRadius] <> ");\n"],

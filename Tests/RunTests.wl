@@ -363,6 +363,23 @@ check["DeclareBlob: \"Fill\" -> \"Dotted\": discs in TikZ (no patterns library),
     FunctionalDiagrams`Private`declaredBlobSize["\\Gamma_{\\rm irr}", "Box", "Dotted"] ==
      FunctionalDiagrams`Private`declaredBlobSize["\\Gamma_{\\rm irr}", "Box", "Hatched"]}],
   {True, True, 1, True, Graphics, True}];
+(* the blobs without a name follow the rule of the fills: a vertex function VertexFunction (the trees of
+   ConnectedFunctionFromVertices) cross-hatched, any other factor of three or more labels that is not declared hatched,
+   the default of DeclareBlob; no grey fill, no label clearing *)
+hatchLineCounts[g_] := Cases[g, {AbsoluteThickness[0.6], l_List} :> Length[l], Infinity];
+tikzHatchSegments[t_String] := StringCount[StringJoin[StringCases[t, "\\draw[line width=" ~~ Shortest[___] ~~ ";\n"]], " -- "];
+check["the vertex functions of a tree are cross-hatched discs (Graphics and TikZ), another undeclared factor of three labels a hatched one; no grey fill",
+  With[{tree = ConnectedFunctionFromVertices[{a, b, c, d}, "Boson"], tv = DiagramToTikZ[VertexFunction[a, b, c, d], {a, b, c, d}],
+    tk = DiagramToTikZ[UnnamedKernel[a, b, c], {a, b, c}]},
+   {Union[Cases[FunctionalDiagrams`Private`geometriesOf[tree, {a, b, c, d}, {}][[All, 2]], {"N", _, k_} :> k, Infinity]],
+    Cases[DiagramToTikZ[tree, {a, b, c, d}, "Output" -> "List"], {_, t_} :> tikzHatchSegments[t]],
+    hatchLineCounts[DrawDiagram[VertexFunction[a, b, c, d], {a, b, c, d}, "Appearance" -> "Light"]],
+    hatchLineCounts[DrawDiagram[UnnamedKernel[a, b, c], {a, b, c}, "Appearance" -> "Light"]],
+    Union[Cases[{DrawDiagram[VertexFunction[a, b, c, d], {a, b, c, d}, "Appearance" -> "Light"],
+       DrawDiagram[UnnamedKernel[a, b, c], {a, b, c}, "Appearance" -> "Light"]}, (GrayLevel | RGBColor)[__], Infinity]],
+    {tikzHatchSegments[tv], tikzHatchSegments[tk]}, occurrences[tv, "\\fill[white] (0.000,0.000) circle (0.200)"],
+    StringFreeQ[tv <> tk, "black!" | "node[font=\\small, inner sep=1.2pt"]}],
+  {{"ext", "vertexFunction"}, {6, 12, 12, 12}, {6}, {3}, {GrayLevel[0], GrayLevel[1]}, {6, 3}, 1, True}];
 check["DeclareBlob: a four-point box has its legs at its corners",
   Sort[Cases[geometryItems[FBx[a, b, c, d], {a, b, c, d}], {"L", q_, __} :> Round[q/FunctionalDiagrams`Private`$declaredBlobSize]]],
   {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}}];
@@ -484,10 +501,10 @@ check["\"Appearance\" -> \"Dark\": light lines on a dark background, the clearin
    colourDirectives[colourPicture["Appearance" -> "Light"]], Cases[List @@ colourPicture["Appearance" -> "Light"], (Background -> c_) :> c],
    FreeQ[colourPicture["Appearance" -> "Dark"], h_Symbol /; SymbolName[h] === "LightDarkSwitched"]},
   {{GrayLevel[0.1], GrayLevel[0.9]}, {GrayLevel[0.1]}, {GrayLevel[0], GrayLevel[1]}, {GrayLevel[1]}, True}];
-check["\"Appearance\": the grey vertex blobs, the grey fill, the frames and the weights of DiagramPlot in the dark colours; a Grid with a background",
-  {colourDirectives[DiagramPlot[GreyBlob3[a, b, c] + IntegralOver[G[a, u] GreyFilled[u, v] G[v, b], {u, v}], {a, b, c}, "Appearance" -> "Dark"]],
+check["\"Appearance\": a blob without a name, the grey fill, the frames and the weights of DiagramPlot in the dark colours; a Grid with a background",
+  {colourDirectives[DiagramPlot[UnnamedKernel[a, b, c] + IntegralOver[G[a, u] GreyFilled[u, v] G[v, b], {u, v}], {a, b, c}, "Appearance" -> "Dark"]],
    Cases[List @@ DiagramPlot[G[a, b] - G[a, b] V[a, b], {a, b}, "Output" -> "Grid", "Appearance" -> "Dark"], (Background -> c_) :> c]},
-  {{GrayLevel[0.1], GrayLevel[0.3], GrayLevel[0.42], GrayLevel[0.48], GrayLevel[0.9]}, {GrayLevel[0.1]}}];
+  {{GrayLevel[0.1], GrayLevel[0.3], GrayLevel[0.42], GrayLevel[0.9]}, {GrayLevel[0.1]}}];
 check["\"Appearance\" -> \"Bright\": message appearance, Automatic used",
   {messageGivenQ[colourPicture["Appearance" -> "Bright"], FunctionalDiagrams::appearance],
    Quiet[colourPicture["Appearance" -> "Bright"]] === colourPicture[]}, {True, True}];

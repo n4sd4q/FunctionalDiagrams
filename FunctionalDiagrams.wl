@@ -70,7 +70,7 @@ DeclareLineStyle::usage = "DeclareLineStyle[h, style] sets how a two-label facto
 DeclareDirectedPropagator::usage = "DeclareDirectedPropagator[G, ...] is DeclareLineStyle[G, \"Arrow\"]: G[x, y] is drawn with an arrow from y to x (a fermion propagating from y to x).";
 DeclareInteractionLine::usage = "DeclareInteractionLine[V, ...] declares interaction lines, kernels of the interaction such as V in S_int = 1/2 \[Integral] V(x, y) psibar(x) psibar(y) psi(y) psi(x): V[x, y] is drawn as a wavy line, and in the weight written with a picture it stands for -V (the minus sign comes from expanding exp(-S_int)). DeclareInteractionLine[V, ..., style] draws them in another style, e.g. \"DoubleWavy\" for a screened interaction W drawn beside V (in a skeleton expansion, where every line is a dressed one, the plain styles are used: the option \"Interactions\" -> {W} draws W as a wavy line in one picture). A line declared only with DeclareLineStyle is a propagator and stands for itself.";
 DeclareCoupling::usage = "DeclareCoupling[lambda, ...] declares couplings of local interactions, such as lambda in S_int = lambda/4! \[Integral] phi^4 or g in g \[Integral] phi psibar psi. In the weight written with a picture they are absorbed into the vertices, each of which stands for minus its coupling: lambda^n in the coefficient of a term becomes (-1)^n, so that the tadpole -lambda/2 G(a, z) G(z, z) G(z, b) has the weight 1/2. The expressions are not changed.";
-DeclareLocalVertex::usage = "DeclareLocalVertex[h, ...] declares heads of local vertices: kernels such as the quark-gluon vertex h[x, y, z] or the three-gluon vertex, whose labels carry different indices (Lorentz, colour, spinor) at one point of space-time. The pictures draw h[x, y, ...] as one point, at which its lines meet, instead of a grey blob; in the weight written with a picture the vertex stands for minus its kernel, -h (the sign of exp(-S_int)).";
+DeclareLocalVertex::usage = "DeclareLocalVertex[h, ...] declares heads of local vertices: kernels such as the quark-gluon vertex h[x, y, z] or the three-gluon vertex, whose labels carry different indices (Lorentz, colour, spinor) at one point of space-time. The pictures draw h[x, y, ...] as one point, at which its lines meet, instead of a blob; in the weight written with a picture the vertex stands for minus its kernel, -h (the sign of exp(-S_int)).";
 DeclareDisplayName::usage = "DeclareDisplayName[h, name] displays h[x, y, ...] as name with the subscript x y ..., for example DeclareDisplayName[BareGreenFunction, \"G0\"]: input keeps the explicit name, output is compact.";
 DeclareBlob::usage = "DeclareBlob[h, label] draws a factor h[x1, ..., xn] (n >= 2, a self-energy h[x, y] included) as a blob with label (a LaTeX string, e.g. \"\\\\Sigma\") written inside; its legs leave it counterclockwise from the top left, at the corners of a square for n = 4, and its lines leave from these corners, as from those of a triangle (a point that is twice an argument, h[z, z, w, w], stands outside two corners, joined to each); a box joined by single lines from three of its corners to one vertex (the four-point vertex in the Schwinger-Dyson equation of phi^4 theory) is turned by 45 degrees, the vertex on the diagonal through the fourth corner, the lines to the two other corners arcs symmetric about it, the label upright. Options: \"Shape\" -> \"Circle\" (default), \"Box\" or \"Triangle\" (equilateral, three legs at its corners, two on the left and one on the right: the vertex of a one-body operator), or \"TriangleUp\" (the same triangle with two legs at the bottom and one at the top), \"Diamond\" (a square turned by 45 degrees, legs at the left, bottom, right and top corners); \"AxialPorts\" -> {k1, ...}: the lines and legs of these ports leave horizontally, so that a self-energy can be drawn with its fermion line on an axis (the default for \"TriangleUp\" is {1, 2}); \"Fill\" -> \"Hatched\" (default), \"CrossHatched\", \"Dotted\" (dots on a staggered grid, sparser than the hatching), \"Grey\" or \"White\"; the documents fill a vertex function the more densely the more diagrams it contains (the fully irreducible vertex dotted, the irreducible parts hatched, the full vertex functions cross-hatched) and leave the correlation and response functions white. A blob is as large as its label needs: the label (on a hatched, cross-hatched or dotted blob in a white clearing, with a band of the fill left around it) sits at the centre, or near the incentre of a triangle, and a label with an accent, a subscript or a superscript makes the blob a little larger, never the label smaller; in one picture, and in all the terms of a sum drawn together, the blobs of one shape have one size. Blobs joined by lines are drawn side by side, as in the exact equations of many-body theory (Dyson, Schwinger-Dyson, Bethe-Salpeter, parquet).";
 ResetDeclarations::usage = "ResetDeclarations[] removes all declarations (sources, fields, symmetries, derivative rules, line styles, interaction lines, couplings, local vertices, blobs, Matsubara frequencies): symmetric heads lose the attribute Orderless and antisymmetric ones their sign rules; display formats remain.";
@@ -125,12 +125,12 @@ DysonSeries::usage = "DysonSeries[sigma, {s1, s2}, G0, {x, y}, m] is G0(x, y) + 
 (* --------------------------------------------------------- tree expansion *)
 ConnectedFunctionFromVertices::usage = "ConnectedFunctionFromVertices[{x1, ..., xn}, \"Boson\" | \"Fermion\"] gives the connected n-point function at zero source as a sum of trees of full propagators FullPropagator and one-particle-irreducible vertices VertexFunction (the tree expansion), obtained by differentiating the full propagator with respect to the source ExternalSource with the rules that follow from the Legendre transform. ConnectedFunctionFromVertices[n, type] uses the labels x1, ..., xn; the type is \"Boson\" by default. \"Fermion\" gives the trees of a superfield (psi, psibar), with antisymmetric propagator and vertices; \"FermionLines\" gives them with fermion lines: <psi(x1) psibar(x2) psi(x3) psibar(x4) ...>_c as trees of directed propagators FullPropagator[x, y] = G(x, y) = -<psi(x) psibar(y)>_c and vertices VertexFunction[outs..., ins...], antisymmetric within the outgoing and within the incoming legs; ConnectedFunctionFromVertices[labels, \"FermionLines\", {\"Out\" | \"In\", ...}] chooses psi (\"Out\") or psibar (\"In\") for each label.";
 FullPropagator::usage = "FullPropagator[x, y] is the full (dressed) propagator G, the connected two-point function at the current source, used by ConnectedFunctionFromVertices.";
-VertexFunction::usage = "VertexFunction[x1, ..., xn] is the one-particle-irreducible vertex \[CapitalGamma]^(n), used by ConnectedFunctionFromVertices.";
+VertexFunction::usage = "VertexFunction[x1, ..., xn] is the one-particle-irreducible vertex \[CapitalGamma]^(n), used by ConnectedFunctionFromVertices; the pictures draw it as a cross-hatched disc.";
 MeanField::usage = "MeanField[x] is the mean field <phi(x)> at the current source, displayed as phi with a bar (the expectation value of the field, the exact one-point function, not a mean-field approximation), used by ConnectedFunctionFromVertices.";
 ExternalSource::usage = "ExternalSource[x] is the source J(x) with respect to which ConnectedFunctionFromVertices differentiates.";
 
 (* ----------------------------------------------------------------- pictures *)
-DrawDiagram::usage = "DrawDiagram[term, {x1, ..., xn}, options] draws one term as a Feynman diagram. Propagators are lines, interaction lines are wavy (see DeclareLineStyle), factors with three or more labels are grey blobs (vertex functions), factors with one label are source insertions. External points of correlation functions are open circles; in amputated vertex functions (self-energies, vertices) the external labels sit on vertices and are drawn as external legs; labels joined by a DeltaFunction are the same point. Options as for DiagramPlot.";
+DrawDiagram::usage = "DrawDiagram[term, {x1, ..., xn}, options] draws one term as a Feynman diagram. Propagators are lines, interaction lines are wavy (see DeclareLineStyle), factors with three or more labels are blobs (one not declared with DeclareBlob is a small disc without a name, hatched as the default of DeclareBlob, and a vertex function VertexFunction a cross-hatched one, as the full vertex functions of the documents), factors with one label are source insertions. External points of correlation functions are open circles; in amputated vertex functions (self-energies, vertices) the external labels sit on vertices and are drawn as external legs; labels joined by a DeltaFunction are the same point. Options as for DiagramPlot.";
 DiagramPlot::usage = "DiagramPlot[expr, {x1, ..., xn}, options] draws every canonical term of expr with its weight: the number written in front of a picture, times the values of its elements, is the term. A propagator stands for itself, an interaction line (DeclareInteractionLine) for minus its kernel, a local vertex (DeclareLocalVertex) for minus its kernel, and a vertex for minus its coupling (DeclareCoupling): the minus signs come from expanding exp(-S_int). An anomalous line (\"DivergingArrows\", \"ConvergingArrows\") or an antisymmetric blob of two labels shows no orientation: the weight takes it read along its fermion line, around a loop in either sense, along an open line from its end at the first external label. A kernel OperatorKernel[D^-1] is drawn as a line: in a term with lines D (a derivative of a trace before ExpandTrace) it gives the message inversekernel. Options: \"VertexLabels\" -> Automatic (external labels) | All (also z1, z2, ...) | None; \"LegDirections\" -> Automatic | \"Alternating\" | {\"Out\", \"In\", ...} (arrows on the external legs of fermionic vertex functions); \"AmputatedLegs\" -> Automatic | True | False; \"InteractionStyle\" -> Automatic | \"Wavy\" | \"DoubleWavy\" | \"Curly\" | \"Dashed\" | \"Dotted\" | \"Zigzag\" (the style of all the interaction lines); \"Directed\" -> {G, ...} and \"Interactions\" -> {V, ...} (heads drawn as arrows or as interaction lines in this picture only); \"Couplings\" -> {g, ...} (couplings absorbed into the vertices in this picture only, as with DeclareCoupling); \"ExternalOrder\" -> Automatic | {x1, ...} | \"Uncrossed\" | {\"Uncrossed\", {x1, ...}} (four external labels are at the corners counterclockwise from the top left, in the order given to the function or in the order of the list, and a diagram whose channel joins two opposite corners is drawn with two legs crossing as an X; with \"Uncrossed\" each diagram has instead the legs of one side exchanged where that keeps its lines from crossing, the labels moving with their legs); \"Columns\" -> n; \"Weights\" -> True | False | \"Coefficients\" (the coefficients of the terms, every line and vertex standing for its kernel); \"LineWidth\" -> width of the lines in points; \"Output\" -> \"Grid\" (a grid of weights and pictures); ImageSize -> width of the picture in pixels (Automatic: 46 pixels per diagram unit); \"Appearance\" -> Automatic (dark lines and text on a light notebook, light ones on a dark notebook, through LightDarkSwitched of Mathematica 14.3 or later; before 14.3 the light colours) | \"Light\" | \"Dark\" (forced, on a background of the paper colour: white, or the dark grey of a dark notebook; SetOptions[{DiagramPlot, DrawDiagram}, \"Appearance\" -> \"Dark\"] for a session). DiagramToTikZ ignores it: the TikZ code is for white pages.";
 DiagramToTikZ::usage = "DiagramToTikZ[expr, {x1, ..., xn}, options] gives LaTeX/TikZ code for the diagrams of expr: a sum of tikzpictures with their weights, ready for a paper (it needs the TikZ library decorations.pathmorphing). Same options as DiagramPlot, plus \"Scale\" -> length of one diagram unit in cm (0.7), \"LineWidth\" -> width of the lines in pt (0.7; arrow heads, dashes and double lines follow), \"LabelFont\" -> LaTeX font command of the labels (\"\\\\small\"), \"Labels\" -> rules from labels to LaTeX strings, and \"Output\" -> \"List\" for a list of {weight, picture} strings.";
 ExpressionToLaTeX::usage = "ExpressionToLaTeX[expr, options] gives the LaTeX code of a formula: integrals with their variables as a subscript, functions with their arguments in parentheses, delta functions, Grassmann products in their order. Options: \"Names\" -> {h -> \"G_0\", ...}, the LaTeX of heads and symbols (by default the name given with DeclareDisplayName, else the symbol name, with greek letters, trailing digits and a final bar recognised) and of subexpressions (FermiFunction[xi[p1]] -> \"n_1\"); \"Labels\" -> {x -> \"x_1\", ...}, the LaTeX of labels; \"Subscripts\" -> {xi, v, ...}, heads whose arguments are written as a subscript, xi[p] as \\xi_{p} (dispersions and potentials in momentum space).";
@@ -2135,11 +2135,12 @@ termAutomorphisms[c_, o_List, d_List] := Module[{factors, inerts, data, incidenc
 (*                                                                           *)
 (*  A term is drawn as follows. Labels joined by a DeltaFunction are one     *)
 (*  point. Two-label factors are lines (propagators or interaction lines),   *)
-(*  factors with three or more labels are gray blobs, one-label factors are  *)
-(*  source insertions. An external label that ends a single propagator is   *)
-(*  an external point of a correlation function (open circle); any other     *)
-(*  external label sits on a vertex of an amputated function (self-energy,   *)
-(*  vertex) and gets an external leg, with an arrow for fermions.            *)
+(*  factors with three or more labels are blobs (hatched; a vertex function  *)
+(*  VertexFunction cross-hatched), one-label factors are source insertions.  *)
+(*  An external label that ends a single propagator is an external point of  *)
+(*  a correlation function (open circle); any other external label sits on a *)
+(*  vertex of an amputated function (self-energy, vertex) and gets an        *)
+(*  external leg, with an arrow for fermions.                                *)
 (* ========================================================================= *)
 
 $drawingDefaults = {"VertexLabels" -> Automatic, "Interactions" -> {}, "Directed" -> {}, "InteractionStyle" -> Automatic,
@@ -2150,14 +2151,13 @@ drawingOption[opts_List, name_String] := optionValue[opts, $drawingDefaults, nam
 
 (* the colours of the pictures of Mathematica (the TikZ code is for white pages and has none), as {light, dark}: the
    lines and the text, the paper (what hides the lines under it: the inside of a blob, of an external point or of a
-   source, the clearing behind the label of a hatched or dotted blob), the fill "Grey" of a blob, the grey vertex blobs and the
-   frames of the cells of DiagramPlot. "Appearance" -> Automatic follows the notebook (dark lines on a light notebook,
+   source, the clearing behind the label of a hatched or dotted blob), the fill "Grey" of a blob and the frames of the cells
+   of DiagramPlot. "Appearance" -> Automatic follows the notebook (dark lines on a light notebook,
    light ones on a dark notebook) through LightDarkSwitched, of Mathematica 14.3 or later, the paper being then the
    background of the notebook itself; before 14.3 the light colours. "Light" and "Dark" force one of them, on a
    background of the paper colour (for a picture exported or shown on a page of the other kind) *)
 $diagramPalette = <|"Foreground" -> {GrayLevel[0], GrayLevel[0.9]}, "Paper" -> {GrayLevel[1], GrayLevel[0.1]},
-    "GreyFill" -> {GrayLevel[0.8], GrayLevel[0.42]}, "VertexBlob" -> {GrayLevel[0.75], GrayLevel[0.48]},
-    "CellFrame" -> {GrayLevel[0.85], GrayLevel[0.3]}|>;
+    "GreyFill" -> {GrayLevel[0.8], GrayLevel[0.42]}, "CellFrame" -> {GrayLevel[0.85], GrayLevel[0.3]}|>;
 (* a colour for light notebooks and one for dark notebooks (LightDarkSwitched, Mathematica 14.3 or later; dark ->
    Automatic: the dark variant chosen by the front end) *)
 lightDarkColor[light_, dark_] := If[Names["System`LightDarkSwitched"] =!= {}, Symbol["LightDarkSwitched"][light, dark],
@@ -3980,6 +3980,12 @@ blobHeadOf[v_, blobs_] := First[Cases[blobs, {v, _, h_} :> h], None];
 (* the spec {label, shape, fill, size} of a declared blob: its size is $declaredBlobSize, or larger when its label needs it
    (declaredBlobSize) *)
 blobSpecOf[h_] := First[Cases[$blobDeclarations, {h, l_, s_, f_, ___} :> {l, s, f, pictureBlobSize[l, s, f]}], None];
+(* a factor of three or more labels that is not declared is a disc of radius $blobRadius without a name, filled by the rule
+   of the declared blobs: a vertex function VertexFunction (Gamma^(n) of the tree expansion, a full 1PI vertex)
+   cross-hatched, any other factor hatched, the default of DeclareBlob. Its node is {"N", p, kind} *)
+unnamedBlobKind[h_] := If[h === VertexFunction, "vertexFunction", "blob"];
+unnamedBlobKindQ[k_] := k === "blob" || k === "vertexFunction";
+unnamedBlobSpec[k_] := {"", "Circle", If[k === "vertexFunction", "CrossHatched", "Hatched"], $blobRadius};
 (* within one picture the blobs of one shape have one size, the largest their labels need: F beside Gamma_ph is as large
    as it, so that the lines between them are parallel; so do those of all the terms of a sum drawn together, so that a
    blob looks the same in every term (Gamma0 alone and beside Gamma4 in Gamma4 = Gamma0 - Gamma0 L0 Gamma4/2).
@@ -4454,12 +4460,12 @@ declaredBlobPrimitives[p_, spec : {label_, shape_, fill_, h_}, a_ : Automatic] :
    diagramColor[a, "Foreground"], {AbsoluteThickness[0.6], Line /@ blobHatchesOf[p, spec]},
    With[{dots = blobDotsOf[p, spec]}, If[dots === {}, {}, {AbsolutePointSize[1.3], Point[dots]}]],
    (* on a hatched or dotted blob the label sits in a clearing of the paper colour with rounded corners, the outline drawn
-      over it (as in TikZ) *)
-   Text[If[texturedFillQ[fill],
+      over it (as in TikZ); a blob without a name (unnamedBlobSpec) has neither *)
+   If[label === "", {}, Text[If[texturedFillQ[fill],
      Framed[Style[plainBlobLabel[label], blobLabelScale[shape] $fontPixels], Background -> diagramColor[a, "Paper"],
       FrameStyle -> diagramColor[a, "Paper"], RoundingRadius -> 3,
       FrameMargins -> {{2, 2}, {1, 2}}],
-     Style[plainBlobLabel[label], blobLabelScale[shape] $fontPixels]], blobLabelPoint[p, spec]],
+     Style[plainBlobLabel[label], blobLabelScale[shape] $fontPixels]], blobLabelPoint[p, spec]]],
    Switch[shape, "Box", Line[{p + {-h, -h}, p + {h, -h}, p + {h, h}, p + {-h, h}, p + {-h, -h}}],
     "Triangle" | "TriangleUp" | "Diamond", Line[Append[triangleCorners[p, h, shape], First[triangleCorners[p, h, shape]]]], _, Circle[p, h]]};
 
@@ -4637,7 +4643,7 @@ labelBox[x_] := {0.62 $fontPixels StringLength[labelString[x]], 0.75 $fontPixels
 
 (* geometry of one frame (the part with the external labels, or one vacuum component). Items:
    {"E", path, style} lines; {"L", node point, end point, direction} legs; {"S", {p, q}} source insertions;
-   {"N", p, kind} nodes ("dot", "ext", "blob"); {"T", p, label, a, angle} labels centred at p, or attached at a in the direction angle. *)
+   {"N", p, kind} nodes ("dot", "ext", and "blob" or "vertexFunction" for a blob without a name); {"T", p, label, a, angle} labels centred at p, or attached at a in the direction angle. *)
 (* the circle through three points: {centre, radius}, or None if they are (nearly) on one line *)
 circleThrough[p1_, p2_, p3_] := Module[{a = p2 - p1, b = p3 - p1, d},
    d = 2 (a[[1]] b[[2]] - a[[2]] b[[1]]);
@@ -4910,7 +4916,7 @@ frameItems[frameNodes_, positions_, lines_, blobs_, stubs_, ext_, amputatedExt_,
       (* the shape and size of the blob as laid out: a turned box is a diamond *)
       Head[v] === blob && declaredBlobHeadQ[blobHeadOf[v, blobs]], AppendTo[items, {"B", p, With[{sp = blobSpecOf[blobHeadOf[v, blobs]],
           dk = If[mode[[1]] === "blob", Select[mode[[2]], vectorNorm[#[[1]] - p] < 10.^-6 &, 1], {}]}, If[dk === {}, sp, ReplacePart[sp, {2 -> dk[[1, 2]], 4 -> dk[[1, 3]]}]]]}],
-      Head[v] === blob, AppendTo[items, {"N", p, "blob"}],
+      Head[v] === blob, AppendTo[items, {"N", p, unnamedBlobKind[blobHeadOf[v, blobs]]}],
       (* a port of a declared blob, on its boundary, joined to at most one line: no dot (a point twice a port of a blob is
          outside it, joined to two of its corners) *)
       MemberQ[ports, v] && Count[frameLines, {a_, b_, _, _} /; a =!= b && (a === v || b === v)] <= 1 &&
@@ -4949,7 +4955,7 @@ lineCoarsePoints[path_] := With[{k = If[path[[1]] === "segment", 1, Max[4, Ceili
 itemPoints[items_] := Join[Flatten[Cases[items, {"E", path_, _} :> lineCoarsePoints[path]], 1], Flatten[Cases[items, {"S", q_} :> q], 1],
    Flatten[Cases[items, {"L", p_, q_, _} :> {p, q}], 1],
    Flatten[Cases[items, {"T", p_, label_, ___} :> With[{b = labelBox[label]/2}, {p - b, p + b}]], 1],
-   Flatten[Cases[items, {"N", p_, k_} :> With[{r = If[k === "blob", $blobRadius, $externalPointRadius]}, {p - {r, r}, p + {r, r}}]], 1],
+   Flatten[Cases[items, {"N", p_, k_} :> With[{r = If[unnamedBlobKindQ[k], $blobRadius, $externalPointRadius]}, {p - {r, r}, p + {r, r}}]], 1],
    Flatten[Cases[items, {"B", p_, spec_} :> {p - {spec[[4]], spec[[4]]}, p + {spec[[4]], spec[[4]]}}], 1]];
 boundingBox[items_] := With[{pts = itemPoints[items]}, If[pts === {}, {{-0.5, 0.5}, {-0.5, 0.5}},
     {{Min[pts[[All, 1]]], Max[pts[[All, 1]]]}, {Min[pts[[All, 2]]], Max[pts[[All, 2]]]}}]];
@@ -5315,7 +5321,7 @@ itemPrimitives[items_, opts_List, a_ : Automatic] := With[{fg = diagramColor[a, 
    legPrimitives /@ Cases[items, {"L", __}],
    Cases[items, {"S", {p_, q_}} :> {Line[{p, q}], {EdgeForm[{fg, AbsoluteThickness[1.]}], paper, Disk[q, 0.1]},
       AbsoluteThickness[1.], crossAt[q, 0.07]}],
-   Cases[items, {"N", p_, "blob"} :> {EdgeForm[{fg, AbsoluteThickness[1.]}], diagramColor[a, "VertexBlob"], Disk[p, $blobRadius]}],
+   Cases[items, {"N", p_, k_?unnamedBlobKindQ} :> declaredBlobPrimitives[p, unnamedBlobSpec[k], a]],
    Cases[items, {"B", p_, spec_} :> declaredBlobPrimitives[p, spec, a]],
    Cases[items, {"N", p_, "dot"} :> Disk[p, $dotRadius]],
    Cases[items, {"N", p_, "ext"} :> {EdgeForm[{fg, AbsoluteThickness[1.]}], paper, Disk[p, $externalPointRadius]}],
@@ -5611,10 +5617,11 @@ tikzLine[{"E", path_, style_}, t_, scale_, lw_ : 0.7, crossings_List : {}] := Mo
      If[anomalousStyleQ[style], StringJoin[tikzArrowHead[#[[1]], #[[2]], scale, lw] & /@ anomalousArrowHeads[path, style]], ""] <>
      If[style === "Impurity", "  \\draw " <> tikzCross[First[pathPoints[path, {0.5}, 0.]], $impurityCross] <> ";\n", ""]]];
 
-(* a declared blob: the shape filled, the hatching as explicit chords and the dots as small discs (no patterns library),
-   the label, the outline. On a hatched or dotted blob the label sits in a white clearing with rounded corners, a little
-   larger than the glyphs, so that no hatch line or dot runs through or touches them; the clearing is clipped to the blob
-   and the outline drawn over it, so that a wide label never cuts the outline *)
+(* a declared blob, or one without a name (unnamedBlobSpec, label ""): the shape filled, the hatching as explicit chords
+   and the dots as small discs (no patterns library), the label, the outline. On a hatched or dotted blob the label sits
+   in a white clearing with rounded corners, a little larger than the glyphs, so that no hatch line or dot runs through
+   or touches them; the clearing is clipped to the blob and the outline drawn over it, so that a wide label never cuts
+   the outline *)
 tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := Module[{shapeString, hatches = blobHatchesOf[p, spec],
     dots = blobDotsOf[p, spec],
     at = coordinateString[blobLabelPoint[p, spec]],
@@ -5631,11 +5638,14 @@ tikzDeclaredBlob[p_, spec : {label_, shape_, fill_, h_}, lw_, font_, rules_] := 
        units of the line width of the picture, so that they follow it when the line width is changed *)
     If[dots === {}, "", "  \\fill " <> joinStrings[Table[coordinateString[q] <> " circle (0.7\\pgflinewidth)", {q, dots}], " "] <>
       ";\n"] <>
-    If[texturedFillQ[fill],
+    Which[
+     (* a blob without a name (unnamedBlobSpec): the fill and the outline *)
+     label === "", "  \\draw " <> shapeString <> ";\n",
+     texturedFillQ[fill],
      "  \\begin{scope}\n  \\clip " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <>
       ", inner sep=1.2pt, fill=white, rounded corners=2pt] at " <> at <> " {$" <> label <> "$};\n  \\end{scope}\n" <>
       "  \\draw " <> shapeString <> ";\n",
-     "  \\draw " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <> ", inner sep=0.6pt] at " <> at <> " {$" <> label <> "$};\n"]];
+     True, "  \\draw " <> shapeString <> ";\n  \\node[font=" <> ToString[font] <> scaleString <> ", inner sep=0.6pt] at " <> at <> " {$" <> label <> "$};\n"]];
 
 tikzItems[items_, opts_List] := Module[{scale = tikzScale[opts], rules = Flatten[{drawingOption[opts, "Labels"]}], es,
     lw = tikzLineWidth[opts], font = drawingOption[opts, "LabelFont"]},
@@ -5649,7 +5659,7 @@ tikzItems[items_, opts_List] := Module[{scale = tikzScale[opts], rules = Flatten
     Cases[items, {"S", {p_, q_}} :> If[p === q, "", "  \\draw " <> coordinateString[p] <> " -- " <> coordinateString[q] <> ";\n"] <>
        "  \\draw[fill=white] " <> coordinateString[q] <> " circle (" <> numberString[0.1] <> ");\n" <>
        "  \\draw[line width=" <> numberString[0.71 lw] <> "pt] " <> tikzCross[q, 0.07] <> ";\n"],
-    Cases[items, {"N", p_, "blob"} :> "  \\draw[fill=black!22] " <> coordinateString[p] <> " circle (" <> numberString[$blobRadius] <> ");\n"],
+    Cases[items, {"N", p_, k_?unnamedBlobKindQ} :> tikzDeclaredBlob[p, unnamedBlobSpec[k], lw, font, rules]],
     Cases[items, {"B", p_, spec_} :> tikzDeclaredBlob[p, spec, lw, font, rules]],
     Cases[items, {"N", p_, "dot"} :> "  \\fill " <> coordinateString[p] <> " circle (" <> numberString[0.85 $dotRadius] <> ");\n"],
     Cases[items, {"N", p_, "ext"} :> "  \\draw[fill=white] " <> coordinateString[p] <> " circle (" <> numberString[$externalPointRadius] <> ");\n"],
