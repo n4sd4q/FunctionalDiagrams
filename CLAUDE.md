@@ -261,7 +261,9 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   nowhere by default). The blobs without a name follow the same rule: a factor of three or more labels that is not
   declared is a disc of radius 0.2 (`$blobRadius`, four hatch spacings across), hatched as the default of `DeclareBlob`,
   and the vertex functions Γ⁽ⁿ⁾ of the trees (`VertexFunction`, full vertex functions) cross-hatched (`unnamedBlobSpec`,
-  drawn by `declaredBlobPrimitives` and `tikzDeclaredBlob` without a label or a clearing). A blob is as
+  drawn by `declaredBlobPrimitives` and `tikzDeclaredBlob` without a label or a clearing; a line to such a disc ends at its
+  centre, its arrow in the middle of the part outside it, `visiblePart`, as on a line from a declared blob, which starts at
+  its outline). A blob is as
   large as its label needs (`declaredBlobSize`, from `blobLabelExtent`, an estimate of the LaTeX box, with the label font
   taken as `$blobLabelEm` = 0.6 units): the label, in a white clearing on a hatched, cross-hatched or dotted blob, lies
   inside the blob with a band of the fill (0.1 units) all around it, at the centre or on the axis of a triangle near its incentre

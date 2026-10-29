@@ -3139,9 +3139,9 @@ alignPrincipalAxes[positions_, circles_, lines_] := Module[{pts = Cases[position
 (* ---------------------------------------------------------------- graphics primitives *)
 labelPrimitive[label_, p_] := Text[Style[If[Head[label] === DummyVariable, Subscript["z", label[[2]]], label], $fontPixels, Italic], p];
 
-(* parameter of the arrow on a directed line: the middle, unless another arrow is already close to it or another line
-   crosses it there *)
-arrowParameter[path_, used_, others_ : {}, blobs_ : {}] := Module[{freeQ, c, boxes},
+(* parameter of the arrow on a directed line: the middle of its visible part {t0, t1} (visiblePart), unless another arrow
+   is already close to it or another line crosses it there; then 0.3, 0.7, 0.4 or 0.6 of the visible part *)
+arrowParameter[path_, used_, others_ : {}, blobs_ : {}, visible_ : {0., 1.}] := Module[{freeQ, c, boxes, t0 = visible[[1]], t1 = visible[[2]]},
    (* a line whose bounding box is farther than 0.15 from the point, in x or in y, is farther at every segment *)
    boxes = Table[{Min[o[[All, 1]]], Max[o[[All, 1]]], Min[o[[All, 2]]], Max[o[[All, 2]]]}, {o, others}];
    freeQ[t_] := With[{q = First[pathPoints[path, {t}, 0.]]},
@@ -3149,14 +3149,36 @@ arrowParameter[path_, used_, others_ : {}, blobs_ : {}] := Module[{freeQ, c, box
       AllTrue[Range[Length[others]], Function[i, With[{b = boxes[[i]], o = others[[i]]},
         Max[b[[1]] - q[[1]], q[[1]] - b[[2]], b[[3]] - q[[2]], q[[2]] - b[[4]]] > 0.15 + 10.^-9 ||
          Min[Table[segmentDistance[q, {o[[k]], o[[k + 1]]}], {k, Length[o] - 1}]] > 0.15]]]];
-   c = Select[{0.5, 0.3, 0.7, 0.4, 0.6}, freeQ, 1];
-   If[c === {}, 0.5, First[c]]];
-(* blobs: {centre, shape, half size} of the declared blobs, which hide what is under them *)
-arrowParameters[items_, blobs_ : {}] := Module[{used = {}, ts = {}, t, path, coarse = Table[lineCoarsePoints[it[[2]]], {it, items}]},
+   c = Select[t0 + (t1 - t0) {0.5, 0.3, 0.7, 0.4, 0.6}, freeQ, 1];
+   If[c === {}, (t0 + t1)/2, First[c]]];
+(* the visible part {t0, t1} of a line, as parameters: the whole line, but for a line that ends on the centre of a blob
+   without a name (discs, unnamedBlobSpec), which is drawn over it: from the outline of the disc to the other end, or to
+   the outline of its disc, external point or dot (markers, {centre, radius}). A line from a declared blob starts at its
+   outline, so that its arrow is already in the middle of what is seen; on the short legs of a vertex function in a tree
+   the middle of the whole line would put the arrow against the disc *)
+visiblePart[path_, discs_, markers_] := Module[{ends, len, atDisc, hidden},
+   If[discs === {}, Return[{0., 1.}]];
+   ends = pathPoints[path, {0., 1.}, 0.]; len = pathLength[path];
+   atDisc = Table[AnyTrue[discs, vectorNorm[# - q] < 10.^-6 &], {q, ends}];
+   If[! Or @@ atDisc, Return[{0., 1.}]];
+   hidden = Table[If[atDisc[[k]], $blobRadius, With[{m = Select[markers, vectorNorm[#[[1]] - ends[[k]]] < 10.^-6 &, 1]},
+       If[m === {}, 0., m[[1, 2]]]]], {k, 2}];
+   If[Total[hidden] > 0.8 len, {0., 1.}, {hidden[[1]]/len, 1. - hidden[[2]]/len}]];
+(* blobs: {centre, shape, half size} of the blobs, which hide what is under them; discs: the centres of those without a
+   name; markers: {centre, radius} of the points drawn at the ends of lines *)
+arrowParameters[items_, blobs_ : {}, discs_ : {}, markers_ : {}] := Module[{used = {}, ts = {}, t, path,
+    coarse = Table[lineCoarsePoints[it[[2]]], {it, items}]},
    Do[If[directedStyleQ[items[[i, 3]]], path = items[[i, 2]];
-     t = arrowParameter[path, used, Delete[coarse, i], blobs]; AppendTo[used, First[pathPoints[path, {t}, 0.]]];
+     t = arrowParameter[path, used, Delete[coarse, i], blobs, visiblePart[path, discs, markers]];
+     AppendTo[used, First[pathPoints[path, {t}, 0.]]];
      AppendTo[ts, t], AppendTo[ts, 0.5]], {i, Length[items]}];
    ts];
+(* the arrow parameters of the lines es of a picture (its items): the declared blobs, and the discs of those without a
+   name, hide what is under them; external points and dots are the markers *)
+itemArrowParameters[es_, items_] := arrowParameters[es,
+   Join[Cases[items, {"B", p_, spec_} :> {p, spec[[2]], spec[[4]]}], Cases[items, {"N", p_, k_?unnamedBlobKindQ} :> {p, "Circle", $blobRadius}]],
+   Cases[items, {"N", p_, k_?unnamedBlobKindQ} :> p],
+   Join[Cases[items, {"N", p_, "ext"} :> {p, $externalPointRadius}], Cases[items, {"N", p_, "dot"} :> {p, $dotRadius}]]];
 
 (* the half size of the cross on an impurity line *)
 $impurityCross = 0.13;
@@ -3188,7 +3210,7 @@ legPrimitives[{"L", q_, e_, direction_}] := With[{path = If[direction === "In", 
 (* a: the appearance (diagramAppearance): every colour is that of the light or the dark notebook *)
 itemPrimitives[items_, opts_List, a_ : Automatic] := With[{fg = diagramColor[a, "Foreground"], paper = diagramColor[a, "Paper"]},
   {AbsoluteThickness[With[{w = drawingOption[opts, "LineWidth"]}, If[NumberQ[w] && w > 0, w, 1.3]]], fg,
-   With[{es = Cases[items, {"E", __}]}, MapThread[linePrimitives[#1, #2] &, {es, arrowParameters[es, Cases[items, {"B", p_, spec_} :> {p, spec[[2]], spec[[4]]}]]}]],
+   With[{es = Cases[items, {"E", __}]}, MapThread[linePrimitives[#1, #2] &, {es, itemArrowParameters[es, items]}]],
    legPrimitives /@ Cases[items, {"L", __}],
    Cases[items, {"S", {p_, q_}} :> {Line[{p, q}], {EdgeForm[{fg, AbsoluteThickness[1.]}], paper, Disk[q, 0.1]},
       AbsoluteThickness[1.], crossAt[q, 0.07]}],

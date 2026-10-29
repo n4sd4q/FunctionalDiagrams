@@ -115,6 +115,14 @@ vertex of the electron gas at fourth order 10.5 s instead of 14; the Green funct
   four spacings of the hatching across), without a label. A grey blob is now drawn only for `"Fill" -> "Grey"`. The
   trees of the showcase, the manual and the examples are drawn so, and the usage messages of `DrawDiagram` and
   `VertexFunction` say it.
+- **The arrow of a line from a disc without a name is in the middle of what is seen.** A line to a vertex function of a
+  tree or to another undeclared factor of three or more labels ends at the centre of the disc, under it, and its arrow
+  was at the middle of the whole line: on the short legs of the trees with fermion lines (`ConnectedFunctionFromVertices`
+  with `"FermionLines"`) it sat against the disc, 0.06 units from it, and three times as far from the external point.
+  It is now in the middle of the part outside the disc, from its outline to the outline of the point, vertex or disc at
+  the other end, as the arrow of a line from a declared blob, which starts at its outline; in the Graphics of
+  Mathematica and in TikZ, the arrowheads of the same size. Only the trees with fermion lines of the showcase and of the
+  manual change.
 
 ### Documents
 

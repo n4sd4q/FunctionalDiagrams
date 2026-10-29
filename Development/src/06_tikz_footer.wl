@@ -211,7 +211,7 @@ tikzItems[items_, opts_List] := Module[{scale = tikzScale[opts], rules = Flatten
     lw = tikzLineWidth[opts], font = drawingOption[opts, "LabelFont"]},
    es = Cases[items, {"E", __}];
    StringJoin[
-    MapThread[tikzLine[#1, #2, scale, lw, #3] &, {es, arrowParameters[es, Cases[items, {"B", p_, spec_} :> {p, spec[[2]], spec[[4]]}]],
+    MapThread[tikzLine[#1, #2, scale, lw, #3] &, {es, itemArrowParameters[es, items],
       waveCrossingParameters[es]}],
     Cases[items, {"L", q_, e_, direction_} :> "  \\draw " <> coordinateString[q] <> " -- " <> coordinateString[e] <> ";\n" <>
        Which[direction === "Out", tikzArrowHead[{"segment", q, e}, 0.55, scale, lw],

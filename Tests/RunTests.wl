@@ -468,6 +468,39 @@ check["the vertex functions of a tree are cross-hatched discs (Graphics and TikZ
     {tikzHatchSegments[tv], tikzHatchSegments[tk]}, occurrences[tv, "\\fill[white] (0.000,0.000) circle (0.200)"],
     StringFreeQ[tv <> tk, "black!" | "node[font=\\small, inner sep=1.2pt"]}],
   {{"ext", "vertexFunction"}, {6, 12, 12, 12}, {6}, {3}, {GrayLevel[0], GrayLevel[1]}, {6, 3}, 1, True}];
+(* a line that ends at the centre of a disc without a name has its arrow in the middle of the part outside the disc:
+   the arrowheads of TikZ, on every line from a disc, as far from the disc (radius 0.2) as from the outline of what is
+   at the other end (another disc, or an external point, 0.08), and well clear of both; in the middle of the whole
+   line they would sit against the disc (0.06 from it on the legs of the trees) *)
+discArrowGaps[t_String] := Module[{pt, lines, heads, discs, exts, out = {}},
+   pt[s_] := ToExpression["{" <> s <> "}"];
+   lines = StringCases[t, "\\draw (" ~~ a : Except[")"] .. ~~ ") -- (" ~~ b : Except[")"] .. ~~ ");" :> {pt[a], pt[b]}];
+   heads = StringCases[t, "\\fill (" ~~ h : Except[";"] .. ~~ "-- cycle;" :> (pt /@ StringCases["(" <> h, "(" ~~ c : Except[")"] .. ~~ ")" :> c])];
+   discs = StringCases[t, "\\fill[white] (" ~~ c : Except[")"] .. ~~ ") circle (0.200)" :> pt[c]];
+   exts = StringCases[t, "\\draw[fill=white] (" ~~ c : Except[")"] .. ~~ ") circle (0.080)" :> pt[c]];
+   Do[With[{ends = If[AnyTrue[discs, Norm[# - l[[1]]] < 0.002 &], l, Reverse[l]]},
+      If[AnyTrue[discs, Norm[# - ends[[1]]] < 0.002 &],
+       With[{c = ends[[1]], u = Normalize[ends[[2]] - ends[[1]]], len = Norm[ends[[2]] - ends[[1]]],
+         re = Which[AnyTrue[discs, Norm[# - ends[[2]]] < 0.002 &], 0.2, AnyTrue[exts, Norm[# - ends[[2]]] < 0.002 &], 0.08, True, 0.]},
+        Do[With[{m = Mean[h] - c}, If[Abs[m . {-u[[2]], u[[1]]}] < 0.01 && 0 < m . u < len,
+           With[{s = (# - c) . u & /@ h}, AppendTo[out, {Min[s] - 0.2, len - re - Max[s]}]]]], {h, heads}]]]], {l, lines}];
+   out];
+DeclareDirectedPropagator[ArrowLine];
+check["the arrow of a line from a disc without a name (a vertex function of a tree, an undeclared factor) in the middle of the part outside the disc, in TikZ and in the Graphics",
+  (* the trees with fermion lines made first: they declare their propagator directed again (the trees of "Boson" drawn
+     above declared it undirected) *)
+  With[{four = ConnectedFunctionFromVertices[{x1, x2, x3, x4}, "FermionLines"]},
+   With[{gaps = discArrowGaps /@ Append[DiagramToTikZ[lineTrees6, {x1, x2, x3, x4, x5, x6}, "Output" -> "List"][[All, 2]],
+        DiagramToTikZ[IntegralOver[ArrowLine[x, u] ArrowLine[v, y] ArrowLine[w, z] UnnamedKernel[u, v, w], {u, v, w}], {x, y, z}]],
+     heads = Cases[DrawDiagram[four, {x1, x2, x3, x4}], Polygon[h : {_, _, _}] :> h, Infinity],
+     exts = Cases[geometryItems[four, {x1, x2, x3, x4}], {"N", p_, "ext"} :> p]},
+    {Length /@ gaps, Min[Flatten[gaps]] > 0.1, Max[Abs[Subtract @@@ Flatten[gaps, 1]]] < 0.005,
+     (* the Graphics: the heads of the four legs of the vertex of W^(4) (its disc at the origin) clear of the disc and of
+        the points *)
+     Length[heads], Min[Table[With[{e = First[MaximalBy[exts, Normalize[#] . Mean[h] &]]}, With[{s = Normalize[e] . # & /@ h},
+          {Min[s] - FunctionalDiagrams`Private`$blobRadius, Norm[e] - FunctionalDiagrams`Private`$externalPointRadius - Max[s]}]],
+        {h, heads}]] > 0.1}]],
+  {{6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3}, True, True, 4, True}];
 check["DeclareBlob: a four-point box has its legs at its corners",
   Sort[Cases[geometryItems[FBx[a, b, c, d], {a, b, c, d}], {"L", q_, __} :> Round[q/FunctionalDiagrams`Private`$declaredBlobSize]]],
   {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}}];
