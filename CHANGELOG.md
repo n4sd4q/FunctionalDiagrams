@@ -30,7 +30,12 @@
 ### Faster
 
 The same results, every one: the benchmark of `Development/benchmark.wl`, the test suite, the figures of the showcase
-and the examples of the manual are unchanged byte for byte.
+and the examples of the manual are unchanged byte for byte. Altogether (the minimum of three runs, alone on two cores):
+the test suite takes 64 s instead of 80, the showcase script 132 s instead of 155, the guided tour 12 s instead of 14
+and the examples of the manual 10.5 s instead of 11.5; the 48 cases of the benchmark half the time, 68 s instead of 137,
+the slowest of them, Φ of the Nambu field with the pairing terms at fourth order, 20 s instead of 75, and the full
+vertex of the electron gas at fourth order 10.5 s instead of 14; the Green function of the electron gas at fifth order
+(8162 diagrams) takes 18.5 s instead of 25.4.
 
 - **Cut tests on integer graphs.** The tests of one- and two-particle irreducibility, of skeletons and of the channels
   of the parquet decomposition build the graph of a term with integer nodes and remove its lines inside compiled

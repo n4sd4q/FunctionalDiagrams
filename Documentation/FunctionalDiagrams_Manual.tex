@@ -821,10 +821,11 @@ The derivatives of $\log Z$ at zero source are the connected functions (the cumu
 \excode{cumulants}
 \exformula{cumulants}
 For an interacting theory, $W=\log Z$ is best expanded in the coupling before it is differentiated: every derivative of
-\pkg{Log[Z]} brings a power of $1/Z$ with all its orders, so that the four-point function of $\phi^4$ theory takes minutes
-this way. With $Z=Z_0(1+z)$, where \pkg{z = SimplifyDiagrams[(Z - Z0)/Z0]} is a polynomial in the source (the division
-cancels the Gaussian factor), \pkg{W = Log[Z0] + Normal[Series[Log[1 + z], \{lambda, 0, n\}]]} is differentiated in seconds
-(the guided tour, section~4); \fnref{ConnectedCorrelationFunction} gives the same functions directly.
+\pkg{Log[Z]} brings a power of $1/Z$ with all its orders, so that the four-point function of $\phi^4$ theory from $Z$ to
+$\lambda^2$ takes about 13~s this way. With $Z=Z_0(1+z)$, where \pkg{z = SimplifyDiagrams[(Z - Z0)/Z0]} is a polynomial
+in the source (the division cancels the Gaussian factor),
+\pkg{W = Log[Z0] + Normal[Series[Log[1 + z], \{lambda, 0, n\}]]} is differentiated in a fraction of a second (the guided
+tour, section~4); \fnref{ConnectedCorrelationFunction} gives the same functions directly.
 
 \subsection{Gaussian functionals}
 
@@ -3371,11 +3372,11 @@ one-dimensional interval at their real roots.
 \paragraph{Performance} The showcase --- the electron gas and $\phi^4$ theory to third order ($G$: 87
 diagrams, $\Sigma$, $\log Z$, $\Phi$, $\Sigma[G]$, $\Gamma^0$: 58, the full vertex $F$: 94, the parquet checks), the exact
 equations, Hubbard--Stratonovich, the Matsubara sums, $\phi^4$ theory to two loops in dimensional regularization, QCD and
-the trees of vertex functions up to six points, with several hundred pictures --- runs in about four minutes.
-The QED computation of section~\ref{sec:qed-results} (\pkg{Tests/QEDOneLoop.wl}) takes about ten seconds.
-The superfield costs more per order than the electron gas: its Luttinger--Ward functional takes about 3~s at third
-order and 2~minutes at fourth, \fnref{EffectiveAction2PI} with its mean about 3~minutes at fourth order (16~s for the
-fermionic $\Gamma[\bar\Psi,\Psi,G]$), and \fnref{SuperfieldComponents} of that action about 8~minutes.
+the trees of vertex functions up to six points, with several hundred pictures --- runs in a little over two minutes.
+The QED computation of section~\ref{sec:qed-results} (\pkg{Tests/QEDOneLoop.wl}) takes about ten seconds. At fourth
+order the Luttinger--Ward functional of the superfield takes about half a second, \fnref{EffectiveAction2PI} with its
+mean about 2~s (1~s for the fermionic $\Gamma[\bar\Psi,\Psi,G]$), and \fnref{SuperfieldComponents} of that action
+about 30~s; the Green function of the electron gas at fifth order, 8162 diagrams, about 20~s.
 
 % ------------------------------------------------------------------ 20
 \section{Compatibility, tests and troubleshooting}\label{sec:troubleshooting}
@@ -3387,7 +3388,7 @@ test suite is \pkg{Tests/RunTests.wl}:
 wolframscript -file Tests/RunTests.wl
 wolfram -script Tests/RunTests.wl         # the same, without wolframscript
 \end{tcblisting}
-It prints PASS or FAIL for every check and a summary with the number of checks passed, about 800 in two minutes;
+It prints PASS or FAIL for every check and a summary with the number of checks passed, about 860 in a minute;
 \pkg{Tests/RunTests.out} is the output of the last run. The checks cover the functional derivative (sources, chain rule,
 renaming of integration variables, delta functions), Wick's theorem for bosons and fermions (signs, numbers of pairings,
 spin indices), the numbers of diagrams of $\phi^4$ theory and of the electron gas (vacuum, Green function, 1PI,

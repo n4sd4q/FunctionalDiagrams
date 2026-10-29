@@ -7,7 +7,7 @@
 
    Run it in a fresh kernel: open this file in Mathematica and choose Run All Code, or evaluate
    Get["<path of this folder>/make_examples.wl"], or run  wolfram -script make_examples.wl  (or wolframscript -file) in this
-   folder; it takes about twenty seconds. *)
+   folder; it takes about ten seconds. *)
 
 $IterationLimit = 10^8;
 SetDirectory[If[$InputFileName =!= "", DirectoryName[$InputFileName], NotebookDirectory[]]];

@@ -271,8 +271,9 @@ more limited than FeynCalc's, so for real loop calculations the two are better u
 
 Wick's theorem is applied as a sum over pairings in which the interchangeable legs of a vertex are contracted only once,
 with their multiplicity, and the canonical form uses colour refinement and individualization, as graph-isomorphism
-programs do. The guided tour runs in less than a minute, the test suite in about a minute and a half (twenty-five seconds
-without the effective actions), and the script that computes and draws everything in the showcase in about two minutes.
+programs do; the refinement (of most terms) and the tests of irreducibility run on integers, in compiled functions. As
+scripts, the guided tour runs in about 12 s, the test suite in about a minute (twenty-five seconds without the effective
+actions), and the script that computes and draws everything in the showcase in a little over two minutes.
 
 </details>
 

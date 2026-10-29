@@ -24,15 +24,21 @@ showcase script and took a third off the test suite.
 - **Cutting rules.** The finite-temperature cutting rules are checked for chains of lines; vertex corrections (the
   circling rules of Kobes and Semenoff) are not covered.
 - **Speed with the full Wolfram Language.** Profiled (October 2026, `Development/benchmark.wl` and a sampling profiler)
-  over the suite and the scripts of the showcase and the manual. Done since, with the same outputs: the cut tests on
-  integer graphs (a compiled union-find), the Wick enumeration, the copies of a term, the delta functions, the colour
-  refinement on integers (compiled) for the terms whose factors are flat. Left: the TikZ export and the layout (two
-  fifths of the showcase script: options looked up at every use, numbers formatted one at a time, crossings counted
-  candidate by candidate, a second canonical form in `termsForDrawing`); the terms with a power of a line or another
-  factor that is not flat (a sixth of the terms, 2-3 % of the canonical form), which take the symbolic refinement; the
-  Dirac rules applied by `//.` to whole expressions (the product rules of the first `diracLinear` are most of
-  `DiracSimplify`: applied once to each distinct product, trace or chain, `diracLinear` is 15 % faster, but the fresh
-  loop momenta get other names; a term at a time changes their order).
+  over the suite and the scripts of the showcase and the manual. Done since, with the same outputs (the benchmark, the
+  suite, the figures and the examples byte for byte; reviewed with differential checks on inputs outside them): the cut
+  tests on integer graphs (a compiled union-find), the Wick enumeration, the copies of a term, the delta functions, the
+  colour refinement on integers (compiled) for the terms whose factors are flat. The suite went from 80 to 64 s, the
+  showcase script from 155 to 132 s, the benchmark from 137 to 68 s. Left: the drawing and the TikZ export (two fifths
+  of the showcase script, in `05_drawing.wl` and `06_tikz_footer.wl`; each change must keep every picture byte for
+  byte, and a vectorised sum can change the last digit of a coordinate): the options of a picture resolved once into an
+  association instead of `optionValue` at every use, the numbers of a path formatted together (`numberString` is called
+  300 000 times by the showcase script), the candidate positions of a loop (`placeLoopCircle`) scored in one call or
+  pruned by bounding boxes, no second canonical form in `termsForDrawing`, fewer `Module`s and short real lists per item
+  in `frameItems`, `pathPoints` and `arrowParameter`, the distances of `layoutVacuumLoops` vectorised. Also left: the
+  terms with a power of a line or another factor that is not flat (a sixth of the terms, 2-3 % of the canonical form),
+  which take the symbolic refinement; the Dirac rules applied by `//.` to whole expressions (the product rules of the
+  first `diracLinear` are most of `DiracSimplify`: applied once to each distinct product, trace or chain, `diracLinear`
+  is 15 % faster, but the fresh loop momenta get other names; a term at a time changes their order).
 - **Options.** Functions of 07, 09 and 10 check the names of their options (`checkOptionNames`) without `Options[f]`;
   those of 03, 04 and 11 have `Options[f]` with literal defaults and no check, so a misspelt `"Statistics"`, `"Channel"`
   or `"MaximumOrder"` is ignored silently and `SetOptions` has no effect on most. One helper (names checked, defaults
@@ -90,9 +96,9 @@ Left:
   FullPropagator = −𝒢, another sign convention).
 - Spin-resolved pairing kernels with spin components (singlet pairing at a contact interaction, where 𝒢_ψψ(x, x) = 0
   without spin); a superfield of complex bosons with a condensate.
-- Fourth order: Φ of the superfield takes 2 s at V⁴ and its components 5 s; Φ of Z0 with the pairing terms written in
-  components takes more than a minute (the cut tests, see Speed); the projections would need a selection by the number
-  of anomalous lines.
+- Fourth order: Φ of the superfield takes 0.7 s at V⁴ and its components 3.4 s; Φ of Z0 with the pairing terms written
+  in components 20 s (75 s before the cut tests on integers); the projections would need a selection by the number of
+  anomalous lines.
 
 ## Further checks and functions (ranked)
 
@@ -126,12 +132,14 @@ free energy.
 
 ## Speed
 
-- The test suite takes about 80–90 s alone on a core (805 checks; 23 s for 528 checks before the effective actions; it
-  was 125 s before the third round), about 70 % in `Tests/EffectiveActions.wl`. The slowest checks left are Γ⁽⁴⁾ of
-  `EffectiveAction1PI` to λ³ (11 s) and the one-site model to u⁴ (8 s); the fully irreducible vertices of the parquet
-  check are stored (`Tests/FullyIrreducibleVertices.m`, recomputed with `RECOMPUTE_REFERENCES=1`).
-- `Showcase/make_figures.wl` takes about 120 s alone on a core (it was 286 s): the effective actions 52 s (the full
-  vertex of the electron gas 16 s), the Nambu section 17 s, the φ⁴ moments 7 s, the brute-force Matsubara sums 5 s.
+- The test suite takes about a minute alone on two cores (861 checks: 64 s; 80 s before the speed work of October
+  2026, 125 s before the third round), two thirds of it in `Tests/EffectiveActions.wl`. The slowest checks left are
+  those of `EffectiveAction1PI` for Γ[φ̄] (10 s, with Γ⁽⁴⁾ to λ³), the one-site model and the exact effective actions of
+  φ³ + φ⁴ in zero dimensions (4 s each); the fully irreducible vertices of the parquet check are stored
+  (`Tests/FullyIrreducibleVertices.m`, recomputed with `RECOMPUTE_REFERENCES=1`).
+- `Showcase/make_figures.wl` takes about 130 s alone on two cores (155 s before the speed work, 286 s before the third
+  round): the effective actions 39 s (the full vertex of the electron gas 10.5 s), the Nambu section 14 s, the
+  brute-force Matsubara sums 5 s, the φ⁴ moments 4 s.
 - `"MaximumOrder"` with the logarithm of a sum at a high order: the series of Log[Z0 + Z1] to λ⁸ is written at once,
   but its powers of Z1/Z0, expanded before the derivatives, are too many (the second derivative does not finish in
   300 s); dropping the terms with too many sources before the expansion would help.

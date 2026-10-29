@@ -188,7 +188,7 @@ SimplifyDiagrams[fermionSixPoint
 (*3. Perturbation theory and vacuum bubbles*)
 
 (* ::Text:: *)
-(*φ^4 theory has the interaction S_int = λ/4! ∫ φ(z)^4, so that Z = exp(−λ/4! ∫ (δ/δJ(z))^4) Z0[J]. The package applies this operator literally, one order at a time; here to second order, since the third takes about a minute (the functions used from the next subsection on go to third order in a fraction of a second). At J = 0 the series is Z/Z0 = ⟨exp(−S_int)⟩0, the sum of all the vacuum diagrams, disconnected ones included, each with its symmetry factor. In the pictures each vertex stands for −λ (DeclareCoupling[lambda]) and an interaction line for minus its kernel: the minus sign comes from expanding exp(−S_int). The number written in front of a picture, times the values of its elements, is the term.*)
+(*φ^4 theory has the interaction S_int = λ/4! ∫ φ(z)^4, so that Z = exp(−λ/4! ∫ (δ/δJ(z))^4) Z0[J]. The package applies this operator literally, one order at a time; here to second order (the third takes about a second and a half more, while the functions used from the next subsection on go to third order in a fraction of a second). At J = 0 the series is Z/Z0 = ⟨exp(−S_int)⟩0, the sum of all the vacuum diagrams, disconnected ones included, each with its symmetry factor. In the pictures each vertex stands for −λ (DeclareCoupling[lambda]) and an interaction line for minus its kernel: the minus sign comes from expanding exp(−S_int). The number written in front of a picture, times the values of its elements, is the term.*)
 
 DeclareCoupling[lambda];
 applyInteraction[F_] := SimplifyDiagrams[

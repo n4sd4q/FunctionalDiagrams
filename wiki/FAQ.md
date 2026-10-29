@@ -174,7 +174,7 @@ Length[DiagramTerms[green4]]
 706
 ```
 
-This takes a few seconds; the fifth order (8162 diagrams) takes a few minutes. The showcase writes the time of each
+This takes about a second; the fifth order (8162 diagrams) about twenty seconds. The showcase writes the time of each
 of its steps in [`Showcase/figures/values.txt`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Showcase/figures/values.txt).
 Compute only the orders you need: [Orders and simplification](Orders-and-Simplification#selecting-and-counting-orders).
 
