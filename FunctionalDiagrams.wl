@@ -1652,7 +1652,8 @@ BetheSalpeterLadder[left_, right_, labels : {x1_, x2_, x3_, x4_}, channel_String
   SimplifyDiagrams[ladderIntegral[left, right, labels, channel, g, statisticsOption[{opts}, $parquetStatistics]]];
 
 (* the parts of order 0, 1, ..., n of the canonical terms (as OrderPart, whose order of a term is termOrder) *)
-orderPartsOfTerms[terms_List, x_, headQ_, n_Integer] := Table[Select[terms, termOrder[#, x, headQ] == k &], {k, 0, n}];
+orderPartsOfTerms[terms_List, x_, headQ_, n_Integer] := With[{orders = termOrder[#, x, headQ] & /@ terms},
+   Table[Pick[terms, (# == k &) /@ orders], {k, 0, n}]];
 (* OrderPart[e, x, k] for k = 0, ..., n, with one canonical form of e *)
 orderParts[e_, x_, n_Integer] := termListToExpression /@ orderPartsOfTerms[canonicalTermsOf[e], x, ! FreeQ[e, x[___]], n];
 (* the ladder of the parts of order k1 of the left vertex and k2 of the right one, k1 + k2 <= n (lists of the parts of
@@ -8202,10 +8203,9 @@ ExpandTrace[e_, opts___Rule] := Catch[expandTraces[e, None, 0, {opts}], operator
 ExpandTrace[e_, g0_Symbol, n_Integer, opts___Rule] := Catch[expandTraces[e, g0, n, {opts}], operatorFailure];
 (* the monomials are written out lazily (orderBounded) only for terms without Grassmann-odd factors (those of the budget of
    truncatedRawTerms) *)
-gradedSymbolQ[s_Symbol] := MemberQ[$grassmannSources, s] || MemberQ[$grassmannOddHeads, s] || MemberQ[$gradedHeads, s];
-gradedSymbolQ[_] := False;
 expandTraces[e_, g0_, n_, opts_List] := Module[{maximum = optionValue[opts, Options[ExpandTrace], "MaximumOrder"], r, terms, lazy},
-   lazy = MatchQ[maximum, {_, _Integer}] && FreeQ[e, _NonCommutativeMultiply | _GrassmannProduct] && FreeQ[e, _?gradedSymbolQ];
+   lazy = MatchQ[maximum, {_, _Integer}] && FreeQ[e, _NonCommutativeMultiply | _GrassmannProduct] &&
+     FreeQ[e, Alternatives @@ Join[$grassmannSources, $grassmannOddHeads, $gradedHeads]];
    Block[{$operatorOrder = If[lazy, {maximum[[1]], ! FreeQ[e, maximum[[1]][___]]}, None], functionLowerOrder, graded, lazyMonomial, $lazyCount = 0,
      monomialsOf, expanded},
     functionLowerOrder[f_] := functionLowerOrder[f] = functionLowerOrderOf[f];

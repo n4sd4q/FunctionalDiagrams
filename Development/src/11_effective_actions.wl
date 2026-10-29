@@ -269,10 +269,9 @@ ExpandTrace[e_, opts___Rule] := Catch[expandTraces[e, None, 0, {opts}], operator
 ExpandTrace[e_, g0_Symbol, n_Integer, opts___Rule] := Catch[expandTraces[e, g0, n, {opts}], operatorFailure];
 (* the monomials are written out lazily (orderBounded) only for terms without Grassmann-odd factors (those of the budget of
    truncatedRawTerms) *)
-gradedSymbolQ[s_Symbol] := MemberQ[$grassmannSources, s] || MemberQ[$grassmannOddHeads, s] || MemberQ[$gradedHeads, s];
-gradedSymbolQ[_] := False;
 expandTraces[e_, g0_, n_, opts_List] := Module[{maximum = optionValue[opts, Options[ExpandTrace], "MaximumOrder"], r, terms, lazy},
-   lazy = MatchQ[maximum, {_, _Integer}] && FreeQ[e, _NonCommutativeMultiply | _GrassmannProduct] && FreeQ[e, _?gradedSymbolQ];
+   lazy = MatchQ[maximum, {_, _Integer}] && FreeQ[e, _NonCommutativeMultiply | _GrassmannProduct] &&
+     FreeQ[e, Alternatives @@ Join[$grassmannSources, $grassmannOddHeads, $gradedHeads]];
    Block[{$operatorOrder = If[lazy, {maximum[[1]], ! FreeQ[e, maximum[[1]][___]]}, None], functionLowerOrder, graded, lazyMonomial, $lazyCount = 0,
      monomialsOf, expanded},
     functionLowerOrder[f_] := functionLowerOrder[f] = functionLowerOrderOf[f];
