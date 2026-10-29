@@ -136,10 +136,8 @@ declaredBlobQ[f_] := ! AtomQ[f] && declaredBlobHeadQ[Head[f]];
 
 hasDuplicatesQ[list_List] := Length[Union[list]] < Length[list];
 
-(* sign of the permutation performed by Sort (consistent with Sort by construction) *)
-permutationSign[list_List] := Module[{p = Sort[Transpose[{list, Range[Length[list]]}]][[All, 2]], inversions = 0},
-   Do[If[p[[i]] > p[[j]], inversions++], {i, Length[p]}, {j, i + 1, Length[p]}];
-   (-1)^inversions];
+(* sign of the permutation performed by Sort: Ordering gives the positions in sorted order, ties by position *)
+permutationSign[list_List] := Signature[Ordering[list]];
 
 (* sort a list of Grassmann-odd atoms: {sign, sorted list}; sign 0 if an atom repeats (nilpotency) *)
 sortGrassmannAtoms[list_List] := If[hasDuplicatesQ[list], {0, list}, {permutationSign[list], Sort[list]}];

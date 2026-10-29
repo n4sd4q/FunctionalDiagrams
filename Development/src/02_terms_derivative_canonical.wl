@@ -182,15 +182,22 @@ differentiatePower[b_, n_, source_] := Which[
 
 inertForm[e_?AtomQ] := e;
 inertForm[e_] := inert[inertForm[Head[e]], inertForm /@ (List @@ e)];
-symmetricHeadQ[h_Symbol] := MemberQ[Join[{Times, Plus, DeltaFunction}, $symmetricHeads, $antisymmetricHeads], h] ||
-   MemberQ[Attributes[h], Orderless];
+(* during a canonical form (canonicalTermList) the answers are remembered in $symmetricMemo: the declarations and the
+   attributes cannot change meanwhile *)
+$symmetricMemo = None;
+symmetricHeadQ[h_Symbol] := If[AssociationQ[$symmetricMemo], Lookup[$symmetricMemo, h, $symmetricMemo[h] = symmetricHeadQAt[h]],
+   symmetricHeadQAt[h]];
 symmetricHeadQ[_] := False;
+symmetricHeadQAt[h_Symbol] := MemberQ[Join[{Times, Plus, DeltaFunction}, $symmetricHeads, $antisymmetricHeads], h] ||
+   MemberQ[Attributes[h], Orderless];
 normalizedInertForm[inert[h_, args_List]] := With[{a = normalizedInertForm /@ args}, inert[h, If[symmetricHeadQ[h], Sort[a], a]]];
 normalizedInertForm[e_] := e;
 
-(* the rank of each descriptor among the distinct ones. The descriptors contain no patterns (heads and atoms of the
-   factors are wrapped in inert), so that they can be the left-hand sides of rules *)
-rankOfEach[descriptors_List] := With[{u = Union[descriptors]}, Replace[descriptors, Thread[u -> Range[Length[u]]], {1}]];
+(* the rank of each descriptor among the distinct ones, looked up in an association; descriptors with inexact numbers
+   (machine reals that Union takes as equal may be different keys) by rules: they contain no patterns (heads and atoms
+   of the factors are wrapped in inert), so that they can be the left-hand sides of rules *)
+rankOfEach[descriptors_List] := With[{u = Union[descriptors]}, If[Precision[descriptors] === Infinity,
+    Lookup[AssociationThread[u -> Range[Length[u]]], descriptors], Replace[descriptors, Thread[u -> Range[Length[u]]], {1}]]];
 
 (* The data of the refinement, computed once per term: for each inert factor the variables it contains and their
    positions in d; for each variable the factors that contain it. A flat factor (an atomic head with atomic arguments,
@@ -359,7 +366,9 @@ canonicalTermsOfCopies[terms_List, keys_List, depth_] := Module[{factors = keys[
    MapThread[Function[{k, f, nk, nf}, If[k === f, canonicalOf[f],
        With[{r = canonicalOf[f]}, If[r[[1]] === 0, r, {r[[1]] nk/nf, r[[2]]}]]]], {Range[Length[terms]], firstOf, factors, factors[[firstOf]]}]];
 
-canonicalTermList[terms_List, depth_ : 1] := If[depth === 1 && ! TrueQ[$nestedMemoActive] && ! FreeQ[terms, IntegralOver],
+canonicalTermList[terms_List, depth_ : 1] := If[! AssociationQ[$symmetricMemo],
+   Block[{$symmetricMemo = <||>}, canonicalTermList[terms, depth]], canonicalTermListMemo[terms, depth]];
+canonicalTermListMemo[terms_List, depth_] := If[depth === 1 && ! TrueQ[$nestedMemoActive] && ! FreeQ[terms, IntegralOver],
    Block[{$nestedMemoActive = True, nestedMemo}, canonicalTermListAt[terms, depth]], canonicalTermListAt[terms, depth]];
 canonicalTermListAt[terms_List, depth_] := Module[{keys = MapIndexed[copyKey[#1, First[#2]] &, terms], canonical, groups},
    canonical = Select[If[DuplicateFreeQ[keys[[All, 1]]], canonicalTerm[#, depth] & /@ terms, canonicalTermsOfCopies[terms, keys, depth]],
