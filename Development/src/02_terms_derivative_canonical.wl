@@ -75,14 +75,29 @@ findIntegrableDelta[c_, d_] := Module[{factors = factorList[c]}, Catch[
         If[MemberQ[d, g[[2]]], Throw[{i, g[[2]], g[[1]]}]]]]], {i, Length[factors]}];
     None]];
 
-(* a term without delta functions is left as it is *)
+(* a term without delta functions is left as it is. The deltas are integrated one at a time, on the product of the
+   deltas alone: their relative order is the same as in the whole product (Times sorts its factors by one total order,
+   and a delta combines with nothing but a delta), so the substitutions x -> y are those of integrating them in the whole
+   term, composed into one list of rules applied once to the other factors and the odd atoms. A term that vanishes is
+   integrated as before, one substitution at a time in the whole term, which stops where it vanishes *)
+deltaFactorQ[f_] := Head[f] === DeltaFunction || (Head[f] === Power && Head[f[[1]]] === DeltaFunction);
 integrateDeltaFunctions[t : diagramTerm[c0_, o0_, d0_]] := If[FreeQ[c0, DeltaFunction], t,
-   Module[{c = c0, o = o0, d = d0, found, factors, f, i, x, y},
-    While[(found = findIntegrableDelta[c, d]) =!= None,
-     {i, x, y} = found; factors = factorList[c]; f = factors[[i]];
-     c = (Times @@ Delete[factors, i]) If[Head[f] === Power, f[[1]]^(f[[2]] - 1), 1];
-     c = c /. x -> y; o = o /. x -> y; d = DeleteCases[d, x]];
-    normalizeExternalDeltas[diagramTerm[c, o, d]]]];
+   Module[{factors = factorList[c0], deltaMask, cd, d = d0, found, fs, f, i, x, y, rules = {}, c},
+    deltaMask = deltaFactorQ /@ factors;
+    cd = Times @@ Pick[factors, deltaMask];
+    While[(found = findIntegrableDelta[cd, d]) =!= None,
+     {i, x, y} = found; fs = factorList[cd]; f = fs[[i]];
+     cd = (Times @@ Delete[fs, i]) If[Head[f] === Power, f[[1]]^(f[[2]] - 1), 1];
+     cd = cd /. x -> y; rules = Append[rules /. x -> y, x -> y]; d = DeleteCases[d, x]];
+    If[rules === {}, normalizeExternalDeltas[t],
+     c = If[cd === 0, 0, cd ((Times @@ Pick[factors, deltaMask, False]) /. rules)];
+     If[c === 0, integrateDeltaFunctionsInTerm[t], normalizeExternalDeltas[diagramTerm[c, o0 /. rules, d]]]]]];
+integrateDeltaFunctionsInTerm[diagramTerm[c0_, o0_, d0_]] := Module[{c = c0, o = o0, d = d0, found, factors, f, i, x, y},
+   While[(found = findIntegrableDelta[c, d]) =!= None,
+    {i, x, y} = found; factors = factorList[c]; f = factors[[i]];
+    c = (Times @@ Delete[factors, i]) If[Head[f] === Power, f[[1]]^(f[[2]] - 1), 1];
+    c = c /. x -> y; o = o /. x -> y; d = DeleteCases[d, x]];
+   normalizeExternalDeltas[diagramTerm[c, o, d]]];
 
 (* Delta functions between labels that are not integrated over: the labels of a class joined by deltas are replaced,
    everywhere else in the term, by the first of them in canonical order; delta(a, b) f(a, b) = delta(a, b) f(a, a). *)
