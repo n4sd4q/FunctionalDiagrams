@@ -324,10 +324,31 @@ canonicalTermWithDummies[c0_, o0_, d0_, depth_] := Module[{canonicalNames = Tabl
     coefficients = Union[Select[candidates, #[[1]] === best &][[All, 2]]];
     If[Length[coefficients] > 1, {0, None}, {First[coefficients], diagramTerm[best[[1]], best[[2]], canonicalNames]}]]];
 
+(* Copies: many raw terms are copies of one another (the Wick sums of real fields, SuperfieldComponents, the derivatives
+   of exp(1/2 J G J), whose copies have fresh names), and the canonical form is computed once for the first term of each
+   key, scaled for the others. The key of a term: {its product without the exact numeric factor and its odd atoms, the
+   variables renamed by their position in d inside Hold (nothing evaluated), that factor}; two terms with one key are
+   n2/n1 times each other renamed, and the canonical form is invariant under the renaming and scales with an exact
+   factor. A term that is a number, or whose numeric factor is inexact, has a key of its own (its position i). *)
+copyKey[diagramTerm[c_, o_, d_], i_] := If[Head[c] === Times && NumberQ[First[c]],
+   If[ExactNumberQ[First[c]], {{Length[d], Delete[Hold[c, o], {1, 1}] /. Thread[d -> Array[copySlot, Length[d]]]}, First[c]},
+    {{"single", i}, 1}],
+   If[NumberQ[c], {{"single", i}, 1}, {{Length[d], Hold[c, o] /. Thread[d -> Array[copySlot, Length[d]]]}, 1}]];
+copyKey[_, i_] := {{"single", i}, 1};
+(* the canonical forms of the terms, in their order: computed for the first term of each key (in the order of the
+   terms), the copies' from it *)
+canonicalTermsOfCopies[terms_List, keys_List, depth_] := Module[{factors = keys[[All, 2]], firstOf, representatives, canonicalOf},
+   firstOf = Lookup[AssociationThread[Reverse[keys[[All, 1]]] -> Reverse[Range[Length[terms]]]], keys[[All, 1]]];
+   representatives = DeleteDuplicates[firstOf];
+   canonicalOf = AssociationThread[representatives -> (canonicalTerm[#, depth] & /@ terms[[representatives]])];
+   MapThread[Function[{k, f, nk, nf}, If[k === f, canonicalOf[f],
+       With[{r = canonicalOf[f]}, If[r[[1]] === 0, r, {r[[1]] nk/nf, r[[2]]}]]]], {Range[Length[terms]], firstOf, factors, factors[[firstOf]]}]];
+
 canonicalTermList[terms_List, depth_ : 1] := If[depth === 1 && ! TrueQ[$nestedMemoActive] && ! FreeQ[terms, IntegralOver],
    Block[{$nestedMemoActive = True, nestedMemo}, canonicalTermListAt[terms, depth]], canonicalTermListAt[terms, depth]];
-canonicalTermListAt[terms_List, depth_] := Module[{canonical, groups},
-   canonical = Select[canonicalTerm[#, depth] & /@ terms, #[[1]] =!= 0 &];
+canonicalTermListAt[terms_List, depth_] := Module[{keys = MapIndexed[copyKey[#1, First[#2]] &, terms], canonical, groups},
+   canonical = Select[If[DuplicateFreeQ[keys[[All, 1]]], canonicalTerm[#, depth] & /@ terms, canonicalTermsOfCopies[terms, keys, depth]],
+     #[[1]] =!= 0 &];
    groups = GatherBy[canonical, Last];
    Select[Table[With[{w = Together[Total[g[[All, 1]]]]}, diagramTerm[w First[g][[2, 1]], First[g][[2, 2]], First[g][[2, 3]]]],
      {g, groups}], #[[1]] =!= 0 &]];
