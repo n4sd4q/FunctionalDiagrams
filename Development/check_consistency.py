@@ -134,7 +134,7 @@ if os.path.isdir(wiki):
     # are used only on the pages (the last ones as names not to give to a propagator)
     known = set(public) | set(code_symbols(package)) | {
         'FunctionalDiagrams', 'Needs', 'Get', 'Put', 'Export', 'Print', 'ToString', 'AbsoluteTiming', 'SetOptions',
-        'Options', 'SystemOpen', 'FindFile', 'PacletInstall', 'PacletFind', 'PacletObject', 'PacletUninstall',
+        'Options', 'SystemOpen', 'NotebookOpen', 'FindFile', 'PacletInstall', 'PacletFind', 'PacletObject', 'PacletUninstall',
         'PacletDirectoryLoad', '$UserBaseDirectory', '$Version', 'Times', 'LightDarkSwitched', 'Remove',
         'C', 'D', 'E', 'I', 'K', 'N', 'O', 'Beta', 'Gamma', 'GreenFunction'}
     code = {name: re.findall(r'```mathematica\n(.*?)```', text, re.S) for name, text in pages.items()}

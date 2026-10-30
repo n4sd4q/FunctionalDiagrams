@@ -36,7 +36,12 @@ The paclet also carries the showcase, the manual and the guided tour. To open th
 SystemOpen[PacletObject["FunctionalDiagrams"]["AssetLocation", "Manual"]]
 ```
 
-(`"Showcase"` and `"Examples"` open the other two.)
+(`"Showcase"` opens the showcase.) The guided tour is a notebook, which opens in the running session:
+
+<!-- not run: it opens a notebook -->
+```mathematica
+NotebookOpen[PacletObject["FunctionalDiagrams"]["AssetLocation", "Examples"]]
+```
 
 ## From a clone of the repository
 

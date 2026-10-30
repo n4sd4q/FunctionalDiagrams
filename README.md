@@ -49,8 +49,7 @@ electron gas.
 ## Installation
 
 The package needs Mathematica 12.1 or later. Install the paclet of the latest
-[release](https://github.com/n4sd4q/FunctionalDiagrams/releases) once (the button at the right of the box copies the
-line):
+[release](https://github.com/n4sd4q/FunctionalDiagrams/releases) once:
 
 ```mathematica
 PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.5.0/FunctionalDiagrams-2.5.0.paclet"]
@@ -62,15 +61,20 @@ then load it in every session:
 Needs["FunctionalDiagrams`"]
 ```
 
-The paclet also contains the showcase, the manual and the guided tour. The latest release is 2.5.0, which this page and
-the documents describe (see the [changelog](CHANGELOG.md)). One can also download the `.paclet` file of the release
-and pass its path to `PacletInstall`. A clone of the repository works as it is, with
-`PacletDirectoryLoad["/path/to/FunctionalDiagrams"]` and ``Needs["FunctionalDiagrams`"]``, or simply
-`Get["/path/to/FunctionalDiagrams/FunctionalDiagrams.wl"]`. ``?FunctionalDiagrams`*`` lists the functions and `?Name`
-explains each one. Loaded in a notebook, the package contacts `api.github.com` once a day, in the background, and adds a
-line to its banner when a newer release is out; `$FunctionalDiagramsUpdateCheck = False` before `Needs` turns this off.
-Updating, uninstalling and the common problems: the wiki's
-[Installation](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Installation) page.
+The paclet (Mathematica's package archive) also carries the guided tour, a notebook to run cell by cell, and the two
+PDFs. To open the tour:
+
+```mathematica
+NotebookOpen[PacletObject["FunctionalDiagrams"]["AssetLocation", "Examples"]]
+```
+
+(`SystemOpen` with `"Manual"` or `"Showcase"` in place of `"Examples"` opens a PDF.) ``?FunctionalDiagrams`*`` lists
+the functions and `?Name` explains each one.
+
+- In a notebook the package asks `api.github.com` once a day, in the background, whether a newer release is out;
+  `$FunctionalDiagramsUpdateCheck = False` before `Needs` turns this off.
+- Other ways (a downloaded `.paclet`, a clone with `PacletDirectoryLoad`, `Get` of the file), updating and removing:
+  the wiki's [Installation](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Installation) page.
 
 ## A first example
 
@@ -126,8 +130,8 @@ lambda: 1, 1 and 3 diagrams, one band per order"></p>
 <p align="center">The output. A vertex stands for −λ (<code>DeclareCoupling</code>), so that the tadpole has the weight
 ½.</p>
 
-The [guided tour](Examples.nb) ([`Examples.wl`](Examples.wl), the same as a script, can be read on GitHub) goes on from
-here in thirteen short sections: the effective actions, the Bethe–Salpeter and parquet equations, pairing, Hedin's
+The [guided tour](Examples.wl) ([download the notebook](https://n4sd4q.github.io/FunctionalDiagrams/Examples.nb)) goes
+on from here in thirteen short sections: the effective actions, the Bethe–Salpeter and parquet equations, pairing, Hedin's
 equations and *GW*, and then linear response, Matsubara sums, phonons, disorder, dimensional regularization, QED and
 QCD. The [showcase](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) covers everything in more depth; every picture and number
 in it is computed by the package.
@@ -167,7 +171,7 @@ one-loop gluon self-energy.</p>
 |---|---|
 | [**Showcase**](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) | an introduction to the diagrammatic methods through the package, in three parts. Many-body theory: perturbation theory, the self-energy, linear response, Matsubara sums, the 1PI and 2PI effective actions, the grand potential, the Bethe–Salpeter equation from the response to a one-body source, vertices and response functions, the parquet equations from the derivatives of the 2PI action, pairing with the superfield of Nambu and Gor'kov, Hedin's equations, Hubbard–Stratonovich and *GW*, Potthoff's functional and divergent vertices, phonons and disorder. Quantum field theory: dimensional regularization, one-loop QED, the vertices of QCD. Tools: pictures and formulas, and what the package does under the hood |
 | [**Manual**](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf) | every function, option and convention, with examples computed by the package |
-| [**Guided tour**](Examples.nb) | a notebook to run in Mathematica (GitHub shows its source: download it with *Download raw file*); [`Examples.wl`](Examples.wl) is the same as a script, readable on GitHub |
+| [**Guided tour**](Examples.wl) | a notebook to run in Mathematica: in the paclet (see [Installation](#installation)) or [to download](https://n4sd4q.github.io/FunctionalDiagrams/Examples.nb); [`Examples.wl`](Examples.wl) is the same as a script, readable on GitHub |
 | [**Wiki**](https://github.com/n4sd4q/FunctionalDiagrams/wiki) | practical guides and a FAQ: installing and updating, the conventions in one place, declaring a theory, reading the weights, exact equations, evaluating diagrams, pictures in LaTeX, scripts |
 
 ## What it does

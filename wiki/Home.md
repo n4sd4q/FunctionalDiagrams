@@ -15,7 +15,7 @@ itself:
 | [README](https://github.com/n4sd4q/FunctionalDiagrams#readme) | an overview, a first example and a gallery |
 | [Showcase (PDF)](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) | the physics, step by step, for the electron gas and φ⁴ theory |
 | [Manual (PDF)](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf) | every function, option and convention, with examples |
-| [Guided tour](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Examples.wl) | a notebook to run ([`Examples.nb`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Examples.nb)), and the same as a script |
+| [Guided tour](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Examples.wl) | a notebook to run ([download `Examples.nb`](https://n4sd4q.github.io/FunctionalDiagrams/Examples.nb), or open it from the paclet: [Installation](Installation#from-a-release-recommended)), and the same as a script |
 | [Map of the functions](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html) | every public name by its role in a calculation, with its dependencies (interactive) |
 | [Demo video](https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4) | the first example of the README, typed and run |
 | [Releases](https://github.com/n4sd4q/FunctionalDiagrams/releases) | the paclet of every version, with the two PDFs; the history is in the [changelog](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/CHANGELOG.md) |

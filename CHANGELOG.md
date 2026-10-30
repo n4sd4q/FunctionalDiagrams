@@ -12,6 +12,11 @@
   of the repository is unchanged.
 - **φ⁴ theory in the first example of the README**, after the electron gas, as in the other documents: a real boson
   with the vertex λ/4! and its propagator to second order (1 + 1 + 3 diagrams), with its picture in bands.
+- **The guided tour, from the paclet or as a download.** The installation of the README shows the line that opens the
+  notebook of the tour from the paclet installed, `NotebookOpen[PacletObject["FunctionalDiagrams"]["AssetLocation",
+  "Examples"]]`, and leaves the other ways of installing to the wiki; the README and the wiki link the notebook as a
+  download from GitHub Pages (before, GitHub's view of its source) and the script `Examples.wl` to read. The wiki's
+  Installation page shows the line too, and its sidebar lists the tour.
 
 ## 2.5.0 (2026-10-29)
 
