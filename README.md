@@ -18,7 +18,8 @@
 </p>
 
 <p align="center">
-  <a href="https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf"><b>Showcase</b></a>
+  <a href="https://n4sd4q.github.io/FunctionalDiagrams/"><b>Website</b></a>
+  ·&nbsp;<a href="https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf"><b>Showcase</b></a>
   ·&nbsp;<a href="https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf"><b>Manual</b></a>
   ·&nbsp;<a href="Examples.wl"><b>Guided&nbsp;tour</b></a>
   ·&nbsp;<a href="https://github.com/n4sd4q/FunctionalDiagrams/wiki"><b>Wiki</b></a>
@@ -43,7 +44,8 @@ package differs from FeynArts, QGRAF, FeynCalc and DoFun.
   Luttinger–Ward functional and its derivatives Sigma and Gamma0, the Bethe–Salpeter and parquet equations of the
   electron gas, Hedin's equations"></a><br>
   <sub>A preview of the <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4">demo video</a> (40 s): the
-  electron gas of the first example below typed and run, then a few other results.</sub>
+  electron gas of the first example below typed and run, then a few other results. The
+  <a href="https://n4sd4q.github.io/FunctionalDiagrams/">website</a> plays it in the page.</sub>
 </p>
 
 ## Installation
@@ -170,6 +172,7 @@ one-loop gluon self-energy.</p>
 
 | Document | Contents |
 |---|---|
+| [**Website**](https://n4sd4q.github.io/FunctionalDiagrams/) | the package on one page: what it does, the demo video, the first example, installation, the documents, how to cite |
 | [**Showcase**](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) (PDF) | the physics, step by step, for the electron gas and φ⁴ theory: many-body theory, quantum field theory, and the tools (pictures, formulas, how the package works) |
 | [**Manual**](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf) (PDF) | every function, option and convention, with examples computed by the package |
 | [**Guided tour**](Examples.wl) | a notebook to run: in the paclet ([Installation](#installation)) or [to download](https://n4sd4q.github.io/FunctionalDiagrams/Examples.nb); [`Examples.wl`](Examples.wl) is the same as a script |
@@ -333,7 +336,7 @@ actions), and the script that computes and draws everything in the showcase in a
 | `Logo/` | the logo: the exchange (Fock) vacuum diagram, one of the two first-order diagrams of the Luttinger–Ward functional |
 | `Development/` | the sources of the package, one file per part, and the scripts that assemble it, build the paclet and draw the pictures of this page |
 | `PacletInfo.wl` | the paclet: the repository can be loaded as it is |
-| `index.html` | the landing page of the [GitHub Pages site](https://n4sd4q.github.io/FunctionalDiagrams/) |
+| `index.html` | the [website](https://n4sd4q.github.io/FunctionalDiagrams/), served by GitHub Pages and written by `Development/make_site.py` |
 | `CHANGELOG.md`, `CITATION.cff`, `CONTRIBUTING.md`, `SECURITY.md`, `LICENSE`, `NOTICE` | the history, how to cite, how to report a problem or contribute, the package's network access (its update check) and how to report a vulnerability, the text of the license, the copyright and the additional terms |
 
 </details>
