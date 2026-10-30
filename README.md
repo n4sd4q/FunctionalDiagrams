@@ -35,7 +35,8 @@ the diagrams of QCD.
 The diagrams it produces can be compared up to relabelling, sorted into classes (connected, one- and two-particle
 irreducible, skeleton, reducible in a channel), differentiated again, checked against exact equations, evaluated in a
 few common cases, and drawn in Mathematica or exported as TikZ. Every step is worked out for φ⁴ theory and for the
-electron gas.
+electron gas. [Checks](#checks) says how the results are tested, and [Related software](#related-software) how the
+package differs from FeynArts, QGRAF, FeynCalc and DoFun.
 
 <p align="center">
   <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4"><img src="Media/demo_preview.webp" width="720" alt="Preview of the demo video: the
@@ -216,9 +217,6 @@ one-loop gluon self-energy.</p>
   vacuum polarization and the vertex, with their renormalization constants and β(e) (`QEDIntegrand`, `DiracSimplify`, `IntegrateOneLoop`,
   `VertexFormFactors`)
 
-The evaluation part is deliberately small: it covers the integrals that come up in the examples, not general loop
-calculations.
-
 **Pictures and formulas**
 - diagrams in the usual style of many-body papers (fermion lines straight, loops as circles, ladders as ladders,
   symmetric diagrams drawn symmetric), exact equations with blobs, and formulas as LaTeX (`DiagramPlot`,
@@ -226,6 +224,15 @@ calculations.
 
 The theories are written in condensed notation, so the same functions work for real and complex bosons, fermions,
 phonons, disorder and QCD (quarks, gluons, ghosts).
+
+**Scope.** The package computes exact symbolic sums of diagrams in the space of labels; it is not a program for the
+numerical evaluation of Feynman integrals. It carries out the frequency sums at finite temperature, leaving the momentum
+integrals symbolic, evaluates the loop integrals that reduce to nested one-loop ones in dimensional regularization, and
+the one-loop diagrams of QED. The number of diagrams grows factorially with the order: the Green function of the
+electron gas has 706 diagrams at fourth order and 8162 at fifth (the
+[FAQ](https://github.com/n4sd4q/FunctionalDiagrams/wiki/FAQ#how-high-an-order-can-i-compute) says how long they take).
+The pictures follow rules made for many-body diagrams and trees of vertex functions; other diagrams get a general
+layout, readable but not always as in a textbook.
 
 ## Checks
 
@@ -240,13 +247,15 @@ point, Z₁ = Z₂, the anomalous magnetic moment).
 
 ## Related software
 
-[FeynArts](https://feynarts.de) and [FeynCalc](https://feyncalc.github.io) are the standard Mathematica tools for
-scattering amplitudes: FeynArts generates the diagrams of a process from a model's Feynman rules, and FeynCalc does the
-Dirac and colour algebra and the reduction of loop integrals. [DoFun](https://github.com/markusqh/DoFun) derives
-Dyson–Schwinger and functional renormalization group equations. FunctionalDiagrams starts from the generating functional
-instead, and is meant for the objects of many-body theory and effective actions: correlation and vertex functions,
-Φ[G] and its derivatives, channels and parquet equations, self-consistent approximations. Its evaluation tools are much
-more limited than FeynCalc's, so for real loop calculations the two are better used together.
+[FeynArts](https://feynarts.de) and QGRAF ([Nogueira 1993](https://doi.org/10.1006/jcph.1993.1074)) generate the
+Feynman diagrams of a process from the fields and couplings of a model, and [FeynCalc](https://feyncalc.github.io) does
+their Dirac and colour algebra and reduces one-loop integrals to scalar ones. [DoFun](https://github.com/markusqh/DoFun)
+and [QMeS-Derivation](https://github.com/QMeS-toolbox/QMeS-Derivation) derive Dyson–Schwinger and functional
+renormalization group equations, the first from an action, the second from a master equation, also by functional
+derivatives. FunctionalDiagrams works order by order with the objects of many-body theory and effective actions:
+correlation and vertex functions, Φ[G] and its derivatives, channels and parquet equations, self-consistent
+approximations; and it checks its exact equations against the perturbative series. Its evaluation tools are much more
+limited than FeynCalc's, so for real loop calculations the two are better used together.
 
 ## Map of the functions
 
@@ -267,6 +276,9 @@ use it.
 
 <details>
 <summary>Conventions</summary>
+
+All of them, with the effective actions and the units, are on the wiki's
+[Conventions](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Conventions) page.
 
 * `IntegralOver[f, {x, y, ...}]` is the integral (or sum) over the labels `x, y, ...`, which stand for position, time,
   spin and any other index; `DeltaFunction[x, y]` is the delta function. Labels are symbols. The diagrams do not depend
@@ -334,6 +346,13 @@ Every check prints PASS or FAIL; `Tests/RunTests.out` is the output of the last 
 
 </details>
 
+## Questions and problems
+
+The wiki's [FAQ](https://github.com/n4sd4q/FunctionalDiagrams/wiki/FAQ) answers the questions of the first days.
+Problems, questions and suggestions are welcome as
+[issues](https://github.com/n4sd4q/FunctionalDiagrams/issues/new/choose); [`CONTRIBUTING.md`](CONTRIBUTING.md) says what
+helps.
+
 ## Citing
 
 If you use FunctionalDiagrams in published work, please cite it as described in [`CITATION.cff`](CITATION.cff)
@@ -349,8 +368,7 @@ If you use FunctionalDiagrams in published work, please cite it as described in 
 }
 ```
 
-The history of the package is in [`CHANGELOG.md`](CHANGELOG.md). Problems, questions and suggestions are welcome as
-issues: see [`CONTRIBUTING.md`](CONTRIBUTING.md).
+The history of the package is in [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Star history
 

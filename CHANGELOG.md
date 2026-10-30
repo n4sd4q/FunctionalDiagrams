@@ -46,6 +46,13 @@
   zero-width space: GitHub drops `<wbr>`), not before the last letter, and so does the title of the wiki's Home; the
   table of the documents gives each one a short line (a third of its height on a phone) and lists the map of the
   functions, whose section now follows Related software, so that What it does, Checks and Related software read on.
+- **The README says what the package is not, and where to ask.** The introduction points to Checks and Related
+  software; What it does ends with its scope (exact sums of diagrams, not a program for the numerical evaluation of
+  Feynman integrals; what it evaluates; the factorial growth of the number of diagrams; the pictures), from the
+  manual's Scope and limitations. Related software names QGRAF and QMeS-Derivation too, each described from its own
+  page or paper, and says that DoFun and QMeS-Derivation also work by functional derivatives. A new section, Questions
+  and problems, links the FAQ, the issue forms and `CONTRIBUTING.md`; the conventions of the README and of
+  `CONTRIBUTING.md` point to the wiki's Conventions page.
 
 ## 2.5.0 (2026-10-29)
 

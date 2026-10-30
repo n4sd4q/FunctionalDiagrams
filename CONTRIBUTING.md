@@ -10,7 +10,8 @@ Open an [issue](https://github.com/n4sd4q/FunctionalDiagrams/issues) with:
 - a minimal input that shows the problem, starting from ``Needs["FunctionalDiagrams`"]`` (or `Get`), with the declarations
   it needs;
 - what you get (the output or the message) and what you expected. For a picture, a screenshot helps; for a wrong sign or
-  weight, say which convention you compared with (the conventions are in the README, under *Details*, and in the manual).
+  weight, say which convention you compared with (the conventions are in the wiki's
+  [Conventions](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Conventions) page and in the manual).
 
 ## Working on the package
 
