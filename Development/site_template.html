@@ -373,19 +373,13 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
     <div class="wrap">
       <figure>
         <div class="screen">
-          <video id="demo" autoplay muted loop playsinline controls preload="metadata" width="1920" height="1080"
+          <!-- no autoplay: the poster (the output of the first example) is what the first screen shows, under the hero;
+               the first frame of the video is its title card, the logo and the name again -->
+          <video id="demo" muted playsinline controls preload="metadata" width="1920" height="1080"
                  poster="Media/demo_poster.png" aria-label="{{VIDEO_LABEL}}" aria-describedby="demo-caption">
             <source src="Media/demo.mp4" type="video/mp4">
             <a href="Media/demo.mp4">The demo video (MP4)</a>
           </video>
-          <script>
-            (function () {
-              var v = document.getElementById('demo');
-              if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                v.removeAttribute('autoplay'); v.autoplay = false; v.pause();
-              }
-            })();
-          </script>
         </div>
         <figcaption id="demo-caption">The demo ({{VIDEO_SECONDS}} s, no sound): the first example below typed and run in a
           notebook, then a few other results. <a href="Media/demo.mp4">Open the MP4 file</a>.</figcaption>
