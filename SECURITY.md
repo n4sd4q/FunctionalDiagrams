@@ -27,6 +27,7 @@ The first line in your `init.m` (`FileNameJoin[{$UserBaseDirectory, "Kernel", "i
 
 ## Reporting a vulnerability
 
-Please report a security problem privately, not in a public issue: on the page of the repository, *Security* →
-*Report a vulnerability* (GitHub's private vulnerability reporting). Fixes go into the next release; only the latest
+Please report a security problem privately, not in a public issue:
+[*Report a vulnerability*](https://github.com/n4sd4q/FunctionalDiagrams/security/advisories/new), on the security tab
+of the repository (GitHub's private vulnerability reporting). Fixes go into the next release; only the latest
 release is supported. Other problems are welcome as [issues](https://github.com/n4sd4q/FunctionalDiagrams/issues).
