@@ -10,3 +10,5 @@ Documentation/function_map.svg linguist-generated=true
 Documentation/function_map.html linguist-generated=true
 Tests/RunTests.out linguist-generated=true
 *.pdf binary
+# the LaTeX of the manual, the showcase and the pictures of the README: documentation, not counted in the languages
+*.tex linguist-documentation=true

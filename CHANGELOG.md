@@ -76,6 +76,8 @@ Changes to the documents alone need no release; they are listed under the next v
   patch release may change, and the wiki's Installation page says it where it explains updating. The wiki's Home and
   its sidebar list the pages in the same order: first steps (Installation, Declaring a theory, Reading the weights,
   FAQ), recipes, the conventions as the reference, and in the sidebar the documents, the releases and the changelog.
+- **The languages of the repository.** The LaTeX of the manual, the showcase and the pictures of the README counts as
+  documentation (`.gitattributes`), so that GitHub's bar of languages shows the code of the package.
 
 ## 2.5.0 (2026-10-29)
 
