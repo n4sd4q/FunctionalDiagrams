@@ -3,8 +3,8 @@
 template Development/site_template.html and the sources of every fact on it, so that nothing is stated twice:
 
 - README.md: the tagline, the opening paragraphs, the install lines, the first example (its code blocks, pictures and
-  captions, in order), the panels of the gallery with their captions, the text of the map, Checks, Related software, and
-  the BibTeX entry of Citing;
+  captions, in order), the panels of the gallery with their captions, the scope (What it does), the text of the map,
+  Checks, Related software, and the BibTeX entry of Citing;
 - PacletInfo.wl: the name, the repository (hence the address of the site), the Mathematica version needed, the license
   and the name of the guided tour among the assets; Development/src/00_header.wl: the version; CITATION.cff: the date of
   the release, the author and the affiliation;
@@ -497,6 +497,10 @@ def build():
     values.update(MAP_TEXT=inline(first.group(1), link), MAP_WIDTH=str(w), MAP_HEIGHT=str(h),
                   MAP_COUNTS='%d public names · %d dependencies · version %s'
                              % (len(fmap['nodes']), len(fmap['edges']), esc(fmap['version'])))
+
+    # the scope of the package, the last paragraph of What it does if the README states it
+    scope = [b[1] for b in blocks(readme.section('What it does')) if b[0] == 'para' and b[1].startswith('**Scope.**')]
+    values.update(SCOPE='<p class="scope">%s</p>' % inline(scope[0], link) if scope else '')
 
     # Checks, Related software, Citing
     values.update(CHECKS=paragraphs(readme.section('Checks'), link),

@@ -210,6 +210,9 @@ h3 { font-size: 1.08rem; line-height: 1.35; margin: 0 0 6px; }
 .textbtn:hover { filter: brightness(1.08); }
 .textbtn svg { width: 16px; height: 16px; }
 .counts { font-size: 0.9rem; letter-spacing: 0.02em; }
+.scope { max-width: none; margin: 24px 0 0; padding: 18px 22px; border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0;
+         background: var(--band); color: var(--text-2); }
+.scope strong { color: var(--text); }
 
 /* code */
 .codecard { border: 1px solid var(--line); border-radius: 14px; background: var(--code-bg); overflow: hidden; }
@@ -412,6 +415,7 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
         <a class="mapview" href="Documentation/function_map.html" tabindex="-1" aria-hidden="true"><img src="Documentation/function_map.svg"
            width="{{MAP_WIDTH}}" height="{{MAP_HEIGHT}}" loading="lazy" decoding="async" alt=""></a>
       </div>
+      {{SCOPE}}
     </div>
   </section>
 

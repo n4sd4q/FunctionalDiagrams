@@ -87,7 +87,7 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   the documents, how to cite), **generated**: `python3 Development/make_site.py` writes it from the template
   `Development/site_template.html` (markup, CSS, the few lines of JavaScript: copy buttons, the light/dark toggle) and
   the sources of every fact on it: the README (tagline, opening paragraphs, install lines, the first example with its
-  pictures and captions, the gallery, the text of the map, Checks, Related software, the BibTeX), `PacletInfo.wl`,
+  pictures and captions, the gallery, the scope, the text of the map, Checks, Related software, the BibTeX), `PacletInfo.wl`,
   `00_header.wl`, `CITATION.cff`, `Tests/RunTests.out`, `function_map.json`, the PDFs (pages), the video (length). Never
   edit it directly; no external scripts, fonts or trackers. A README section it needs that cannot be found stops the
   script with a message. `.nojekyll` (empty) — GitHub Pages serves the main branch as it is, so that the README can
