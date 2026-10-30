@@ -42,7 +42,12 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   \orderrow{V^2}{name_2} ... \end{ordersum}` draws a sum with one coloured band per order (its left-hand side never
   alone at the foot of a page), `\figuresum{lhs}{name}` a plain sum (as a displayed formula, never at the top of a page
   apart from the line that introduces it), `\formula{name}` a formula, `\val{Key}` a value of `values.txt`. The pictures are small:
-  `pictureOptions` in `make_figures.wl`.
+  `pictureOptions` in `make_figures.wl`. `Development/check_showcase.wl` (Mathematica, about two minutes) runs every code
+  block of the `.tex` in order in one fresh kernel, as a notebook reads it, and compares each output with what the page
+  shows after the block (read by `Development/showcase_blocks.py`): the pictures of a sum (weights and TikZ code, band by
+  band), a formula (as `ExpressionToLaTeX` writes it with the options of `writeFormula` in `make_figures.wl`, whose
+  `"Display" -> f` renames symbols or indices for the display only), a value; a block after the line `% not run` is
+  skipped, and part of an output shown (some orders) is listed, the text saying so.
 - `Logo/` — the logo (SVG and PDF: the badge, which reads on light and dark pages; a white version for the dark title
   pages of the manual and the showcase; `_small.svg` for 16–32 px), drawn by `Development/make_logo.py`; the social preview
   `social_preview.png` is built by `Development/make_readme_figure.sh`.
@@ -89,7 +94,8 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
 1. Edit `Development/src/*.wl`, then `Development/build.sh`.
 2. Run the tests: `wolfram -script Tests/RunTests.wl > Tests/RunTests.out`; every check must pass.
 3. If results or pictures change: `cd Showcase && wolfram -script make_figures.wl && ./build_pdf.sh`, then look
-   at the pages of the PDF (symmetric diagrams drawn symmetric, nothing overlapping, no overfull lines).
+   at the pages of the PDF (symmetric diagrams drawn symmetric, nothing overlapping, no overfull lines), and run
+   `wolfram -script Development/check_showcase.wl` (also after editing the code of the showcase): every block must pass.
 4. Every time something is implemented and works: commit it, then right away document it in the showcase, the manual
    (`cd Documentation && wolfram -script make_examples.wl && ./build_manual.sh`), `Examples.wl` (then regenerate
    `Examples.nb`), `README.md`, the pages of the wiki that treat it (`wiki/`, then `wolfram -script

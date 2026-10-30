@@ -244,7 +244,9 @@ Schwinger–Dyson, vertex and Hedin equations, and a Hubbard–Stratonovich theo
 is checked against numbers: frequency sums against brute-force sums, imaginary parts against the cutting rules, loop
 integrals against numerical integration in non-integer dimension, and the renormalization of φ⁴ theory and of one-loop
 QED against the textbook results (β functions, anomalous dimensions, the Ising exponents at the Wilson–Fisher fixed
-point, Z₁ = Z₂, the anomalous magnetic moment).
+point, Z₁ = Z₂, the anomalous magnetic moment). The code of the showcase, of the wiki and of the first example above is
+run as printed, and gives what the page shows after it (`Development/check_showcase.wl`, `check_wiki.wl`,
+`check_readme.wl`).
 
 ## Related software
 

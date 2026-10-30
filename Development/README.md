@@ -39,6 +39,15 @@ The README uses plain `<img>` elements, one file per picture: the GitHub mobile 
 `DiagramPlot` of a block gives the panel after it: the same orders as its bands and, in each, the same weights and TikZ
 code as the figures of the showcase that the band shows.
 
+`wolfram -script check_showcase.wl` (about two minutes, after `Showcase/make_figures.wl`) does the same for the whole
+showcase: it runs every code block of `../Showcase/FunctionalDiagrams_Showcase.tex` in order, in one fresh kernel, one
+statement per complete line as a notebook reads it, and compares each output with what the page shows after the block,
+read by `showcase_blocks.py` (python3, standard library): the pictures of a sum, band by band, with `figures/NAME.terms`;
+a formula with `figures/formula_NAME.tex`, as `ExpressionToLaTeX` writes it with the options `make_figures.wl` gives
+it; a value with `figures/values.txt`. A statement that gives a message fails; a block after the line `% not run` is
+only read; the outputs shown in part (some orders, said in the text) are listed. The comment at the top of
+`check_showcase.wl` gives the rules.
+
 The demo video, `../Media/demo.mp4`, its looping preview at the top of the README, `../Media/demo_preview.webp` (an
 animated WebP at 60 fps), and a
 poster frame, `../Media/demo_poster.png`, are made by `python3 make_demo_video.py` (after `Showcase/make_figures.wl`;
@@ -58,10 +67,11 @@ and an entry in the manual, that the version is the same everywhere, that the ba
 of the tests, that the map of the functions is drawn from the current public names and version, that every version
 x.y.z written in the README, `../index.html`, the manual, the showcase (its title: x.y) and the guided tour is that
 version (numbers of that form that are not versions of the package go in its list `not_versions`), that the pages of
-the wiki state that version, use only names of the package that exist and link pages, images and files that exist, and
+the wiki state that version, use only names of the package that exist and link pages, images and files that exist,
 that the links of the README, `../index.html`, `../SECURITY.md`, `../CONTRIBUTING.md` and the issue forms reach a page
-and a heading of the wiki, a file of the repository or a heading of the README. GitHub runs it on
-every push (`../.github/workflows/consistency.yml`).
+and a heading of the wiki, a file of the repository or a heading of the README, and that the pictures and formulas shown
+after the code blocks of the showcase are in `../Showcase/figures`. GitHub runs it on every push
+(`../.github/workflows/consistency.yml`).
 
 The pages of the GitHub wiki are written in `../wiki/` (`Home.md`, `_Sidebar.md`, `_Footer.md`, one `Page-Name.md` per
 page, pictures in `images/`) and published by `../.github/workflows/wiki.yml`, which mirrors the folder into the wiki

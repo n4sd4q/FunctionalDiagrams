@@ -190,15 +190,6 @@ free energy.
 
 ## Documents
 
-- **The code of the showcase as a test.** Every code block of `Showcase/FunctionalDiagrams_Showcase.tex`, extracted and
-  run in order in one fresh kernel, one input per complete line as a notebook reads it, with the terms of each
-  `DiagramPlot` compared with `figures/` (up to the sizing options): done once by hand in October 2026, it found three
-  definitions broken over two lines, helpers of the script used without their definition and a name that already had a
-  value (in October 2026 again, with the formulas of the dimensional-regularization and QED sections compared as
-  strings with `figures/`, a third time with every formula: two propagators declared directed after their first use, a
-  name reused as a frequency, a check that kept orders beyond those it states; and a fourth time, after the check of the
-  moments of φ⁴ by the cumulants and the connected vacuum diagrams of the electron gas were written out). It could run
-  with the tests or in `check_consistency.py` (about five minutes).
 - Usage messages: those of `EffectiveAction2PI` (about 7800 characters) and `EffectiveAction1PI` (3700) are long; the
   details could move to the manual.
 

@@ -75,6 +75,17 @@ Changes to the documents alone need no release; they are listed under the next v
   It checks the links of the README, `index.html`, `SECURITY.md`, `CONTRIBUTING.md` and the issue forms as it checks
   those of the wiki: each must reach a page and a heading of the wiki, a file of the repository or a heading of the
   README.
+- **The code of the showcase as a test.** `Development/check_showcase.wl` (about two minutes) runs every code block of
+  the showcase in order in one fresh kernel, one statement per complete line as a notebook reads it, and compares each
+  output with what the page shows after the block: the pictures of a sum band by band (weights and TikZ code), a
+  formula as `ExpressionToLaTeX` writes it, a value. A message or an output not shown fails; an output shown in part
+  (some orders, as the text says) is listed. Its first run found the parquet check, an association, shown only by its
+  counts and residuals (the code now takes them with `KeyTake`), and the four-loop piece of the 1PI action of the
+  electron gas, which starts at V³, left out without a word. The formulas whose display differs from the output by
+  names only (the contracted indices called ρ and σ, ε written after π, the step function as Θ) are written by
+  `make_figures.wl` with an option that the check applies too. `check_consistency.py` checks that every picture and
+  formula shown after a code block is in `Showcase/figures`, and the Checks of the README say that the code of the
+  showcase, of the wiki and of the first example is run as printed.
 - **The versions explained, and the wiki in one order.** The head of this changelog says what a major, a minor and a
   patch release may change, and the wiki's Installation page says it where it explains updating. The wiki's Home and
   its sidebar list the pages in the same order: first steps (Installation, Declaring a theory, Reading the weights,
