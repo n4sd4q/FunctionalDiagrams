@@ -40,8 +40,10 @@ writeTerms[name_String, e_, ext_List, opts___] := Module[{parts = DiagramToTikZ[
 writePicture[name_String, e_, ext_List, opts___] := Module[{parts = DiagramToTikZ[e, ext, "Output" -> "List", opts, Sequence @@ pictureOptions]},
    Export["figures/" <> name <> ".terms", "1\n%%PICTURE%%\n" <> parts[[1, 2]], "Text"];
    Print[name, ": picture"]];
-(* a formula, written by ExpressionToLaTeX *)
-writeFormula[name_String, e_, opts___] := With[{tex = ExpressionToLaTeX[e, opts]},
+(* a formula, written by ExpressionToLaTeX. The option "Display" -> f writes f(e) instead of e, for names only (indices
+   renamed, a symbol written otherwise): Development/check_showcase.wl applies it too, to the output of the code shown *)
+writeFormula[name_String, e_, opts___] := With[{tex = ExpressionToLaTeX[Lookup[Association[Cases[{opts}, _Rule]], "Display", Identity][e],
+     Sequence @@ DeleteCases[{opts}, "Display" -> _]]},
    Export["figures/formula_" <> name <> ".tex", tex, "Text"]; Print[name, ": ", tex]];
 (* orderPart: OrderPart remembered, as most sums are both counted and written *)
 orderPart[e_, v_, m_] := orderPart[e, v, m] = OrderPart[e, v, m];
@@ -567,8 +569,8 @@ writeValue["check Lindhard = -chi0", Together[withoutMomentumSum[lindhard] +
 lindhardImaginary = RetardedImaginaryPart[AnalyticContinuation[lindhard, nu -> omega], omega];
 writeFormula["lindhard_imaginary", lindhardImaginary, "Subscripts" -> {xi}];
 (* the step function (UnitStep, written \theta by the package) as \Theta: theta is the gauge function of the Ward identity *)
-With[{tex = StringReplace[ExpressionToLaTeX[ZeroTemperatureLimit[lindhard], "Names" -> frequencyNames, "Subscripts" -> {xi}], "\\theta(" -> "\\Theta("]},
-  Export["figures/formula_lindhard_zero_temperature.tex", tex, "Text"]; Print["lindhard_zero_temperature: ", tex]];
+writeFormula["lindhard_zero_temperature", ZeroTemperatureLimit[lindhard], "Display" -> (# /. UnitStep -> StepFunctionTheta &),
+  "Names" -> Join[frequencyNames, {StepFunctionTheta -> "\\Theta"}], "Subscripts" -> {xi}];
 (* at T = 0 in one dimension (k_F = m = 1), static: minus the Lindhard function, -chi0 = (2/(Pi q)) log|(2 + q)/(2 - q)| *)
 With[{integrand = withoutMomentumSum[ZeroTemperatureLimit[lindhard /. nu -> 0]] /. {xi -> Function[s, s^2/2 - 1/2], q -> 4/5}},
   writeValue["check Lindhard T=0 one dimension", If[Abs[NIntegrate[integrand, {p, -3, -9/5, -1, 1/5, 1, 3}]/(2 Pi) -
@@ -1008,7 +1010,7 @@ $qedReport = False;
 Get[FileNameJoin[{ParentDirectory[Directory[]], "Tests", "QEDOneLoop.wl"}]];
 (* eps is written veps in the formulas only, so that it comes after pi *)
 qedNames = {veps -> "\\varepsilon", q2 -> "q^{2}"};
-qedFormula[name_String, x_] := writeFormula[name, x /. eps -> veps, "Names" -> qedNames];
+qedFormula[name_String, x_] := writeFormula[name, x, "Display" -> (# /. eps -> veps &), "Names" -> qedNames];
 (* the photon waves need the size of the pictures of QCD *)
 qedOptions = Sequence["Scale" -> 0.5, "LineWidth" -> 0.45];
 (* the 1PI functions: -i Sigma_2, i Pi_2, i e delta Gamma^mu (and the tree vertex i e gamma^mu; e > 0, the electron has charge -e) *)
@@ -1029,13 +1031,13 @@ qedIndexNames[f_] := With[{zs = Union[Cases[{f}, DummyVariable[__], Infinity]]},
 qedTree = DiracSimplify[QEDIntegrand[qedTreeVertex, {x2 -> p1, x3 -> p2 - p1, x1 -> -p2}, qedRules[1], "Indices" -> {x3 -> mu}]];
 writeFormula["qed_tree_vertex", qedTree];
 writeValue["check QED tree vertex", DiracSimplify[qedTree - I e DiracProduct[GammaMatrix[mu]]]];
-writeFormula["qed_sigma_integrand", qedIndexNames[QEDIntegrand[qedSigmaDiagrams, {y -> p, x -> -p}, qedRules[xi], "LoopMomentum" -> k]],
-  "Names" -> qedNames];
+writeFormula["qed_sigma_integrand", QEDIntegrand[qedSigmaDiagrams, {y -> p, x -> -p}, qedRules[xi], "LoopMomentum" -> k],
+  "Display" -> qedIndexNames, "Names" -> qedNames];
 writeFormula["qed_pi_integrand", QEDIntegrand[qedPiDiagrams, {y -> q, x -> -q}, qedRules[xi], "Indices" -> {x -> mu, y -> nu}, "LoopMomentum" -> k],
   "Names" -> qedNames];
 (* the vertex in the Feynman gauge, xi -> 1 *)
-writeFormula["qed_vertex_integrand", qedIndexNames[QEDIntegrand[qedVertexDiagrams, {x2 -> p1, x3 -> p2 - p1, x1 -> -p2}, qedRules[xi],
-    "Indices" -> {x3 -> mu}, "LoopMomentum" -> k] /. xi -> 1], "Names" -> qedNames];
+writeFormula["qed_vertex_integrand", QEDIntegrand[qedVertexDiagrams, {x2 -> p1, x3 -> p2 - p1, x1 -> -p2}, qedRules[xi],
+    "Indices" -> {x3 -> mu}, "LoopMomentum" -> k] /. xi -> 1, "Display" -> qedIndexNames, "Names" -> qedNames];
 (* the computation: Sigma_2, Pi_2 and the vertex exactly in d, their expansions, the counterterms, the form factors *)
 (* qedOneLoop[] repeats the computation of the showcase (below) for the checks: its time is not counted in "seconds QED" *)
 qedChecksStart = AbsoluteTime[];

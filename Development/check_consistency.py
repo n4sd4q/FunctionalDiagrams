@@ -7,7 +7,9 @@ README, index.html, the manual, the showcase (its title: major and minor) and th
 (Documentation/function_map.*) is drawn from the current public names and version; the pages of the wiki (wiki/) state
 that version, use only names of the package that exist, and link pages, images and files that exist (their code is run
 by Development/check_wiki.wl, which needs Mathematica), as do the README, index.html, SECURITY.md, CONTRIBUTING.md and the
-links of the issue forms (pages and headings of the wiki, files of the repository, headings of the README). Run from any folder:
+links of the issue forms (pages and headings of the wiki, files of the repository, headings of the README); the code
+blocks of the showcase are read by Development/showcase_blocks.py and the pictures and formulas shown after them exist
+(Development/check_showcase.wl runs them). Run from any folder:
 python3 Development/check_consistency.py"""
 import json, os, re, subprocess, sys, tempfile, unicodedata
 
@@ -242,5 +244,25 @@ for name in ('README.md', 'index.html', 'SECURITY.md', 'CONTRIBUTING.md', os.pat
         elif name == 'README.md' and target.startswith('#') and target[1:] not in readme_anchors:
             problems.append('README.md links %s, which is not a heading of the README' % target)
 
-print('\n'.join(problems) if problems else 'consistent: package, notebook, %d public names documented, wiki' % len(public))
+# the code blocks of the showcase (Development/check_showcase.wl runs them, which needs Mathematica): the .tex is read by
+# Development/showcase_blocks.py, and every picture and formula shown after a block is in Showcase/figures
+sys.path.insert(0, os.path.join(root, 'Development'))
+from showcase_blocks import showcase_blocks
+figures = os.path.join(root, 'Showcase', 'figures')
+try:
+    showcase = showcase_blocks(os.path.join(root, 'Showcase', 'FunctionalDiagrams_Showcase.tex'))
+except ValueError as error:
+    problems.append('Showcase/FunctionalDiagrams_Showcase.tex cannot be read by Development/showcase_blocks.py: %s' % error)
+    showcase = []
+for block in showcase:
+    for item in block['items']:
+        files = {'sum': [[row['name'] + '.terms'] for row in item.get('rows', [])],
+                 'figure': [[item.get('name', '') + '.terms', item.get('name', '') + '.tex']],
+                 'formula': [['formula_' + item.get('name', '') + '.tex']]}.get(item['kind'], [])
+        for alternatives in files:
+            if not any(os.path.exists(os.path.join(figures, f)) for f in alternatives):
+                problems.append('Showcase/FunctionalDiagrams_Showcase.tex, line %d: figures/%s is missing (run make_figures.wl '
+                                'and assemble.py)' % (item['line'], alternatives[0]))
+
+print('\n'.join(problems) if problems else 'consistent: package, notebook, %d public names documented, wiki, showcase' % len(public))
 sys.exit(1 if problems else 0)
