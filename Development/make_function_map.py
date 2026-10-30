@@ -2,7 +2,8 @@
 """Draws the map of the public functions of the package from Documentation/function_map.json (written by
 make_function_map.wl): Documentation/function_map.svg (a white card with a hairline edge and rounded corners, legible on
 light and dark pages alike: the picture of the README) and Documentation/function_map.html (interactive, one
-self-contained file, light and dark).
+self-contained file, light and dark, with a bar in the style of the site linking back to it: the landing page of GitHub
+Pages, the PDFs, the wiki and the repository, whose addresses come from PacletInfo.wl through make_site.py).
 
 The map shows the idea of the package: you write a functional and its functional derivatives are the diagrams. A name
 is placed by its role in a calculation, read from top to bottom as six stages: 1 declare the symbols, 2 write a
@@ -30,11 +31,14 @@ that no name overflows its chip.
 
 Python 3 with numpy and matplotlib. Run from any folder:  python3 Development/make_function_map.py"""
 
+import base64
 import html
 import itertools
 import json
 import math
 import os
+import re
+import sys
 from collections import Counter, defaultdict
 
 import numpy as np
@@ -43,6 +47,8 @@ from matplotlib.textpath import TextPath
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCUMENTATION = os.path.join(ROOT, 'Documentation')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from make_site import paclet_info, site_url  # noqa: E402  (the addresses of the repository and of the site)
 FONT_STACK = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif"
 MONO_STACK = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace"
 
@@ -1121,8 +1127,16 @@ def render_html():
              for a in NAMES]
     data = dict(version=MAP['version'], groups=[title(c) for c in CATEGORIES],
                 stages=['%s %s' % (n, t) for _, n, t in STAGES], notation=CATEGORIES.index('notation'), nodes=nodes)
+    repo = paclet_info()['url']
+    with open(os.path.join(ROOT, 'Logo', 'FunctionalDiagrams_logo_small.svg'), encoding='utf-8') as f:
+        favicon = 'data:image/svg+xml;base64,' + base64.b64encode(f.read().strip().encode('utf-8')).decode('ascii')
+    with open(os.path.join(ROOT, 'Logo', 'FunctionalDiagrams_logo_white.svg'), encoding='utf-8') as f:
+        mark = re.sub(r'<title>.*?</title>\s*', '', f.read().strip(), flags=re.S)
+    mark = mark.replace('<svg ', '<svg aria-hidden="true" focusable="false" ', 1)
     page = HTML_PAGE
-    for key, value in [('{{LIGHT}}', block('light')), ('{{DARK}}', block('dark')), ('{{SVG}}', svg),
+    for key, value in [('{{REPO}}', esc(repo)), ('{{SITE}}', esc(site_url(repo))), ('{{FAVICON}}', esc(favicon)),
+                       ('{{MARK}}', mark), ('{{DESCRIPTION}}', esc(description())),
+                       ('{{LIGHT}}', block('light')), ('{{DARK}}', block('dark')), ('{{SVG}}', svg),
                        ('{{DATA}}', json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')),
                        ('{{COUNTS}}', '%d public names, %d dependencies' % (len(NAMES), len(EDGES))),
                        ('{{VERSION}}', esc(MAP['version'])), ('{{FONTS}}', FONT_STACK)]:
@@ -1136,15 +1150,38 @@ HTML_PAGE = r'''<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FunctionalDiagrams function map</title>
+<meta name="description" content="{{DESCRIPTION}}">
+<link rel="canonical" href="{{SITE}}Documentation/function_map.html">
+<link rel="icon" href="{{FAVICON}}" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FunctionalDiagrams">
+<meta property="og:title" content="FunctionalDiagrams: map of the public functions">
+<meta property="og:description" content="{{DESCRIPTION}}">
+<meta property="og:url" content="{{SITE}}Documentation/function_map.html">
+<meta property="og:image" content="{{SITE}}Logo/social_preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<script>
+  try { var t = localStorage.getItem('FunctionalDiagrams.theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
 <style>
-:root { color-scheme: light; {{LIGHT}} --page: #ffffff; --sheet: #f6f8fa; --button: #f6f8fa; --ring: #0969da; }
+:root { color-scheme: light; {{LIGHT}} --page: #ffffff; --sheet: #f6f8fa; --button: #f6f8fa; --ring: #0969da; --bar: #1f4e79; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { color-scheme: dark; {{DARK}} --page: #0d1117; --sheet: #151b23; --button: #212830; --ring: #4493f8; }
+  :root:not([data-theme="light"]) { color-scheme: dark; {{DARK}} --page: #0d1117; --sheet: #151b23; --button: #212830; --ring: #4493f8; --bar: #163b5e; }
 }
-:root[data-theme="dark"] { color-scheme: dark; {{DARK}} --page: #0d1117; --sheet: #151b23; --button: #212830; --ring: #4493f8; }
+:root[data-theme="dark"] { color-scheme: dark; {{DARK}} --page: #0d1117; --sheet: #151b23; --button: #212830; --ring: #4493f8; --bar: #163b5e; }
 * { box-sizing: border-box; }
 html { overflow-x: hidden; }  /* on html only: on body it would make body a scroll container, and the side panel would not stick */
 body { margin: 0; background: var(--page); color: var(--ink); font-family: {{FONTS}}; font-size: 14px; line-height: 1.45; }
+.site { background: var(--bar); color: #ffffff; }
+.site .in { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 18px; padding: 6px 20px; min-height: 52px; }
+.site a { display: inline-flex; align-items: center; min-height: 36px; color: #d6e5f2; text-decoration: none; font-size: 14px; }
+.site a:hover { color: #ffffff; text-decoration: underline; text-underline-offset: 3px; }
+.site a:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; border-radius: 4px; }
+.site .home { gap: 9px; margin-right: auto; color: #ffffff; font-weight: 650; font-size: 15px; }
+.site .home svg { width: 26px; height: 26px; flex: none; }
+.site .home span { color: #b9cfe3; font-weight: 400; }
+.site nav { display: flex; flex-wrap: wrap; gap: 0 16px; }
 header { padding: 16px 20px 8px; display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: flex-end; justify-content: space-between; }
 h1 { margin: 0; font-size: 20px; font-weight: 700; }
 h1 span { font-weight: 400; color: var(--ink2); }
@@ -1189,6 +1226,8 @@ aside h3 svg { flex: none; }
 @media (max-width: 900px) {
   main { grid-template-columns: minmax(0, 1fr); padding: 8px 8px 45vh; }
   header { padding: 12px 12px 6px; }
+  .site .in { padding: 4px 12px; gap: 0 14px; }
+  .site .home span { display: none; }
   #map { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   #map svg { min-width: 640px; }
   aside { position: fixed; left: 8px; right: 8px; bottom: 8px; top: auto; max-height: 40vh; box-shadow: 0 -2px 14px rgba(0,0,0,.2); z-index: 2; }
@@ -1200,9 +1239,21 @@ aside h3 svg { flex: none; }
 </style>
 </head>
 <body>
+<div class="site">
+  <div class="in">
+    <a class="home" href="../">{{MARK}}FunctionalDiagrams <span>{{VERSION}}</span></a>
+    <nav aria-label="FunctionalDiagrams">
+      <a href="../">Home</a>
+      <a href="../Showcase/FunctionalDiagrams_Showcase.pdf">Showcase</a>
+      <a href="FunctionalDiagrams_Manual.pdf">Manual</a>
+      <a href="{{REPO}}/wiki">Wiki</a>
+      <a href="{{REPO}}">GitHub</a>
+    </nav>
+  </div>
+</div>
 <header>
   <div>
-    <h1>FunctionalDiagrams <span>· map of the public functions</span></h1>
+    <h1>Map of the public functions</h1>
     <p>{{COUNTS}} (version {{VERSION}}). Point at a name, or tab to it, to see what it uses (lines in the colour of the name used, darker towards it) and what uses it (dashed); click, tap or press Enter to keep the selection, Escape or a click on the background to release it.</p>
   </div>
   <div class="tools">
@@ -1394,6 +1445,7 @@ aside h3 svg { flex: none; }
     var dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark'
       : window.matchMedia('(prefers-color-scheme: dark)').matches;
     root.setAttribute('data-theme', dark ? 'light' : 'dark');
+    try { localStorage.setItem('FunctionalDiagrams.theme', dark ? 'light' : 'dark'); } catch (e) {}
   });
 })();
 </script>
