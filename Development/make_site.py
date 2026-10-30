@@ -387,9 +387,10 @@ class Code:
 
 
 def picture(src, alt, cls='paper'):
+    """a picture of the README, a link to itself: the SVG opens at full size in the browser"""
     w, h = svg_size(*src.split('/'))
-    return ('<img class="%s" src="%s" width="%d" height="%d" loading="lazy" decoding="async" alt="%s">'
-            % (cls, esc(src), 2 * w, 2 * h, esc(alt)))
+    return ('<a class="zoom" href="%s" title="Open the picture at full size"><img class="%s" src="%s" width="%d" '
+            'height="%d" loading="lazy" decoding="async" alt="%s"></a>' % (esc(src), cls, esc(src), 2 * w, 2 * h, esc(alt)))
 
 
 # ------------------------------------------------------------------------------------------------------------- the page
