@@ -241,6 +241,7 @@ h3 { font-size: 1.08rem; line-height: 1.35; margin: 0 0 6px; }
 .step { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; max-width: 780px; margin-top: 36px; }
 .output { max-width: 626px; margin: 0; padding: 12px 12px 16px; background: var(--tray); border: 1px solid var(--line); border-radius: 14px; }
 .output figcaption { margin: 14px 4px 0; color: var(--text-2); font-size: 0.93rem; }
+figcaption code { background: var(--bg); }   /* on the tray of a panel the usual tint would not show */
 .after { margin-top: 30px; }
 
 /* Checks and related software */
@@ -463,7 +464,7 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
             <h3>Open the guided tour</h3>
             <p>A notebook to run cell by cell; the paclet carries it, with the two PDFs:</p>
             {{TOUR_LINE}}
-            <p>Or <a href="Examples.nb" download>download <code>Examples.nb</code></a>.</p>
+            <p>Or download it: <a href="Examples.nb" download><code>Examples.nb</code></a>.</p>
           </div>
         </li>
       </ol>

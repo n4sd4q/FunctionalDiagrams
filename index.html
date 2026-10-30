@@ -272,6 +272,7 @@ h3 { font-size: 1.08rem; line-height: 1.35; margin: 0 0 6px; }
 .step { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; max-width: 780px; margin-top: 36px; }
 .output { max-width: 626px; margin: 0; padding: 12px 12px 16px; background: var(--tray); border: 1px solid var(--line); border-radius: 14px; }
 .output figcaption { margin: 14px 4px 0; color: var(--text-2); font-size: 0.93rem; }
+figcaption code { background: var(--bg); }   /* on the tray of a panel the usual tint would not show */
 .after { margin-top: 30px; }
 
 /* Checks and related software */
@@ -522,7 +523,7 @@ Z0phi = Exp[1/2 <span class="tok-f">IntegralOver</span>[J[x] D0[x, y] J[y], {x, 
             <h3>Open the guided tour</h3>
             <p>A notebook to run cell by cell; the paclet carries it, with the two PDFs:</p>
             <div class="oneliner"><pre><code id="code-3">NotebookOpen[PacletObject[<span class="tok-s">&quot;FunctionalDiagrams&quot;</span>][<span class="tok-s">&quot;AssetLocation&quot;</span>, <span class="tok-s">&quot;Examples&quot;</span>]]</code></pre><button class="copy" type="button" data-copy="code-3" aria-label="Copy the line that opens the guided tour"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="8.5" y="8.5" width="12" height="12" rx="2.2"/><path d="M15.5 8.5V5.7a2.2 2.2 0 0 0-2.2-2.2H5.7a2.2 2.2 0 0 0-2.2 2.2v7.6a2.2 2.2 0 0 0 2.2 2.2h2.8"/></g></svg><span class="label">Copy</span></button></div>
-            <p>Or <a href="Examples.nb" download>download <code>Examples.nb</code></a>.</p>
+            <p>Or download it: <a href="Examples.nb" download><code>Examples.nb</code></a>.</p>
           </div>
         </li>
       </ol>
