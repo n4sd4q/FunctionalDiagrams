@@ -1574,7 +1574,7 @@ of the vertices of degree two, normal and anomalous; and $\Gamma_1$, its lines e
 line, the means taken in the canonical order of section~\ref{sec:engine}, every $\Psi$ before every $\bar\Psi$
 (so that $S_{\rm int}[\bar\Psi,\Psi]=\frac12\int_{x,y}V(x,y)\bar\Psi(x)\bar\Psi(y)\Psi(y)\Psi(x)$ is
 $-\frac12\int_{x,y}V(x,y)\Psi(x)\Psi(y)\bar\Psi(x)\bar\Psi(y)$), and every interaction line stands for $-V$ (the pieces with
-two and three loops drawn to $V^2$):
+two or more loops drawn to $V^2$: the one with four loops starts at $V^3$):
 \begin{code}
 gammaPsi1PI = EffectiveAction1PI[FreeFermionGeneratingFunctional, CoulombVertex, 3,
     {psi -> MeanPsi, psibar -> MeanPsibar}, BareGreenFunction -> BareGreenFunction];
@@ -2548,12 +2548,12 @@ perturbative diagrams are the same:
 \begin{result}
 $F-R_{\ph}-\Gamma^0$, to $V^3$: \val{CheckGamma0FRPh}
 \end{result}
-\pkg{CheckParquetEquations} verifies the Bethe--Salpeter equation of every channel, order by order:
+\pkg{CheckParquetEquations} verifies the Bethe--Salpeter equation of every channel, order by order; of what it returns, the
+numbers of diagrams in each class and the residuals of the three equations:
 \begin{code}
-CheckParquetEquations[fullVertex, {x1, x2, x3, x4}, DressedGreenFunction,
-    InteractionPotential, 3]
+KeyTake[CheckParquetEquations[fullVertex, {x1, x2, x3, x4}, DressedGreenFunction,
+    InteractionPotential, 3], {"DiagramCounts", "Residuals"}]
 \end{code}
-The numbers of diagrams in each class, and the residuals of the three Bethe--Salpeter equations:
 \inputfigure{parquet_table}
 
 The self-energy is in turn given by the full vertex: the Schwinger--Dyson equation drawn above closes the parquet
