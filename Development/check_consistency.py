@@ -91,7 +91,10 @@ def other_versions(name, text):
 for name in ('README.md', 'index.html', 'Examples.wl', 'Documentation/FunctionalDiagrams_Manual.tex',
              'Showcase/FunctionalDiagrams_Showcase.tex'):
     if os.path.exists(os.path.join(root, name)):
-        for v in other_versions(name, open(os.path.join(root, name), encoding='utf-8').read()):
+        text = open(os.path.join(root, name), encoding='utf-8').read()
+        if name.endswith('.html'):
+            text = re.sub(r'\sd="[^"]*"', '', text)   # the path data of the icons drawn in the page are not text
+        for v in other_versions(name, text):
             problems.append('%s states the version %s, not %s (a number that is not a version of the package goes in '
                             'not_versions of check_consistency.py)' % (name, v, version))
 # the title of the showcase states the major and minor version
