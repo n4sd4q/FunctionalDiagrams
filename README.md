@@ -331,7 +331,7 @@ actions), and the script that computes and draws everything in the showcase in a
 | `Development/` | the sources of the package, one file per part, and the scripts that assemble it, build the paclet and draw the pictures of this page |
 | `PacletInfo.wl` | the paclet: the repository can be loaded as it is |
 | `index.html` | the landing page of the [GitHub Pages site](https://n4sd4q.github.io/FunctionalDiagrams/) |
-| `CHANGELOG.md`, `CITATION.cff`, `CONTRIBUTING.md`, `LICENSE`, `NOTICE` | the history, how to cite, how to report a problem or contribute, the text of the license, the copyright and the additional terms |
+| `CHANGELOG.md`, `CITATION.cff`, `CONTRIBUTING.md`, `SECURITY.md`, `LICENSE`, `NOTICE` | the history, how to cite, how to report a problem or contribute, the package's network access (its update check) and how to report a vulnerability, the text of the license, the copyright and the additional terms |
 
 </details>
 

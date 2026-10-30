@@ -1,5 +1,6 @@
 name: Problem report
 description: A wrong result, a message, a picture drawn badly, or a mistake in the documentation
+labels: ["bug"]
 body:
   - type: input
     id: versions

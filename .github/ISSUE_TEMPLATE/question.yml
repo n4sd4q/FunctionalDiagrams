@@ -1,0 +1,26 @@
+name: Question or suggestion
+description: How to compute something with the package, or an idea for it
+labels: ["question"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: What you want to compute
+      description: The object, the theory and the order, as you would write them on paper; for a suggestion, what it would let you do.
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What you tried
+      description: The input you wrote, after loading the package, and what it gave.
+      render: mathematica
+    validations:
+      required: false
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: The values of $FunctionalDiagramsVersion and $Version, if the package is installed.
+    validations:
+      required: false

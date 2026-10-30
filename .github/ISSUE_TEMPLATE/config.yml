@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: FAQ and practical guides (wiki)
+    url: https://github.com/n4sd4q/FunctionalDiagrams/wiki/FAQ
+    about: Installing, declaring a theory, reading the weights, pictures.
+  - name: Reference manual (PDF)
+    url: https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf
+    about: Every function, option and convention, with examples.

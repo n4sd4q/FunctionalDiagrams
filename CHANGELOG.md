@@ -53,6 +53,11 @@
   page or paper, and says that DoFun and QMeS-Derivation also work by functional derivatives. A new section, Questions
   and problems, links the FAQ, the issue forms and `CONTRIBUTING.md`; the conventions of the README and of
   `CONTRIBUTING.md` point to the wiki's Conventions page.
+- **Issue forms and a security policy.** Besides the problem report (now labelled `bug`), a form for a question or a
+  suggestion (labelled `question`: what you want to compute, what you tried, the versions), and links to the FAQ and to
+  the manual on the page that opens a new issue. `SECURITY.md` states the package's only access to the network, the
+  daily update check of a notebook, what it keeps on disk and how to turn it off, and how to report a vulnerability
+  privately.
 
 ## 2.5.0 (2026-10-29)
 
