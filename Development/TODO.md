@@ -197,6 +197,12 @@ free energy.
   each k) would show exactly its output, and change the two blocks of the PDF.
 - Usage messages: those of `EffectiveAction2PI` (about 7800 characters) and `EffectiveAction1PI` (3700) are long; the
   details could move to the manual.
+- **After the lighter README, website and wiki (optional).** The second comment of the README's first example in one
+  line, "(* the Luttinger–Ward functional and its derivatives: the self-energy Sigma(x, y) = dPhi/dG(y, x) and the
+  irreducible vertex Gamma0 = dSigma/dG *)", only together with a new demo video (`make_demo_video.py` types the
+  block), then `check_readme.wl`. A landscape crop of the map of the functions for the README
+  (`function_map_preview.svg`, written by `make_function_map.py`) in place of the portrait at 400 px. On the website:
+  a narrower column for the first example on a desktop, and the documentation cards in two columns on a phone.
 
 ## Distribution
 
