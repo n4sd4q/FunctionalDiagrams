@@ -155,17 +155,6 @@ self-energy of QCD"></p>
 <p align="center"><b>Field theory.</b> φ⁴ theory to two loops in dimensional regularization, one-loop QED up to the
 anomalous magnetic moment, and the gluon self-energy of QCD.</p>
 
-## Documentation
-
-| Document | Contents |
-|---|---|
-| [**Website**](https://n4sd4q.github.io/FunctionalDiagrams/) | the package on one page: what it does, the demo video, the first example, installation, the documents, how to cite |
-| [**Showcase**](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) (PDF) | the physics, step by step, for the electron gas and φ⁴ theory: many-body theory, quantum field theory, and the tools (pictures, formulas, how the package works) |
-| [**Manual**](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf) (PDF) | every function, option and convention, with examples computed by the package |
-| [**Guided tour**](Examples.wl) | a notebook to run: in the paclet ([Installation](#installation)) or [to download](https://n4sd4q.github.io/FunctionalDiagrams/Examples.nb); [`Examples.wl`](Examples.wl) is the same as a script |
-| [**Wiki**](https://github.com/n4sd4q/FunctionalDiagrams/wiki) | practical guides and a FAQ |
-| [**Map of the functions**](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html) | every public name by its role in a calculation, interactive |
-
 ## What it does
 
 - **Diagrams from a generating functional**: Wick's theorem, Z and log Z order by order, and the classes of diagrams:
@@ -236,6 +225,48 @@ fifth ([timings](https://github.com/n4sd4q/FunctionalDiagrams/wiki/FAQ#how-high-
 follow rules made for many-body diagrams and trees of vertex functions; other diagrams get a general layout, readable
 but not always as in a textbook.
 
+## Documentation
+
+| Document | Contents |
+|---|---|
+| [Website](https://n4sd4q.github.io/FunctionalDiagrams/) | the package on one page, with the demo video |
+| [Showcase](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) (PDF) | the physics step by step, for the electron gas and φ⁴ theory |
+| [Manual](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf) (PDF) | every function, option and convention |
+| [Guided tour](Examples.wl) | a notebook to run: in the paclet, or [to download](https://n4sd4q.github.io/FunctionalDiagrams/Examples.nb) |
+| [Wiki](https://github.com/n4sd4q/FunctionalDiagrams/wiki) | practical guides, the conventions and a FAQ |
+| [Changelog](CHANGELOG.md) | what changed in each version |
+
+<details>
+<summary>Conventions in brief</summary>
+
+All of them, with the effective actions and the units, are on the wiki's
+[Conventions](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Conventions) page.
+
+* `IntegralOver[f, {x, y, ...}]` is the integral (or sum) over the labels `x, y, ...`, which stand for position, time,
+  spin and any other index; `DeltaFunction[x, y]` is the delta function. Labels are symbols.
+* Grassmann-odd factors are multiplied with `**`; `FunctionalDerivative[F, s1, ..., sn]` is the left derivative
+  δ/δs1 … δ/δsn F, the rightmost acting first.
+* Results are in canonical form: the integration variables are renamed `z1, z2, ...`, so that equal diagrams are
+  recognized and `SimplifyDiagrams[a - b]` is 0 exactly when `a` and `b` are equal.
+* Fermions: `G0 = -<psi psibar>`, the free generating functional is `Exp[-IntegralOver[G0[x, y] etabar[x] ** eta[y], {x, y}]]`,
+  `psi` ↔ δ/δ`etabar`, `psibar` ↔ −δ/δ`eta`; `G[x, y]` is drawn as an arrow from `y` to `x`. The interaction is
+  `1/2 ∫ V(x, y) psibar(x) psibar(y) psi(y) psi(x)`.
+
+</details>
+
+## Map of the functions
+
+<p align="center"><a href="https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html"><img
+src="Documentation/function_map.svg" width="400" alt="Map of the public functions of FunctionalDiagrams in six stages
+of a calculation: declare the symbols, write a functional, differentiate it with FunctionalDerivative (the hub, with
+the functions built on it hanging from it), then classify and check, draw and evaluate the diagrams. Click to open the
+interactive map"></a></p>
+
+The public functions by their role in a calculation: declare the symbols, write a functional, differentiate it, then
+classify, draw and evaluate the diagrams. Click the map for the
+[interactive version](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html): select a name to read
+its usage message and to see what it uses and what uses it.
+
 ## Checks
 
 The results are checked against each other, order by order, and the showcase reports every residual: for the electron
@@ -258,99 +289,11 @@ correlation and vertex functions, Φ[G] and its derivatives, channels and parque
 approximations; and it checks its exact equations against the perturbative series. Its evaluation tools are much more
 limited than FeynCalc's, so for real loop calculations the two are better used together.
 
-## Map of the functions
-
-<p align="center"><a href="https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html"><img
-src="Documentation/function_map.svg" width="400" alt="Map of the public functions of FunctionalDiagrams in six stages
-of a calculation: declare the symbols, write a functional, differentiate it with FunctionalDerivative (the hub, with
-the functions built on it hanging from it), then classify and check, draw and evaluate the diagrams. Click to open the
-interactive map"></a></p>
-
-The public functions by their role in a calculation: declare the symbols, write a functional, differentiate it, then
-classify, draw and evaluate the diagrams. Click the map for the
-[interactive version](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html): select a name to read
-its usage message and to see what it uses and what uses it.
-
-## Details
-
-<details>
-<summary>Conventions</summary>
-
-All of them, with the effective actions and the units, are on the wiki's
-[Conventions](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Conventions) page.
-
-* `IntegralOver[f, {x, y, ...}]` is the integral (or sum) over the labels `x, y, ...`, which stand for position, time,
-  spin and any other index; `DeltaFunction[x, y]` is the delta function. Labels are symbols. The diagrams do not depend
-  on what a label is: the same results hold in any dimension, at zero or finite temperature, and on the Keldysh contour.
-* Grassmann-odd factors are multiplied with `**`; `FunctionalDerivative[F, s1, ..., sn]` is the left derivative
-  δ/δs1 … δ/δsn F, the rightmost acting first.
-* Results are in canonical form: the integration variables are renamed `z1, z2, ...`, so that equal diagrams are
-  recognized and `SimplifyDiagrams[a - b]` is 0 exactly when `a` and `b` are equal.
-* Fermions: `G0 = -<psi psibar>`, the free generating functional is `Exp[-IntegralOver[G0[x, y] etabar[x] ** eta[y], {x, y}]]`,
-  `psi` ↔ δ/δ`etabar`, `psibar` ↔ −δ/δ`eta`; `G[x, y]` is drawn as an arrow from `y` to `x`. The interaction is
-  `1/2 ∫ V(x, y) psibar(x) psibar(y) psi(y) psi(x)`.
-* The number written in front of a picture, times the values of its elements, is the term: a propagator stands for
-  itself, an interaction line for −V and a vertex for minus its coupling (−λ in φ⁴ theory, `DeclareCoupling`): the minus
-  sign comes from expanding exp(−S_int). So Fock has the weight +1, Hartree −1 (its closed fermion loop), the φ⁴ tadpole +½.
-* QED: the electron has the charge −e, with e > 0 everywhere, and the vertex is +ieγ^μ (Peskin and Schroeder with e → −e).
-* Σ(x, y) = δΦ/δG(y, x) and Γ⁰(x1, x2; x3, x4) = δΣ(x1, x2)/δG(x4, x3): fermions leave a vertex at `x1, x3` and enter at
-  `x2, x4`. In code: `FunctionalDerivative[Phi, G[y, x]]` and `FunctionalDerivative[Phi, G[x4, x3], G[x2, x1]]`.
-* Real bosons (`G = <phi phi>`, declared symmetric): Σ(x, y) = −2δΦ/δG(x, y) and Γ⁰ = −2δΣ/δG = 4δ²Φ/δGδG, the kernel of
-  the channel s; for the Nambu field (ψ, ψ̄) with its antisymmetric propagator 𝒢 the same, Σ = −2δΦ/δ𝒢. The shortcuts take
-  `"Statistics" -> "Boson"` or `"Superfield"` (without it, on a symmetric G, a message).
-* Names of propagators and fields must not be built-in symbols (`GreenFunction`, `Gamma`, `C`, `D`, `E`, `I`, `K`, `N`,
-  `O`, …): the package warns. Hence `BareGreenFunction`, `DressedGreenFunction`.
-
-</details>
-
-<details>
-<summary>Performance</summary>
-
-Wick's theorem is applied as a sum over pairings in which the interchangeable legs of a vertex are contracted only once,
-with their multiplicity, and the canonical form uses colour refinement and individualization, as graph-isomorphism
-programs do; the refinement (of most terms) and the tests of irreducibility run on integers, in compiled functions. As
-scripts, the guided tour runs in about 12 s, the test suite in about a minute (twenty-five seconds without the effective
-actions), and the script that computes and draws everything in the showcase in a little over two minutes.
-
-</details>
-
-<details>
-<summary>Contents of the repository</summary>
-
-| File | Contents |
-|---|---|
-| `FunctionalDiagrams.wl` | the package, a single file |
-| `Examples.nb`, `Examples.wl` | the guided tour (notebook, and the same as a script) |
-| `Showcase/` | the showcase: `make_figures.wl` computes and draws everything in it, `build_pdf.sh` typesets it |
-| `wiki/` | the pages of the wiki, published to it by `.github/workflows/wiki.yml` |
-| `Documentation/` | the reference manual (`make_examples.wl` computes its examples, `build_manual.sh` typesets it) and the map of the functions |
-| `Tests/` | the test suite `RunTests.wl` and its last output `RunTests.out`; `QEDOneLoop.wl`, the one-loop QED computation used by the tests; `MatsubaraBruteForce.wl`, the brute-force Matsubara sums used by the tests and the showcase; `EffectiveActions.wl`, the tests of the effective actions, with two slow references stored in `FullyIrreducibleVertices.m`; `Superfields.wl`, the tests of the superfields; `Harness.wl`, the helpers they share |
-| `Media/` | the demo video and its preview |
-| `Logo/` | the logo: the exchange (Fock) vacuum diagram, one of the two first-order diagrams of the Luttinger–Ward functional |
-| `Development/` | the sources of the package, one file per part, and the scripts that assemble it, build the paclet and draw the pictures of this page |
-| `PacletInfo.wl` | the paclet: the repository can be loaded as it is |
-| `index.html` | the [website](https://n4sd4q.github.io/FunctionalDiagrams/), served by GitHub Pages and written by `Development/make_site.py` |
-| `CHANGELOG.md`, `CITATION.cff`, `CONTRIBUTING.md`, `SECURITY.md`, `LICENSE`, `NOTICE` | the history, how to cite, how to report a problem or contribute, the package's network access (its update check) and how to report a vulnerability, the text of the license, the copyright and the additional terms |
-
-</details>
-
-<details>
-<summary>Running the tests</summary>
-
-```sh
-wolfram -script Tests/RunTests.wl     # or: wolframscript -file Tests/RunTests.wl
-```
-
-Every check prints PASS or FAIL; `Tests/RunTests.out` is the output of the last run.
-
-</details>
-
 ## Questions and problems
 
-The wiki's [FAQ](https://github.com/n4sd4q/FunctionalDiagrams/wiki/FAQ) answers the questions of the first days.
-Problems, questions and suggestions are welcome as
-[issues](https://github.com/n4sd4q/FunctionalDiagrams/issues/new/choose); [`CONTRIBUTING.md`](CONTRIBUTING.md) says what
-helps.
+Start with the wiki's [FAQ](https://github.com/n4sd4q/FunctionalDiagrams/wiki/FAQ). Problems, questions and suggestions
+are welcome as [issues](https://github.com/n4sd4q/FunctionalDiagrams/issues/new/choose);
+[`CONTRIBUTING.md`](CONTRIBUTING.md) says what helps.
 
 ## Citing
 
@@ -367,16 +310,14 @@ If you use FunctionalDiagrams in published work, please cite it as described in 
 }
 ```
 
-The history of the package is in [`CHANGELOG.md`](CHANGELOG.md).
+## License
+
+Released under the [GNU General Public License, version 3 or later](LICENSE), with two additional terms
+([`NOTICE`](NOTICE)): the attribution to the author must be kept, and modified versions must say that they are modified,
+by whom and when. Author: Nazzareno Africani (SISSA).
 
 ## Star history
 
 <p align="center"><a href="https://star-history.com/#n4sd4q/FunctionalDiagrams&amp;Date"><img
-src="https://api.star-history.com/svg?repos=n4sd4q/functionaldiagrams&amp;type=Date" width="600" alt="Star history
+src="https://api.star-history.com/svg?repos=n4sd4q/functionaldiagrams&amp;type=Date" width="400" alt="Star history
 of FunctionalDiagrams: the number of stars of the repository over time"></a></p>
-
-## License
-
-Released under the [GNU General Public License, version 3 or later](LICENSE), with two additional terms: the attribution
-to the author must be kept, and modified versions must say that they are modified, by whom and when (see
-[`NOTICE`](NOTICE), with the copyright and the terms). Author: Nazzareno Africani (SISSA).

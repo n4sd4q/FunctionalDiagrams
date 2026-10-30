@@ -7,12 +7,11 @@ needs no account, no key and no server of its own.
 
 The package's only access to the network is a check for a newer release. Loaded in a notebook, it asks GitHub's API
 (`https://api.github.com/repos/n4sd4q/FunctionalDiagrams/releases/latest`) at most once a day, in the background, for
-the latest release, and if that release is newer than the one loaded, its banner gets a line with the `PacletInstall`
-line of the release. The request carries nothing about you or your work (GitHub sees it as any web request, with the
-address it comes from). The date of the last check
-is kept in `LastUpdateCheck.txt`, in the folder `ApplicationData/FunctionalDiagrams` of `$UserBaseDirectory`. A script
-never checks, nor does a session in which Mathematica may not use the Internet (`$AllowInternet` is `False`), and every
-failure is silent.
+the latest release; if that release is newer than the one loaded, the banner shows the `PacletInstall` line of the new
+release. The request carries nothing about you or your work (GitHub sees it as any web request, with the address it
+comes from). The date of the last check is kept in `LastUpdateCheck.txt`, in the folder
+`ApplicationData/FunctionalDiagrams` of `$UserBaseDirectory`. A script never checks, nor does a session in which
+Mathematica may not use the Internet (`$AllowInternet` is `False`), and every failure is silent.
 
 To load the package without the check:
 
@@ -22,8 +21,8 @@ Needs["FunctionalDiagrams`"]
 ```
 
 The first line in your `init.m` (`FileNameJoin[{$UserBaseDirectory, "Kernel", "init.m"}]`) turns it off for good;
-`FunctionalDiagramsUpdateCheck[]` checks by hand. The wiki's
-[Installation](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Installation#updating-and-removing) page says more.
+`FunctionalDiagramsUpdateCheck[]` checks by hand. Updating and removing the package: the wiki's
+[Installation](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Installation#updating-and-removing) page.
 
 ## Reporting a vulnerability
 
