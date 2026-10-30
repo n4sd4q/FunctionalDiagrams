@@ -1,9 +1,10 @@
 #!/bin/bash
 # Draw the pictures of README.md from the figures of the showcase (run Showcase/make_figures.wl first): the panels
 # Documentation/readme_1.svg, readme_2.svg, ... (readme_gallery.tex) and the social preview of the repository,
-# Logo/social_preview.png (social_preview.tex; it needs the logo, python3 make_logo.py ../Logo). The formulas of the
-# panels are read from ../Showcase/figures/formula_*.tex, and a sum of one order shown on its own, \fig{NAME_m_alone},
-# is written by Showcase/assemble.py. Needs pdflatex, perl and pdftocairo (poppler). Run from any folder.
+# Logo/social_preview.png (social_preview.tex, with the panel that readme_gallery.tex gives when \socialpreviewpanel is
+# defined; it needs the logo, python3 make_logo.py ../Logo). The formulas of the panels are read from
+# ../Showcase/figures/formula_*.tex, and a sum of one order shown on its own, \fig{NAME_m_alone}, is written by
+# Showcase/assemble.py. Needs pdflatex, perl and pdftocairo (poppler). Run from any folder.
 set -e
 cd "$(dirname "$0")"
 build=$(mktemp -d)
@@ -30,8 +31,11 @@ for n in $(seq 1 "$pages"); do
   touch "$svg"
 done
 echo "Documentation/readme_1.svg ... readme_$pages.svg written"
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory "$build" -jobname social_panel \
+  "\def\figdir{$build/figures}\def\socialpreviewpanel{}\input{readme_gallery.tex}" > /dev/null ||
+  { tail -20 "$build/social_panel.log"; exit 1; }
 pdflatex -interaction=nonstopmode -halt-on-error -output-directory "$build" -jobname social_preview \
-  "\def\gallery{$build/readme_gallery.pdf}\input{social_preview.tex}" > /dev/null ||
+  "\def\panelpdf{$build/social_panel.pdf}\input{social_preview.tex}" > /dev/null ||
   { tail -20 "$build/social_preview.log"; exit 1; }
 pdftocairo -png -r 144 -singlefile "$build/social_preview.pdf" "$build/social_preview"
 mv "$build/social_preview.png" ../Logo/social_preview.png

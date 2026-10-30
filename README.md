@@ -88,21 +88,29 @@ interaction =
 (* the Green function to second order: 1 + 2 + 10 diagrams, no vacuum bubbles *)
 DiagramPlot[
   -PerturbativeCorrelationFunction[Z0, {psi[x], psibar[y]}, interaction, 2], {x, y}]
+```
 
+<p align="center"><img src="Documentation/readme_1.svg" width="600" alt="The Green function of the electron gas to second
+order in the interaction: 1, 2 and 10 diagrams, one band per order"></p>
+<p align="center">The output as <code>DiagramPlot</code> draws it, its orders in bands. A wavy line
+<a href="https://github.com/n4sd4q/FunctionalDiagrams/wiki/Reading-the-Weights">stands for −V</a>, so that the number in
+front of a picture times the values of its lines is the term.</p>
+
+```mathematica
 (* the Luttinger–Ward functional and its derivatives: Sigma(x, y) = dPhi/dG(y, x) and
    Gamma0(x1, x2; x3, x4) = dSigma(x1, x2)/dG(x4, x3), the irreducible vertex
    (the shortcuts SelfEnergy and IrreducibleVertex give the same) *)
-Phi = LuttingerWardFunctional[Z0, interaction, 3, G0 -> G];
+Phi = LuttingerWardFunctional[Z0, interaction, 2, G0 -> G];
 DiagramPlot[Phi]
 DiagramPlot[FunctionalDerivative[Phi, G[y, x]], {x, y}]
 DiagramPlot[FunctionalDerivative[Phi, G[x4, x3], G[x2, x1]], {x1, x2, x3, x4}]
 ```
 
-<p align="center"><img src="Documentation/readme_1.svg" width="600" alt="The Luttinger–Ward functional Phi[G] of the
-electron gas to second order, the self-energy Sigma = dPhi/dG and the irreducible vertex Gamma0 = dSigma/dG"></p>
-<p align="center">The output of the last three lines, up to second order: Φ[G] and its derivatives Σ and Γ⁰. A wavy
-line stands for −V, so that the number in front of a picture times the values of its lines is the term; the legs of Γ⁰
-are x₁ (out), x₂ (in), x₃ (out), x₄ (in), counterclockwise from the top left.</p>
+<p align="center"><img src="Documentation/readme_2.svg" width="600" alt="The Luttinger–Ward functional Phi[G] of the
+electron gas to second order, the self-energy Sigma = dPhi/dG and the irreducible vertex Gamma0 = dSigma/dG, one band
+per order"></p>
+<p align="center">The outputs: Φ[G] and its derivatives Σ and Γ⁰, to second order. The legs of Γ⁰ are x₁ (out), x₂
+(in), x₃ (out), x₄ (in), counterclockwise from the top left.</p>
 
 The [guided tour](Examples.nb) ([`Examples.wl`](Examples.wl), the same as a script, can be read on GitHub) goes on from
 here in thirteen short sections: the effective actions, the Bethe–Salpeter and parquet equations, pairing, Hedin's
@@ -114,24 +122,24 @@ in it is computed by the package.
 
 Each panel is drawn by the package from results it computes; the showcase derives and checks all of them.
 
-<p align="center"><img src="Documentation/readme_2.svg" width="600" alt="Exact equations of many-body theory drawn by
+<p align="center"><img src="Documentation/readme_3.svg" width="600" alt="Exact equations of many-body theory drawn by
 the package: the Dyson equation, the Bethe–Salpeter equation, the equation of the vertex of the density and the parquet
 decomposition of the full vertex"></p>
 <p align="center"><b>Exact equations.</b> Drawn with blobs and checked order by order against perturbation theory:
 Dyson, Bethe–Salpeter, the vertex Λ of the density, and the parquet decomposition of the full vertex F.</p>
 
-<p align="center"><img src="Documentation/readme_3.svg" width="600" alt="Hedin's equations for Sigma, W, P and the vertex,
+<p align="center"><img src="Documentation/readme_4.svg" width="600" alt="Hedin's equations for Sigma, W, P and the vertex,
 and the functional Phi[G, W] with its derivatives, the GW self-energy and the polarization"></p>
 <p align="center"><b>Screening.</b> Hedin's equations (the double wavy line is the screened interaction <i>W</i>), and
 the 2PI functional Φ[G, W] of the dressed lines (here the wavy ones are <i>W</i>) with its derivatives: the first diagram
 gives the <i>GW</i> approximation, the next ones its vertex corrections.</p>
 
-<p align="center"><img src="Documentation/readme_4.svg" width="600" alt="Pairing with the Nambu superfield: the first
+<p align="center"><img src="Documentation/readme_5.svg" width="600" alt="Pairing with the Nambu superfield: the first
 order of Phi in the normal and anomalous propagators, the Gor'kov equations, the Hartree–Fock self-energy and the BCS gap"></p>
 <p align="center"><b>Pairing.</b> With the Nambu superfield (ψ, ψ̄) the anomalous propagators (lines with two arrows)
 are variables of Φ: the first order of Φ, the Gor'kov equations, and the Hartree–Fock self-energy and the BCS gap Δ.</p>
 
-<p align="center"><img src="Documentation/readme_5.svg" width="600" alt="Field theory: the second-order self-energy of
+<p align="center"><img src="Documentation/readme_6.svg" width="600" alt="Field theory: the second-order self-energy of
 phi^4 theory in dimensional regularization with its pole and the two-loop beta function; the one-loop electron
 self-energy, vacuum polarization and vertex of QED with delta2, beta(e) and F2(0) = alpha/2pi; the one-loop gluon
 self-energy of QCD"></p>

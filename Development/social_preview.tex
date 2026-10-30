@@ -1,11 +1,12 @@
 % The social preview of the GitHub repository (Logo/social_preview.png, 1280 x 640 px; uploaded by hand in the settings
-% of the repository): the logo, the name and the first panel of the README. Built by make_readme_figure.sh, after the
-% gallery (\gallery is the PDF of readme_gallery.tex) and the logo (python3 make_logo.py ../Logo).
+% of the repository): the logo, the name and a panel of Phi[G] and its derivatives. Built by make_readme_figure.sh, after
+% that panel (\panelpdf is the PDF of readme_gallery.tex compiled with \socialpreviewpanel defined) and the logo
+% (python3 make_logo.py ../Logo).
 \documentclass[border=0pt]{standalone}
 \usepackage[T1]{fontenc}
 \usepackage[sc]{mathpazo}
 \usepackage{tikz,graphicx}
-\providecommand{\gallery}{readme_gallery.pdf}
+\providecommand{\panelpdf}{social_panel.pdf}
 \definecolor{accent}{HTML}{1F4E79}
 \definecolor{muted}{HTML}{59636E}
 \definecolor{edge}{HTML}{D0D7DE}
@@ -14,7 +15,7 @@
   \useasboundingbox (0, 0) rectangle (640, 320);
   \fill[white] (0, 0) rectangle (640, 320);
   \fill[accent] (0, 0) rectangle (640, 5);
-  % left: logo, name, what it is; right: the first panel of the README, on a card; both centred vertically, the card
+  % left: logo, name, what it is; right: the panel, on a card; both centred vertically, the card
   % 280bp high, so that the 2:1 picture keeps a margin of about 40 px above and below it
   \node[anchor=west, inner sep=0pt] at (40, 163) {\begin{minipage}{262bp}\raggedright
     \includegraphics[height=66bp]{../Logo/FunctionalDiagrams_logo.pdf}\par\vskip 22bp
@@ -23,6 +24,6 @@
     {\color{muted}\fontsize{10.5}{14}\selectfont A Mathematica package for perturbation theory,\\ effective actions and many-body physics}
   \end{minipage}};
   \node[anchor=east, inner sep=5bp, draw=edge, line width=0.6bp, rounded corners=4bp, fill=white] at (608, 163)
-    {\includegraphics[height=270bp, page=1]{\gallery}};
+    {\includegraphics[height=270bp, page=1]{\panelpdf}};
 \end{tikzpicture}
 \end{document}

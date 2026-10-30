@@ -1,9 +1,11 @@
 % The pictures of README.md: results of the showcase as the package draws them, one panel per page (each page becomes
 % Documentation/readme_<n>.svg). Built by make_readme_figure.sh, which first copies the figures of Showcase/figures
 % (run Showcase/make_figures.wl first) to \figdir with one unit of length, heavier lines and larger labels for all of
-% them; the formulas are those the showcase computes (\formula). One panel, one theme: the first example, exact
-% equations, screening, pairing, field theory. Every panel has the same width, so that the README shows them all at the
-% same scale; the titles are captions in README.md.
+% them; the formulas are those the showcase computes (\formula). One panel, one theme: the outputs of the first example,
+% then exact equations, screening, pairing, field theory. The outputs of the first example are drawn as DiagramPlot draws
+% them, whole, one band per order (as the showcase prints a sum order by order). Every panel has the same width, so that
+% the README shows them all at the same scale; the titles are captions in README.md. Compiled with \socialpreviewpanel
+% defined, the document is instead the one panel of the social preview (social_preview.tex).
 \documentclass[multi=panel,border=11pt]{standalone}
 \usepackage[T1]{fontenc}
 \usepackage[sc]{mathpazo}
@@ -29,8 +31,33 @@
     \raggedright\arraybackslash\figlines}l<{\end{varwidth}}@{}}\BODY\end{tabular}}}
 % the space between two rows (\\[...] would add nothing after a row of two lines)
 \newcommand{\rowgap}{\\\noalign{\vskip 11pt}}
+% a sum written order by order, as the showcase prints it: \ordersum{lhs}{\orderrow{order}{diagrams} ...}, the
+% left-hand side on the left, right-aligned at the width of the widest one of the panel (the argument of orderpanel), and
+% on its right one band per order, the order on the left of the band and the diagrams as a ragged paragraph
+\definecolor{bandA}{HTML}{EEF3F9}
+\definecolor{bandB}{HTML}{F7F9FC}
+\definecolor{accent}{HTML}{1F4E79}
+\newcounter{band}
+\newlength{\orderlabelwidth}\setlength{\orderlabelwidth}{0.6cm}
+\newlength{\bandwidth}
+\newenvironment{orderpanel}[1]{\settowidth{\lhswidth}{$\displaystyle #1={}$}%
+  \setlength{\bandwidth}{\dimexpr\panelwidth-\lhswidth\relax}\begin{minipage}{\panelwidth}\parindent=0pt\relax}
+  {\end{minipage}}
+\newcommand{\ordersum}[2]{\par\noindent\makebox[\lhswidth][r]{$\displaystyle #1={}$}%
+  \parbox[t]{\bandwidth}{\setcounter{band}{0}\offinterlineskip #2}\par}
+\newcommand{\orderrow}[2]{\stepcounter{band}%
+  \ifodd\value{band}\def\bandcolor{bandA}\else\def\bandcolor{bandB}\fi
+  \par\noindent{\setlength{\fboxsep}{4pt}\colorbox{\bandcolor}{\parbox[t]{\dimexpr\bandwidth-2\fboxsep\relax}{%
+  \rightskip=0pt plus 1fil\parfillskip=0pt plus 1fil\baselineskip=0pt\figlines\let\diagramgap\banddiagramgap
+  \hangindent=\orderlabelwidth\hangafter=1\noindent\makebox[\orderlabelwidth][l]{\small\color{accent}$#1$}#2\par}}}\par}
+% between two diagrams of a band, the space at the end of the line before it dropped
+\newcommand{\banddiagramgap}{\unskip\hskip 0.6em\relax}
+% the space between two sums of a panel
+\newcommand{\ordergap}{\par\vspace{11pt}}
 \begin{document}
-% 1: the first example of README.md: Phi[G] and its derivatives
+\ifdefined\socialpreviewpanel
+% the panel of the social preview: Phi[G] and its derivatives up to second order, the rest as + ... (a picture, not the
+% output of a command)
 \begin{panel}
 \begin{rows}
 $\Phi[G]={}$ & \fig{luttinger_ward_1}\diagramgap\fig{luttinger_ward_2}\rest\rowgap
@@ -38,7 +65,31 @@ $\Sigma=\dfrac{\delta\Phi}{\delta G}={}$ & \fig{self_energy_1}\diagramgap\fig{se
 $\Gamma^0=\dfrac{\delta\Sigma}{\delta G}={}$ & \fig{irreducible_vertex_1}\diagramgap\fig{irreducible_vertex_2}\rest
 \end{rows}
 \end{panel}
-% 2: exact equations of many-body theory, drawn with blobs: Dyson, Bethe-Salpeter, the vertex of the density, parquet
+\else
+% 1: the first example of README.md: the Green function to second order
+\begin{panel}
+\begin{orderpanel}{G(x,y)}
+\ordersum{G(x,y)}{%
+\orderrow{V^0}{\fig{green_function_0}}
+\orderrow{V}{\fig{green_function_1}}
+\orderrow{V^2}{\fig{green_function_2}}}
+\end{orderpanel}
+\end{panel}
+% 2: the first example of README.md: Phi[G] and its derivatives to second order
+\begin{panel}
+\begin{orderpanel}{\Gamma^0=\dfrac{\delta\Sigma}{\delta G}}
+\ordersum{\Phi[G]}{%
+\orderrow{V}{\fig{luttinger_ward_1}}
+\orderrow{V^2}{\fig{luttinger_ward_2}}}\ordergap
+\ordersum{\Sigma=\dfrac{\delta\Phi}{\delta G}}{%
+\orderrow{V}{\fig{self_energy_1}}
+\orderrow{V^2}{\fig{self_energy_2}}}\ordergap
+\ordersum{\Gamma^0=\dfrac{\delta\Sigma}{\delta G}}{%
+\orderrow{V}{\fig{irreducible_vertex_1}}
+\orderrow{V^2}{\fig{irreducible_vertex_2}}}
+\end{orderpanel}
+\end{panel}
+% 3: exact equations of many-body theory, drawn with blobs: Dyson, Bethe-Salpeter, the vertex of the density, parquet
 \begin{panel}
 \begin{rows}
 \fig{exact_dyson_lhs}\,${}={}$ & \fig{exact_dyson}\rowgap
@@ -47,7 +98,7 @@ $\Gamma^0=\dfrac{\delta\Sigma}{\delta G}={}$ & \fig{irreducible_vertex_1}\diagra
 \fig{exact_vertex_lhs}\,${}={}$ & \fig{exact_parquet}
 \end{rows}
 \end{panel}
-% 3: the screened interaction: Hedin's equations, and the functional Phi[G, W] whose derivatives give GW
+% 4: the screened interaction: Hedin's equations, and the functional Phi[G, W] whose derivatives give GW
 \begin{panel}
 \begin{rows}
 $\Sigma(x,y)={}$ & \fig{hedin_sigma}\rowgap
@@ -59,7 +110,7 @@ $\Sigma=\dfrac{\delta\Phi}{\delta G}={}$ & \fig{sigma_gw_1}\rest\rowgap
 $P=-2\dfrac{\delta\Phi}{\delta W}={}$ & \fig{polarization_gw_0}\diagramgap\fig{polarization_gw_1}\rest
 \end{rows}
 \end{panel}
-% 4: pairing: the superfield of Nambu and Gor'kov
+% 5: pairing: the superfield of Nambu and Gor'kov
 \begin{panel}
 \begin{rows}
 $\Phi[G,\mathcal G_{\psi\psi},\mathcal G_{\bar\psi\bar\psi}]={}$ & \fig{nambu_phi_components_1}\rest\rowgap
@@ -69,7 +120,7 @@ $\Phi[G,\mathcal G_{\psi\psi},\mathcal G_{\bar\psi\bar\psi}]={}$ & \fig{nambu_ph
 \fig{nambu_gap_lhs}\,${}={}$ & \fig{nambu_gap}
 \end{rows}
 \end{panel}
-% 5: field theory: phi^4 in dimensional regularization to two loops, QED at one loop (each 1PI function with its main
+% 6: field theory: phi^4 in dimensional regularization to two loops, QED at one loop (each 1PI function with its main
 % result), the gluon self-energy of QCD; the formulas are those the showcase computes
 \begin{panel}
 \begin{rows}
@@ -81,4 +132,5 @@ $ie\,\delta\Gamma^\mu={}$ & \fig{qed_vertex}\qquad$F_2(0)=\displaystyle\formula{
 $\Pi_{\rm QCD}(x,y)={}$ & \fig{qcd_gluon_self_energy}
 \end{rows}
 \end{panel}
+\fi
 \end{document}

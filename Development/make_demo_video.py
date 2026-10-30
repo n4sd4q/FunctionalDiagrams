@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""The demo video of the package: Media/demo.mp4 (1920 x 1080, 60 fps, H.264), its looping preview for the README,
+"""The demo video of the package: Media/demo.mp4 (1920 x 1080, 60 fps, H.264; its first frame, the one a player shows
+before it plays, is the title card in full view), its looping preview for the README,
 Media/demo_preview.webp (960 x 540, 60 fps; its first frame, the one shown where animated images do not play, is a card
 in full view), and a poster frame, Media/demo_poster.png.
 
 Nothing in it is drawn by hand: the diagrams and formulas are the figures of the showcase (Showcase/figures, computed
 by Showcase/make_figures.wl; run it first), redrawn with one unit of length as in make_readme_figure.sh, and the code
-typed in the notebook is the first example of README.md. The pictures go through pdflatex and pdftocairo (one PNG per
+typed in the notebook is the first example of README.md (the electron gas). The pictures go through pdflatex and pdftocairo (one PNG per
 element, transparent), the frames are put together with PIL (at 1920 x 1080; the preview is reduced from them) and
 encoded by ffmpeg. The logo of the first and the last card is drawn again in every frame from the geometry of
 Development/make_logo.py, its wavy line rippling, its loop breathing and turning once (the arrow heads travel around it,
@@ -179,14 +180,17 @@ def elements():
                      r"\band{bandA}{%s}{V^2}{%s}" % (w, fig("green_function_2", **nb)) + r"\end{tabular}")
     lhs, rhs = "2.2cm", "11.4cm"
     small = r"\fontsize{9}{11}\selectfont"
-    # the last cell has three outputs, Phi, Sigma and Gamma0 to third order (Out[4], Out[5] and Out[6]): shown, like the
-    # README, up to second order, the rest as +... (Gamma0 plain, as DiagramPlot draws it: the crossed pp diagrams too)
-    e["nb_phi"] = r"{%s\eqrow{%s}{$\Phi[G]={}$}{%s}{%s\diagramgap%s\rest}}" % (
-        small, lhs, rhs, fig("luttinger_ward_1", **nb), fig("luttinger_ward_2", **nb))
-    e["nb_sigma"] = r"{%s\eqrow{%s}{$\Sigma=\dfrac{\delta\Phi}{\delta G}={}$}{%s}{%s\diagramgap%s\rest}}" % (
-        small, lhs, rhs, fig("self_energy_1", **nb), fig("self_energy_2", **nb))
-    e["nb_gamma"] = r"{%s\eqrow{%s}{$\Gamma^0=\dfrac{\delta\Sigma}{\delta G}={}$}{%s}{%s\diagramgap%s\rest}}" % (
-        small, lhs, rhs, fig("irreducible_vertex_1", **nb), fig("irreducible_vertex_2", **nb))
+    # the last cell has three outputs, Phi, Sigma and Gamma0 to second order (Out[4], Out[5] and Out[6]), each with its
+    # two bands, as in the README (Gamma0 plain, as DiagramPlot draws it: the crossed pp diagrams too); the left-hand
+    # side, level with the first band, says which is which
+    bw = "11.1cm"     # a band, with the padding of its \colorbox: the width rhs
+
+    def bands(name):
+        return (r"\begin{tabular}[t]{@{}l@{}}" + r"\band{bandA}{%s}{V}{%s}\\[-1pt]" % (bw, fig(name + "_1", **nb)) +
+                r"\band{bandB}{%s}{V^2}{%s}" % (bw, fig(name + "_2", **nb)) + r"\end{tabular}")
+    e["nb_phi"] = r"{%s\eqrow{%s}{$\Phi[G]={}$}{%s}{%s}}" % (small, lhs, rhs, bands("luttinger_ward"))
+    e["nb_sigma"] = r"{%s\eqrow{%s}{$\Sigma=\dfrac{\delta\Phi}{\delta G}={}$}{%s}{%s}}" % (small, lhs, rhs, bands("self_energy"))
+    e["nb_gamma"] = r"{%s\eqrow{%s}{$\Gamma^0=\dfrac{\delta\Sigma}{\delta G}={}$}{%s}{%s}}" % (small, lhs, rhs, bands("irreducible_vertex"))
     # the same, larger, for the preview
     lhs, rhs, cd, big = "2.7cm", "12.5cm", dict(cd, unit=0.40), r"\fontsize{13.5}{17}\selectfont"
     e["card_phi"] = r"{%s\eqrow{%s}{$\Phi[G]={}$}{%s}{%s\diagramgap%s\rest}}" % (big, lhs, rhs, fig("luttinger_ward_1", **cd), fig("luttinger_ward_2", **cd))
@@ -320,12 +324,14 @@ def font(name, size):
 
 
 def readme_cells():
-    """The first example of README.md (the first code block of its section "A first example", after the installation
-    lines), one cell per paragraph."""
+    """The first example of README.md, the electron gas: the first two code blocks of its section "A first example"
+    (each followed in the README by the picture of its output; the third block is phi^4 theory), one cell per
+    paragraph."""
     text = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
     section = re.split(r"^## A first example\s*$", text, maxsplit=1, flags=re.M)[1]
-    block = re.search(r"```mathematica\n(.*?)```", section, re.S).group(1)
-    return [cell.strip("\n") for cell in re.split(r"\n\s*\n", block) if cell.strip()]
+    section = re.split(r"^## ", section, maxsplit=1, flags=re.M)[0]
+    blocks = re.findall(r"```mathematica\n(.*?)```", section, re.S)[:2]
+    return [cell.strip("\n") for block in blocks for cell in re.split(r"\n\s*\n", block) if cell.strip()]
 
 
 TOKEN = re.compile(r"\(\*.*?\*\)|\"(?:[^\"\\]|\\.)*\"|[A-Za-z$][A-Za-z0-9$`]*|\d+|.", re.S)
@@ -581,7 +587,7 @@ class LogoItem:
     def draw(self, frame, t, dy=0):
         if t < self.t0:
             return
-        u = (t - self.t0) / self.fade
+        u = (t - self.t0) / self.fade if self.fade else 1.0
         scale = 0.8 + 0.2 * ease_out_back(u)
         size = max(ipx(8), int(round(self.size * scale)))
         img = with_alpha(logo_image(size, t, self.turn), ease_out(1.6 * u))
@@ -633,10 +639,11 @@ def centred(img, y):
     return (W - img.width) / 2, y
 
 
-def title_scene(el, duration, url, fade_out=None, turn=None):
+def title_scene(el, duration, url, fade_out=None, turn=None, shown=False):
     """The logo, the name and the tagline (and the address of the repository), stacked in the middle; the title card
     fades out, the end card only with `fade_out` (the preview, which loops). With `turn` (a time), the fermion loop of
-    the logo turns once from then on (Turn: about two seconds to come to rest)."""
+    the logo turns once from then on (Turn: about two seconds to come to rest). With `shown`, the card is in full view
+    from its first frame (the first frame of the video, which a player shows before it plays) instead of building up."""
     parts = ["logo", "name", "tagline"] + (["url"] if url else [])
     gaps = {"name": px(26), "tagline": px(12), "url": px(34)}
     height = sum(el[p].height for p in parts) + sum(gaps[p] for p in parts[1:])
@@ -646,10 +653,11 @@ def title_scene(el, duration, url, fade_out=None, turn=None):
         y += gaps.get(p, 0) if p != "logo" else 0
         if p == "logo":
             size = round(2.6 / 2.54 * DPI)     # the height of the logo in elements()
-            items.append(LogoItem(size, (W - size) / 2, y + (el[p].height - size) / 2, times[p], turn=turn))
+            items.append(LogoItem(size, (W - size) / 2, y + (el[p].height - size) / 2, 0.0 if shown else times[p],
+                                  fade=0 if shown else 0.45, turn=turn))
         else:
             x, _ = centred(el[p], y)
-            items.append(Item(el[p], x, y, times[p], fade=0.35))
+            items.append(Item(el[p], x, y, 0.0 if shown else times[p], fade=0 if shown else 0.35))
         y += el[p].height
     return Scene(duration, items, fade_out=fade_out if fade_out is not None else (0.3 if not url else 0))
 
@@ -896,7 +904,8 @@ def timeline(el, preview=False):
     qed = results_scene(el, "qed", [("qed_sigma", "qed_sigma_result"), ("qed_pi", "qed_pi_result"),
                                     ("qed_vertex", "qed_vertex_result")], 4.5, gap=12)
     tikz = card_scene(el, "tikz", [tikz_code_panel(), arrow_image(), "tikz_picture"], 3.0, horizontal=True, gap=36, stagger=0.24)
-    return [title_scene(el, 2.4, url=False, turn=0.3), Scene(notebook.duration, draw=notebook.draw, fade_out=0.25),
+    # the title card in full view from the first frame, which a player shows before the video plays
+    return [title_scene(el, 2.4, url=False, turn=0.3, shown=True), Scene(notebook.duration, draw=notebook.draw, fade_out=0.25),
             twoparticle, parquet, hedin, matsubara, qed, tikz, end]
 
 
@@ -985,6 +994,7 @@ def main():
             if i == 0:
                 s.frame(PREVIEW_START).convert("RGB").resize((PREVIEW_W, PREVIEW_H), Image.LANCZOS).save(os.path.join(out, "preview_first.png"))
         print("frames in", out)
+        video[0].frame(0).convert("RGB").save(os.path.join(out, "scene0_first.png"))
         if "--only-frames" in sys.argv:
             return
     mp4 = os.path.join(MEDIA, "demo.mp4")

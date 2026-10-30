@@ -30,7 +30,8 @@ The logo (`../Logo/`) is drawn by `python3 make_logo.py ../Logo` (it needs `cair
 
 The pictures of `../README.md`, `../Documentation/readme_1.svg`, `readme_2.svg`, ... (`readme_gallery.tex`, one panel per
 page, all of the same width, on white cards so that they read on light and dark pages), and the social preview of the
-repository, `../Logo/social_preview.png` (`social_preview.tex`), are drawn from the figures and formulas of the showcase
+repository, `../Logo/social_preview.png` (`social_preview.tex`, with a panel that `readme_gallery.tex` gives when
+`\socialpreviewpanel` is defined), are drawn from the figures and formulas of the showcase
 by `./make_readme_figure.sh` (after `Showcase/make_figures.wl`, `Showcase/assemble.py` and `make_logo.py`; it needs
 pdflatex, perl and pdftocairo).
 The README uses plain `<img>` elements, one file per picture: the GitHub mobile apps do not show `<picture>`.

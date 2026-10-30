@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Documents
+
+- **The first example of the README gives what it shows.** Its Green function to second order is followed by its
+  picture, and Φ[G], Σ and Γ⁰ are computed to second order (`LuttingerWardFunctional[..., 2, ...]`, before to third
+  order with only the second shown, the rest as "+ ⋯"); each code block is followed by its output, drawn as
+  `DiagramPlot` draws it, its orders in bands, as in the showcase. The notebook of the demo video shows the same
+  outputs in bands, and the video starts on its title card in full view (before, on a blank frame). The social preview
+  of the repository is unchanged.
+
 ## 2.5.0 (2026-10-29)
 
 Since 2.4.0: one new function, `FunctionalDiagramsUpdateCheck`, with its setting `$FunctionalDiagramsUpdateCheck` (133
