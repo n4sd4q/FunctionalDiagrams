@@ -35,8 +35,7 @@ The code needs, in the preamble,
 \usetikzlibrary{decorations.pathmorphing}
 ```
 
-(the library draws the straight wavy and zigzag lines; arcs of these styles are explicit curves, and arrow heads are
-small filled polygons, so the pictures compile at any scale). Write the code to a file,
+(for the wavy and zigzag lines; the pictures compile at any scale). Write the code to a file,
 
 ```mathematica
 Export["sigma.tex", DiagramToTikZ[sigma, {a, b}], "Text"]

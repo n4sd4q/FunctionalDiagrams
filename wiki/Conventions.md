@@ -1,4 +1,4 @@
-The manual derives each of these; its sections are named in *italics*.
+The conventions of the package in one place; the manual derives them, in the sections named in *italics*.
 
 ## Expressions
 
@@ -112,8 +112,8 @@ is the classical action, written whole, and S'' its second derivative with respe
   propagator in the background, and Γ₁, defined by this equation, is minus the connected 1PI vacuum diagrams with two
   or more loops, with the lines D[φ̄] = S''[φ̄]⁻¹ and the vertices of S_int[φ̄ + φ] of degree three or more in φ.
 - Fermions: Γ[Ψ̄, Ψ] = S[Ψ̄, Ψ] − ½ Tr ln(−S''[Ψ̄, Ψ]) + Γ₁[Ψ̄, Ψ], with S'' the Nambu matrix of the second derivatives
-  with respect to (Ψ, Ψ̄), and the lines of Γ₁ are S''⁻¹. A superfield has the same form,
-  Γ[𝚿] = S[𝚿] − ½ Tr ln(−S''[𝚿]) + Γ₁[𝚿].
+  with respect to (Ψ, Ψ̄), whose normal block is D⁻¹[Ψ̄, Ψ](x, y) = δ²S/δΨ̄(x)δΨ(y), and the lines of Γ₁ are S''⁻¹. A
+  superfield has the same form, Γ[𝚿] = S[𝚿] − ½ Tr ln(−S''[𝚿]) + Γ₁[𝚿].
 
 ### The 2PI action (`EffectiveAction2PI`)
 
@@ -129,10 +129,9 @@ is the classical action, written whole, and S'' its second derivative with respe
 <details>
 <summary>The Nambu blocks, the vertex functions and the expansion in G₀</summary>
 
-- The Nambu matrix S'' of fermions has the normal block D⁻¹[Ψ̄, Ψ](x, y) = δ²S/δΨ̄(x)δΨ(y) and the anomalous blocks
-  δ²S/δΨ̄(x)δΨ̄(y) = V(x, y)Ψ(x)Ψ(y) and δ²S/δΨ(x)δΨ(y) = V(x, y)Ψ̄(x)Ψ̄(y). For fermions D⁻¹[Ψ̄, Ψ] = G₀⁻¹ − Σ_HF[−ΨΨ̄]:
-  Σ_HF[−ΨΨ̄], the first-order self-energy with −Ψ(x)Ψ̄(y) in place of G(x, y), is the Hartree and Fock potentials of the
-  means.
+- The anomalous blocks of the Nambu matrix S'' of fermions are δ²S/δΨ̄(x)δΨ̄(y) = V(x, y)Ψ(x)Ψ(y) and
+  δ²S/δΨ(x)δΨ(y) = V(x, y)Ψ̄(x)Ψ̄(y). Its normal block is D⁻¹[Ψ̄, Ψ] = G₀⁻¹ − Σ_HF[−ΨΨ̄]: Σ_HF[−ΨΨ̄], the first-order
+  self-energy with −Ψ(x)Ψ̄(y) in place of G(x, y), is the Hartree and Fock potentials of the means.
 - The package computes the 1PI actions of fermions and superfields with bare lines G₀, the vertices of degree two kept
   as vertices: grouped by loops, their diagrams are S_int, the rings of the one loop, and Γ₁ with its lines expanded.
 - At zero means the derivatives of the 1PI action are the vertex functions: for a boson the second is D₀⁻¹ − Σ and the

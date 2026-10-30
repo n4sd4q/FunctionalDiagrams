@@ -213,7 +213,8 @@ disorder and QCD (quarks, gluons, ghosts).
 **Pictures and formulas**
 - diagrams in the usual style of many-body papers (fermion lines straight, loops as circles, ladders as ladders,
   symmetric diagrams drawn symmetric), exact equations with blobs, and formulas as LaTeX (`DiagramPlot`,
-  `DiagramToTikZ`, `ExpressionToLaTeX`); in a notebook the pictures follow its light or dark appearance
+  `DiagramToTikZ`, `ExpressionToLaTeX`); in a notebook, from Mathematica 14.3, the pictures follow its light or dark
+  appearance
 
 </details>
 

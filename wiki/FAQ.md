@@ -160,7 +160,8 @@ See [Declaring a theory](Declaring-a-Theory).
 
 From Mathematica 14.3 the pictures of `DiagramPlot` and `DrawDiagram` follow the appearance of the notebook: lines and
 text are dark on a light notebook and light on a dark one. Before 14.3 they have the colours of a light notebook. The
-option `"Appearance"` forces one look, on its own background, for example for slides with a dark background:
+option `"Appearance"` forces one look, on its own background: `"Dark"` for a dark notebook before 14.3, or for slides
+with a dark background:
 
 ```mathematica
 green = -PerturbativeCorrelationFunction[Z0, {psi[x], psibar[y]}, interaction, 1];

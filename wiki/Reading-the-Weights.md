@@ -69,7 +69,7 @@ D0[a, b] - ---------------------------------------------------------
                                        2
 ```
 
-The tadpole is −λ/2 ∫ D₀ D₀ D₀, and its vertex stands for −λ: its weight is ½, the symmetry factor.
+The tadpole is −λ/2 ∫ D₀ D₀ D₀, and its vertex stands for −λ: its weight is ½, the symmetry factor:
 
 ```mathematica
 DiagramPlot[propagator, {a, b}]

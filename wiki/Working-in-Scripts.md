@@ -5,8 +5,8 @@ Wolfram Language code, `run.wl`, run from a shell:
 wolfram -script run.wl         # or: wolframscript -file run.wl
 ```
 
-A script prints only what you `Print`: results of statements are not shown, the banner of the package is not printed, and the package does not
-look for a newer release ([Installation](Installation#updating-and-removing)).
+A script prints only what you `Print`: results of statements are not shown, the banner of the package is not printed,
+and the package does not look for a newer release ([Installation](Installation#updating-and-removing)).
 
 ## Printing results
 
