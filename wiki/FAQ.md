@@ -13,12 +13,12 @@ that give the same results. For the electron gas of the README (`Z0`, `interacti
 | Green function G(x, y) = −⟨T ψ(x) ψ̄(y)⟩ | a derivative of Z with respect to η̄(x) and η(y) | `-PerturbativeCorrelationFunction[Z0, {psi[x], psibar[y]}, interaction, n]` |
 | connected functions | derivatives of log Z | `ConnectedCorrelationFunction[Z0, {psi[x1], psibar[x2], ...}, interaction, n]` |
 | connected vacuum diagrams | log(Z/Z₀) | `ConnectedVacuumDiagrams[Z0, interaction, n]` |
-| Luttinger–Ward functional Φ[G] | minus the 2PI vacuum diagrams, with G₀ → G | `LuttingerWardFunctional[Z0, interaction, n,`<br>`G0 -> G]` |
+| Luttinger–Ward functional Φ[G] | minus the 2PI vacuum diagrams, with G₀ → G | `LuttingerWardFunctional[Z0, interaction,`<br>`n, G0 -> G]` |
 | self-energy Σ(x, y) | δΦ/δG(y, x): `FunctionalDerivative[Phi, G[y, x]]` | `SelfEnergy[Phi, G, {x, y}]` |
 | irreducible vertex Γ⁰(x₁, x₂; x₃, x₄) | δ²Φ/δG(x₄, x₃)δG(x₂, x₁): `FunctionalDerivative[Phi, G[x4, x3], G[x2, x1]]` | `IrreducibleVertex[Phi, G, {x1, x2, x3, x4}]` |
-| 1PI effective action Γ[Ψ̄, Ψ] | Legendre transform of −log Z in η, η̄ | `EffectiveAction1PI[Z0, interaction, n,`<br>`{psi -> Psi, psibar -> Psibar},`<br>`G0 -> G0]` |
-| full vertex F(x₁, x₂; x₃, x₄) | the fourth derivative of the 1PI action with respect to the means | `PerturbativeFullVertex[Z0, interaction, n,`<br>`{psi, psibar}, {x1, x2, x3, x4},`<br>`G0 -> G]` |
-| vertex of the density Λ(x₁, x₂; z) | −δG⁻¹(x₁, x₂)/δU(z), U coupled to the density | `PerturbativeDensityVertex[Z0, interaction, n,`<br>`{psi, psibar}, {x1, x2, z},`<br>`G0 -> G]` |
+| 1PI effective action Γ[Ψ̄, Ψ] | Legendre transform of −log Z in η, η̄ | `EffectiveAction1PI[Z0, interaction,`<br>`n, {psi -> Psi, psibar -> Psibar},`<br>`G0 -> G0]` |
+| full vertex F(x₁, x₂; x₃, x₄) | the fourth derivative of the 1PI action with respect to the means | `PerturbativeFullVertex[Z0, interaction,`<br>`n, {psi, psibar}, {x1, x2, x3, x4},`<br>`G0 -> G]` |
+| vertex of the density Λ(x₁, x₂; z) | −δG⁻¹(x₁, x₂)/δU(z), U coupled to the density | `PerturbativeDensityVertex[Z0, interaction,`<br>`n, {psi, psibar}, {x1, x2, z},`<br>`G0 -> G]` |
 | 2PI effective action Γ[G] | Legendre transform of −log Z in the two-point source | `EffectiveAction2PI[Phi, G0 -> G]` |
 
 The effective actions are written out in [Conventions](Conventions#effective-actions). The
