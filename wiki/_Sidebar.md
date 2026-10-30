@@ -14,7 +14,6 @@
 - [Particle–particle diagrams](Particle-Particle-Diagrams)
 - [Evaluating diagrams](Evaluating-Diagrams)
 - [Pictures in LaTeX](Pictures-in-LaTeX)
-- [Light and dark notebooks](Light-and-Dark-Notebooks)
 - [Working in scripts](Working-in-Scripts)
 
 **Reference**

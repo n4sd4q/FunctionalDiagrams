@@ -160,6 +160,23 @@ The weight changed as well: an interaction line stands for −V (see [Reading th
 picture only, the options `"Directed" -> {Gx}` and `"Interactions" -> {Vx}` do the same as the declarations.
 See [Declaring a theory](Declaring-a-Theory).
 
+## Why are my pictures black on a dark notebook?
+
+From Mathematica 14.3 the pictures of `DiagramPlot` and `DrawDiagram` follow the appearance of the notebook: lines and
+text are dark on a light notebook and light on a dark one. Before 14.3 they have the colours of a light notebook. The
+option `"Appearance"` forces one look, on its own background, for example for slides with a dark background:
+
+```mathematica
+green = -PerturbativeCorrelationFunction[Z0, {psi[x], psibar[y]}, interaction, 1];
+Export["green_dark.png", DiagramPlot[green, {x, y}, "Appearance" -> "Dark"]]
+```
+
+```text
+green_dark.png
+```
+
+`SetOptions[{DiagramPlot, DrawDiagram}, "Appearance" -> "Dark"]` sets it for the whole session.
+
 ## How do I set an option for the whole session?
 
 Options are rules after the arguments. `Options[f]` gives those of a function with their defaults, and `SetOptions`

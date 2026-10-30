@@ -144,7 +144,7 @@ PacletUninstall["FunctionalDiagrams"]
   The package's function wins; ``Remove["Global`DiagramPlot"]`` clears the stray symbol, and loading the package first
   avoids the message.
 - **The pictures are black on a dark notebook.** Before Mathematica 14.3 the pictures have the colours of a light
-  notebook: see [Light and dark notebooks](Light-and-Dark-Notebooks).
+  notebook: see the [FAQ](FAQ#why-are-my-pictures-black-on-a-dark-notebook).
 - **Results show `DummyVariable[1, 1]`** in a script: see [Working in scripts](Working-in-Scripts).
 - **A function is missing**, or behaves as described in a newer document: compare `$FunctionalDiagramsVersion` with the
   version of the document (the manual says which version it describes on its title page).

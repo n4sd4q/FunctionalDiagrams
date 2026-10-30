@@ -53,6 +53,9 @@ The self-energy of $\phi^4$ theory at first order is
 \[ \Sigma(a, b) = \input{sigma.tex} \]
 ```
 
+`DiagramToTikZ` ignores the option `"Appearance"` of `DiagramPlot`: its code is for white pages. On a page that may be
+dark (a README, a wiki), put the picture on a white card.
+
 ## Size and labels
 
 The options of `DiagramPlot` work here too (`"ExternalOrder"`, `"LegDirections"`, `"Couplings"`, ...); these set the

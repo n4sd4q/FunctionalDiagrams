@@ -12,14 +12,13 @@ function.
   - [Installation](Installation): installing, updating, and what to do when loading fails
   - [Declaring a theory](Declaring-a-Theory): fields, sources, propagators, interaction lines, couplings
   - [Reading the weights](Reading-the-Weights): what the number in front of a picture means
-  - [FAQ](FAQ): which function gives the object you need, names that fail, zero derivatives, orders, citing
+  - [FAQ](FAQ): which function gives the object you need, names that fail, zero derivatives, dark notebooks
 - Recipes
   - [Orders and simplification](Orders-and-Simplification): selecting orders, counting and comparing diagrams
   - [Exact equations](Exact-Equations): drawing an equation with blobs and checking it order by order
   - [Particle–particle diagrams](Particle-Particle-Diagrams): channels, and the order of the external points
   - [Evaluating diagrams](Evaluating-Diagrams): Matsubara sums and dimensional regularization
   - [Pictures in LaTeX](Pictures-in-LaTeX): TikZ code for a paper, and formulas
-  - [Light and dark notebooks](Light-and-Dark-Notebooks): the colours of the pictures
   - [Working in scripts](Working-in-Scripts): running the package without a notebook
 - Reference
   - [Conventions](Conventions): signs, propagators, weights, channels, effective actions and units, in one place
