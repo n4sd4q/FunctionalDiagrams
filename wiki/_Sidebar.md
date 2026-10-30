@@ -23,9 +23,7 @@
 
 **Documents**
 
+- [Website](https://n4sd4q.github.io/FunctionalDiagrams/)
 - [Showcase (PDF)](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf)
 - [Manual (PDF)](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf)
-- [Guided tour](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Examples.wl)
-- [Map of the functions](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html)
-- [Releases](https://github.com/n4sd4q/FunctionalDiagrams/releases) and [changelog](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/CHANGELOG.md)
 - [Repository](https://github.com/n4sd4q/FunctionalDiagrams)

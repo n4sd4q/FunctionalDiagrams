@@ -1,47 +1,15 @@
 # Functional&#8203;Diagrams
 
-FunctionalDiagrams is a Mathematica package that derives Feynman diagrams by functional derivatives. You write a
-generating functional and an interaction; the package differentiates them with respect to the sources and the
-propagators, with the fermion signs of the Grassmann algebra and the symmetry factors, and returns the diagrams. It then
-recognizes equal diagrams, sorts them into classes, checks them against exact equations (Dyson, Bethe–Salpeter, parquet,
-Hedin), evaluates them in a few common cases (Matsubara sums, dimensional regularization, one-loop QED) and draws them,
-in Mathematica or as TikZ for a paper.
-
-This wiki collects practical guides and answers to common questions. The documents of the repository explain the package
-itself:
-
-| Document | What it gives |
-|---|---|
-| [README](https://github.com/n4sd4q/FunctionalDiagrams#readme) | an overview, a first example and a gallery |
-| [Showcase (PDF)](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) | the physics, step by step, for the electron gas and φ⁴ theory |
-| [Manual (PDF)](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf) | every function, option and convention, with examples |
-| [Guided tour](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Examples.wl) | a notebook to run ([download `Examples.nb`](https://n4sd4q.github.io/FunctionalDiagrams/Examples.nb), or open it from the paclet: [Installation](Installation#from-a-release-recommended)), and the same as a script |
-| [Map of the functions](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html) | every public name by its role in a calculation, with its dependencies (interactive) |
-| [Demo video](https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4) | the electron gas of the README's first example, typed and run, then a few other results (40 s) |
-| [Releases](https://github.com/n4sd4q/FunctionalDiagrams/releases) | the paclet of every version, with the two PDFs; the history is in the [changelog](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/CHANGELOG.md) |
-
-## Install
-
-With Mathematica 12.1 or later, once:
-
-<!-- not run: it downloads the paclet -->
-```mathematica
-PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.6.0/FunctionalDiagrams-2.6.0.paclet"];
-```
-
-and then in every session:
-
-```mathematica
-Needs["FunctionalDiagrams`"]
-```
-
-[Installation](Installation) has the other ways (a clone of the repository, a file downloaded by hand), updating and
-the usual problems.
+Practical guides and a FAQ for FunctionalDiagrams, a Mathematica package that derives Feynman diagrams by functional
+derivatives. The [website](https://n4sd4q.github.io/FunctionalDiagrams/) gives the overview and a first example, the
+[showcase](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) the physics step by
+step and the [manual](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf) every
+function.
 
 ## Pages
 
 - Start
-  - [Installation](Installation): installing, loading, updating and removing the package; which version is loaded
+  - [Installation](Installation): installing, updating, and what to do when loading fails
   - [Declaring a theory](Declaring-a-Theory): fields, sources, propagators, interaction lines, couplings
   - [Reading the weights](Reading-the-Weights): what the number in front of a picture means
   - [FAQ](FAQ): which function gives the object you need, names that fail, zero derivatives, orders, citing
@@ -56,12 +24,5 @@ the usual problems.
 - Reference
   - [Conventions](Conventions): signs, propagators, weights, channels, effective actions and units, in one place
 
-## How the code on these pages is checked
-
-Every block of Mathematica code on these pages is run, in a fresh kernel for each page, by
-[`Development/check_wiki.wl`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Development/check_wiki.wl), and
-gives exactly what is shown after it. Outputs are shown as a terminal session prints them (OutputForm: strings without
-quotes, fractions over two lines); a notebook shows the same in its compact form, with the integrals as ∫ and the delta
-functions as δ. Pictures are what `DiagramPlot` draws, typeset from the TikZ code of the same call. The few blocks that
-cannot run as they stand (they download, install or remove the paclet, open a file, depend on your machine, or show a
-fragment) are only checked to be valid code. The pages describe version 2.6.0.
+The code on these pages is run, and gives what is shown after it. Outputs are printed as a terminal prints them; a
+notebook shows the same in compact form, with the integrals as ∫ and the delta functions as δ.

@@ -359,8 +359,8 @@ Changes to the documents alone (README, showcase, manual text, wiki, video, logo
 tag and its paclet never move: a mistake in a release is corrected by the next patch release. A release: the version in
 `00_header.wl`, `PacletInfo.wl`, `CITATION.cff` (with `date-released`), the check of `Tests/RunTests.wl`, the README
 (install line), the manual (title, install line, latest release, the value of
-`$FunctionalDiagramsVersion`, how to cite), the showcase (title, values), `Examples.wl`, `index.html`, the wiki (`Home.md`,
-`Installation.md`, `_Footer.md`) and the map of the functions
+`$FunctionalDiagramsVersion`, how to cite), the showcase (title, values), `Examples.wl`, `index.html`, the wiki
+(`Installation.md`, `_Footer.md`) and the map of the functions
 (`git grep` the old number: only `CHANGELOG.md` keeps it; `check_consistency.py` reports any other x.y.z in the README,
 `index.html`, the manual, the showcase, `Examples.wl` and the wiki, and the x.y of the showcase's title); `## Unreleased` of `CHANGELOG.md` becomes `## X.Y.Z (date)`;
 everything rebuilt (the site too: `python3 Development/make_site.py`, which takes the version, the date, the install
