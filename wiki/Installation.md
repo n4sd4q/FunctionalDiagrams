@@ -1,5 +1,5 @@
-The package needs Mathematica 12.1 or later (for the paclet manager that loads it). It is written in the Wolfram
-Language alone: nothing to compile, no other package needed.
+The package needs Mathematica 12.1 or later. It is written in the Wolfram Language alone: nothing to compile, no other
+package needed.
 
 ## From a release (recommended)
 
@@ -24,10 +24,9 @@ Then, in every session:
 Needs["FunctionalDiagrams`"]
 ```
 
-In a notebook this prints a banner of two lines (the logo, the version, the license, how to cite, links to the
-repository and the manual) and, once a day, looks for a newer release (see [Updating and
-removing](#updating-and-removing)); in a script nothing is printed. `` ?FunctionalDiagrams`* `` lists the functions and
-`?Name` explains each one.
+In a notebook this prints a short banner and, once a day, looks for a newer release (see [Updating and
+removing](#updating-and-removing)); a script prints nothing. `` ?FunctionalDiagrams`* `` lists the functions and `?Name`
+explains each one.
 
 The paclet also carries the showcase, the manual and the guided tour. To open the manual of the version installed:
 
@@ -88,15 +87,12 @@ and which file `Needs` loads; their outputs depend on your machine:
 FindFile["FunctionalDiagrams`"]
 ```
 
-`FindFile` gives the file that `Needs` loads.
-
 ## Updating and removing
 
-In a notebook, loading the package checks once a day whether a newer release is out: it asks `api.github.com` in the
-background, so that loading does not wait for the answer, and if there is one, the banner gets a third line with its
-version, a link to what is new and the `PacletInstall` line of its paclet, ready to copy. The date of the last check is
-kept in `LastUpdateCheck.txt`, in the folder `ApplicationData/FunctionalDiagrams` of `$UserBaseDirectory`. A script
-never checks, and a failure (no connection, a proxy) is silent. To load the package without the check:
+In a notebook, loading the package looks for a newer release once a day, in the background; if there is one, the banner
+shows its `PacletInstall` line, ready to copy. A script never checks, and a failure is silent;
+[`SECURITY.md`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/SECURITY.md) says what is sent and where the date
+of the last check is kept. To load the package without the check:
 
 ```mathematica
 $FunctionalDiagramsUpdateCheck = False;
@@ -110,24 +106,19 @@ Needs["FunctionalDiagrams`"]
 FunctionalDiagramsUpdateCheck[]
 ```
 
-It gives the version loaded, the latest release and the line that installs it, and prints that line when the release
-is newer (when GitHub cannot be reached, `$Failed` and a message).
+It gives the version loaded, the latest release and the line that installs it.
 
-The number of a release says what may change for you: a new major version (the first number) may make code written
-for the previous one stop working or give another result, a minor one (the second) only adds, and a patch (the third)
-fixes and speeds up, with the same results otherwise; the head of the
-[changelog](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/CHANGELOG.md) states the rule, and the changelog
-lists every change. To update, install the paclet of the new release as above. `Needs` loads the newest version installed, in a new
-session; in the running one, `Needs` does nothing once the package is loaded, and
+Releases follow semantic versioning: a new major version may change results or break code, a minor one only adds, a
+patch fixes; the [changelog](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/CHANGELOG.md) lists every change. To
+update, install the paclet of the new release as above. `Needs` loads the newest version installed, in a new session; in
+the running one it does nothing once the package is loaded, and
 
 <!-- not run: it loads the package again -->
 ```mathematica
 Get["FunctionalDiagrams`"]
 ```
 
-loads it again (from the newest version found). A package loaded again starts afresh: its definitions and the record of your declarations are cleared
-(the attributes that declarations gave to your own symbols, such as `Orderless` for a symmetric function, remain), so
-declare your theory again after it.
+loads it again: declare your theory again after it.
 
 To remove every installed version (a clone is not deleted):
 
@@ -150,9 +141,8 @@ PacletUninstall["FunctionalDiagrams"]
   [issue](https://github.com/n4sd4q/FunctionalDiagrams/issues).
 - **`DiagramPlot::shdw`** (or another name of the package) when the package is loaded: the name was typed in the
   session before `Needs`, which made a symbol of its own in ``Global` ``, or another package loaded before defines it.
-  The package's function is the one used from then on (the context loaded last comes first on the context path);
-  ``Remove["Global`DiagramPlot"]`` removes the symbol of ``Global` ``, and loading the package first avoids the
-  message.
+  The package's function wins; ``Remove["Global`DiagramPlot"]`` clears the stray symbol, and loading the package first
+  avoids the message.
 - **The pictures are black on a dark notebook.** Before Mathematica 14.3 the pictures have the colours of a light
   notebook: see [Light and dark notebooks](Light-and-Dark-Notebooks).
 - **Results show `DummyVariable[1, 1]`** in a script: see [Working in scripts](Working-in-Scripts).
