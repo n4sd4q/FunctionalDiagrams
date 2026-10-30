@@ -73,8 +73,9 @@ the functions and `?Name` explains each one.
 
 - In a notebook the package asks `api.github.com` once a day, in the background, whether a newer release is out;
   `$FunctionalDiagramsUpdateCheck = False` before `Needs` turns this off.
-- Other ways (a downloaded `.paclet`, a clone with `PacletDirectoryLoad`, `Get` of the file), updating and removing:
-  the wiki's [Installation](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Installation) page.
+- Other ways (a downloaded `.paclet`, a clone with `PacletDirectoryLoad`, `Get` of the file), updating and removing,
+  and the usual problems: the wiki's [Installation](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Installation)
+  page.
 
 ## A first example
 
