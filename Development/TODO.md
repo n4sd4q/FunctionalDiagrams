@@ -51,6 +51,10 @@ showcase script and took a third off the test suite.
   `LegendreTransform[Phi, G -> S, "Statistics" -> s]`, read where it is differentiated or written out (an unknown value
   gives `FunctionalDiagrams::statistics`, a misspelt name nothing). A check at `SelfEnergyFunctional` covers the
   functionals the package builds; one for a `LegendreTransform` written by hand would have to run when it is read.
+- **The channel of `BetheSalpeterLadder` is not checked.** An unknown name (`"Nonsense"`) gives an unevaluated `Switch`
+  of the six ladders, with no message; a fermionic channel with `"Statistics" -> "Superfield"` (or `"s"` for fermions)
+  gives that ladder silently. A message and `$Failed` for a channel that is not one of the statistics (the channels
+  of `channelPairings`) would be a patch.
 - **Display forms of the integral heads (review).** `09_dimreg.wl` and `10_qed.wl` declare display forms of the same
   shapes for their integral heads. Left as one-line declarations next to each head: a loop injecting the heads would be
   less clear. Merge them if a third family of integrals appears.
@@ -192,6 +196,12 @@ free energy.
 
 - Usage messages: those of `EffectiveAction2PI` (about 7800 characters) and `EffectiveAction1PI` (3700) are long; the
   details could move to the manual.
+- **Values in `Development/check_showcase.wl`.** A value that a statement gives is compared with every `\val` after its
+  block, and a residual 0 matches any check shown as 0: after the blocks of the linked cluster (13), of the moments of
+  φ⁴ by the cumulants (19) and of the Bethe–Salpeter equation (54) a changed value is not caught (tried: 0 → 1 in
+  `values.txt` passes), and `\val{KeyN}` accepts any entry of the list, not the N-th. Tying them needs the page to
+  say which values are outputs, e.g. a macro `\outval{Key}` typeset as `\val` and matched one to one, in order, by the
+  check; the index of an entry would follow the first index of `assemble.py` (0 for orders, 1 otherwise).
 
 ## Distribution
 
