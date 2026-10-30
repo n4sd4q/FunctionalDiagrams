@@ -321,11 +321,12 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
   .duo { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .intro { grid-template-columns: minmax(0, 1fr); }
   .mapcard { grid-template-columns: minmax(0, 1fr); }
-  .navlinks { display: none; }
+  .navlinks li:not(:nth-child(3)) { display: none; }
 }
 @media (max-width: 600px) {
   .wrap { padding: 0 16px; }
   .topbar .wrap { height: 58px; }
+  .navlinks { display: none; }
   .iconbtn .label { display: none; }
   .hero { padding: 40px 0 128px; }
   .hero-logo { width: 84px; height: 84px; }
@@ -413,8 +414,8 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
             <a href="Media/demo.mp4">The demo video (MP4)</a>
           </video>
         </div>
-        <figcaption id="demo-caption">The demo (40 s, no sound): the electron gas of the first example below
-          typed and run in a notebook, then a few other results. <a href="Media/demo.mp4">Open the MP4 file</a>.</figcaption>
+        <figcaption id="demo-caption">The demo (40 s, no sound): the electron gas of the first example below,
+          typed and run, then a few more results.</figcaption>
       </figure>
     </div>
   </div>
@@ -434,17 +435,6 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
 <figure class="panel"><a class="zoom" href="Documentation/readme_6.svg" title="Open the picture at full size"><img class="paper" src="Documentation/readme_6.svg" width="640" height="364" loading="lazy" decoding="async" alt="Pairing with the Nambu superfield: the first order of Phi in the normal and anomalous propagators, the Gor&#x27;kov equations, the Hartree–Fock self-energy and the BCS gap"></a><figcaption><h3>Pairing</h3><p>The Nambu superfield (ψ, ψ̄): Φ in the normal and anomalous propagators (two arrows), the Gor'kov equations, Hartree–Fock and the BCS gap Δ.</p></figcaption></figure>
 <figure class="panel"><a class="zoom" href="Documentation/readme_7.svg" title="Open the picture at full size"><img class="paper" src="Documentation/readme_7.svg" width="640" height="712" loading="lazy" decoding="async" alt="Field theory: the second-order self-energy of phi^4 theory in dimensional regularization with its pole and the two-loop beta function; the one-loop electron self-energy, vacuum polarization and vertex of QED with delta2, beta(e) and F2(0) = alpha/2pi; the one-loop gluon self-energy of QCD"></a><figcaption><h3>Field theory</h3><p>φ⁴ theory to two loops in dimensional regularization, one-loop QED up to the anomalous magnetic moment, and the gluon self-energy of QCD.</p></figcaption></figure>
       </div>
-      <div class="mapcard">
-        <div>
-          <h3>Map of the functions</h3>
-          <p>The public functions by their role in a calculation: declare the symbols, write a functional, differentiate it, then classify, draw and evaluate the diagrams.</p>
-          <p class="counts">133 public names · 551 dependencies · version 2.6.0</p>
-          <a class="textbtn" href="Documentation/function_map.html">Open the interactive map <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M12.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-        </div>
-        <a class="mapview" href="Documentation/function_map.html" tabindex="-1" aria-hidden="true"><img src="Documentation/function_map.svg"
-           width="800" height="1561" loading="lazy" decoding="async" alt=""></a>
-      </div>
-      <p class="scope"><strong>Scope.</strong> The package computes exact symbolic sums of diagrams; it is not a program for the numerical evaluation of Feynman integrals. It does the frequency sums at finite temperature (the momentum integrals stay symbolic), the loop integrals that reduce to nested one-loop ones in dimensional regularization, and one-loop QED. The number of diagrams grows factorially with the order: the Green function of the electron gas has 706 diagrams at fourth order and 8162 at fifth (<a href="https://github.com/n4sd4q/FunctionalDiagrams/wiki/FAQ#how-high-an-order-can-i-compute">timings</a>). The pictures follow rules made for many-body diagrams and trees of vertex functions; other diagrams get a general layout, readable but not always as in a textbook.</p>
     </div>
   </section>
 
@@ -483,26 +473,11 @@ Z0phi = Exp[1/2 <span class="tok-f">IntegralOver</span>[J[x] D0[x, y] J[y], {x, 
     </div>
   </section>
 
-  <section id="checks" aria-label="Checks and related software">
-    <div class="wrap duo">
-      <div>
-        <h2>Checks</h2>
-        <p class="stat"><strong>875</strong><span>tests in <a href="https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Tests/RunTests.out">the last run</a>, all passed</span></p>
-        <div class="prose"><p>The results are checked against each other, order by order, and the showcase reports every residual: for the electron gas and φ⁴ theory to third order, the Dyson equation and the linked-cluster theorem, Σ[G] against the skeleton part of the perturbative Σ, the Ward identity, the Bethe–Salpeter, parquet, Schwinger–Dyson and Hedin equations. The evaluation is checked against numbers (brute-force frequency sums, the cutting rules, numerical integration in non-integer dimension) and against textbook results (β functions, the Ising exponents at the Wilson–Fisher fixed point, Z₁ = Z₂, the anomalous magnetic moment). The code printed in the showcase, in the wiki and on this page is run, and gives what is shown after it.</p></div>
-      </div>
-      <div id="related">
-        <h2>Related software</h2>
-        <div class="prose"><p><a href="https://feynarts.de">FeynArts</a> and QGRAF (<a href="https://doi.org/10.1006/jcph.1993.1074">Nogueira 1993</a>) generate the Feynman diagrams of a process from the fields and couplings of a model, and <a href="https://feyncalc.github.io">FeynCalc</a> does their Dirac and colour algebra and reduces one-loop integrals to scalar ones. <a href="https://github.com/markusqh/DoFun">DoFun</a> and <a href="https://github.com/QMeS-toolbox/QMeS-Derivation">QMeS-Derivation</a> derive Dyson–Schwinger and functional renormalization group equations, the first from an action, the second from a master equation, also by functional derivatives. FunctionalDiagrams works order by order with the objects of many-body theory and effective actions: correlation and vertex functions, Φ[G] and its derivatives, channels and parquet equations, self-consistent approximations; and it checks its exact equations against the perturbative series. Its evaluation tools are much more limited than FeynCalc's, so for real loop calculations the two are better used together.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="install" class="band" aria-labelledby="install-title">
+  <section id="install" aria-labelledby="install-title">
     <div class="wrap">
       <h2 id="install-title">Installation</h2>
       <ul class="require" aria-label="Requirements">
-        <li>Mathematica 12.1 or later</li>
-        <li>the Wolfram Language alone: nothing to compile, no other package</li>
+        <li>Mathematica 12.1 or later; nothing to compile, no other package</li>
       </ul>
       <ol class="steps">
         <li>
@@ -527,34 +502,44 @@ Z0phi = Exp[1/2 <span class="tok-f">IntegralOver</span>[J[x] D0[x, y] J[y], {x, 
           </div>
         </li>
       </ol>
-      <p class="note">Other ways (the <code>.paclet</code> file downloaded by hand, a clone of the repository, the single
-        file), updating and removing, and the usual problems: the wiki's <a href="https://github.com/n4sd4q/FunctionalDiagrams/wiki/Installation">Installation</a>
-        page.</p>
+      <p class="note">Other ways to install, updating and the usual problems: the wiki's <a href="https://github.com/n4sd4q/FunctionalDiagrams/wiki/Installation">Installation</a> page.</p>
     </div>
   </section>
 
-  <section id="docs" aria-labelledby="docs-title">
+  <section id="docs" class="band" aria-labelledby="docs-title">
     <div class="wrap">
       <h2 id="docs-title">Documentation</h2>
-      <p class="lead">The two PDFs open in the browser. Every picture and number in the showcase, and every example in the
-        manual, is computed by the package.</p>
       <div class="docs">
-        <a class="doc" href="Showcase/FunctionalDiagrams_Showcase.pdf"><strong>Showcase</strong><span>The physics, step by step, for the electron gas
-          and φ⁴ theory: many-body theory, quantum field theory, and the tools.</span><small>PDF · 105 pages</small></a>
-        <a class="doc" href="Documentation/FunctionalDiagrams_Manual.pdf"><strong>Manual</strong><span>Every function, option and convention, with examples
-          computed by the package.</span><small>PDF · 102 pages</small></a>
+        <a class="doc" href="Showcase/FunctionalDiagrams_Showcase.pdf"><strong>Showcase</strong><span>The physics step by step, for the electron gas and φ⁴ theory.</span><small>PDF · 105 pages</small></a>
+        <a class="doc" href="Documentation/FunctionalDiagrams_Manual.pdf"><strong>Manual</strong><span>Every function, option and convention.</span><small>PDF · 102 pages</small></a>
         <a class="doc" href="Examples.nb" download><strong>Guided tour</strong><span>A notebook to run in Mathematica,
           from the first derivative to QED and QCD.</span><small>Notebook · download</small></a>
-        <a class="doc" href="https://github.com/n4sd4q/FunctionalDiagrams/wiki"><strong>Wiki</strong><span>Practical guides and a FAQ: installing, declaring a
-          theory, reading the weights, pictures in LaTeX.</span><small>GitHub wiki</small></a>
-        <a class="doc" href="Documentation/function_map.html"><strong>Map of the functions</strong><span>Every public name
-          by its role in a calculation, with its usage message and its dependencies.</span><small>Interactive page</small></a>
-        <a class="doc" href="https://github.com/n4sd4q/FunctionalDiagrams/releases"><strong>Releases</strong><span>The paclet of each version, with the
-          showcase and the manual of that version.</span><small>GitHub releases</small></a>
-        <a class="doc" href="https://github.com/n4sd4q/FunctionalDiagrams/blob/main/CHANGELOG.md"><strong>Changelog</strong><span>What changed from one version
-          to the next, and what is on the main branch since the latest release.</span><small>CHANGELOG.md</small></a>
-        <a class="doc" href="https://github.com/n4sd4q/FunctionalDiagrams/issues"><strong>Issues</strong><span>Problems, questions and suggestions;
-          CONTRIBUTING.md says what helps.</span><small>GitHub issues</small></a>
+        <a class="doc" href="https://github.com/n4sd4q/FunctionalDiagrams/wiki"><strong>Wiki</strong><span>Practical guides, the conventions and a FAQ.</span><small>GitHub wiki</small></a>
+      </div>
+      <div class="mapcard">
+        <div>
+          <h3>Map of the functions</h3>
+          <p>The public functions by their role in a calculation: declare the symbols, write a functional, differentiate it, then classify, draw and evaluate the diagrams.</p>
+          <p class="counts">133 public names · 551 dependencies · version 2.6.0</p>
+          <a class="textbtn" href="Documentation/function_map.html">Open the interactive map <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M12.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+        <a class="mapview" href="Documentation/function_map.html" tabindex="-1" aria-hidden="true"><img src="Documentation/function_map.svg"
+           width="800" height="1561" loading="lazy" decoding="async" alt=""></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="checks" aria-label="Checks and related software">
+    <div class="wrap duo">
+      <div>
+        <h2>Checks</h2>
+        <p class="stat"><strong>875</strong><span>tests in <a href="https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Tests/RunTests.out">the last run</a>, all passed</span></p>
+        <div class="prose"><p>The results are checked against each other, order by order, and the showcase reports every residual: for the electron gas and φ⁴ theory to third order, the Dyson equation and the linked-cluster theorem, Σ[G] against the skeleton part of the perturbative Σ, the Ward identity, the Bethe–Salpeter, parquet, Schwinger–Dyson and Hedin equations. The evaluation is checked against numbers (brute-force frequency sums, the cutting rules, numerical integration in non-integer dimension) and against textbook results (β functions, the Ising exponents at the Wilson–Fisher fixed point, Z₁ = Z₂, the anomalous magnetic moment). The code printed in the showcase, in the wiki and on this page is run, and gives what is shown after it.</p></div>
+      </div>
+      <div id="related">
+        <h2>Related software</h2>
+        <div class="prose"><p><a href="https://feynarts.de">FeynArts</a> and QGRAF (<a href="https://doi.org/10.1006/jcph.1993.1074">Nogueira 1993</a>) generate the Feynman diagrams of a process from the fields and couplings of a model, and <a href="https://feyncalc.github.io">FeynCalc</a> does their Dirac and colour algebra and reduces one-loop integrals to scalar ones. <a href="https://github.com/markusqh/DoFun">DoFun</a> and <a href="https://github.com/QMeS-toolbox/QMeS-Derivation">QMeS-Derivation</a> derive Dyson–Schwinger and functional renormalization group equations, the first from an action, the second from a master equation, also by functional derivatives. FunctionalDiagrams works order by order with the objects of many-body theory and effective actions: correlation and vertex functions, Φ[G] and its derivatives, channels and parquet equations, self-consistent approximations; and it checks its exact equations against the perturbative series. Its evaluation tools are much more limited than FeynCalc's, so for real loop calculations the two are better used together.</p></div>
+        <p class="scope"><strong>Scope.</strong> The package computes exact symbolic sums of diagrams; it is not a program for the numerical evaluation of Feynman integrals. It does the frequency sums at finite temperature (the momentum integrals stay symbolic), the loop integrals that reduce to nested one-loop ones in dimensional regularization, and one-loop QED. The number of diagrams grows factorially with the order: the Green function of the electron gas has 706 diagrams at fourth order and 8162 at fifth (<a href="https://github.com/n4sd4q/FunctionalDiagrams/wiki/FAQ#how-high-an-order-can-i-compute">timings</a>). The pictures follow rules made for many-body diagrams and trees of vertex functions; other diagrams get a general layout, readable but not always as in a textbook.</p>
       </div>
     </div>
   </section>

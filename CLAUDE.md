@@ -87,8 +87,8 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   `--runs 3` for the minimum of three runs), each output compared with its reference in `build/optim/reference/`
   (`--save`, from the code before a change), so that a faster package is checked to give exactly the same results.
 - `index.html` — the landing page of GitHub Pages, a site of its own (hero with the buttons, the demo video, what the
-  package does with the panels of the README and the map, the first example, Checks and Related software, installation,
-  the documents, how to cite), **generated**: `python3 Development/make_site.py` writes it from the template
+  package does with the panels of the README, the first example, installation, the documents and the map, Checks and
+  Related software with the scope, how to cite), **generated**: `python3 Development/make_site.py` writes it from the template
   `Development/site_template.html` (markup, CSS, the few lines of JavaScript: copy buttons, the light/dark toggle) and
   the sources of every fact on it: the README (tagline, opening paragraphs, install lines, the first example with its
   pictures and captions, the gallery, the scope, the text of the map, Checks, Related software, the BibTeX), `PacletInfo.wl`,

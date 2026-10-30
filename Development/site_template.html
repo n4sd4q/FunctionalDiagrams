@@ -290,11 +290,12 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
   .duo { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .intro { grid-template-columns: minmax(0, 1fr); }
   .mapcard { grid-template-columns: minmax(0, 1fr); }
-  .navlinks { display: none; }
+  .navlinks li:not(:nth-child(3)) { display: none; }
 }
 @media (max-width: 600px) {
   .wrap { padding: 0 16px; }
   .topbar .wrap { height: 58px; }
+  .navlinks { display: none; }
   .iconbtn .label { display: none; }
   .hero { padding: 40px 0 128px; }
   .hero-logo { width: 84px; height: 84px; }
@@ -382,8 +383,8 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
             <a href="Media/demo.mp4">The demo video (MP4)</a>
           </video>
         </div>
-        <figcaption id="demo-caption">The demo ({{VIDEO_SECONDS}} s, no sound): the electron gas of the first example below
-          typed and run in a notebook, then a few other results. <a href="Media/demo.mp4">Open the MP4 file</a>.</figcaption>
+        <figcaption id="demo-caption">The demo ({{VIDEO_SECONDS}} s, no sound): the electron gas of the first example below,
+          typed and run, then a few more results.</figcaption>
       </figure>
     </div>
   </div>
@@ -400,17 +401,6 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
       <div class="gallery">
         {{GALLERY}}
       </div>
-      <div class="mapcard">
-        <div>
-          <h3>Map of the functions</h3>
-          <p>{{MAP_TEXT}}</p>
-          <p class="counts">{{MAP_COUNTS}}</p>
-          <a class="textbtn" href="Documentation/function_map.html">Open the interactive map {{ICON_ARROW}}</a>
-        </div>
-        <a class="mapview" href="Documentation/function_map.html" tabindex="-1" aria-hidden="true"><img src="Documentation/function_map.svg"
-           width="{{MAP_WIDTH}}" height="{{MAP_HEIGHT}}" loading="lazy" decoding="async" alt=""></a>
-      </div>
-      {{SCOPE}}
     </div>
   </section>
 
@@ -424,26 +414,11 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
     </div>
   </section>
 
-  <section id="checks" aria-label="Checks and related software">
-    <div class="wrap duo">
-      <div>
-        <h2>Checks</h2>
-        <p class="stat"><strong>{{TESTS}}</strong><span>tests in <a href="{{TESTS_OUT}}">the last run</a>, all passed</span></p>
-        <div class="prose">{{CHECKS}}</div>
-      </div>
-      <div id="related">
-        <h2>Related software</h2>
-        <div class="prose">{{RELATED}}</div>
-      </div>
-    </div>
-  </section>
-
-  <section id="install" class="band" aria-labelledby="install-title">
+  <section id="install" aria-labelledby="install-title">
     <div class="wrap">
       <h2 id="install-title">Installation</h2>
       <ul class="require" aria-label="Requirements">
-        <li>{{REQUIREMENT}}</li>
-        <li>the Wolfram Language alone: nothing to compile, no other package</li>
+        <li>{{REQUIREMENT}}; nothing to compile, no other package</li>
       </ul>
       <ol class="steps">
         <li>
@@ -468,34 +443,44 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
           </div>
         </li>
       </ol>
-      <p class="note">Other ways (the <code>.paclet</code> file downloaded by hand, a clone of the repository, the single
-        file), updating and removing, and the usual problems: the wiki's <a href="{{REPO}}/wiki/Installation">Installation</a>
-        page.</p>
+      <p class="note">Other ways to install, updating and the usual problems: the wiki's <a href="{{REPO}}/wiki/Installation">Installation</a> page.</p>
     </div>
   </section>
 
-  <section id="docs" aria-labelledby="docs-title">
+  <section id="docs" class="band" aria-labelledby="docs-title">
     <div class="wrap">
       <h2 id="docs-title">Documentation</h2>
-      <p class="lead">The two PDFs open in the browser. Every picture and number in the showcase, and every example in the
-        manual, is computed by the package.</p>
       <div class="docs">
-        <a class="doc" href="{{SHOWCASE}}"><strong>Showcase</strong><span>The physics, step by step, for the electron gas
-          and φ⁴ theory: many-body theory, quantum field theory, and the tools.</span><small>PDF · {{SHOWCASE_PAGES}} pages</small></a>
-        <a class="doc" href="{{MANUAL}}"><strong>Manual</strong><span>Every function, option and convention, with examples
-          computed by the package.</span><small>PDF · {{MANUAL_PAGES}} pages</small></a>
+        <a class="doc" href="{{SHOWCASE}}"><strong>Showcase</strong><span>The physics step by step, for the electron gas and φ⁴ theory.</span><small>PDF · {{SHOWCASE_PAGES}} pages</small></a>
+        <a class="doc" href="{{MANUAL}}"><strong>Manual</strong><span>Every function, option and convention.</span><small>PDF · {{MANUAL_PAGES}} pages</small></a>
         <a class="doc" href="Examples.nb" download><strong>Guided tour</strong><span>A notebook to run in Mathematica,
           from the first derivative to QED and QCD.</span><small>Notebook · download</small></a>
-        <a class="doc" href="{{REPO}}/wiki"><strong>Wiki</strong><span>Practical guides and a FAQ: installing, declaring a
-          theory, reading the weights, pictures in LaTeX.</span><small>GitHub wiki</small></a>
-        <a class="doc" href="Documentation/function_map.html"><strong>Map of the functions</strong><span>Every public name
-          by its role in a calculation, with its usage message and its dependencies.</span><small>Interactive page</small></a>
-        <a class="doc" href="{{REPO}}/releases"><strong>Releases</strong><span>The paclet of each version, with the
-          showcase and the manual of that version.</span><small>GitHub releases</small></a>
-        <a class="doc" href="{{REPO}}/blob/main/CHANGELOG.md"><strong>Changelog</strong><span>What changed from one version
-          to the next, and what is on the main branch since the latest release.</span><small>CHANGELOG.md</small></a>
-        <a class="doc" href="{{REPO}}/issues"><strong>Issues</strong><span>Problems, questions and suggestions;
-          CONTRIBUTING.md says what helps.</span><small>GitHub issues</small></a>
+        <a class="doc" href="{{REPO}}/wiki"><strong>Wiki</strong><span>Practical guides, the conventions and a FAQ.</span><small>GitHub wiki</small></a>
+      </div>
+      <div class="mapcard">
+        <div>
+          <h3>Map of the functions</h3>
+          <p>{{MAP_TEXT}}</p>
+          <p class="counts">{{MAP_COUNTS}}</p>
+          <a class="textbtn" href="Documentation/function_map.html">Open the interactive map {{ICON_ARROW}}</a>
+        </div>
+        <a class="mapview" href="Documentation/function_map.html" tabindex="-1" aria-hidden="true"><img src="Documentation/function_map.svg"
+           width="{{MAP_WIDTH}}" height="{{MAP_HEIGHT}}" loading="lazy" decoding="async" alt=""></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="checks" aria-label="Checks and related software">
+    <div class="wrap duo">
+      <div>
+        <h2>Checks</h2>
+        <p class="stat"><strong>{{TESTS}}</strong><span>tests in <a href="{{TESTS_OUT}}">the last run</a>, all passed</span></p>
+        <div class="prose">{{CHECKS}}</div>
+      </div>
+      <div id="related">
+        <h2>Related software</h2>
+        <div class="prose">{{RELATED}}</div>
+        {{SCOPE}}
       </div>
     </div>
   </section>
