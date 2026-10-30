@@ -1,5 +1,5 @@
-Every result of the package is a sum of terms in canonical form: one term per diagram, with its coefficient. This page
-shows how to select orders, count diagrams and compare two results. The electron gas of the README:
+Every result of the package is a sum of terms in canonical form: one term per diagram, with its coefficient. The
+electron gas of the README:
 
 ```mathematica
 Needs["FunctionalDiagrams`"]

@@ -1,7 +1,7 @@
 The diagrams of the package are functions of labels. Two families of evaluations turn them into formulas: in momentum
 and Matsubara frequency at finite temperature, and loop integrals in dimensional regularization at zero temperature.
-Both route the momenta through the lines themselves; the evaluation part is deliberately small, and covers the
-integrals that come up in the examples, not general loop calculations.
+Both route the momenta through the lines; for general loop calculations, pass the integrands to a program made for
+them.
 
 ## Matsubara sums
 

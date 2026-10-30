@@ -69,16 +69,13 @@ D0[a, b] - ---------------------------------------------------------
                                        2
 ```
 
-The tadpole is −λ/2 ∫ D₀ D₀ D₀, and its vertex stands for −λ: its weight is ½, the symmetry factor. The weights that
-`DiagramPlot` writes, as LaTeX strings, are those of `DiagramToTikZ` with `"Output" -> "List"`:
+The tadpole is −λ/2 ∫ D₀ D₀ D₀, and its vertex stands for −λ: its weight is ½, the symmetry factor.
 
 ```mathematica
-First /@ DiagramToTikZ[propagator, {a, b}, "Output" -> "List"]
+DiagramPlot[propagator, {a, b}]
 ```
 
-```text
-{1, \frac{1}{2}}
-```
+![The propagator of phi^4 theory at first order: the free line with the weight 1 and the tadpole with the weight 1/2](images/weights_phi4_first_order.svg)
 
 Without `DeclareCoupling[lambda]` the weight would be −λ/2. For one picture only, the option `"Couplings" -> {lambda}`
 does the same as the declaration.

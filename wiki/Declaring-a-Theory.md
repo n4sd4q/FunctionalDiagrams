@@ -37,9 +37,9 @@ phonon, with the weight −1 of its closed fermion loop.
 |---|---|
 | `DeclareSource[J]`, `DeclareGrassmannSource[eta, etabar]` | `J[x]` is a commuting source, `eta[x]` an anticommuting one: `FunctionalDerivative` differentiates them |
 | `DeclareField[phi, J]`, `DeclareField[psibar, eta, -1]` | `phi[x]` is δ/δJ(x), `psibar[x]` is −δ/δη(x) |
-| `DeclareSymmetric[D0]`, `DeclareAntisymmetric[A]` | `D0[x, y] = D0[y, x]`; `A[y, x] = -A[x, y]` (a superfield propagator). Declare before using the symbol: it acts on the expressions evaluated afterwards |
+| `DeclareSymmetric[D0]`, `DeclareAntisymmetric[A]` | `D0[x, y] = D0[y, x]`; `A[y, x] = -A[x, y]` (a superfield propagator) |
 | `DeclareDirectedPropagator[G0]` | `G0[x, y]` is an arrow from `y` to `x` |
-| `DeclareLineStyle[h, style]` | how a two-label factor is drawn: `"Plain"`, `"Arrow"`, `"DoubleArrow"`, `"DottedArrow"`, `"Double"`, `"Wavy"`, `"DoubleWavy"`, `"Curly"`, `"Dashed"`, `"Dotted"`, `"Zigzag"`, `"Impurity"`, `"DivergingArrows"`, `"ConvergingArrows"`; the line stands for itself |
+| `DeclareLineStyle[h, style]` | how a two-label factor is drawn: `"Arrow"`, `"Double"`, `"Wavy"`, `"Curly"`, `"Dashed"`, `"Zigzag"`, ... (`?DeclareLineStyle` lists them all); the line stands for itself |
 | `DeclareInteractionLine[V]` | `V[x, y]` is an interaction line, wavy (or the style given), standing for −V in the weights |
 | `DeclareCoupling[g]` | the coupling is absorbed into the vertices of the pictures, each standing for −g |
 | `DeclareLocalVertex[h]` | `h[x, y, z]` is one point with several indices (the quark–gluon vertex), drawn as a vertex, standing for −h |

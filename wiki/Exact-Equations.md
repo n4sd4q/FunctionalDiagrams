@@ -22,9 +22,8 @@ in the usage message, `?ExactEquation`, and in the manual, section *Exact equati
 
 ## Fills
 
-The fill of a blob (the option `"Fill"` of `DeclareBlob`) says what it stands for. The documents of the package follow
-one rule: a vertex function is filled the more densely the more diagrams it contains, and a correlation or response
-function is white.
+The fill of a blob (the option `"Fill"` of `DeclareBlob`) says what it stands for: the more diagrams a vertex function
+contains, the denser its fill; correlation and response functions are white.
 
 | `"Fill"` | objects |
 |---|---|

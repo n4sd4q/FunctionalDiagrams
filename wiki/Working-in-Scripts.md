@@ -5,8 +5,7 @@ Wolfram Language code, `run.wl`, run from a shell:
 wolfram -script run.wl         # or: wolframscript -file run.wl
 ```
 
-The two commands do the same; on some installations only one of them is available. A script prints only what you
-`Print`: results of statements are not shown, the banner of the package is not printed, and the package does not
+A script prints only what you `Print`: results of statements are not shown, the banner of the package is not printed, and the package does not
 look for a newer release ([Installation](Installation#updating-and-removing)).
 
 ## Printing results
@@ -50,14 +49,12 @@ total = OrderPart[green, V, 1] +
 
 - Compute only the orders you need (`{k}` in `PerturbativeCorrelationFunction`, `"CouplingOrder"`, `"MaximumOrder"`:
   see [Orders and simplification](Orders-and-Simplification)).
-- `AbsoluteTiming[expr]` gives the time and the result; the showcase writes the times of its main steps in
-  `Showcase/figures/values.txt`.
+- `AbsoluteTiming[expr]` gives the time and the result.
 - Pictures can be written to files from a script: `Export["green.pdf", DiagramPlot[green, {x, y}]]` (the front end is
   started in the background for it), or `DiagramToTikZ` to a `.tex` file, see [Pictures in LaTeX](Pictures-in-LaTeX).
 
 ## Examples in the repository
 
-[`Examples.wl`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Examples.wl) (the guided tour),
-[`Showcase/make_figures.wl`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Showcase/make_figures.wl) (everything
-in the showcase) and [`Tests/RunTests.wl`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Tests/RunTests.wl)
-(the test suite) are scripts; each one loads the package from the repository with `Get`.
+The guided tour [`Examples.wl`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Examples.wl), the showcase's
+[`make_figures.wl`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Showcase/make_figures.wl) and the tests
+[`RunTests.wl`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Tests/RunTests.wl) are such scripts.
