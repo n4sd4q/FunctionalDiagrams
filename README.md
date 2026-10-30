@@ -113,8 +113,7 @@ DiagramPlot[FunctionalDerivative[Phi, G[x4, x3], G[x2, x1]], {x1, x2, x3, x4}]
 <p align="center"><img src="Documentation/readme_2.svg" width="600" alt="The Luttinger–Ward functional Phi[G] of the
 electron gas to second order, the self-energy Sigma = dPhi/dG and the irreducible vertex Gamma0 = dSigma/dG, one band
 per order"></p>
-<p align="center">The outputs: Φ[G] and its derivatives Σ and Γ⁰, to second order. The legs of Γ⁰ are x₁ (out), x₂
-(in), x₃ (out), x₄ (in), counterclockwise from the top left.</p>
+<p align="center">The outputs: Φ[G] and its derivatives Σ and Γ⁰, to second order.</p>
 
 ```mathematica
 (* phi^4 theory: a real boson with the free propagator D0 = <phi phi>_0 and the interaction
@@ -130,40 +129,38 @@ lambda: 1, 1 and 3 diagrams, one band per order"></p>
 <p align="center">The output. A vertex stands for −λ (<code>DeclareCoupling</code>), so that the tadpole has the weight
 ½.</p>
 
-The [guided tour](Examples.wl) ([download the notebook](https://n4sd4q.github.io/FunctionalDiagrams/Examples.nb)) goes
-on from here in thirteen short sections: the effective actions, the Bethe–Salpeter and parquet equations, pairing, Hedin's
-equations and *GW*, and then linear response, Matsubara sums, phonons, disorder, dimensional regularization, QED and
-QCD. The [showcase](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) covers everything in more depth; every picture and number
-in it is computed by the package.
+**Next.** The [guided tour](Examples.wl) ([notebook](https://n4sd4q.github.io/FunctionalDiagrams/Examples.nb)) goes
+on from here in thirteen short sections, up to QED and QCD. The wiki shows how to
+[declare a theory](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Declaring-a-Theory) of your own and
+[which function gives](https://github.com/n4sd4q/FunctionalDiagrams/wiki/FAQ#which-function-gives-the-object-i-need)
+the object you need; ``?FunctionalDiagrams`*`` lists the functions and `?Name` explains each one.
 
 ## Gallery
 
-Each panel is drawn by the package from results it computes; the showcase derives and checks all of them.
+Drawn by the package; the [showcase](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) derives and checks each one.
 
 <p align="center"><img src="Documentation/readme_4.svg" width="600" alt="Exact equations of many-body theory drawn by
 the package: the Dyson equation, the Bethe–Salpeter equation, the equation of the vertex of the density and the parquet
 decomposition of the full vertex"></p>
-<p align="center"><b>Exact equations.</b> Drawn with blobs and checked order by order against perturbation theory:
-Dyson, Bethe–Salpeter, the vertex Λ of the density, and the parquet decomposition of the full vertex F.</p>
+<p align="center"><b>Exact equations.</b> Dyson, Bethe–Salpeter, the vertex Λ of the density and the parquet
+decomposition of the full vertex F, drawn with blobs and checked order by order.</p>
 
 <p align="center"><img src="Documentation/readme_5.svg" width="600" alt="Hedin's equations for Sigma, W, P and the vertex,
 and the functional Phi[G, W] with its derivatives, the GW self-energy and the polarization"></p>
-<p align="center"><b>Screening.</b> Hedin's equations (the double wavy line is the screened interaction <i>W</i>), and
-the 2PI functional Φ[G, W] of the dressed lines (here the wavy ones are <i>W</i>) with its derivatives: the first diagram
-gives the <i>GW</i> approximation, the next ones its vertex corrections.</p>
+<p align="center"><b>Screening.</b> Hedin's equations, and the functional Φ[G, W] of the dressed lines with its
+derivatives: the <i>GW</i> approximation and its vertex corrections.</p>
 
 <p align="center"><img src="Documentation/readme_6.svg" width="600" alt="Pairing with the Nambu superfield: the first
 order of Phi in the normal and anomalous propagators, the Gor'kov equations, the Hartree–Fock self-energy and the BCS gap"></p>
-<p align="center"><b>Pairing.</b> With the Nambu superfield (ψ, ψ̄) the anomalous propagators (lines with two arrows)
-are variables of Φ: the first order of Φ, the Gor'kov equations, and the Hartree–Fock self-energy and the BCS gap Δ.</p>
+<p align="center"><b>Pairing.</b> The Nambu superfield (ψ, ψ̄): Φ in the normal and anomalous propagators (two arrows),
+the Gor'kov equations, Hartree–Fock and the BCS gap Δ.</p>
 
 <p align="center"><img src="Documentation/readme_7.svg" width="600" alt="Field theory: the second-order self-energy of
 phi^4 theory in dimensional regularization with its pole and the two-loop beta function; the one-loop electron
 self-energy, vacuum polarization and vertex of QED with delta2, beta(e) and F2(0) = alpha/2pi; the one-loop gluon
 self-energy of QCD"></p>
-<p align="center"><b>Field theory.</b> φ⁴ theory in dimensional regularization: the two-loop self-energy with its pole,
-and the β function. One-loop QED: the three 1PI functions, with δ₂, β(e) and the anomalous magnetic moment. QCD: the
-one-loop gluon self-energy.</p>
+<p align="center"><b>Field theory.</b> φ⁴ theory to two loops in dimensional regularization, one-loop QED up to the
+anomalous magnetic moment, and the gluon self-energy of QCD.</p>
 
 ## Documentation
 
@@ -248,16 +245,13 @@ but not always as in a textbook.
 
 ## Checks
 
-The results are checked against each other, order by order, and the showcase reports every residual. For the electron
-gas and φ⁴ theory to third order these include the Dyson equation and the linked-cluster theorem, Σ[G] against the
-skeleton part of the perturbative Σ, the Ward identity, the Bethe–Salpeter and parquet equations in every channel, the
-Schwinger–Dyson, vertex and Hedin equations, and a Hubbard–Stratonovich theory against the original one. The evaluation
-is checked against numbers: frequency sums against brute-force sums, imaginary parts against the cutting rules, loop
-integrals against numerical integration in non-integer dimension, and the renormalization of φ⁴ theory and of one-loop
-QED against the textbook results (β functions, anomalous dimensions, the Ising exponents at the Wilson–Fisher fixed
-point, Z₁ = Z₂, the anomalous magnetic moment). The code of the showcase, of the wiki and of the first example above is
-run as printed, and gives what the page shows after it (`Development/check_showcase.wl`, `check_wiki.wl`,
-`check_readme.wl`).
+The results are checked against each other, order by order, and the showcase reports every residual: for the electron
+gas and φ⁴ theory to third order, the Dyson equation and the linked-cluster theorem, Σ[G] against the skeleton part of
+the perturbative Σ, the Ward identity, the Bethe–Salpeter, parquet, Schwinger–Dyson and Hedin equations. The evaluation
+is checked against numbers (brute-force frequency sums, the cutting rules, numerical integration in non-integer
+dimension) and against textbook results (β functions, the Ising exponents at the Wilson–Fisher fixed point, Z₁ = Z₂,
+the anomalous magnetic moment). The code printed in the showcase, in the wiki and on this page is run, and gives what
+is shown after it.
 
 ## Related software
 
