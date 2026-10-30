@@ -1,13 +1,14 @@
 **[Home](Home)**
 
+**Start**
+
 - [Installation](Installation)
-- [Conventions](Conventions)
+- [Declaring a theory](Declaring-a-Theory)
+- [Reading the weights](Reading-the-Weights)
 - [FAQ](FAQ)
 
 **Recipes**
 
-- [Declaring a theory](Declaring-a-Theory)
-- [Reading the weights](Reading-the-Weights)
 - [Orders and simplification](Orders-and-Simplification)
 - [Exact equations](Exact-Equations)
 - [Particle–particle diagrams](Particle-Particle-Diagrams)
@@ -16,10 +17,15 @@
 - [Light and dark notebooks](Light-and-Dark-Notebooks)
 - [Working in scripts](Working-in-Scripts)
 
+**Reference**
+
+- [Conventions](Conventions)
+
 **Documents**
 
 - [Showcase (PDF)](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf)
 - [Manual (PDF)](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf)
 - [Guided tour](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Examples.wl)
 - [Map of the functions](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html)
+- [Releases](https://github.com/n4sd4q/FunctionalDiagrams/releases) and [changelog](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/CHANGELOG.md)
 - [Repository](https://github.com/n4sd4q/FunctionalDiagrams)

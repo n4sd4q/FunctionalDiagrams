@@ -1,5 +1,14 @@
 # Changelog
 
+The versions are MAJOR.MINOR.PATCH (semantic versioning), read for this package as:
+
+- **major**: code written for the previous version may stop working or give another result (a public name removed or
+  renamed, the arguments or the default of an option changed, a convention of the expressions changed);
+- **minor**: additions only (a function, an option or a value of one, an exact equation, a kind of picture);
+- **patch**: fixes and speed, with the same results otherwise (a wrong result or picture corrected, messages).
+
+Changes to the documents alone need no release; they are listed under the next version.
+
 ## Unreleased
 
 ### New
@@ -63,6 +72,10 @@
   and the TikZ code of the showcase's figures. `check_consistency.py` checks the version wherever it is written in the
   README, `index.html`, the manual, the showcase (whose title gives major and minor) and the guided tour, as it did in
   the wiki: a number x.y.z that is not the version is reported, unless it is listed as not a version of the package.
+- **The versions explained, and the wiki in one order.** The head of this changelog says what a major, a minor and a
+  patch release may change, and the wiki's Installation page says it where it explains updating. The wiki's Home and
+  its sidebar list the pages in the same order: first steps (Installation, Declaring a theory, Reading the weights,
+  FAQ), recipes, the conventions as the reference, and in the sidebar the documents, the releases and the changelog.
 
 ## 2.5.0 (2026-10-29)
 

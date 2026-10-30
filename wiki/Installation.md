@@ -113,7 +113,11 @@ FunctionalDiagramsUpdateCheck[]
 It gives the version loaded, the latest release and the line that installs it, and prints that line when the release
 is newer (when GitHub cannot be reached, `$Failed` and a message).
 
-To update, install the paclet of the new release as above. `Needs` loads the newest version installed, in a new
+The number of a release says what may change for you: a new major version (the first number) may make code written
+for the previous one stop working or give another result, a minor one (the second) only adds, and a patch (the third)
+fixes and speeds up, with the same results otherwise; the head of the
+[changelog](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/CHANGELOG.md) states the rule, and the changelog
+lists every change. To update, install the paclet of the new release as above. `Needs` loads the newest version installed, in a new
 session; in the running one, `Needs` does nothing once the package is loaded, and
 
 <!-- not run: it loads the package again -->

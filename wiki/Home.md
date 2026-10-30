@@ -40,11 +40,12 @@ the usual problems.
 
 ## Pages
 
-- [Installation](Installation): installing, loading, updating and removing the package; which version is loaded
-- [Conventions](Conventions): signs, propagators, weights, channels, effective actions and units, in one place
-- Recipes
+- Start
+  - [Installation](Installation): installing, loading, updating and removing the package; which version is loaded
   - [Declaring a theory](Declaring-a-Theory): fields, sources, propagators, interaction lines, couplings
   - [Reading the weights](Reading-the-Weights): what the number in front of a picture means
+  - [FAQ](FAQ): which function gives the object you need, names that fail, zero derivatives, orders, citing
+- Recipes
   - [Orders and simplification](Orders-and-Simplification): selecting orders, counting and comparing diagrams
   - [Exact equations](Exact-Equations): drawing an equation with blobs and checking it order by order
   - [Particle–particle diagrams](Particle-Particle-Diagrams): channels, and the order of the external points
@@ -52,7 +53,8 @@ the usual problems.
   - [Pictures in LaTeX](Pictures-in-LaTeX): TikZ code for a paper, and formulas
   - [Light and dark notebooks](Light-and-Dark-Notebooks): the colours of the pictures
   - [Working in scripts](Working-in-Scripts): running the package without a notebook
-- [FAQ](FAQ)
+- Reference
+  - [Conventions](Conventions): signs, propagators, weights, channels, effective actions and units, in one place
 
 ## How the code on these pages is checked
 
