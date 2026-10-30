@@ -238,22 +238,21 @@ the package only has to recognize when two terms are the same diagram.
 
 The package is a single file, \pkg{FunctionalDiagrams.wl}, written for Mathematica~12.1 or later (for the
 paclet manager that loads it).
-The recommended installation is the paclet of a release, which also contains the showcase, this manual and the guided
-tour:
+The recommended installation is the paclet of the latest release, which also contains the showcase, this manual and the
+guided tour:
 \begin{code}
-PacletInstall["/path/to/FunctionalDiagrams-2.5.0.paclet"]   (* once *)
-Needs["FunctionalDiagrams`"]
+PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/" <>
+  "releases/download/v2.5.0/FunctionalDiagrams-2.5.0.paclet"]   (* once *)
+Needs["FunctionalDiagrams`"]   (* in every session *)
+NotebookOpen[PacletObject["FunctionalDiagrams"]["AssetLocation", "Examples"]]
 \end{code}
-(\pkg{PacletInstall} also takes the address of the paclet on the page of the release.) This manual describes
-version~2.5.0, the latest release. A clone of the repository is a
-paclet too, loaded by \pkg{PacletDirectoryLoad} of its folder and then \pkg{Needs}.
-Without the paclet, load the file with
+The last line opens the guided tour, a notebook to run cell by cell; \pkg{SystemOpen} with \pkg{"Manual"} or
+\pkg{"Showcase"} in place of \pkg{"Examples"} opens a PDF. Without a connection from Mathematica (a proxy, a cluster
+node), download the paclet from the page of the release with a browser and give \pkg{PacletInstall} its path in place
+of the address. This manual describes version~2.5.0, the latest release. A clone of the repository is a paclet too, loaded by \pkg{PacletDirectoryLoad} of its folder and then \pkg{Needs}. Without the paclet
+manager, load the file with
 \begin{code}
 Get["/path/to/FunctionalDiagrams/FunctionalDiagrams.wl"]
-\end{code}
-or copy it into the folder \pkg{Applications} of \pkg{\$UserBaseDirectory} and load it with
-\begin{code}
-Needs["FunctionalDiagrams`"]
 \end{code}
 The functions are in the context \pkg{FunctionalDiagrams`}; \pkg{?FunctionalDiagrams`*} lists them and \pkg{?Name}
 shows their usage. \pkg{\$FunctionalDiagramsVersion} is the version, \pkg{"2.5.0"}. Loading the
@@ -294,6 +293,10 @@ Asks GitHub for the latest release now, whatever the date of the last check and 
 \pkg{<|"InstalledVersion" -> \dots, "LatestVersion" -> \dots, "InstallLine" -> \dots|>}: the version loaded, the
 latest release and the line that installs its paclet, as a string; when the release is newer, it also prints that line.
 When the release cannot be read it gives \pkg{\$Failed}, with the message \pkg{FunctionalDiagramsUpdateCheck::latest}.
+
+The repository, \url{https://github.com/n4sd4q/FunctionalDiagrams}, holds the source, the releases and the issues;
+the wiki, \url{https://github.com/n4sd4q/FunctionalDiagrams/wiki}, practical guides and a FAQ; the website,
+\url{https://n4sd4q.github.io/FunctionalDiagrams/}, the two PDFs, the map of the functions and the demo video.
 
 \subsection{A first session}
 
@@ -344,7 +347,8 @@ attribution to the author must be kept, and modified versions must say that they
 file \pkg{NOTICE}, with the copyright and the terms; the text of the license is in \pkg{LICENSE}). If you use the package
 in published work, please cite it, for instance as
 \begin{quote}
-N.~Africani, \emph{FunctionalDiagrams: functional derivatives and Feynman diagrams in Mathematica}, version 2.5.0 (2026).
+N.~Africani, \emph{FunctionalDiagrams: functional derivatives and Feynman diagrams in Mathematica}, version 2.5.0 (2026),
+\url{https://github.com/n4sd4q/FunctionalDiagrams}.
 \end{quote}
 The file \pkg{CITATION.cff} in the repository has the same information in a machine-readable form.
 
@@ -3391,6 +3395,10 @@ about 30~s; the Green function of the electron gas at fifth order, 8162 diagrams
 
 % ------------------------------------------------------------------ 20
 \section{Compatibility, tests and troubleshooting}\label{sec:troubleshooting}
+
+A problem (a wrong result, a picture badly drawn, a message not understood) is best reported in an issue,
+\url{https://github.com/n4sd4q/FunctionalDiagrams/issues}; the FAQ of the wiki,
+\url{https://github.com/n4sd4q/FunctionalDiagrams/wiki/FAQ}, answers the common questions.
 
 \paragraph{Compatibility} The package runs in Mathematica~12.1 or later (for the paclet manager that loads it). The
 test suite is \pkg{Tests/RunTests.wl}:

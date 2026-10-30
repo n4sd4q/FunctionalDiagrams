@@ -20,7 +20,8 @@
 
 (* load FunctionalDiagrams.wl from the folder of this notebook (or script); when it is
    not there (the notebook opened on its own), Needs["FunctionalDiagrams`"] loads the
-   installed paclet (PacletInstall["/path/to/FunctionalDiagrams-<version>.paclet"]) *)
+   installed paclet, installed once with
+   PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.5.0/FunctionalDiagrams-2.5.0.paclet"] *)
 With[{folder = Quiet[If[$InputFileName =!= "", DirectoryName[$InputFileName], NotebookDirectory[]]]},
   If[StringQ[folder] && FileExistsQ[FileNameJoin[{folder, "FunctionalDiagrams.wl"}]],
     Get[FileNameJoin[{folder, "FunctionalDiagrams.wl"}]],
@@ -1077,10 +1078,19 @@ FunctionalDerivative[PropagatorOfJ[x, y], J[u], J[v]]
 (*Where to go next*)
 
 (* ::Item:: *)
-(*The showcase, Showcase/FunctionalDiagrams_Showcase.pdf: the same path to third order, with the derivations, the checks and all the pictures.*)
+(*The showcase, Showcase/FunctionalDiagrams_Showcase.pdf: the same path to third order, with the derivations, the checks and all the pictures. The paclet carries it: SystemOpen[PacletObject["FunctionalDiagrams"]["AssetLocation", "Showcase"]] opens the showcase of the version installed.*)
 
 (* ::Item:: *)
-(*The manual, Documentation/FunctionalDiagrams_Manual.pdf: every function, option and convention, with examples.*)
+(*The manual, Documentation/FunctionalDiagrams_Manual.pdf: every function, option and convention, with examples. SystemOpen[PacletObject["FunctionalDiagrams"]["AssetLocation", "Manual"]] opens the manual of the version installed.*)
+
+(* ::Item:: *)
+(*The map of the functions, every public name by its role in a calculation, interactive: https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html*)
+
+(* ::Item:: *)
+(*The wiki, practical guides and a FAQ: https://github.com/n4sd4q/FunctionalDiagrams/wiki*)
+
+(* ::Item:: *)
+(*The repository, with the releases and the changelog: https://github.com/n4sd4q/FunctionalDiagrams. Report a problem or ask a question in an issue: https://github.com/n4sd4q/FunctionalDiagrams/issues*)
 
 (* ::Item:: *)
 (*In Mathematica, ?Name shows the usage of a function, for example ?PerturbativeCorrelationFunction.*)

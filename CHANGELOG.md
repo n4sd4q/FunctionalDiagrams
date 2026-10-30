@@ -58,6 +58,13 @@ Changes to the documents alone need no release; they are listed under the next v
   "Examples"]]`, and leaves the other ways of installing to the wiki; the README and the wiki link the notebook as a
   download from GitHub Pages (before, GitHub's view of its source) and the script `Examples.wl` to read. The wiki's
   Installation page shows the line too, and its sidebar lists the tour.
+- **The PDFs and the guided tour say where the package lives**, since they travel without the repository (in the
+  paclet, as release assets, forwarded). The showcase's Getting started installs the paclet of the release (before,
+  only a clone), opens the tour and gives the addresses of the repository, the wiki and the site. The manual's
+  installation shows the address of the paclet first, the line that opens the tour and the three addresses, and no
+  longer suggests a copy of the file in `Applications` (which `PacletInstall` would not update); its citation gives the
+  repository, and its troubleshooting where to report a problem. The tour's last section gives the addresses of the
+  repository, its issues, the wiki and the map, and the lines that open the two PDFs of the installed paclet.
 - **The README on a phone, and its order.** On a narrow screen the title breaks between *Functional* and *Diagrams* (a
   zero-width space: GitHub drops `<wbr>`), not before the last letter, and so does the title of the wiki's Home; the
   table of the documents gives each one a short line (a third of its height on a phone) and lists the map of the

@@ -9,7 +9,8 @@ Cell[TextData[{"How to use this notebook: evaluate the cells in order (Shift+Ent
 Cell["Loading the package", "Subsection"],
 Cell["(* load FunctionalDiagrams.wl from the folder of this notebook (or script); when it is
    not there (the notebook opened on its own), Needs[\"FunctionalDiagrams`\"] loads the
-   installed paclet (PacletInstall[\"/path/to/FunctionalDiagrams-<version>.paclet\"]) *)
+   installed paclet, installed once with
+   PacletInstall[\"https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.5.0/FunctionalDiagrams-2.5.0.paclet\"] *)
 With[{folder = Quiet[If[$InputFileName =!= \"\", DirectoryName[$InputFileName], NotebookDirectory[]]]},
   If[StringQ[folder] && FileExistsQ[FileNameJoin[{folder, \"FunctionalDiagrams.wl\"}]],
     Get[FileNameJoin[{folder, \"FunctionalDiagrams.wl\"}]],
@@ -694,7 +695,10 @@ FunctionalDerivative[PropagatorOfJ[x, y], J[u], J[v]]
 (* G[x, u] G[u, v] G[v, y] + G[x, v] G[v, u] G[u, y] *)", "Input"],
 Cell[TextData[{"The rules of the tree expansion of section 6 are rules of this kind: ", StyleBox["ConnectedFunctionFromVertices", FontFamily -> "Source Code Pro", FontWeight -> "Bold", FontColor -> RGBColor[0.15, 0.2, 0.45]], " declares them for ", StyleBox["FullPropagator", FontFamily -> "Source Code Pro", FontWeight -> "Bold", FontColor -> RGBColor[0.15, 0.2, 0.45]], " and ", StyleBox["VertexFunction", FontFamily -> "Source Code Pro", FontWeight -> "Bold", FontColor -> RGBColor[0.15, 0.2, 0.45]], " and differentiates."}], "Text"],
 Cell["Where to go next", "Subsection"],
-Cell[TextData[{"The showcase, ", StyleBox["Showcase/FunctionalDiagrams_Showcase.pdf", FontFamily -> "Source Code Pro", FontWeight -> "Bold", FontColor -> RGBColor[0.15, 0.2, 0.45]], ": the same path to third order, with the derivations, the checks and all the pictures."}], "Item"],
-Cell[TextData[{"The manual, ", StyleBox["Documentation/FunctionalDiagrams_Manual.pdf", FontFamily -> "Source Code Pro", FontWeight -> "Bold", FontColor -> RGBColor[0.15, 0.2, 0.45]], ": every function, option and convention, with examples."}], "Item"],
+Cell[TextData[{"The showcase, ", StyleBox["Showcase/FunctionalDiagrams_Showcase.pdf", FontFamily -> "Source Code Pro", FontWeight -> "Bold", FontColor -> RGBColor[0.15, 0.2, 0.45]], ": the same path to third order, with the derivations, the checks and all the pictures. The paclet carries it: ", StyleBox["SystemOpen[PacletObject[\"FunctionalDiagrams\"][\"AssetLocation\", \"Showcase\"]]", FontFamily -> "Source Code Pro", FontWeight -> "Bold", FontColor -> RGBColor[0.15, 0.2, 0.45]], " opens the showcase of the version installed."}], "Item"],
+Cell[TextData[{"The manual, ", StyleBox["Documentation/FunctionalDiagrams_Manual.pdf", FontFamily -> "Source Code Pro", FontWeight -> "Bold", FontColor -> RGBColor[0.15, 0.2, 0.45]], ": every function, option and convention, with examples. ", StyleBox["SystemOpen[PacletObject[\"FunctionalDiagrams\"][\"AssetLocation\", \"Manual\"]]", FontFamily -> "Source Code Pro", FontWeight -> "Bold", FontColor -> RGBColor[0.15, 0.2, 0.45]], " opens the manual of the version installed."}], "Item"],
+Cell["The map of the functions, every public name by its role in a calculation, interactive: https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html", "Item"],
+Cell["The wiki, practical guides and a FAQ: https://github.com/n4sd4q/FunctionalDiagrams/wiki", "Item"],
+Cell["The repository, with the releases and the changelog: https://github.com/n4sd4q/FunctionalDiagrams. Report a problem or ask a question in an issue: https://github.com/n4sd4q/FunctionalDiagrams/issues", "Item"],
 Cell[TextData[{"In Mathematica, ", StyleBox["?Name", FontFamily -> "Source Code Pro", FontWeight -> "Bold", FontColor -> RGBColor[0.15, 0.2, 0.45]], " shows the usage of a function, for example ", StyleBox["?PerturbativeCorrelationFunction", FontFamily -> "Source Code Pro", FontWeight -> "Bold", FontColor -> RGBColor[0.15, 0.2, 0.45]], "."}], "Item"]
 }, WindowSize -> {1000, 850}, WindowTitle -> "FunctionalDiagrams: a guided tour", StyleDefinitions -> "Default.nb"]
