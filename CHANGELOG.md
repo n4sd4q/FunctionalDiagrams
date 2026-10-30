@@ -9,6 +9,21 @@ The versions are MAJOR.MINOR.PATCH (semantic versioning), read for this package 
 
 Changes to the documents alone need no release; they are listed under the next version.
 
+## Unreleased
+
+### Documents
+
+- **A lighter README, website and wiki.** The README shows at first sight what the package is, the demo, the
+  installation, the first example and the gallery, with shorter captions, and says what the package does in four lines;
+  the complete list, with the names of the functions, and four conventions are in folds, and the folds on performance,
+  the contents of the repository and the tests are gone (the manual, the FAQ and `CONTRIBUTING.md` have them). Each
+  fact keeps one home: the update check in `SECURITY.md`, the other ways to install and updating on the wiki's
+  Installation page, the layout of the repository in `CONTRIBUTING.md`. The site follows its bar (what it does, the
+  example, installation, the documents with the map, checks and related software with the scope, how to cite), with
+  four cards of documents. The wiki's Home is one sentence and the list of pages, its sidebar links the website and its
+  footer is one line; the page on light and dark notebooks became an answer of the FAQ, the effective actions in
+  Conventions keep their formulas in view and the rest in a fold, and the recipes lose a few sentences.
+
 ## 2.6.0 (2026-10-30)
 
 Since 2.5.0: `Options` and `SetOptions` for every public function that takes options, and a message for the name of an
