@@ -1,4 +1,4 @@
-# FunctionalDiagrams
+# Functional&#8203;Diagrams
 
 FunctionalDiagrams is a Mathematica package that derives Feynman diagrams by functional derivatives. You write a
 generating functional and an interaction; the package differentiates them with respect to the sources and the

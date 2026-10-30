@@ -17,6 +17,10 @@
   "Examples"]]`, and leaves the other ways of installing to the wiki; the README and the wiki link the notebook as a
   download from GitHub Pages (before, GitHub's view of its source) and the script `Examples.wl` to read. The wiki's
   Installation page shows the line too, and its sidebar lists the tour.
+- **The README on a phone, and its order.** On a narrow screen the title breaks between *Functional* and *Diagrams* (a
+  zero-width space: GitHub drops `<wbr>`), not before the last letter, and so does the title of the wiki's Home; the
+  table of the documents gives each one a short line (a third of its height on a phone) and lists the map of the
+  functions, whose section now follows Related software, so that What it does, Checks and Related software read on.
 
 ## 2.5.0 (2026-10-29)
 

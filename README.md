@@ -2,7 +2,7 @@
   <img src="Logo/FunctionalDiagrams_logo.svg" width="120" alt="FunctionalDiagrams logo: the exchange vacuum diagram">
 </p>
 
-<h1 align="center">FunctionalDiagrams</h1>
+<h1 align="center">Functional&#8203;Diagrams</h1>
 
 <p align="center">
   <b>Feynman diagrams from functional derivatives</b><br>
@@ -41,9 +41,8 @@ electron gas.
   <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4"><img src="Media/demo_preview.webp" width="720" alt="Preview of the demo video: the
   Luttinger–Ward functional and its derivatives Sigma and Gamma0, the Bethe–Salpeter and parquet equations of the
   electron gas, Hedin's equations"></a><br>
-  <sub>A preview of the <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4">demo video</a> (an MP4 file,
-  also in the repository as <a href="Media/demo.mp4"><code>Media/demo.mp4</code></a>): the first example below typed and
-  run, then a few other results.</sub>
+  <sub>A preview of the <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4">demo video</a> (40 s): the
+  electron gas of the first example below typed and run, then a few other results.</sub>
 </p>
 
 ## Installation
@@ -169,10 +168,11 @@ one-loop gluon self-energy.</p>
 
 | Document | Contents |
 |---|---|
-| [**Showcase**](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) | an introduction to the diagrammatic methods through the package, in three parts. Many-body theory: perturbation theory, the self-energy, linear response, Matsubara sums, the 1PI and 2PI effective actions, the grand potential, the Bethe–Salpeter equation from the response to a one-body source, vertices and response functions, the parquet equations from the derivatives of the 2PI action, pairing with the superfield of Nambu and Gor'kov, Hedin's equations, Hubbard–Stratonovich and *GW*, Potthoff's functional and divergent vertices, phonons and disorder. Quantum field theory: dimensional regularization, one-loop QED, the vertices of QCD. Tools: pictures and formulas, and what the package does under the hood |
-| [**Manual**](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf) | every function, option and convention, with examples computed by the package |
-| [**Guided tour**](Examples.wl) | a notebook to run in Mathematica: in the paclet (see [Installation](#installation)) or [to download](https://n4sd4q.github.io/FunctionalDiagrams/Examples.nb); [`Examples.wl`](Examples.wl) is the same as a script, readable on GitHub |
-| [**Wiki**](https://github.com/n4sd4q/FunctionalDiagrams/wiki) | practical guides and a FAQ: installing and updating, the conventions in one place, declaring a theory, reading the weights, exact equations, evaluating diagrams, pictures in LaTeX, scripts |
+| [**Showcase**](https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf) (PDF) | the physics, step by step, for the electron gas and φ⁴ theory: many-body theory, quantum field theory, and the tools (pictures, formulas, how the package works) |
+| [**Manual**](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf) (PDF) | every function, option and convention, with examples computed by the package |
+| [**Guided tour**](Examples.wl) | a notebook to run: in the paclet ([Installation](#installation)) or [to download](https://n4sd4q.github.io/FunctionalDiagrams/Examples.nb); [`Examples.wl`](Examples.wl) is the same as a script |
+| [**Wiki**](https://github.com/n4sd4q/FunctionalDiagrams/wiki) | practical guides and a FAQ |
+| [**Map of the functions**](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html) | every public name by its role in a calculation, interactive |
 
 ## What it does
 
@@ -227,21 +227,6 @@ calculations.
 The theories are written in condensed notation, so the same functions work for real and complex bosons, fermions,
 phonons, disorder and QCD (quarks, gluons, ghosts).
 
-## Map of the functions
-
-<p align="center"><a href="https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html"><img
-src="Documentation/function_map.svg" width="100%" alt="Map of the public functions of FunctionalDiagrams in six stages
-of a calculation: declare the symbols, write a functional, differentiate it with FunctionalDerivative (the hub, with
-the functions built on it hanging from it), then classify and check, draw and evaluate the diagrams. Click to open the
-interactive map"></a></p>
-
-The public functions by their role in a calculation: declare the symbols, write a functional, differentiate it, then
-classify, draw and evaluate the diagrams. The colour of a name is its group in the manual; dashed names are inert heads
-used as data. A name indented under another is built on it, and *uses* lists the other names it uses. Click the map for
-the [interactive version](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html), with every
-dependency: select a name to read its usage message and to see the lines to the names it uses and from the names that
-use it (in a clone, open [`Documentation/function_map.html`](Documentation/function_map.html) in a browser).
-
 ## Checks
 
 The results are checked against each other, order by order, and the showcase reports every residual. For the electron
@@ -262,6 +247,21 @@ Dyson–Schwinger and functional renormalization group equations. FunctionalDiag
 instead, and is meant for the objects of many-body theory and effective actions: correlation and vertex functions,
 Φ[G] and its derivatives, channels and parquet equations, self-consistent approximations. Its evaluation tools are much
 more limited than FeynCalc's, so for real loop calculations the two are better used together.
+
+## Map of the functions
+
+<p align="center"><a href="https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html"><img
+src="Documentation/function_map.svg" width="100%" alt="Map of the public functions of FunctionalDiagrams in six stages
+of a calculation: declare the symbols, write a functional, differentiate it with FunctionalDerivative (the hub, with
+the functions built on it hanging from it), then classify and check, draw and evaluate the diagrams. Click to open the
+interactive map"></a></p>
+
+The public functions by their role in a calculation: declare the symbols, write a functional, differentiate it, then
+classify, draw and evaluate the diagrams. The colour of a name is its group in the manual; dashed names are inert heads
+used as data. A name indented under another is built on it, and *uses* lists the other names it uses. Click the map for
+the [interactive version](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html), with every
+dependency: select a name to read its usage message and to see the lines to the names it uses and from the names that
+use it.
 
 ## Details
 
