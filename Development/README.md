@@ -57,8 +57,10 @@ sources, that `../Examples.nb` is generated from `../Examples.wl`, that every pu
 and an entry in the manual, that the version is the same everywhere, that the badge of the README matches the last run
 of the tests, that the map of the functions is drawn from the current public names and version, that every version
 x.y.z written in the README, `../index.html`, the manual, the showcase (its title: x.y) and the guided tour is that
-version (numbers of that form that are not versions of the package go in its list `not_versions`), and that the pages
-of the wiki state that version, use only names of the package that exist and link pages, images and files that exist. GitHub runs it on
+version (numbers of that form that are not versions of the package go in its list `not_versions`), that the pages of
+the wiki state that version, use only names of the package that exist and link pages, images and files that exist, and
+that the links of the README, `../index.html`, `../SECURITY.md`, `../CONTRIBUTING.md` and the issue forms reach a page
+and a heading of the wiki, a file of the repository or a heading of the README. GitHub runs it on
 every push (`../.github/workflows/consistency.yml`).
 
 The pages of the GitHub wiki are written in `../wiki/` (`Home.md`, `_Sidebar.md`, `_Footer.md`, one `Page-Name.md` per

@@ -72,6 +72,9 @@ Changes to the documents alone need no release; they are listed under the next v
   and the TikZ code of the showcase's figures. `check_consistency.py` checks the version wherever it is written in the
   README, `index.html`, the manual, the showcase (whose title gives major and minor) and the guided tour, as it did in
   the wiki: a number x.y.z that is not the version is reported, unless it is listed as not a version of the package.
+  It checks the links of the README, `index.html`, `SECURITY.md`, `CONTRIBUTING.md` and the issue forms as it checks
+  those of the wiki: each must reach a page and a heading of the wiki, a file of the repository or a heading of the
+  README.
 - **The versions explained, and the wiki in one order.** The head of this changelog says what a major, a minor and a
   patch release may change, and the wiki's Installation page says it where it explains updating. The wiki's Home and
   its sidebar list the pages in the same order: first steps (Installation, Declaring a theory, Reading the weights,

@@ -6,7 +6,8 @@ the install line of the README, the title of the manual and the check of the tes
 README, index.html, the manual, the showcase (its title: major and minor) and the guided tour is that one; the map of the functions
 (Documentation/function_map.*) is drawn from the current public names and version; the pages of the wiki (wiki/) state
 that version, use only names of the package that exist, and link pages, images and files that exist (their code is run
-by Development/check_wiki.wl, which needs Mathematica). Run from any folder:
+by Development/check_wiki.wl, which needs Mathematica), as do the README, index.html, SECURITY.md, CONTRIBUTING.md and the
+links of the issue forms (pages and headings of the wiki, files of the repository, headings of the README). Run from any folder:
 python3 Development/check_consistency.py"""
 import json, os, re, subprocess, sys, tempfile, unicodedata
 
@@ -216,6 +217,30 @@ if os.path.isdir(wiki):
     listed = set(re.findall(r'\]\(([A-Z][A-Za-z-]*)\)', pages.get('_Sidebar', '')))
     for name in sorted(set(pages) - listed - {'_Sidebar', '_Footer'}):
         problems.append('wiki/%s.md is not in wiki/_Sidebar.md' % name)
+
+# the links of the README, the landing page, the community files and the issue forms: a page of the wiki and its heading,
+# a file of the repository (on GitHub or on GitHub Pages, or relative), a heading of the README
+readme_anchors = {slug(h) for h in re.findall(r'^#+ (.*)$', re.sub(r'```.*?```', '', readme, flags=re.S), re.M)}
+for name in ('README.md', 'index.html', 'SECURITY.md', 'CONTRIBUTING.md', os.path.join('.github', 'ISSUE_TEMPLATE', 'config.yml')):
+    if not os.path.exists(os.path.join(root, name)):
+        continue
+    text = re.sub(r'```.*?```', '', open(os.path.join(root, name), encoding='utf-8').read(), flags=re.S)
+    for target in sorted({''.join(t) for t in re.findall(r'\]\(([^)\s]+)\)|(?:href|src)="([^"]+)"|^\s*url:\s*(\S+)', text, re.M)}):
+        wiki_page = re.match(r'https://github\.com/n4sd4q/FunctionalDiagrams/wiki(?:/([^#?]*))?(?:#(.*))?$', target)
+        repo_file = re.match(r'https://(?:github\.com/n4sd4q/FunctionalDiagrams/(?:blob|tree)/main/|'
+                             r'n4sd4q\.github\.io/FunctionalDiagrams/)([^#?]*)', target)
+        if wiki_page and os.path.isdir(wiki):
+            page, anchor = wiki_page.group(1) or 'Home', wiki_page.group(2)
+            if page not in pages:
+                problems.append('%s links the wiki page %s, which is not in wiki/' % (name, page))
+            elif anchor and anchor not in anchors[page]:
+                problems.append('%s links %s, which is not a heading of wiki/%s.md' % (name, target, page))
+        elif repo_file or not re.match(r'[a-z]+:|#', target):
+            path = repo_file.group(1) if repo_file else target.partition('#')[0].partition('?')[0]
+            if not os.path.exists(os.path.join(root, path or 'index.html')):
+                problems.append('%s links %s, which is not a file of the repository' % (name, target))
+        elif name == 'README.md' and target.startswith('#') and target[1:] not in readme_anchors:
+            problems.append('README.md links %s, which is not a heading of the README' % target)
 
 print('\n'.join(problems) if problems else 'consistent: package, notebook, %d public names documented, wiki' % len(public))
 sys.exit(1 if problems else 0)
