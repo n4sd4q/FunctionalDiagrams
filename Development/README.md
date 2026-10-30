@@ -50,8 +50,8 @@ value quoted in the text, is never an output). A statement that gives a message 
 of `check_showcase.wl` gives the rules.
 
 The demo video, `../Media/demo.mp4`, its looping preview at the top of the README, `../Media/demo_preview.webp` (an
-animated WebP at 60 fps), and a
-poster frame, `../Media/demo_poster.png`, are made by `python3 make_demo_video.py` (after `Showcase/make_figures.wl`;
+animated WebP at 60 fps), and its
+poster (the title card, its first frame), `../Media/demo_poster.png`, are made by `python3 make_demo_video.py` (after `Showcase/make_figures.wl`;
 it needs pdflatex, pdftocairo, PIL and ffmpeg): the code typed is the first example of the README, the diagrams and
 formulas are the figures of the showcase, typeset one element per page and put together frame by frame.
 

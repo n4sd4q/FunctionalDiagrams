@@ -23,6 +23,9 @@ Changes to the documents alone need no release; they are listed under the next v
   four cards of documents. The wiki's Home is one sentence and the list of pages, its sidebar links the website and its
   footer is one line; the page on light and dark notebooks became an answer of the FAQ, the effective actions in
   Conventions keep their formulas in view and the rest in a fold, and the recipes lose a few sentences.
+- **The website's demo plays by itself**, muted and looping, from its title card (its poster, the first frame of the
+  video), with no caption under it; with reduced motion asked for it waits to be played. The README's preview of the
+  video has no caption either: it links the video.
 
 ## 2.6.0 (2026-10-30)
 

@@ -39,9 +39,7 @@ the same diagrams hold in any dimension, at zero or finite temperature and on th
 <p align="center">
   <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4"><img src="Media/demo_preview.webp" width="720" alt="Preview of the demo video: the
   Luttinger–Ward functional and its derivatives Sigma and Gamma0, the Bethe–Salpeter and parquet equations of the
-  electron gas, Hedin's equations"></a><br>
-  <sub>A preview of the <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4">demo video</a> (40 s): the
-  electron gas of the first example below, typed and run, then a few more results.</sub>
+  electron gas, Hedin's equations"></a>
 </p>
 
 ## Installation

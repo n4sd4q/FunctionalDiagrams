@@ -55,9 +55,9 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   pages of the manual and the showcase; `_small.svg` for 16–32 px), drawn by `Development/make_logo.py`; the social preview
   `social_preview.png` is built by `Development/make_readme_figure.sh`.
 - `Media/` — the demo video `demo.mp4` (1920×1080, 60 fps, H.264, under a minute), its looping preview
-  `demo_preview.webp` (an animated WebP at 60 fps, 960×540, at the top of the README, a plain `<img>`) and a poster frame
-  `demo_poster.png` (the output of the first example: the site shows it under its hero, and plays the video only when
-  asked, since its first frame, the title card, would repeat the hero), made by `python3 Development/make_demo_video.py` (about four minutes, most of them writing the WebP;
+  `demo_preview.webp` (an animated WebP at 60 fps, 960×540, at the top of the README, a plain `<img>`) and its poster
+  `demo_poster.png` (its first frame, the title card: the site plays the video by itself, muted and looping, unless the
+  reader asks for reduced motion; `--poster` writes only the poster), made by `python3 Development/make_demo_video.py` (about four minutes, most of them writing the WebP;
   pdflatex, pdftocairo, PIL, ffmpeg) from the figures of the showcase and the first example of the README: run it again
   when they change, and look at frames of the result (`--frames` writes some to `build/video/frames`). Its lengths in
   pixels are written for a frame 1280 px wide and scaled to the frame (`S`, `px`).

@@ -123,37 +123,6 @@ def pdf_pages(*path):
     return counts.pop()
 
 
-def mp4_seconds(*path):
-    """the duration of the movie header (mvhd) of an MP4 file, rounded to seconds"""
-    with open(os.path.join(ROOT, *path), 'rb') as f:
-        data = f.read()
-
-    def boxes(start, end):
-        i = start
-        while i + 8 <= end:
-            size, kind = struct.unpack('>I4s', data[i:i + 8])
-            head = 8
-            if size == 1:
-                size, head = struct.unpack('>Q', data[i + 8:i + 16])[0], 16
-            elif size == 0:
-                size = end - i
-            if size < head:
-                break
-            yield kind, i + head, i + size
-            i += size
-
-    for kind, start, end in boxes(0, len(data)):
-        if kind == b'moov':
-            for kind2, s, _ in boxes(start, end):
-                if kind2 == b'mvhd':
-                    if data[s] == 1:
-                        scale, duration = struct.unpack('>IQ', data[s + 20:s + 32])
-                    else:
-                        scale, duration = struct.unpack('>II', data[s + 12:s + 20])
-                    return int(duration / scale + 0.5)
-    fail('no movie header in ' + os.path.join(*path))
-
-
 def png_size(*path):
     with open(os.path.join(ROOT, *path), 'rb') as f:
         head = f.read(24)
@@ -523,7 +492,7 @@ def build():
                   SHOWCASE='Showcase/FunctionalDiagrams_Showcase.pdf', MANUAL='Documentation/FunctionalDiagrams_Manual.pdf',
                   SHOWCASE_PAGES=str(pdf_pages('Showcase', 'FunctionalDiagrams_Showcase.pdf')),
                   MANUAL_PAGES=str(pdf_pages('Documentation', 'FunctionalDiagrams_Manual.pdf')),
-                  VIDEO_SECONDS=str(mp4_seconds('Media', 'demo.mp4')), OG_WIDTH=str(og_w), OG_HEIGHT=str(og_h),
+                  OG_WIDTH=str(og_w), OG_HEIGHT=str(og_h),
                   WAVE_PATH=wave_path())
     values.update({'ICON_' + k: v for k, v in ICONS.items()})
 

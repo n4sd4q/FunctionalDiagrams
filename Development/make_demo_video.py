@@ -2,7 +2,7 @@
 """The demo video of the package: Media/demo.mp4 (1920 x 1080, 60 fps, H.264; its first frame, the one a player shows
 before it plays, is the title card in full view), its looping preview for the README,
 Media/demo_preview.webp (960 x 540, 60 fps; its first frame, the one shown where animated images do not play, is a card
-in full view), and a poster frame, Media/demo_poster.png.
+in full view), and its poster, Media/demo_poster.png (that title card: the website shows it until the video plays).
 
 Nothing in it is drawn by hand: the diagrams and formulas are the figures of the showcase (Showcase/figures, computed
 by Showcase/make_figures.wl; run it first), redrawn with one unit of length as in make_readme_figure.sh, and the code
@@ -15,6 +15,7 @@ mathpazo, Source Code Pro, varwidth), pdftocairo (poppler), python3 with PIL, ff
     python3 Development/make_demo_video.py            (all three files, about four minutes: most of it the WebP)
     python3 Development/make_demo_video.py --frames   (also a few frames as PNG in build/video/frames, to look at;
                                                       with --only-frames, nothing else)
+    python3 Development/make_demo_video.py --poster   (only the poster, a few seconds)
 """
 import concurrent.futures
 import math
@@ -974,6 +975,12 @@ def write_preview(scenes, path):
                    allow_mixed=True, quality=PREVIEW_QUALITY, method=6)
 
 
+def write_poster(video):
+    # the poster: the title card, the first frame of the video, so that nothing jumps when it starts
+    video[0].frame(0).convert("RGB").quantize(colors=64, method=Image.MEDIANCUT).save(
+        os.path.join(MEDIA, "demo_poster.png"), optimize=True)
+
+
 def main():
     os.makedirs(BUILD, exist_ok=True)
     os.makedirs(MEDIA, exist_ok=True)
@@ -981,6 +988,9 @@ def main():
     video = timeline(el)
     total = sum(s.duration for s in video)
     print("video: %.1f s in %d scenes" % (total, len(video)))
+    if "--poster" in sys.argv:
+        write_poster(video)
+        return
     if "--frames" in sys.argv:
         out = os.path.join(BUILD, "frames")
         os.makedirs(out, exist_ok=True)
@@ -1000,10 +1010,7 @@ def main():
     mp4 = os.path.join(MEDIA, "demo.mp4")
     encode(video, FPS, ["-c:v", "libx264", "-preset", "veryslow", "-crf", "20", "-tune", "animation", "-pix_fmt", "yuv420p",
                         "-movflags", "+faststart", mp4])
-    # the poster: the first example, all of its output in view
-    nb = video[1]
-    nb.frame(nb.duration - 0.6).convert("RGB").quantize(colors=64, method=Image.MEDIANCUT).save(
-        os.path.join(MEDIA, "demo_poster.png"), optimize=True)
+    write_poster(video)
     preview = timeline(el, preview=True)
     first = preview[0]
     if not max(i.t0 + i.fade for i in first.items) <= PREVIEW_START < first.duration - first.fade_out:

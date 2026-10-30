@@ -202,7 +202,6 @@ p { margin: 0 0 1em; }
           border-radius: 20px; box-shadow: var(--shadow-lg); }
 .screen video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 11px; background: #ffffff; }
 .demo figure { margin: 0; }
-.demo figcaption { text-align: center; color: var(--text-2); font-size: 0.93rem; margin: 16px auto 0; max-width: 70ch; }
 
 /* sections */
 section { padding: 88px 0; }
@@ -406,16 +405,14 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
     <div class="wrap">
       <figure>
         <div class="screen">
-          <!-- no autoplay: the poster (the output of the first example) is what the first screen shows, under the hero;
-               the first frame of the video is its title card, the logo and the name again -->
-          <video id="demo" muted playsinline controls preload="metadata" width="1920" height="1080"
-                 poster="Media/demo_poster.png" aria-label="Demo video: the Luttinger–Ward functional and its derivatives Sigma and Gamma0, the Bethe–Salpeter and parquet equations of the electron gas, Hedin&#x27;s equations" aria-describedby="demo-caption">
+          <!-- muted and looping, started by the script below unless the reader asks for reduced motion (then it plays
+               when asked); its poster is its first frame, the title card -->
+          <video id="demo" muted loop playsinline controls preload="metadata" width="1920" height="1080"
+                 poster="Media/demo_poster.png" aria-label="Demo video: the Luttinger–Ward functional and its derivatives Sigma and Gamma0, the Bethe–Salpeter and parquet equations of the electron gas, Hedin&#x27;s equations">
             <source src="Media/demo.mp4" type="video/mp4">
             <a href="Media/demo.mp4">The demo video (MP4)</a>
           </video>
         </div>
-        <figcaption id="demo-caption">The demo (40 s, no sound): the electron gas of the first example below,
-          typed and run, then a few more results.</figcaption>
       </figure>
     </div>
   </div>
@@ -607,6 +604,12 @@ Z0phi = Exp[1/2 <span class="tok-f">IntegralOver</span>[J[x] D0[x, y] J[y], {x, 
   });
   if (system && system.addEventListener) system.addEventListener('change', label);
   label();
+
+  var demo = document.getElementById('demo');
+  if (demo && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+    var playing = demo.play();
+    if (playing && playing.catch) playing.catch(function () {});
+  }
 
   var status = document.getElementById('copy-status');
   function done(btn, ok) {
