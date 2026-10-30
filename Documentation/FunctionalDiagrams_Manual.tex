@@ -348,13 +348,19 @@ N.~Africani, \emph{FunctionalDiagrams: functional derivatives and Feynman diagra
 \end{quote}
 The file \pkg{CITATION.cff} in the repository has the same information in a machine-readable form.
 
-\subsection{Notation used in this manual}
+\subsection{Notation used in this manual}\label{sec:notation}
 
 Function names are in \pkg{typewriter}; \pkg{f[x, y]} is Mathematica input, $f(x,y)$ the corresponding mathematical
 object. In the formulas, $\int_{z_1z_2}$ is \pkg{IntegralOver[\dots, \{z1, z2\}]}, the integral or sum over everything a
 label stands for (position, imaginary time, spin, \dots). A source is written $J$ (bosonic) or $\eta$, $\bar\eta$
 (Grassmann), a field $\phi$, $\psi$, $\bar\psi$. In diagrams, an arrow from $y$ to $x$ is a propagator $G(x,y)$, a wavy
 line an interaction $V$.
+
+Options are rules after the arguments, \pkg{"Statistics" -> "Boson"} (the name a string, or a symbol of that name). The
+options of a function, with their defaults, are \pkg{Options[f]}, and \pkg{SetOptions} changes a default for the rest of
+the session: after \pkg{SetOptions[SelfEnergy, "Statistics" -> "Boson"]}, \fnref{SelfEnergy} without the option is the
+bosonic self-energy. A function that calls another one passes its own options, not the defaults of the other one. An
+unknown name gives the message \pkg{FunctionalDiagrams::optx} and is ignored: the result is the one without it.
 
 % ------------------------------------------------------------------ 2
 \section{Expressions}\label{sec:expressions}
@@ -1134,7 +1140,8 @@ For real bosons $\Sigma(x,y)=-2\,\delta\Phi/\delta G(x,y)$ and $\Gamma_s(a,b,c,d
 \syntax{LuttingerWardFunctional[Z0, interaction, n, G0 -> G]}
 \end{function}
 The Luttinger--Ward functional to order $n$: minus the sum of the two-particle-irreducible connected vacuum diagrams,
-with the bare propagator \pkg{G0} replaced by the dressed one \pkg{G}. Takes the option \opt{Method}. The functional of
+with the bare propagator \pkg{G0} replaced by the dressed one \pkg{G}. Takes the options \opt{Method} and
+\opt{CouplingOrder} of \fnref{ConnectedVacuumDiagrams}. The functional of
 the electron gas to second order is the first example of this section.
 
 \begin{function}{SelfEnergy}
@@ -1211,7 +1218,8 @@ spins is written in this way, \pkg{psi[x1, up]}, \dots; the bare propagators mad
 \pkg{\{G0up -> Gup, G0down -> Gdown\}}. For real bosons (field \pkg{\{phi\}}), $F$ is the 1PI vertex
 $\Gamma^{(4)}=-(\text{amputated connected four-point function})$, so that $F=\lambda+O(\lambda^2)$ in $\phi^4$ theory; the
 same for a superfield (one Grassmann field, \pkg{\{NambuField\}}), whose $F$ is $\mathcal V+O(\mathcal V^2)$.
-Takes the option \opt{Method}. The vertex is the fourth derivative of the 1PI action (\fnref{EffectiveAction1PI},
+Takes the options \opt{Method} and \opt{CouplingOrder} of \fnref{ConnectedCorrelationFunction}. The vertex is the fourth
+derivative of the 1PI action (\fnref{EffectiveAction1PI},
 section~\ref{sec:effective}) at zero mean field, and the result is its skeleton diagrams with $G_0\to G$ (for fermions, the
 derivative $\delta^4\Gamma/\delta\bar\Psi\,\delta\Psi\,\delta\bar\Psi\,\delta\Psi$ of $\Gamma[\bar\Psi,\Psi]$); for $\phi^4$ theory,
 with the dressed line $D$ (\pkg{DressedPropagator}):
@@ -1716,7 +1724,8 @@ order $n$, with \pkg{G0} replaced by \pkg{G}. For a real boson the operator is $
 vertex is the derivative that defines it: with $G^{-1}=G_0^{-1}-U-\Sigma$, $\Lambda=\gamma+\delta\Sigma/\delta U$, the
 perturbative self-energy differentiated through its bare lines (the potential \pkg{LocalPotential} of
 \fnref{ConnectedCorrelationFunction}), its skeleton diagrams with $G_0\to G$ ($\Lambda=\gamma-\delta\Sigma/\delta U$ for a real
-boson, with $D_0^{-1}\to D_0^{-1}+U$). To first order, for the electron gas:
+boson, with $D_0^{-1}\to D_0^{-1}+U$). Takes the options \opt{Method} and \opt{CouplingOrder} of
+\fnref{ConnectedCorrelationFunction}. To first order, for the electron gas:
 \excode{density_vertex}
 \expictures{density_vertex}
 This function computes the same from the three-point function:
@@ -1992,7 +2001,8 @@ pictures fix a term up to the order of its labels, and the weight refers to the 
 \subsection{Options}\label{sec:options}
 
 \fnref{DiagramPlot}, \fnref{DrawDiagram} and \fnref{DiagramToTikZ} take the options below; \pkg{SetOptions} changes their
-defaults, for instance \pkg{SetOptions[DiagramToTikZ, "Scale" -> 0.5]}, and an unknown option name gives a message.
+defaults, for instance \pkg{SetOptions[DiagramToTikZ, "Scale" -> 0.5]}, and an unknown option name gives a message, as for
+every function (section~\ref{sec:notation}).
 
 \begin{center}
 \small
@@ -3388,13 +3398,13 @@ test suite is \pkg{Tests/RunTests.wl}:
 wolframscript -file Tests/RunTests.wl
 wolfram -script Tests/RunTests.wl         # the same, without wolframscript
 \end{tcblisting}
-It prints PASS or FAIL for every check and a summary with the number of checks passed, about 860 in a minute;
+It prints PASS or FAIL for every check and a summary with the number of checks passed, about 870 in a minute;
 \pkg{Tests/RunTests.out} is the output of the last run. The checks cover the functional derivative (sources, chain rule,
 renaming of integration variables, delta functions), Wick's theorem for bosons and fermions (signs, numbers of pairings,
 spin indices), the numbers of diagrams of $\phi^4$ theory and of the electron gas (vacuum, Green function, 1PI,
 skeleton), the Luttinger--Ward functional and its derivatives, the full vertex and its channels, the parquet equations
-for fermions and bosons, the tree expansion, the closed loops, the pictures (arrows, points, layout rules) and the
-\LaTeX{} output, and the Matsubara sums: closed forms, sums over many frequencies (the evaluated diagrams against the
+for fermions and bosons, the tree expansion, the closed loops, the pictures (arrows, points, layout rules), the
+\LaTeX{} output and the options of every function (unknown names, \pkg{SetOptions}), and the Matsubara sums: closed forms, sums over many frequencies (the evaluated diagrams against the
 brute-force sums of their integrands, with poles of first to third order), the Lindhard function at finite and zero
 temperature, the second-order self-energy and the self-energy of electrons and phonons in the form of the textbooks, the
 agreement of the residues with the cutting rules, and the messages and \pkg{\$Failed} of divergent sums and invalid
@@ -3437,8 +3447,9 @@ zero-dimensional theory.
 \item \pkg{FunctionalDiagrams::label}: an external label does not occur in the expression --- a misprint, or the
   arguments in the order of version 1 (line heads before labels).
 \item \pkg{FunctionalDiagrams::labelsymbol}: a label is not a symbol (a number, for instance).
-\item \pkg{FunctionalDiagrams::optx}: an unknown option of a drawing function or of a function of
-  section~\ref{sec:matsubara}.
+\item \pkg{FunctionalDiagrams::optx}: an option name that the function does not know (the message names the function,
+  the option and the options of the function); the option is ignored, and the result is the one without it
+  (section~\ref{sec:notation}).
 \item \pkg{FunctionalDiagrams::realboson}: \pkg{"Statistics" -> "Boson"} with a propagator that is not declared
   symmetric (a complex field: use \pkg{"Statistics" -> "ComplexBoson"}).
 \item \pkg{FunctionalDiagrams::statisticsdefault}: \fnref{SelfEnergy} or \fnref{IrreducibleVertex} on a propagator declared

@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+### New
+
+- **`Options` and `SetOptions` for every function with options.** Every public function that takes options has
+  `Options[f]`, with every name it accepts and the default it uses, and `SetOptions[f, ...]` changes a default for the
+  session: after `SetOptions[SelfEnergy, "Statistics" -> "Boson"]`, `SelfEnergy` without the option is the bosonic
+  self-energy. Until now `SetOptions` changed only the drawing functions, `ExpandTrace`, `ZeroDimensionalValue`,
+  `EffectiveAction1PI` and a few options of `IrreducibleVertex`, `ExactEquation` and `EffectiveAction2PI`, and was
+  accepted but without effect on the other functions of perturbation theory, the self-energy, the vertices and the
+  parquet; the functions of the Matsubara sums (`MatsubaraSum`, `EvaluateMatsubara`, ...), of dimensional
+  regularization and of QED, `ExpressionToLaTeX`, `DeclareBlob` and `SelfEnergyFunctional` had no `Options`. A
+  function that calls another one passes its own options, never the defaults of the other one:
+  `SetOptions[ConnectedCorrelationFunction, ...]` does not change `PerturbativeFullVertex`. `LuttingerWardFunctional`,
+  `PerturbativeFullVertex` and `PerturbativeDensityVertex` list `"CouplingOrder"`, which they always passed on to the
+  correlation functions.
+
+### Fixed
+
+- **A misspelt option is no longer ignored silently.** Every function checks the names of its options where the call
+  enters the package (one helper for the whole package): a name that the function does not know gives
+  `FunctionalDiagrams::optx`, which names the function, the option and the options of the function, and is ignored, so
+  that the result is the one without it. Before, only the drawing functions and those of the Matsubara sums, of
+  dimensional regularization and of QED checked the names: `"Statistcs" -> "Boson"` in `SelfEnergy`, `"Chanel"` in
+  `IrreducibleVertex` or `"MaximumOrdr"` in `ExactEquation` gave the fermionic or the complete result with no warning.
+  The message says that the option is ignored; `DrawDiagram` of several terms gives it once (twice before).
+
 ### Documents
 
 - **The first example of the README gives what it shows.** Its Green function to second order is followed by its

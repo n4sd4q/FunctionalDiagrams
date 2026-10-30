@@ -160,6 +160,37 @@ The weight changed as well: an interaction line stands for −V (see [Reading th
 picture only, the options `"Directed" -> {Gx}` and `"Interactions" -> {Vx}` do the same as the declarations.
 See [Declaring a theory](Declaring-a-Theory).
 
+## How do I set an option for the whole session?
+
+Options are rules after the arguments. `Options[f]` gives those of a function with their defaults, and `SetOptions`
+changes a default until you change it back. With `"CouplingOrder" -> {V, 2}` the connected vacuum diagrams are those of
+order V² only:
+
+```mathematica
+Options[ConnectedVacuumDiagrams]
+SetOptions[ConnectedVacuumDiagrams, "CouplingOrder" -> {V, 2}];
+Length[DiagramTerms[ConnectedVacuumDiagrams[Z0, interaction, 3]]]
+SetOptions[ConnectedVacuumDiagrams, "CouplingOrder" -> None];
+```
+
+```text
+{Method -> Automatic, CouplingOrder -> None}
+5
+```
+
+A name that the function does not know, a misprint for instance, gives a message and is ignored, so that it never
+changes a result unnoticed:
+
+```mathematica
+ConnectedVacuumDiagrams[Z0, interaction, 2, "CoupligOrder" -> {V, 2}] ===
+ ConnectedVacuumDiagrams[Z0, interaction, 2]
+```
+
+```text
+FunctionalDiagrams::optx: Unknown option CoupligOrder of ConnectedVacuumDiagrams, ignored; the options are {Method, CouplingOrder}.
+True
+```
+
 ## How high an order can I compute?
 
 The numbers of diagrams grow quickly, and the package is fast enough for the orders at which one can still look at

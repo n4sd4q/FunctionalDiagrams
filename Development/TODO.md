@@ -39,15 +39,18 @@ showcase script and took a third off the test suite.
   which take the symbolic refinement; the Dirac rules applied by `//.` to whole expressions (the product rules of the
   first `diracLinear` are most of `DiracSimplify`: applied once to each distinct product, trace or chain, `diracLinear`
   is 15 % faster, but the fresh loop momenta get other names; a term at a time changes their order).
-- **Options.** Functions of 07, 09 and 10 check the names of their options (`checkOptionNames`) without `Options[f]`;
-  those of 03, 04 and 11 have `Options[f]` with literal defaults and no check, so a misspelt `"Statistics"`, `"Channel"`
-  or `"MaximumOrder"` is ignored silently and `SetOptions` has no effect on most. One helper (names checked, defaults
-  from `Options[f]`) for every function with options.
 - **Closed Feynman-parameter integrals in QED (review, a feature).** `inertParameterIntegral` (`10_qed.wl`) leaves the
   one-dimensional coefficients of Σ₂ and Π₂ as `ParameterIntegral`; the closed forms of the massive bubble in
   `09_dimreg.wl` (∫ w Δ^n0 ln^k Δ, roots of the Källén function) could give them in closed form. It changes printed and
   tested results, so it is the author's decision. The two engines should stay separate otherwise (different i0, variables
   and output forms).
+- **Options that are not checked (what is left of the review of options, October 2026).** Every public function
+  resolves its options with `callOptions` (names checked, defaults from `Options[f]`). Two rules stay unchecked, being
+  data rather than options of a call: `"MaximumOrder" -> {x, n}` of `FunctionalDerivative`, matched literally by its
+  pattern (any other rule is read as a source: the message `nosource` and 0), and `"Statistics"` inside the inert
+  `LegendreTransform[Phi, G -> S, "Statistics" -> s]`, read where it is differentiated or written out (an unknown value
+  gives `FunctionalDiagrams::statistics`, a misspelt name nothing). A check at `SelfEnergyFunctional` covers the
+  functionals the package builds; one for a `LegendreTransform` written by hand would have to run when it is read.
 - **Display forms of the integral heads (review).** `09_dimreg.wl` and `10_qed.wl` declare display forms of the same
   shapes for their integral heads. Left as one-line declarations next to each head: a loop injecting the heads would be
   less clear. Merge them if a third family of integrals appears.
@@ -132,10 +135,11 @@ free energy.
 
 ## Speed
 
-- The test suite takes about a minute alone on two cores (862 checks: 64 s; 80 s before the speed work of October
-  2026, 125 s before the third round), two thirds of it in `Tests/EffectiveActions.wl`. The slowest checks left are
-  those of `EffectiveAction1PI` for Γ[φ̄] (10 s, with Γ⁽⁴⁾ to λ³), the one-site model and the exact effective actions of
-  φ³ + φ⁴ in zero dimensions (4 s each); the fully irreducible vertices of the parquet check are stored
+- The test suite takes about a minute alone on two cores (862 checks at 2.5.0: 64 s, the 11 checks of the options
+  added since about a second; 80 s before the speed work of October 2026, 125 s before the third round), two thirds of
+  it in `Tests/EffectiveActions.wl`. The slowest checks left are those of `EffectiveAction1PI` for Γ[φ̄] (10 s, with
+  Γ⁽⁴⁾ to λ³), the one-site model and the exact effective actions of φ³ + φ⁴ in zero dimensions (4 s each); the fully
+  irreducible vertices of the parquet check are stored
   (`Tests/FullyIrreducibleVertices.m`, recomputed with `RECOMPUTE_REFERENCES=1`).
 - `Showcase/make_figures.wl` takes about 130 s alone on two cores (155 s before the speed work, 286 s before the third
   round): the effective actions 39 s (the full vertex of the electron gas 10.5 s), the Nambu section 14 s, the
