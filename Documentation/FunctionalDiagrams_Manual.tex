@@ -1626,7 +1626,8 @@ parquet equations read $F=\Gamma_{\rm irr}-\frac12\sum_{r=s,t,u}\Gamma_r\,L_0\,F
 and the factor $\frac12$ that of a pair of identical lines; $\Gamma_s=4\,\delta^2\Phi/\delta G\,\delta G$ and
 $\Gamma_{\rm irr}=\delta^4\Gamma/\delta\bar\phi^4$ at
 fixed $G$ (section~\ref{sec:effective}). With \opt{MaximumOrder} \pkg{-> \{V, n\}} only the products of total order $n$ or less are
-built. The direct interaction iterated in the particle--hole channel gives a bubble:
+built. A channel that is not one of the statistics (an unknown name, or \opt{s} for fermions) gives the message
+\pkg{FunctionalDiagrams::channel} and \pkg{\$Failed}. The direct interaction iterated in the particle--hole channel gives a bubble:
 \excode{ladder_ph}
 \exboth{ladder_ph}
 
@@ -3534,9 +3535,10 @@ zero-dimensional theory.
   \pkg{ParameterIntegral::threshold} and \pkg{SimplexIntegral::threshold}, an integrand with a power $\le-1$ of a base
   that vanishes in the region, above a threshold, which \pkg{N} does not integrate (the result is \pkg{Indeterminate}); \pkg{VertexFormFactors::rest}, a vertex that is not of the form of the form factors
   (\pkg{\$Failed}).
-\item Channels, exact equations and trees: \pkg{FunctionalDiagrams::channel}, a value of \opt{Channel} that does not exist
-  for the statistics; \pkg{FunctionalDiagrams::ppkernel}, the particle--particle kernel of fermions asked as a derivative
-  with respect to $G$ (it is one with respect to the anomalous propagators: use the superfield);
+\item Channels, exact equations and trees: \pkg{FunctionalDiagrams::channel}, a channel that does not exist for the
+  statistics, as a value of \opt{Channel} or as the channel of \fnref{BetheSalpeterLadder};
+  \pkg{FunctionalDiagrams::ppkernel}, the particle--particle kernel of fermions asked as a derivative with respect to $G$
+  (it is one with respect to the anomalous propagators: use the superfield);
   \pkg{ParquetDecomposition::args}, wrong arguments; \pkg{FunctionalDiagrams::exactname}, \pkg{::exactobject}, an
   unknown equation or a missing object of \fnref{ExactEquation}; \pkg{ConnectedFunctionFromVertices::fermionlines},
   directions that are not \pkg{"Out"} and \pkg{"In"}, as many of each. The result is \pkg{\$Failed}.

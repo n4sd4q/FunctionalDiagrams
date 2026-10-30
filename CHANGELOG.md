@@ -35,6 +35,13 @@ Changes to the documents alone need no release; they are listed under the next v
   dimensional regularization and of QED checked the names: `"Statistcs" -> "Boson"` in `SelfEnergy`, `"Chanel"` in
   `IrreducibleVertex` or `"MaximumOrdr"` in `ExactEquation` gave the fermionic or the complete result with no warning.
   The message says that the option is ignored; `DrawDiagram` of several terms gives it once (twice before).
+- **The channel of `BetheSalpeterLadder` is checked.** A channel that is not one of the statistics given
+  (`"ParticleHole"`, `"TransverseParticleHole"`, `"ParticleParticle"` for fermions; `"s"`, `"t"`, `"u"` for real bosons
+  and superfields) gives `FunctionalDiagrams::channel`, which names it and the channels of the statistics, and
+  `$Failed`; so does `"Channel"` in `ExactEquation["BetheSalpeter", ...]`. Before, an unknown name (`"Nonsense"`) gave
+  an unevaluated `Switch` of the six ladders, and a channel of another statistics (`"s"` for fermions, `"ParticleHole"`
+  for superfields) its ladder, with no message. The message is the one of `IrreducibleVertex`, now worded for a channel
+  given as an argument as well as by the option `"Channel"`.
 
 ### Documents
 

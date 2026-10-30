@@ -739,6 +739,37 @@ check["ParquetDecomposition: one line head without a list; a wrong call gives a 
    Quiet[ParquetDecomposition[phiGs4, phiGs4, Gs4, {a, b, c, d}]],
    messageGivenQ[ParquetDecomposition[phiGs4, {a, b, c}, {Gs4}], FunctionalDiagrams::vertexlabels]},
   {{"FullyIrreducible", "s", "t", "u", "SeveralChannels"}, True, $Failed, True}];
+(* the channel of BetheSalpeterLadder: one of the statistics, else the message channel and $Failed; the valid ones are the
+   ladders of the usage message *)
+DeclareAntisymmetric[GaLadder];
+ladderL = ladderLeft[x1, x2, x3, x4]; ladderR = ladderRight[x1, x2, x3, x4];
+check["BetheSalpeterLadder and ExactEquation: an unknown channel, or one of another statistics, gives the message channel and $Failed",
+  {messageAndValue[BetheSalpeterLadder[ladderL, ladderR, {x1, x2, x3, x4}, "Nonsense", G], FunctionalDiagrams::channel],
+   messageAndValue[BetheSalpeterLadder[ladderL, ladderR, {x1, x2, x3, x4}, s, G], FunctionalDiagrams::channel],
+   messageAndValue[BetheSalpeterLadder[ladderL, ladderR, {x1, x2, x3, x4}, "s", G], FunctionalDiagrams::channel],
+   messageAndValue[BetheSalpeterLadder[ladderL, ladderR, {x1, x2, x3, x4}, "ParticleParticle", Gs4, "Statistics" -> "Boson"],
+    FunctionalDiagrams::channel],
+   messageAndValue[BetheSalpeterLadder[ladderL, ladderR, {x1, x2, x3, x4}, "ParticleHole", GaLadder, "Statistics" -> "Superfield",
+     "MaximumOrder" -> {V, 2}], FunctionalDiagrams::channel],
+   messageAndValue[ExactEquation["BetheSalpeter", {"F" -> Fb, "Gamma0" -> Kb, "G" -> Gs4}, {x1, x2, x3, x4}, "Statistics" -> "Boson",
+     "Channel" -> "ParticleHole"], FunctionalDiagrams::channel]}, Table[{True, $Failed}, {6}]];
+check["BetheSalpeterLadder: the channels of fermions, real bosons and superfields, without a message",
+  Check[SimplifyDiagrams /@ Join[{
+     BetheSalpeterLadder[ladderL, ladderR, {x1, x2, x3, x4}, "ParticleHole", G] -
+      IntegralOver[ladderLeft[x1, x2, u5, u6] G[u6, u7] G[u8, u5] ladderRight[u7, u8, x3, x4], {u5, u6, u7, u8}],
+     BetheSalpeterLadder[ladderL, ladderR, {x1, x2, x3, x4}, "TransverseParticleHole", G] +
+      IntegralOver[ladderLeft[x1, u6, u5, x4] G[u6, u7] G[u8, u5] ladderRight[u7, x2, x3, u8], {u5, u6, u7, u8}],
+     BetheSalpeterLadder[ladderL, ladderR, {x1, x2, x3, x4}, "ParticleParticle", G] +
+      1/2 IntegralOver[ladderLeft[x1, u5, x3, u6] G[u5, u7] G[u6, u8] ladderRight[u7, x2, u8, x4], {u5, u6, u7, u8}]},
+    (* real bosons -1/2 in s, t, u; superfields +1/2, -1/2, +1/2 *)
+    Join @@ Table[With[{gl = First[sg], sign = Last[sg], st = If[First[sg] === Gs4, "Boson", "Superfield"]}, {
+       BetheSalpeterLadder[ladderL, ladderR, {x1, x2, x3, x4}, "s", gl, "Statistics" -> st] +
+        sign/2 IntegralOver[ladderLeft[x1, x2, u5, u6] gl[u5, u7] gl[u6, u8] ladderRight[u7, u8, x3, x4], {u5, u6, u7, u8}],
+       BetheSalpeterLadder[ladderL, ladderR, {x1, x2, x3, x4}, "t", gl, "Statistics" -> st] +
+        1/2 IntegralOver[ladderLeft[x1, u5, x3, u6] gl[u5, u7] gl[u6, u8] ladderRight[u7, x2, u8, x4], {u5, u6, u7, u8}],
+       BetheSalpeterLadder[ladderL, ladderR, {x1, x2, x3, x4}, "u", gl, "Statistics" -> st] +
+        sign/2 IntegralOver[ladderLeft[x1, u5, u6, x4] gl[u5, u7] gl[u6, u8] ladderRight[u7, x2, x3, u8], {u5, u6, u7, u8}]}],
+      {sg, {{Gs4, 1}, {GaLadder, -1}}}]], "message"], Table[0, {9}]];
 check["LabelFunction: its variables print without the private context of the package",
   StringFreeQ[ToString[InputForm[LabelFunction[lambda DeltaFunction[u, v] J[u]^2, {u, v}]]], "Private`"], True];
 check["a field without the spin index of its source: message fieldarity",

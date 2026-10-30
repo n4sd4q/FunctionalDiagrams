@@ -51,10 +51,6 @@ showcase script and took a third off the test suite.
   `LegendreTransform[Phi, G -> S, "Statistics" -> s]`, read where it is differentiated or written out (an unknown value
   gives `FunctionalDiagrams::statistics`, a misspelt name nothing). A check at `SelfEnergyFunctional` covers the
   functionals the package builds; one for a `LegendreTransform` written by hand would have to run when it is read.
-- **The channel of `BetheSalpeterLadder` is not checked.** An unknown name (`"Nonsense"`) gives an unevaluated `Switch`
-  of the six ladders, with no message; a fermionic channel with `"Statistics" -> "Superfield"` (or `"s"` for fermions)
-  gives that ladder silently. A message and `$Failed` for a channel that is not one of the statistics (the channels
-  of `channelPairings`) would be a patch.
 - **Display forms of the integral heads (review).** `09_dimreg.wl` and `10_qed.wl` declare display forms of the same
   shapes for their integral heads. Left as one-line declarations next to each head: a loop injecting the heads would be
   less clear. Merge them if a third family of integrals appears.

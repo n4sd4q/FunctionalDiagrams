@@ -284,7 +284,7 @@ selfEnergyOf[phi_, g_Symbol, {x_, y_}, opts_List] := Switch[statisticsOption[opt
 (* Gamma0(x1, x2; x3, x4) = dSigma(x1, x2)/dG(x4, x3) for fermions and complex bosons; -2 dSigma(x1, x2)/dG(x3, x4) for
    real bosons and superfields (antisymmetrised for these) *)
 Options[IrreducibleVertex] = {"Statistics" -> "Fermion", "Channel" -> Automatic};
-FunctionalDiagrams::channel = "\"Channel\" -> `1` is not one of `2` for \"Statistics\" -> `3`.";
+FunctionalDiagrams::channel = "The channel `1` is not one of `2` for \"Statistics\" -> `3`.";
 FunctionalDiagrams::ppkernel = "The kernel of the particle-particle channel is a derivative with respect to the anomalous propagators -<T psi psi> and -<T psibar psibar>, not with respect to G: use the superfield (psi, psibar) (\"Statistics\" -> \"Superfield\", \"Channel\" -> \"t\") and SuperfieldComponents.";
 IrreducibleVertex[phi_, g_Symbol, labels_List, ___Rule] /; Length[labels] != 4 :=
   (Message[FunctionalDiagrams::vertexlabels, IrreducibleVertex, 4, "{x1, x2, x3, x4}", labels]; $Failed);
@@ -366,6 +366,10 @@ channelPairings["Fermion", {x1_, x2_, x3_, x4_}] := {"ParticleHole" -> {{x1, x2}
 channelPairings["Boson", {x1_, x2_, x3_, x4_}] := {"s" -> {{x1, x2}, {x3, x4}}, "t" -> {{x1, x3}, {x2, x4}}, "u" -> {{x1, x4}, {x2, x3}}};
 (* a superfield: the channels of real bosons *)
 channelPairings["Superfield", labels_List] := channelPairings["Boson", labels];
+(* the names of the channels of a statistics; a channel that is not one of them gives the message channel *)
+channelNames[statistics_String] := channelPairings[statistics, {1, 2, 3, 4}][[All, 1]];
+channelOfStatisticsQ[channel_, statistics_String] := MemberQ[channelNames[statistics], channel] ||
+   (Message[FunctionalDiagrams::channel, channel, channelNames[statistics], statistics]; False);
 
 twoParticleReducibleTermQ[t_diagramTerm, pairs : {_List, _List}, lineHeads_List] := cutReducibleTermQ[t, pairs, 2, lineHeads];
 
@@ -417,13 +421,15 @@ ParquetDecomposition[f_, labels_List, lineHeads_List, opts___Rule] := Module[
 relabelVertex[v_, labels_List, new_List] := v /. Thread[labels -> new];
 
 Options[BetheSalpeterLadder] = {"Statistics" -> "Fermion", "MaximumOrder" -> None};
-BetheSalpeterLadder[left_, right_, labels : {x1_, x2_, x3_, x4_}, channel_String, g_Symbol, opts___Rule] :=
+BetheSalpeterLadder[left_, right_, labels : {x1_, x2_, x3_, x4_}, channel_, g_Symbol, opts___Rule] :=
   betheSalpeterLadder[left, right, labels, channel, g, callOptions[BetheSalpeterLadder, {opts}]];
-betheSalpeterLadder[left_, right_, labels : {_, _, _, _}, channel_String, g_Symbol, opts_List] := With[
+(* a channel that is not one of the statistics (an unknown name, "s" for fermions): the message channel and $Failed *)
+betheSalpeterLadder[left_, right_, labels : {_, _, _, _}, channel_, g_Symbol, opts_List] := With[
    {maximum = optionValue[opts, {"MaximumOrder" -> None}, "MaximumOrder"], statistics = statisticsOption[opts, $parquetStatistics]},
-   If[maximum === None, SimplifyDiagrams[ladderIntegral[left, right, labels, channel, g, statistics]],
+   Which[! channelOfStatisticsQ[channel, statistics], $Failed,
+    maximum === None, SimplifyDiagrams[ladderIntegral[left, right, labels, channel, g, statistics]],
     (* only the products of total order <= n *)
-    ladderUpToOrder[orderParts[left, maximum[[1]], maximum[[2]]], orderParts[right, maximum[[1]], maximum[[2]]], labels, channel, g,
+    True, ladderUpToOrder[orderParts[left, maximum[[1]], maximum[[2]]], orderParts[right, maximum[[1]], maximum[[2]]], labels, channel, g,
      statistics]]];
 (* arguments that BetheSalpeterLadder does not take (from ExactEquation): left as BetheSalpeterLadder[...], unevaluated *)
 betheSalpeterLadder[left_, right_, labels_, channel_, g_, opts_List] := BetheSalpeterLadder[left, right, labels, channel, g, Sequence @@ opts];
@@ -524,9 +530,12 @@ $exactEquations = {"Dyson", "BetheSalpeter", "Parquet", "SchwingerDyson", "Verte
    "Response", "Susceptibility"};
 Options[ExactEquation] = {"Statistics" -> "Fermion", "Channel" -> Automatic, "MaximumOrder" -> None};
 ExactEquation[name_String, objects_List, labels_List, opts___Rule] := Module[{o = callOptions[ExactEquation, {opts}], statistics, ob, missing,
-    a, b, c, d, u, v, w, g, gbar, gam, given, maximum, side},
+    a, b, c, d, u, v, w, g, gbar, gam, given, maximum, side, channel},
    statistics = statisticsOption[o]; maximum = optionValue[o, {}, "MaximumOrder"];
    If[! MemberQ[$exactEquations, name], Message[FunctionalDiagrams::exactname, name, $exactEquations]; Return[$Failed]];
+   (* the channel of the Bethe-Salpeter equation: the particle-hole channel, or s for real bosons, by default *)
+   channel = Replace[optionValue[o, {}, "Channel"], Automatic -> If[statistics === "Boson", "s", "ParticleHole"]];
+   If[name === "BetheSalpeter" && ! channelOfStatisticsQ[channel, statistics], Return[$Failed]];
    missing = Select[Switch[name,
       "Dyson", {"G", "G0", "Sigma"}, "BetheSalpeter", {"F", "Gamma0", "G"},
       "Parquet", If[statistics === "Boson", {"F", "Lambda", "Gammas", "Gammat", "Gammau", "G"}, {"F", "Lambda", "GammaPh", "GammaPhbar", "GammaPp", "G"}],
@@ -546,11 +555,9 @@ ExactEquation[name_String, objects_List, labels_List, opts___Rule] := Module[{o 
    Replace[#, HoldPattern[Equal[l_, r_]] :> side[l] == side[r], {0, 1}] &@ Switch[name,
     (* G = G0 + G0 Sigma G *)
     "Dyson", g @@ labels == ob["G0"] @@ labels + IntegralOver[ob["G0"][labels[[1]], u] ob["Sigma"][u, v] g[v, labels[[2]]], {u, v}],
-    (* F = Gamma0 + Gamma0 o F in one channel (BetheSalpeterLadder); the particle-hole channel, or s for real bosons *)
-    "BetheSalpeter", With[{channel = Replace[optionValue[o, {}, "Channel"],
-        Automatic -> If[statistics === "Boson", "s", "ParticleHole"]]},
-     ob["F"] @@ labels == ob["Gamma0"] @@ labels + betheSalpeterLadder[ob["Gamma0"] @@ labels, ob["F"] @@ labels, labels, channel, g,
-       {"Statistics" -> statistics, "MaximumOrder" -> maximum}]],
+    (* F = Gamma0 + Gamma0 o F in one channel (BetheSalpeterLadder) *)
+    "BetheSalpeter", ob["F"] @@ labels == ob["Gamma0"] @@ labels + betheSalpeterLadder[ob["Gamma0"] @@ labels, ob["F"] @@ labels, labels,
+      channel, g, {"Statistics" -> statistics, "MaximumOrder" -> maximum}],
     (* F = Lambda + Sum_r Gamma_r o F *)
     "Parquet", ob["F"] @@ labels == ob["Lambda"] @@ labels + Total[Table[
        betheSalpeterLadder[ob[ch[[1]]] @@ labels, ob["F"] @@ labels, labels, ch[[2]], g, {"Statistics" -> statistics, "MaximumOrder" -> maximum}],
