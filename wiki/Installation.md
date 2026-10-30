@@ -7,15 +7,15 @@ Install the paclet of the latest release, once:
 
 <!-- not run: it downloads the paclet -->
 ```mathematica
-PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.5.0/FunctionalDiagrams-2.5.0.paclet"];
+PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.6.0/FunctionalDiagrams-2.6.0.paclet"];
 ```
 
-Without a connection from Mathematica (a proxy, a cluster node), download `FunctionalDiagrams-2.5.0.paclet` from the
+Without a connection from Mathematica (a proxy, a cluster node), download `FunctionalDiagrams-2.6.0.paclet` from the
 [release page](https://github.com/n4sd4q/FunctionalDiagrams/releases/latest) with a browser and give its path:
 
 <!-- not run: a path of your machine -->
 ```mathematica
-PacletInstall["/path/to/FunctionalDiagrams-2.5.0.paclet"];
+PacletInstall["/path/to/FunctionalDiagrams-2.6.0.paclet"];
 ```
 
 Then, in every session:
@@ -76,7 +76,7 @@ $FunctionalDiagramsVersion
 ```
 
 ```text
-2.5.0
+2.6.0
 ```
 
 When several copies are around (an installed paclet and a clone, two versions), these show which ones Mathematica knows

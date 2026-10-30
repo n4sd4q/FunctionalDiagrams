@@ -9,7 +9,15 @@ The versions are MAJOR.MINOR.PATCH (semantic versioning), read for this package 
 
 Changes to the documents alone need no release; they are listed under the next version.
 
-## Unreleased
+## 2.6.0 (2026-10-30)
+
+Since 2.5.0: `Options` and `SetOptions` for every public function that takes options, and a message for the name of an
+option that a function does not know; no public name added, removed or renamed (133 in all), 875 tests. The expressions
+and the pictures are the same as in 2.5.0 for the same calls; what changes is that `SetOptions` changes the default of
+every function, that a misspelt option is reported (and ignored, as before), and that `BetheSalpeterLadder` refuses a
+channel that is not one of its statistics. In short: the options of the package behave as those of Mathematica, the
+documents give exactly what they show (the first example of the README and the code of the showcase are run and
+compared with their pages) and say where the package lives, and the package has a site of its own on GitHub Pages.
 
 ### New
 
@@ -69,6 +77,8 @@ Changes to the documents alone need no release; they are listed under the next v
   zero-width space: GitHub drops `<wbr>`), not before the last letter, and so does the title of the wiki's Home; the
   table of the documents gives each one a short line (a third of its height on a phone) and lists the map of the
   functions, whose section now follows Related software, so that What it does, Checks and Related software read on.
+  Its links to the showcase and the manual open the PDFs in the browser (from GitHub Pages; before, GitHub's viewer),
+  and the map of the functions opens its interactive version.
 - **The README says what the package is not, and where to ask.** The introduction points to Checks and Related
   software; What it does ends with its scope (exact sums of diagrams, not a program for the numerical evaluation of
   Feynman integrals; what it evaluates; the factorial growth of the number of diagrams; the pictures), from the

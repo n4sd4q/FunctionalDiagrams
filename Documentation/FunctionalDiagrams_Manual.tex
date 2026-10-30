@@ -162,7 +162,7 @@
   \node[anchor=north west, text=white, font=\sffamily\Large, text width=12.2cm] at ([xshift=2.2cm, yshift=-2.9cm]current page.north west)
     {Reference manual\\[2pt]\large functional derivatives and Feynman diagrams in Mathematica};
   \node[anchor=north west, text=accentlight, font=\sffamily\normalsize] at ([xshift=2.2cm, yshift=-4.7cm]current page.north west)
-    {Nazzareno Africani \textperiodcentered{} SISSA \textperiodcentered{} version 2.5.0 \textperiodcentered{} October 2026};
+    {Nazzareno Africani \textperiodcentered{} SISSA \textperiodcentered{} version 2.6.0 \textperiodcentered{} October 2026};
   \IfFileExists{../Logo/FunctionalDiagrams_logo_white.pdf}{\node[anchor=north east] at ([xshift=-2.0cm, yshift=-1.2cm]current page.north east)
     {\includegraphics[height=3.6cm]{../Logo/FunctionalDiagrams_logo_white.pdf}};}{}
 \end{tikzpicture}
@@ -242,20 +242,20 @@ The recommended installation is the paclet of the latest release, which also con
 guided tour:
 \begin{code}
 PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/" <>
-  "releases/download/v2.5.0/FunctionalDiagrams-2.5.0.paclet"]   (* once *)
+  "releases/download/v2.6.0/FunctionalDiagrams-2.6.0.paclet"]   (* once *)
 Needs["FunctionalDiagrams`"]   (* in every session *)
 NotebookOpen[PacletObject["FunctionalDiagrams"]["AssetLocation", "Examples"]]
 \end{code}
 The last line opens the guided tour, a notebook to run cell by cell; \pkg{SystemOpen} with \pkg{"Manual"} or
 \pkg{"Showcase"} in place of \pkg{"Examples"} opens a PDF. Without a connection from Mathematica (a proxy, a cluster
 node), download the paclet from the page of the release with a browser and give \pkg{PacletInstall} its path in place
-of the address. This manual describes version~2.5.0, the latest release. A clone of the repository is a paclet too, loaded by \pkg{PacletDirectoryLoad} of its folder and then \pkg{Needs}. Without the paclet
+of the address. This manual describes version~2.6.0, the latest release. A clone of the repository is a paclet too, loaded by \pkg{PacletDirectoryLoad} of its folder and then \pkg{Needs}. Without the paclet
 manager, load the file with
 \begin{code}
 Get["/path/to/FunctionalDiagrams/FunctionalDiagrams.wl"]
 \end{code}
 The functions are in the context \pkg{FunctionalDiagrams`}; \pkg{?FunctionalDiagrams`*} lists them and \pkg{?Name}
-shows their usage. \pkg{\$FunctionalDiagramsVersion} is the version, \pkg{"2.5.0"}. Loading the
+shows their usage. \pkg{\$FunctionalDiagramsVersion} is the version, \pkg{"2.6.0"}. Loading the
 package again in the same session starts afresh: the definitions of the package and its record of declarations are
 cleared (attributes that the declarations gave to your own symbols, such as \pkg{Orderless} for a symmetric function,
 remain).
@@ -347,7 +347,7 @@ attribution to the author must be kept, and modified versions must say that they
 file \pkg{NOTICE}, with the copyright and the terms; the text of the license is in \pkg{LICENSE}). If you use the package
 in published work, please cite it, for instance as
 \begin{quote}
-N.~Africani, \emph{FunctionalDiagrams: functional derivatives and Feynman diagrams in Mathematica}, version 2.5.0 (2026),
+N.~Africani, \emph{FunctionalDiagrams: functional derivatives and Feynman diagrams in Mathematica}, version 2.6.0 (2026),
 \url{https://github.com/n4sd4q/FunctionalDiagrams}.
 \end{quote}
 The file \pkg{CITATION.cff} in the repository has the same information in a machine-readable form.

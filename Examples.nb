@@ -10,13 +10,13 @@ Cell["Loading the package", "Subsection"],
 Cell["(* load FunctionalDiagrams.wl from the folder of this notebook (or script); when it is
    not there (the notebook opened on its own), Needs[\"FunctionalDiagrams`\"] loads the
    installed paclet, installed once with
-   PacletInstall[\"https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.5.0/FunctionalDiagrams-2.5.0.paclet\"] *)
+   PacletInstall[\"https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.6.0/FunctionalDiagrams-2.6.0.paclet\"] *)
 With[{folder = Quiet[If[$InputFileName =!= \"\", DirectoryName[$InputFileName], NotebookDirectory[]]]},
   If[StringQ[folder] && FileExistsQ[FileNameJoin[{folder, \"FunctionalDiagrams.wl\"}]],
     Get[FileNameJoin[{folder, \"FunctionalDiagrams.wl\"}]],
     Needs[\"FunctionalDiagrams`\"]]];", "Input"],
 Cell["$FunctionalDiagramsVersion
-(* the version of the package, e.g. \"2.5.0\" *)", "Input"],
+(* the version of the package, e.g. \"2.6.0\" *)", "Input"],
 Cell["The road map", "Subsection"],
 Cell["The tour follows the path of field theory. Each step is a new functional, obtained from the previous one by a logarithm or a Legendre transform, that keeps fewer diagrams:", "Text"],
 Cell[TextData[{"Z[J], the generating functional: all diagrams, the moments ", "\[LeftAngleBracket]\:03c6\:03c6\:22ef\[RightAngleBracket]", " (sections 2 and 3)."}], "Item"],

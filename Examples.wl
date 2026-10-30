@@ -21,14 +21,14 @@
 (* load FunctionalDiagrams.wl from the folder of this notebook (or script); when it is
    not there (the notebook opened on its own), Needs["FunctionalDiagrams`"] loads the
    installed paclet, installed once with
-   PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.5.0/FunctionalDiagrams-2.5.0.paclet"] *)
+   PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.6.0/FunctionalDiagrams-2.6.0.paclet"] *)
 With[{folder = Quiet[If[$InputFileName =!= "", DirectoryName[$InputFileName], NotebookDirectory[]]]},
   If[StringQ[folder] && FileExistsQ[FileNameJoin[{folder, "FunctionalDiagrams.wl"}]],
     Get[FileNameJoin[{folder, "FunctionalDiagrams.wl"}]],
     Needs["FunctionalDiagrams`"]]];
 
 $FunctionalDiagramsVersion
-(* the version of the package, e.g. "2.5.0" *)
+(* the version of the package, e.g. "2.6.0" *)
 
 (* ::Subsection:: *)
 (*The road map*)

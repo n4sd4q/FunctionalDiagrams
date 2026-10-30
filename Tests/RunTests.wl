@@ -2112,7 +2112,7 @@ check["SetOptions[DeclareBlob, \"Fill\" -> \"White\"]: the fill of the blobs dec
 (* ------------------------------------------------------------------------- *)
 section["loading twice"];
 Get[FileNameJoin[{testDirectory, "..", "FunctionalDiagrams.wl"}]];
-check["package loaded again", $FunctionalDiagramsVersion, "2.5.0"];
+check["package loaded again", $FunctionalDiagramsVersion, "2.6.0"];
 (* the banner printed when the package is loaded in a notebook (never by a script): built here without printing it *)
 With[{banner = FunctionalDiagrams`Private`loadBanner[]},
   check["load banner: logo, the attribution of term (b) of NOTICE, version, license and links",
