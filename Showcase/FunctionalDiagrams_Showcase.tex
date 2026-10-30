@@ -127,6 +127,9 @@
 \newcommand{\inputfigure}[1]{\IfFileExists{figures/#1.tex}{\input{figures/#1.tex}}{\textcolor{red}{[missing: \detokenize{#1}]}}}
 \newcommand{\setvalue}[2]{\expandafter\def\csname fdval@#1\endcsname{#2}}
 \newcommand{\val}[1]{\ifcsname fdval@#1\endcsname\csname fdval@#1\endcsname\else\textcolor{red}{[#1]}\fi}
+% a value that the code block before it gives, typeset as \val: Development/check_showcase.wl ties it to an output of the
+% block (\outval[N]{Key}: the output is the entry N of the value shown; \outval[Total]{Key}: the sum of its entries)
+\newcommand{\outval}[2][]{\val{#2}}
 \IfFileExists{figures/values.tex}{\input{figures/values.tex}}{}
 
 % the paragraph of a sum of diagrams, which LaTeX breaks into lines by itself
@@ -754,7 +757,7 @@ SimplifyDiagrams[vacuum1 + vacuum2 + vacuum3 - vacuum1^2/2 - vacuum1 vacuum2
 \end{ordersum}
 \pkg{ConnectedVacuumDiagrams[FreeBosonGeneratingFunctional, Phi4Vertex, 3]} computes the same sum directly.
 \begin{result}
-$\log(1+z_1+z_2+z_3)$ minus the connected diagrams of $Z/Z_0$, to $\lambda^3$: \val{CheckPhi4LinkedCluster}\\
+$\log(1+z_1+z_2+z_3)$ minus the connected diagrams of $Z/Z_0$, to $\lambda^3$: \outval{CheckPhi4LinkedCluster}\\
 $\exp(c_1+c_2+c_3)-Z/Z_0$, to $\lambda^3$: \val{CheckPhi4ExponentialOfTheConnectedDiagrams}\\
 \pkg{ConnectedVacuumDiagrams} minus the connected diagrams of $Z/Z_0$: \val{CheckPhi4ConnectedVacuumShortcut}
 \end{result}
@@ -793,7 +796,7 @@ SimplifyDiagrams[OrderPart[numerator - DropVacuumBubbles[numerator, {a, b}]
 \orderrow{\lambda^3}{phi4_propagator_3}
 \end{ordersum}
 \begin{result}
-The numerator minus its diagrams without bubbles times $Z/Z_0$, orders $\lambda^0,\dots,\lambda^3$: \val{CheckPhi4NumeratorFactorizes}\\
+The numerator minus its diagrams without bubbles times $Z/Z_0$, orders $\lambda^0,\dots,\lambda^3$: \outval[Total]{CheckPhi4NumeratorFactorizes}\\
 \pkg{PerturbativeCorrelationFunction} minus the diagrams of the numerator without bubbles: \val{CheckPhi4PropagatorShortcut}
 \end{result}
 
@@ -985,8 +988,8 @@ SimplifyDiagrams[OrderPart[moment - (W4 + W2[a, b] W2[c, d] + W2[a, c] W2[b, d] 
     W2[a, d] W2[b, c]), lambda, {0, 1, 2, 3}]]
 \end{code}
 \begin{result}
-$W^{(4)}$ minus the connected diagrams of the fourth moment, to $\lambda^3$: \val{CheckPhi4CumulantConnected}\\
-The fourth moment minus $W^{(4)}$ and the three pairings of $W^{(2)}$, to $\lambda^3$: \val{CheckPhi4MomentsFromCumulants}
+$W^{(4)}$ minus the connected diagrams of the fourth moment, to $\lambda^3$: \outval{CheckPhi4CumulantConnected}\\
+The fourth moment minus $W^{(4)}$ and the three pairings of $W^{(2)}$, to $\lambda^3$: \outval{CheckPhi4MomentsFromCumulants}
 \end{result}
 \pkg{PerturbativeCorrelationFunction} and \pkg{ConnectedCorrelationFunction} compute the moment and the cumulant directly
 (the same, \val{CheckPhi4MomentShortcut} and \val{CheckPhi4CumulantShortcut}). The four-point function has
@@ -2281,7 +2284,7 @@ SimplifyDiagrams[fullVertex - irreducibleVertex - BetheSalpeterLadder[irreducibl
     "MaximumOrder" -> {InteractionPotential, 3}]]
 \end{code}
 \begin{result}
-residual of the Bethe--Salpeter equation up to $V^3$: \val{CheckBetheSalpeterPh}
+residual of the Bethe--Salpeter equation up to $V^3$: \outval{CheckBetheSalpeterPh}
 \end{result}
 \pkg{BetheSalpeterLadder[A, B, ...]} joins two vertices by the pair of propagators of a given channel, $AL_0B$ in the
 particle--hole channel. Iterating the direct interaction alone gives the bubble chain of the random-phase
@@ -2352,7 +2355,7 @@ CheckEquation[ExactEquation["Vertex", objects, {x1, x2, z}], InteractionPotentia
 \end{code}
 \begin{result}
 $\Lambda=\gamma+\Gamma^0L_0\Lambda$, $\Lambda=\gamma+FL_0\gamma$, $\Sigma=\Sigma_{\rm H}-VG\Lambda$ (below) to $V^3$, and
-$\chi=\gamma L_0\Lambda$ to $V^2$: residuals \val{CheckVertexEquations}
+$\chi=\gamma L_0\Lambda$ to $V^2$: residuals \outval[1]{CheckVertexEquations}
 \end{result}
 For a real boson the operator is $\frac12\phi^2$, a local mass term, with the bare vertex $\gamma(a,b;z)=\delta(a,z)\,
 \delta(b,z)$, and the pair of lines carries the factor $-\frac12$ (section~\ref{sec:twoparticle}). In $\phi^4$ theory the
@@ -2950,7 +2953,7 @@ hedin = ExactEquation["Hedin", {"G" -> DressedGreenFunction,
 MapThread[CheckEquation[#1, InteractionPotential, #2] &, {hedin, {3, 2, 3, 3}}]
 \end{code}
 \begin{result}
-Hedin's equations for $\Sigma$, $W$ and $\tilde\Lambda$ to $V^3$, for $P$ to $V^2$; residuals:\\ \val{CheckHedin}
+Hedin's equations for $\Sigma$, $W$ and $\tilde\Lambda$ to $V^3$, for $P$ to $V^2$; residuals:\\ \outval{CheckHedin}
 \end{result}
 \paragraph{The $GW$ approximation} Replacing the proper vertex by the bare one, $\tilde\Lambda\to\gamma$, leaves the
 Hartree term and the exchange with the screened interaction, and the polarization of a pair of dressed propagators,
@@ -2988,9 +2991,9 @@ SimplifyDiagrams[(IntegrateOutField[{hs["FreeGeneratingFunctional"], hs["Interac
 \end{code}
 \begin{result}
 $G$ of the fermion--boson theory minus $G$ of the electron gas, $\langle\phi\phi\rangle_0=V$, orders $V^0$ to $V^3$:
-\val{CheckHSG}\\
+\outval[Total]{CheckHSG}\\
 the coupling and the Gaussian of \pkg{HubbardStratonovich}, and the interaction given back by \pkg{IntegrateOutField}:
-\val{CheckHubbardStratonovich}
+\outval[3]{CheckHubbardStratonovich}
 \end{result}
 The full propagator of the boson is the screened interaction, $\langle\phi\phi\rangle=V+V\chi V=W$ (section~\ref{sec:hedin}), and
 its self-energy is the polarization $P$: the boson line of section~\ref{sec:hedin} has become a propagator in its own
@@ -3603,8 +3606,8 @@ through both bubbles, and the \val{CountsDimregGamma4Topologies3} bubbles with a
 the number of diagrams that have it:
 \begin{outputbox}
 \[
-\left\{\left\{\formula{dimreg_eye},\ \val{CountsDimregGamma4Topologies1}\right\},\
-\left\{\formula{dimreg_chain},\ \val{CountsDimregGamma4Topologies2}\right\},\ \{0,\ \val{CountsDimregGamma4Topologies3}\}\right\}
+\left\{\left\{\formula{dimreg_eye},\ \outval{CountsDimregGamma4Topologies1}\right\},\
+\left\{\formula{dimreg_chain},\ \outval{CountsDimregGamma4Topologies2}\right\},\ \{0,\ \outval{CountsDimregGamma4Topologies3}\}\right\}
 \]
 \end{outputbox}
 \begin{result}

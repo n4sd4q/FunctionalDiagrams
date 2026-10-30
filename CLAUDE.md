@@ -41,12 +41,15 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   `figures/parquet_table.tex`, long formulas split) and pdflatex. In the `.tex`, `\begin{ordersum}{lhs}
   \orderrow{V^2}{name_2} ... \end{ordersum}` draws a sum with one coloured band per order (its left-hand side never
   alone at the foot of a page), `\figuresum{lhs}{name}` a plain sum (as a displayed formula, never at the top of a page
-  apart from the line that introduces it), `\formula{name}` a formula, `\val{Key}` a value of `values.txt`. The pictures are small:
+  apart from the line that introduces it), `\formula{name}` a formula, `\val{Key}` a value of `values.txt` quoted in the
+  text, `\outval{Key}` (typeset as `\val`) a value that the code block before it gives (`\outval[N]{Key}` when the output
+  is the entry N of the value shown, `\outval[Total]{Key}` the sum of its entries). The pictures are small:
   `pictureOptions` in `make_figures.wl`. `Development/check_showcase.wl` (Mathematica, about two minutes) runs every code
   block of the `.tex` in order in one fresh kernel, as a notebook reads it, and compares each output with what the page
   shows after the block (read by `Development/showcase_blocks.py`): the pictures of a sum (weights and TikZ code, band by
   band), a formula (as `ExpressionToLaTeX` writes it with the options of `writeFormula` in `make_figures.wl`, whose
-  `"Display" -> f` renames symbols or indices for the display only), a value; a block after the line `% not run` is
+  `"Display" -> f` renames symbols or indices for the display only), a value (the `\outval` after the block, one to one
+  and in order, by the keys of `assemble.py`; a `\val` is never an output); a block after the line `% not run` is
   skipped, and part of an output shown (some orders) is listed, the text saying so.
 - `Logo/` — the logo (SVG and PDF: the badge, which reads on light and dark pages; a white version for the dark title
   pages of the manual and the showcase; `_small.svg` for 16–32 px), drawn by `Development/make_logo.py`; the social preview

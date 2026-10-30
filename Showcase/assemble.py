@@ -201,6 +201,14 @@ def latex_of(v):
     return str(v)
 
 
+# the index of the first entry of a list of values and the step (KeyN, N = first, first + step, ...): from order 0 for G,
+# trees by number of points (the fermionic ones for 4 and 6 points); (1, 1) for the other lists. Development/check_showcase.wl
+# reads this table, to tie \outval{KeyN} to the same entry
+list_indices = {'counts G': (0, 1), 'counts trees': (3, 1), 'counts fermion trees': (4, 2), 'counts electron numerator': (0, 1),
+                'counts phi2 correlation': (0, 1), 'counts phi4 R_s': (2, 1),
+                'counts Lambda': (0, 1), 'counts proper vertex': (0, 1), 'counts phi4 Lambda': (0, 1)}
+
+
 def key_of(name):
     # 'check Gamma0 = F - R_ph' -> 'CheckGamma0FRPh'
     return ''.join(w[:1].upper() + w[1:] for w in re.split(r'[^A-Za-z0-9]+', name))
@@ -236,11 +244,8 @@ if os.path.exists('figures/values.txt'):
                         lines.append(r'\setvalue{%s%s%d}{%s}' % (key, key_of(k), i + 1, latex_of(y)))
             lines.append(r'\setvalue{%s}{$%s$}' % (key, r',\ '.join(r'%s\colon %s' % (channel_short.get(k, k), latex_of(x)) for k, x in v.items())))
         elif isinstance(v, list):
-            # numbers of diagrams order by order (from order 0 for G; trees by number of points, the fermionic ones
-            # for 4 and 6 points), and their total
-            start, step = {'counts G': (0, 1), 'counts trees': (3, 1), 'counts fermion trees': (4, 2), 'counts electron numerator': (0, 1),
-                           'counts phi2 correlation': (0, 1), 'counts phi4 R_s': (2, 1),
-                           'counts Lambda': (0, 1), 'counts proper vertex': (0, 1), 'counts phi4 Lambda': (0, 1)}.get(name, (1, 1))
+            # numbers of diagrams order by order, and their total
+            start, step = list_indices.get(name, (1, 1))
             lines.append(r'\setvalue{%s}{%s}' % (key, ', '.join(latex_of(x) for x in v)))
             for i, x in enumerate(v):
                 lines.append(r'\setvalue{%s%d}{%s}' % (key, start + step * i, latex_of(x)))

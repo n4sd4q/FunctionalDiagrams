@@ -190,14 +190,13 @@ free energy.
 
 ## Documents
 
+- **Residuals order by order shown for one residual.** Two statements of the showcase give the residual of all the
+  orders together, 0, where the page shows the residuals order by order, {0, 0, 0, 0}: the numerator of ⟨φ_a φ_b⟩
+  against its diagrams without bubbles times Z/Z₀, and G of the Hubbard–Stratonovich theory against G of the electron
+  gas. `\outval[Total]` ties each to the sum of the orders shown; code that gives the orders (`OrderPart[..., k]` for
+  each k) would show exactly its output, and change the two blocks of the PDF.
 - Usage messages: those of `EffectiveAction2PI` (about 7800 characters) and `EffectiveAction1PI` (3700) are long; the
   details could move to the manual.
-- **Values in `Development/check_showcase.wl`.** A value that a statement gives is compared with every `\val` after its
-  block, and a residual 0 matches any check shown as 0: after the blocks of the linked cluster (13), of the moments of
-  φ⁴ by the cumulants (19) and of the Bethe–Salpeter equation (54) a changed value is not caught (tried: 0 → 1 in
-  `values.txt` passes), and `\val{KeyN}` accepts any entry of the list, not the N-th. Tying them needs the page to
-  say which values are outputs, e.g. a macro `\outval{Key}` typeset as `\val` and matched one to one, in order, by the
-  check; the index of an entry would follow the first index of `assemble.py` (0 for orders, 1 otherwise).
 
 ## Distribution
 

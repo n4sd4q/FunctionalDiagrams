@@ -14,7 +14,9 @@ follow it}. The items, in the order of the page, LaTeX comments left out:
   {"kind": "figure", "name": name, "line": n}                            \\inputfigure{name} elsewhere (not in a
                                                                           left-hand side)
   {"kind": "formula", "name": name, "line": n}                           \\formula, \\formulasplit, \\formulalines
-  {"kind": "value", "key": key, "line": n}                               \\val{key}
+  {"kind": "value", "key": key, "line": n}                               \\val{key}, a value quoted in the text
+  {"kind": "outval", "key": key, "entry": N or null, "line": n}         \\outval{key} or \\outval[N]{key}, a value that
+                                                                          a statement of the block gives (its entry N)
 Standard library only."""
 import json, os, re, sys
 
@@ -65,7 +67,7 @@ def items_of(text, first_line):
     """The items of a stretch of LaTeX (comments removed) that starts at the line first_line."""
     items, i = [], 0
     line_at = lambda k: first_line + text.count('\n', 0, k)
-    pattern = re.compile(r'\\(begin\{ordersum\}|figuresum|orderrow|formulasplit|formulalines|formula|val|inputfigure)(?![A-Za-z])')
+    pattern = re.compile(r'\\(begin\{ordersum\}|figuresum|orderrow|formulasplit|formulalines|formula|outval|val|inputfigure)(?![A-Za-z])')
     current = None  # the ordersum being read
     while True:
         m = pattern.search(text, i)
@@ -102,6 +104,13 @@ def items_of(text, first_line):
         elif command == 'val':
             key, i = argument(text, next_brace(text, i))
             items.append({'kind': 'value', 'key': key.strip(), 'line': line_at(m.start())})
+        elif command == 'outval':
+            # \outval[N]{key}: typeset as \val{key}, the output being its entry N
+            k = i
+            i = skip_optional(text, i)
+            entry = text[k:i].strip()[1:-1].strip() or None
+            key, i = argument(text, next_brace(text, i))
+            items.append({'kind': 'outval', 'key': key.strip(), 'entry': entry, 'line': line_at(m.start())})
         elif command == 'inputfigure':
             name, i = argument(text, next_brace(text, i))
             items.append({'kind': 'figure', 'name': name.strip(), 'line': line_at(m.start())})

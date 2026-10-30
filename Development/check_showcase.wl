@@ -29,11 +29,18 @@
      writeFormula[NAME, e, options] (directly or through a function such as qedFormula), its option "Display" -> f
      applied (names only: contracted indices called rho and sigma, eps written after pi, the step function as Theta). A
      formula may be the orders 0 to k (or 1 to k) of the output.
-   - A value: \val{Key}, compared with the value of figures/values.txt whose key it is (assemble.py: "check Dyson" is
-     CheckDyson), or with one of its entries, or with what assemble.py names by a suffix of that key (KeyN an entry of a
-     list, KeyTotal its total, the entry of an association by its key), never with the value of a key that merely starts
-     the key of the \val; the table figures/parquet_table.tex stands for the values it is made of. Values are not tied
-     to statements: when several \val after a block have the value of an output (residuals 0), any of them shows it.
+   - A value: \outval{Key}, typeset as \val{Key}, marks a value that a statement of the block gives. The outputs of the
+     block are matched one to one and in order with the \outval after it: an output is compared with the first \outval
+     not yet matched and with no other \outval or \val (besides an integer written in an output box and the table
+     below), and an \outval that no output matches fails. Key is a key that
+     assemble.py writes into figures/values.tex, and stands for the value of figures/values.txt that assemble.py writes
+     under it: "check Dyson" is CheckDyson; KeyN the entry N of a list, numbered as assemble.py numbers it (from 1 for the
+     checks, from the first index of its table list_indices for the other lists: 0 for orders that start at 0); KeyTotal
+     the total of a list of integers; KeyK the entry K of an association (not a check) and KeyKN the entry N of that
+     entry. \outval[N]{Key} shows the whole value of Key, of which the output is the entry N (the value of KeyN), and
+     \outval[Total]{Key} a list of which the output is the sum (residuals order by order, the output being the residual
+     of all the orders together). \val{Key} is a value quoted in the text, computed by make_figures.wl, and is never
+     compared with an output. The table figures/parquet_table.tex stands for the values it is made of.
    - A string (the TikZ code of DiagramToTikZ): \inputfigure{NAME} with figures/NAME.tex written by make_figures.wl.
    - Part of an output shown (some orders of a sum, the first orders of a formula, an element of a list or association
      whose orders are left out in the others) passes, and is listed at the end: the text must say what is shown.
@@ -98,32 +105,47 @@ sizingOf[terms_List] := Module[{all = StringJoin[Riffle[terms[[All, 2]], "\n"]],
    font = StringCases[all, "\\node[font=\\" ~~ f : LetterCharacter .. :> "\\" <> f, 1];
    {"Scale" -> First[scale, 0.34], "LineWidth" -> First[width, 0.42], "LabelFont" -> First[font, "\\tiny"]}];
 
-(* the values of figures/values.txt, by the keys of assemble.py *)
+(* the values of figures/values.txt, {name, value} line by line *)
 keyOf[name_String] := StringJoin[(ToUpperCase[StringTake[#, 1]] <> StringDrop[#, 1]) & /@
     Select[StringSplit[name, RegularExpression["[^A-Za-z0-9]+"]], # =!= "" &]];
-$values = Module[{text = readFile["values.txt"]},
-   If[! StringQ[text], <||>,
-    Association[Cases[StringSplit[text, "\n"], line_String /; StringContainsQ[line, " :: "] :>
-       With[{parts = StringSplit[line, " :: ", 2]}, keyOf[parts[[1]]] ->
-         Quiet[Block[{$Context = "Global`"}, ToExpression[parts[[2]], InputForm]]]]]]]];
-(* the values a key of \val can stand for: the value of its line and the entries of the value, or what assemble.py names
-   by a suffix of the key of a line: an entry of a list by its index (CountsSigma2, an entry of CountsSigma: any entry,
-   the first index being 0, 1 or another), the total of a list of integers (CountsSigmaTotal), the entry of an
-   association by its key (ParquetCountsParticleHole) and an entry of that entry by its index. A key that merely starts
-   with the key of another line (CountsGamma0 and CountsG) stands for none of its values *)
-valuesOfKey[key_String] := Flatten[Table[With[{v = $values[k], s = StringDrop[key, StringLength[k]]}, Which[
-       s === "", Prepend[entriesOf[v], v],
-       ListQ[v] && StringMatchQ[s, DigitCharacter ..], v,
-       ListQ[v] && s === "Total" && VectorQ[v, IntegerQ], {Total[v]},
-       AssociationQ[v], Flatten[Function[a, With[{ka = keyOf[ToString[a]]}, Which[
-            s === ka, Prepend[entriesOf[v[a]], v[a]],
-            ListQ[v[a]] && StringMatchQ[s, ka ~~ DigitCharacter ..], v[a],
-            True, {}]]] /@ Keys[v], 1],
-       True, {}]], {k, Select[Keys[$values], StringStartsQ[key, #] &]}], 1];
+$valueLines = Module[{text = readFile["values.txt"]},
+   If[! StringQ[text], {},
+    Cases[StringSplit[text, "\n"], line_String /; StringContainsQ[line, " :: "] :>
+      With[{parts = StringSplit[line, " :: ", 2]}, {parts[[1]], Quiet[Block[{$Context = "Global`"}, ToExpression[parts[[2]], InputForm]]]}]]]];
+(* the first index and the step of the entries of a list of values, from the table list_indices of Showcase/assemble.py
+   ({1, 1} for a list that it does not name) *)
+$listIndices = Module[{table = StringCases[ReadString[FileNameJoin[{$root, "Showcase", "assemble.py"}]],
+     "\nlist_indices = {" ~~ t : Shortest[___] ~~ "}\n" :> t, 1]},
+   If[table === {}, Print["check_showcase: the table list_indices of Showcase/assemble.py cannot be read"]; Exit[2]];
+   Association[StringCases[First[table], "'" ~~ name : Except["'"] .. ~~ "': (" ~~ a : DigitCharacter .. ~~ ", " ~~ b : DigitCharacter .. ~~ ")" :>
+      name -> ToExpression[{a, b}]]]];
+(* every key that assemble.py writes into figures/values.tex, with the value it stands for, by the rules of assemble.py:
+   the key of a line ("check Dyson" is CheckDyson) for its value; a list of checks (lines check ... and parquet residuals
+   ...) also KeyN for its entry N, from 1; an association that is not a check KeyK for its entry K and KeyKN for the
+   entry N of that entry, from 1; another list KeyN for its entries, numbered by list_indices, and KeyTotal for the total
+   of a list of integers. A later line of the same key wins, as a later \setvalue does *)
+$namedValues = Module[{named = <||>, key},
+   Do[With[{name = line[[1]], v = line[[2]]}, key = keyOf[name];
+     Which[
+      name === "version", named[key] = v,
+      StringStartsQ[name, "check"] || StringStartsQ[name, "parquet residuals"],
+      named[key] = v; If[ListQ[v], Do[named[key <> ToString[i]] = v[[i]], {i, Length[v]}]],
+      AssociationQ[v],
+      KeyValueMap[Function[{k, x}, named[key <> keyOf[ToString[k]]] = x;
+         If[ListQ[x], Do[named[key <> keyOf[ToString[k]] <> ToString[i]] = x[[i]], {i, Length[x]}]]], v];
+      named[key] = v,
+      ListQ[v],
+      named[key] = v;
+      With[{first = Lookup[$listIndices, name, {1, 1}]}, Do[named[key <> ToString[first[[1]] + first[[2]] (i - 1)]] = v[[i]], {i, Length[v]}]];
+      If[VectorQ[v, IntegerQ], named[key <> "Total"] = Total[v]],
+      True, named[key] = v]],
+    {line, $valueLines}];
+   named];
+(* the tables that assemble.py makes of values: figures/NAME.tex stands for the values of these keys and their entries *)
+$assembledTables = <|"parquet_table" -> {"ParquetCounts", "ParquetResiduals"}|>;
 entriesOf[v_] := Which[AssociationQ[v], Join[Values[v], Flatten[entriesOf /@ Values[v], 1]],
    ListQ[v], Join[v, Flatten[entriesOf /@ v, 1]], True, {}];
-(* the tables that assemble.py makes of values: figures/NAME.tex stands for the values of these keys *)
-$assembledTables = <|"parquet_table" -> {"ParquetCounts", "ParquetResiduals"}|>;
+tableValues[keys_List] := Flatten[Function[k, If[KeyExistsQ[$namedValues, k], Prepend[entriesOf[$namedValues[k]], $namedValues[k]], {}]] /@ keys, 1];
 
 (* how make_figures.wl writes each formula: {options of ExpressionToLaTeX, the function applied for the display}, from its
    calls writeFormula[NAME, e, options] and from its functions that call writeFormula (qedFormula[name_String, x_] :=
@@ -200,7 +222,7 @@ orderOfLabel[label_String] := Module[{base, m},
 matchItem[out_, item_] := Switch[item["Kind"],
    "sum", matchSum[out, item],
    "formula", matchFormula[out, item],
-   "value", matchValue[out, item],
+   "table", matchTable[out, item],
    "raw", If[StringQ[out], If[StringTrim[out] === StringTrim[item["Text"]], True, "the TikZ code differs from figures/" <> item["Name"] <> ".tex"], None],
    _, None];
 
@@ -264,9 +286,27 @@ stringDifference[a_String, b_String] := Module[{k = 1, n = Min[StringLength[a], 
    around[s_] := StringTake[s, {Max[1, k - 25], Min[StringLength[s], k + 35]}];
    "ExpressionToLaTeX gives ..." <> around[a] <> "... where the file has ..." <> around[b] <> "..."];
 
-matchValue[out_, item_] := Module[{vs = Flatten[valuesOfKey /@ item["Keys"], 1]},
+matchTable[out_, item_] := Module[{vs = tableValues[item["Keys"]]},
    If[MatchQ[out, _plotted] || vs === {}, Return[None]];
    If[AnyTrue[vs, sameValueQ[out, #] &], True, None]];
+(* the value that \outval{Key} stands for, the value of the key Key; \outval[N]{Key} the value of the key KeyN, the entry N of
+   the value of Key; \outval[Total]{Key} the sum of the entries of the list of Key (the residuals order by order, when the
+   output is the residual of all the orders together) *)
+outvalValue[item_] := With[{key = item["Key"] <> Replace[item["Entry"], Except[_String] -> ""]}, Which[
+    item["Entry"] === "Total" && ListQ[Lookup[$namedValues, item["Key"]]], Total[$namedValues[item["Key"]]],
+    KeyExistsQ[$namedValues, key], $namedValues[key],
+    True, Missing[key]]];
+matchOutval[out_, item_] := With[{v = outvalValue[item], where = describe[item] <> " (line " <> ToString[item["Line"]] <> ")"}, Which[
+    MissingQ[v], where <> ": assemble.py writes no value " <> First[v],
+    sameValueQ[out, v], True,
+    True, where <> " is " <> shortForm[v] <> ", the output " <> shortForm[out]]];
+shortForm[e_] := With[{s = ToString[e, InputForm]}, If[StringLength[s] > 60, StringTake[s, 57] <> "...", s]];
+(* an output not shown that a \val after the block has: a value that a statement gives is shown by \outval *)
+quotedHint[out_, block_] := If[MatchQ[out, _plotted], "",
+   With[{quoted = SelectFirst[Select[block["items"], #["kind"] === "value" &],
+       KeyExistsQ[$namedValues, #["key"]] && sameValueQ[out, $namedValues[#["key"]]] &]},
+    If[MissingQ[quoted], "", " (\\val{" <> quoted["key"] <> "}, line " <> ToString[quoted["line"]] <>
+      ", has its value: a value that a statement gives is shown by \\outval)"]]];
 sameValueQ[a_, b_] := TrueQ[a === b] || (NumericQ[a] && NumericQ[b] && TrueQ[Abs[N[a] - N[b]] <= 10.^-8 Max[1., Abs[N[b]]]]) ||
    (ListQ[a] && ListQ[b] && Length[a] === Length[b] && And @@ MapThread[sameValueQ, {a, b}]) ||
    (AssociationQ[a] && AssociationQ[b] && Keys[a] === Keys[b] && sameValueQ[Values[a], Values[b]]);
@@ -277,10 +317,16 @@ writtenQ[n_Integer, boxes_List] := AnyTrue[boxes, StringContainsQ[#, RegularExpr
 (* an output is shown when an item matches it whole, or when every element of a list or association is shown (an
    element of a sum of diagrams whose orders are all left out in the elements shown counts as shown in part). The items
    not yet matched are tried first; an item may show two outputs that are the same. Gives {shown, descriptions, notes of
-   the parts left out, reasons why not, {coupling, orders left out}} *)
+   the parts left out, reasons why not, {coupling, orders left out}}. A value is first compared with the first \outval
+   not yet matched, and with no other \outval *)
 SetAttributes[cover, HoldRest];
-cover[out_, items_, boxes_, depth_ : 0] := Catch[Module[{tried = {}, r, partials = {}, k, sub, leftOut, failedAt, accepted},
-   Do[If[items[[j, "Used"]] === pass,
+cover[out_, items_, boxes_, depth_ : 0] := Catch[Module[{tried = {}, r, partials = {}, k, sub, leftOut, failedAt, accepted, next},
+   next = SelectFirst[Range[Length[items]], items[[#, "Kind"]] === "outval" && ! items[[#, "Used"]] &];
+   If[IntegerQ[next] && ! MatchQ[out, _plotted],
+    r = matchOutval[out, items[[next]]];
+    If[r === True, items[[next, "Used"]] = True; Throw[{True, {describe[items[[next]]]}, {}, {}, {}}, cover]];
+    AppendTo[tried, r]];
+   Do[If[items[[j, "Kind"]] =!= "outval" && items[[j, "Used"]] === pass,
      r = matchItem[out, items[[j]]];
      Which[
       r === True, items[[j, "Used"]] = True; Throw[{True, {describe[items[[j]]]}, {}, {}, {}}, cover],
@@ -306,22 +352,26 @@ cover[out_, items_, boxes_, depth_ : 0] := Catch[Module[{tried = {}, r, partials
 describe[item_] := Switch[item["Kind"],
    "sum", If[Length[item["Rows"]] === 1, item["Rows"][[1, "name"]], item["Rows"][[1, "name"]] <> ".." <> Last[item["Rows"]]["name"]],
    "formula", "formula " <> item["Name"],
-   "value", "\\val{" <> StringRiffle[item["Keys"], ", "] <> "}",
+   "outval", "\\outval" <> If[StringQ[item["Entry"]], "[" <> item["Entry"] <> "]", ""] <> "{" <> item["Key"] <> "}",
+   "table", item["Name"] <> ".tex",
    "raw", item["Name"] <> ".tex",
    _, "?"];
 
 (* the items after a block: an ordersum whose bands are not orders gives one item per band; \inputfigure is a sum when
-   figures/NAME.terms exists, a table of values or the TikZ code of figures/NAME.tex otherwise *)
+   figures/NAME.terms exists, a table of values or the TikZ code of figures/NAME.tex otherwise; \outval a value given by
+   a statement; \val (a value quoted in the text) none *)
 itemsOf[block_] := Flatten[Function[it, Switch[it["kind"],
       "sum", If[FreeQ[orderOfLabel /@ it["rows"][[All, "label"]], None] || Length[it["rows"]] === 1,
        <|"Kind" -> "sum", "Rows" -> it["rows"], "Line" -> it["line"], "Used" -> False|>,
        Table[<|"Kind" -> "sum", "Rows" -> {r}, "Line" -> it["line"], "Used" -> False|>, {r, it["rows"]}]],
       "formula", <|"Kind" -> "formula", "Name" -> it["name"], "Line" -> it["line"], "Used" -> False|>,
-      "value", <|"Kind" -> "value", "Keys" -> {it["key"]}, "Line" -> it["line"], "Used" -> False|>,
+      "outval", <|"Kind" -> "outval", "Key" -> it["key"], "Entry" -> it["entry"], "Line" -> it["line"], "Used" -> False|>,
+      "value", Nothing,
       "figure", Which[
        StringQ[readFile[it["name"] <> ".terms"]], <|"Kind" -> "sum", "Rows" -> {<|"label" -> Null, "name" -> it["name"]|>}, "Line" -> it["line"],
         "Used" -> False|>,
-       KeyExistsQ[$assembledTables, it["name"]], <|"Kind" -> "value", "Keys" -> $assembledTables[it["name"]], "Line" -> it["line"], "Used" -> False|>,
+       KeyExistsQ[$assembledTables, it["name"]], <|"Kind" -> "table", "Name" -> it["name"], "Keys" -> $assembledTables[it["name"]],
+        "Line" -> it["line"], "Used" -> False|>,
        StringQ[readFile[it["name"] <> ".tex"]], <|"Kind" -> "raw", "Name" -> it["name"], "Text" -> readFile[it["name"] <> ".tex"],
         "Line" -> it["line"], "Used" -> False|>,
        True, Nothing]]] /@ block["items"]];
@@ -360,15 +410,19 @@ Do[Module[{b = blocks[[i]], where, items, st, problems = {}, shown = {}, result,
       c = cover[result, items, b["boxes"]];
       If[First[c],
        AppendTo[shown, StringRiffle[c[[2]], " + "]]; notes = Join[notes, (where <> ": " <> #) & /@ c[[3]]],
-       AppendTo[problems, shortStatement[s] <> ": its output is not shown after the block" <>
+       AppendTo[problems, shortStatement[s] <> ": its output " <> If[MatchQ[result, _plotted] || diagramsQ[result], "", shortForm[result] <> " "] <>
+        "is not shown after the block" <> quotedHint[result, b] <>
          If[c[[4]] === {}, "", "; the nearest:\n      " <> StringRiffle[Take[DeleteDuplicates[c[[4]]], UpTo[3]], "\n      "]]]]],
      {s, st}]];
+   (* every \outval is the output of a statement *)
+   Scan[AppendTo[problems, describe[#] <> " (line " <> ToString[#["Line"]] <> ") is the output of no statement"] &,
+    Select[items, #["Kind"] === "outval" && ! #["Used"] &]];
    If[problems === {},
     Print["ok    ", where, ": ", If[shown === {}, "no output", StringRiffle[shown, ", "]],
      If[AbsoluteTime[] - t > 20, " (" <> ToString[Round[AbsoluteTime[] - t]] <> " s)", ""]],
     AppendTo[failed, where];
     Print["FAIL  ", where, ":\n    ", StringRiffle[problems, "\n    "]]];
-   unshown = Join[unshown, (where <> ": " <> describe[#]) & /@ Select[items, ! #["Used"] && #["Kind"] =!= "value" &]]],
+   unshown = Join[unshown, (where <> ": " <> describe[#]) & /@ Select[items, ! #["Used"] && ! MemberQ[{"table", "outval"}, #["Kind"]] &]]],
   {i, Length[blocks]}];
 
 Print[""];

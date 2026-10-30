@@ -44,9 +44,10 @@ showcase: it runs every code block of `../Showcase/FunctionalDiagrams_Showcase.t
 statement per complete line as a notebook reads it, and compares each output with what the page shows after the block,
 read by `showcase_blocks.py` (python3, standard library): the pictures of a sum, band by band, with `figures/NAME.terms`;
 a formula with `figures/formula_NAME.tex`, as `ExpressionToLaTeX` writes it with the options `make_figures.wl` gives
-it; a value with `figures/values.txt`. A statement that gives a message fails; a block after the line `% not run` is
-only read; the outputs shown in part (some orders, said in the text) are listed. The comment at the top of
-`check_showcase.wl` gives the rules.
+it; a value with `figures/values.txt`, through the `\outval{Key}` after the block, one to one and in order (`\val`, a
+value quoted in the text, is never an output). A statement that gives a message fails; a block after the line
+`% not run` is only read; the outputs shown in part (some orders, said in the text) are listed. The comment at the top
+of `check_showcase.wl` gives the rules.
 
 The demo video, `../Media/demo.mp4`, its looping preview at the top of the README, `../Media/demo_preview.webp` (an
 animated WebP at 60 fps), and a

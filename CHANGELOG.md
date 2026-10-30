@@ -92,7 +92,9 @@ Changes to the documents alone need no release; they are listed under the next v
 - **The code of the showcase as a test.** `Development/check_showcase.wl` (about two minutes) runs every code block of
   the showcase in order in one fresh kernel, one statement per complete line as a notebook reads it, and compares each
   output with what the page shows after the block: the pictures of a sum band by band (weights and TikZ code), a
-  formula as `ExpressionToLaTeX` writes it, a value. A message or an output not shown fails; an output shown in part
+  formula as `ExpressionToLaTeX` writes it, a value (the page marks the values that are outputs, `\outval`, and the
+  check ties them to the outputs one to one and in order, so that a changed residual or the wrong entry of a list is
+  caught). A message or an output not shown fails; an output shown in part
   (some orders, as the text says) is listed. Its first run found the parquet check, an association, shown only by its
   counts and residuals (the code now takes them with `KeyTake`), and the four-loop piece of the 1PI action of the
   electron gas, which starts at V³, left out without a word. The formulas whose display differs from the output by
