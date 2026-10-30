@@ -158,6 +158,12 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
   order; the third order is not presented as anything special.
 - Names of propagators and fields must not be built-in symbols (`GreenFunction`, `Gamma`, `C`, `D`, `E`, `I`, `K`, `N`,
   `O`, …); this holds for the examples too (a symmetric kernel is `Q`, not `K`).
+- Options: every public function that takes options has `Options[f]`, with every name it accepts (those it passes on to
+  another function too), and resolves them where the call enters the package with `callOptions[f, {opts}]`
+  (`01_notation_declarations.wl`): an unknown name gives `FunctionalDiagrams::optx` and is ignored, the defaults come
+  from `Options[f]` (so `SetOptions` works). The private code reads the resolved list with `optionValue`; a public
+  function calls the private code of another one with its own options, never the public function (no second check, and
+  `SetOptions` on the inner function does not change the outer one).
 
 ## Drawing rules (`05_drawing.wl`)
 

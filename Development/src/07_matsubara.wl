@@ -222,12 +222,8 @@ EvaluateMatsubara::conv = "The sum over the loop frequency `1` depends on the co
 EvaluateMatsubara::diverge = "The summand of the loop frequency `1` does not decay at large frequency: the sum diverges (a boson line that does not vanish at large frequency?).";
 EvaluateMatsubara::convergence = "\"ConvergenceFactor\" -> `1` is not one of 1 (e^(i w 0+) on the lines at equal times, G(0-) = <psibar psi>, the default), -1 (e^(-i w 0+), G(0+) = -<psi psibar>) and 0 (no factor, the symmetric sum, the mean of the two).";
 
-(* unknown options give a message, as for the drawing functions *)
-checkOptionNames[f_Symbol, opts_List, known_List] := Scan[If[! MemberQ[known, optionKey[#[[1]]]],
-     Message[FunctionalDiagrams::optx, #[[1]], f, known]] &, opts];
-
-MatsubaraSum[f_, z_Symbol, statistics_, opts___Rule] := With[{eta = optionValue[{opts}, {"ConvergenceFactor" -> Automatic}, "ConvergenceFactor"]},
-   checkOptionNames[MatsubaraSum, {opts}, {"ConvergenceFactor"}];
+Options[MatsubaraSum] = {"ConvergenceFactor" -> Automatic};
+MatsubaraSum[f_, z_Symbol, statistics_, opts___Rule] := With[{eta = optionValue[callOptions[MatsubaraSum, {opts}], {}, "ConvergenceFactor"]},
    Which[
     ! MemberQ[{"Fermion", "Boson"}, statistics], Message[MatsubaraSum::statistics, statistics]; $Failed,
     ! MemberQ[{Automatic, 1, -1, 0}, eta], Message[MatsubaraSum::factor, eta]; $Failed,
@@ -448,12 +444,14 @@ sumLoopFrequencies[integrand_, frequencies_List, exponent_, eta0_] := withFreque
         If[g === $Failed, Throw[$Failed, sumFailure]]], {i, Length[frequencies]}];
       g, sumFailure]]]];
 
-(* the options, checked by name: {spin, loop names, convergence factor}; DiagramIntegrand sums no frequency and has no
-   convergence factor. The routed terms: $Failed if the rules, the external points or the options are not valid *)
-matsubaraOptions[f_Symbol, opts_List] := (checkOptionNames[f, opts,
-    Join[{"SpinDegeneracy", "LoopMomenta"}, If[f === DiagramIntegrand, {}, {"ConvergenceFactor"}]]];
-   {optionValue[opts, {"SpinDegeneracy" -> 1}, "SpinDegeneracy"], optionValue[opts, {"LoopMomenta" -> Automatic}, "LoopMomenta"],
-    optionValue[opts, {"ConvergenceFactor" -> 1}, "ConvergenceFactor"]});
+(* the options (resolved by callOptions): {spin, loop names, convergence factor}; DiagramIntegrand sums no frequency and has
+   no convergence factor. The routed terms: $Failed if the rules, the external points or the options are not valid *)
+Options[DiagramIntegrand] = {"SpinDegeneracy" -> 1, "LoopMomenta" -> Automatic};
+Options[EvaluateMatsubara] = {"SpinDegeneracy" -> 1, "LoopMomenta" -> Automatic, "ConvergenceFactor" -> 1, "Limit" -> None};
+Options[CuttingRuleImaginaryPart] = {"SpinDegeneracy" -> 1, "LoopMomenta" -> Automatic, "ConvergenceFactor" -> 1};
+Options[CheckCuttingRules] = Options[CuttingRuleImaginaryPart];
+matsubaraOptions[opts_List] := {optionValue[opts, {"SpinDegeneracy" -> 1}, "SpinDegeneracy"],
+   optionValue[opts, {"LoopMomenta" -> Automatic}, "LoopMomenta"], optionValue[opts, {"ConvergenceFactor" -> 1}, "ConvergenceFactor"]};
 checkConvergenceFactor[eta_] := If[MemberQ[{1, -1, 0}, eta], True, Message[EvaluateMatsubara::convergence, eta]; False];
 (* the lines of the package in momentum and frequency are directed, 1/(i w - xi_k), or bosonic: an antisymmetric two-label
    kernel (an anomalous propagator -<T psi psi>, a superfield propagator) is refused rather than misread *)
@@ -470,7 +468,7 @@ summedIntegrand[data_List, eta_] := sumLoopFrequencies[routeData["Integrand", da
    routeData["EqualTimeFrequency", data], eta];
 
 DiagramIntegrand[e_, externals_List, rules_List, opts___Rule] := Module[{spin, names, routed},
-   {spin, names} = Take[matsubaraOptions[DiagramIntegrand, {opts}], 2];
+   {spin, names} = Take[matsubaraOptions[callOptions[DiagramIntegrand, {opts}]], 2];
    routed = routedTerms[e, externals, rules, names];
    If[routed === $Failed, $Failed,
     If[# === $Failed, $Failed, {"Weight" -> weightOf[#, spin],
@@ -576,12 +574,12 @@ dynamicLimit[e_, w_] := Module[{m = mergedMomentumSums[e], outside, groups},
    If[outside === None || MemberQ[groups[[All, 2]], None], Message[EvaluateMatsubara::limitterms, w]; e,
     outside + Total[Table[momentumSum[s[[2]], s[[1]]], {s, groups}]]]];
 
-traceOrLimitQ[e_, opts_List] := ! FreeQ[e, TraceLog | OperatorTrace] || MemberQ[optionKey /@ opts[[All, 1]], "Limit"];
-EvaluateMatsubara[e_, externals_List, rules_List, opts___Rule] /; traceOrLimitQ[e, {opts}] := Module[
-   {limit = optionValue[{opts}, {"Limit" -> None}, "Limit"], rest = Select[{opts}, optionKey[#[[1]]] =!= "Limit" &], spin, names, eta,
+EvaluateMatsubara[e_, externals_List, rules_List, opts___Rule] := evaluateMatsubara[e, externals, rules, callOptions[EvaluateMatsubara, {opts}]];
+traceOrLimitQ[e_, opts_List] := ! FreeQ[e, TraceLog | OperatorTrace] || optionValue[opts, {"Limit" -> None}, "Limit"] =!= None;
+evaluateMatsubara[e_, externals_List, rules_List, opts_List] /; traceOrLimitQ[e, opts] := Module[
+   {limit = optionValue[opts, {"Limit" -> None}, "Limit"], rest = Select[opts, optionKey[#[[1]]] =!= "Limit" &], spin, names, eta,
     terms, traceTerms, diagrams, k, values, diagramValue, w, ext},
-   {spin, names, eta} = {optionValue[rest, {"SpinDegeneracy" -> 1}, "SpinDegeneracy"], optionValue[rest, {"LoopMomenta" -> Automatic}, "LoopMomenta"],
-     optionValue[rest, {"ConvergenceFactor" -> 1}, "ConvergenceFactor"]};
+   {spin, names, eta} = matsubaraOptions[rest];
    If[! MemberQ[{None, "Static", "Dynamic"}, limit], Message[EvaluateMatsubara::limit, limit]; Return[$Failed]];
    ext = Switch[limit, None, externals, "Static", (#[[1]] -> {0, 0} &) /@ externals, "Dynamic", (#[[1]] -> {0, #[[2, 2]]} &) /@ externals];
    terms = productTermsOf[Expand[e]];
@@ -592,15 +590,15 @@ EvaluateMatsubara[e_, externals_List, rules_List, opts___Rule] /; traceOrLimitQ[
       If[Length[traces] != 1 || ! FreeQ[t/traces[[1]], TraceLog | OperatorTrace | IntegralOver | DeltaFunction] || externals =!= {},
        Message[EvaluateMatsubara::trace, t]; $Failed,
        With[{v = traceValue[traces[[1]], rules, spin, k, eta]}, If[v === $Failed, $Failed, (t/traces[[1]]) v]]]], {t, traceTerms}];
-   diagramValue = If[diagrams === 0, 0, EvaluateMatsubara[diagrams, ext, rules, Sequence @@ rest]];
+   diagramValue = If[diagrams === 0, 0, evaluateMatsubara[diagrams, ext, rules, rest]];
    Which[
     MemberQ[Append[values, diagramValue], $Failed], $Failed,
     limit === "Dynamic" && (w = externalFrequency[externals]) =!= None, Total[values] + dynamicLimit[diagramValue, w],
     True, Total[values] + diagramValue]];
 
 (* $Failed if a term fails *)
-EvaluateMatsubara[e_, externals_List, rules_List, opts___Rule] := Module[{spin, names, eta, routed, w, results},
-   {spin, names, eta} = matsubaraOptions[EvaluateMatsubara, {opts}];
+evaluateMatsubara[e_, externals_List, rules_List, opts_List] := Module[{spin, names, eta, routed, w, results},
+   {spin, names, eta} = matsubaraOptions[opts];
    routed = routedTerms[e, externals, rules, names, eta];
    If[routed === $Failed, $Failed,
     w = externalFrequency[externals];
@@ -717,7 +715,7 @@ cutFrequencyQ[externals_List, w_] := If[Sort[DeleteCases[Table[Coefficient[Expan
 
 (* $Failed if a term is not of the implemented kind *)
 CuttingRuleImaginaryPart[e_, externals_List, rules_List, w_Symbol -> omega_, opts___Rule] := Module[{spin, names, eta, routed, results},
-   {spin, names, eta} = matsubaraOptions[CuttingRuleImaginaryPart, {opts}];
+   {spin, names, eta} = matsubaraOptions[callOptions[CuttingRuleImaginaryPart, {opts}]];
    routed = routedTerms[e, externals, rules, names, eta];
    If[routed === $Failed || ! cutFrequencyQ[externals, w], $Failed,
     results = Table[If[data === $Failed, $Failed, With[{cut = cutIntegrand[Append[data, "Externals" -> externals], spin, w, omega, eta]},
@@ -726,7 +724,7 @@ CuttingRuleImaginaryPart[e_, externals_List, rules_List, w_Symbol -> omega_, opt
 
 (* the two sides, term by term and delta function by delta function: the list of the differences that do not vanish *)
 CheckCuttingRules[e_, externals_List, rules_List, w_Symbol -> omega_, opts___Rule] := Module[{spin, names, eta, routed, differences = {}},
-   {spin, names, eta} = matsubaraOptions[CheckCuttingRules, {opts}];
+   {spin, names, eta} = matsubaraOptions[callOptions[CheckCuttingRules, {opts}]];
    routed = routedTerms[e, externals, rules, names, eta];
    If[routed === $Failed || ! cutFrequencyQ[externals, w], $Failed,
     Do[If[data === $Failed, AppendTo[differences, $Failed],

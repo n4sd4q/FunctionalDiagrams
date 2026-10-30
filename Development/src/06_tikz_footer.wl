@@ -231,7 +231,7 @@ tikzPicture[items_, opts_List] := "\\begin{tikzpicture}[x=" <> numberString[tikz
    numberString[tikzScale[opts]] <> "cm, line width=" <> numberString[tikzLineWidth[opts]] <>
    "pt, baseline={([yshift=-0.6ex]0,0)}]\n" <> tikzItems[items, opts] <> "\\end{tikzpicture}";
 
-DiagramToTikZ[e_, ext_List : {}, opts___] := Module[{allOpts = drawingOptions[DiagramToTikZ, {opts}], gs, parts, output},
+DiagramToTikZ[e_, ext_List : {}, opts___] := Module[{allOpts = callOptions[DiagramToTikZ, {opts}], gs, parts, output},
    gs = geometriesOf[e, ext, allOpts]; output = drawingOption[allOpts, "Output"];
    (* a term without lines (a number) has no picture *)
    parts = Table[With[{w = latexWeight[g[[1]]]}, {w[[1]], w[[2]], If[g[[2]] === {}, "", tikzPicture[g[[2]], allOpts]]}], {g, gs}];
@@ -436,8 +436,9 @@ qedLatexQ[e_] := ! FreeQ[e, MinkowskiLoopIntegral | FeynmanDenominator] ||
 latexLoopMomentumNames[e_] := If[! qedLatexQ[e], {},
    Table[LoopMomentum[i] -> "\\ell_{" <> ToString[i] <> "}", {i, Union[Cases[{e}, LoopMomentum[i_] :> i, Infinity]]}]];
 (* "Names" names heads and symbols, and also subexpressions, such as n_F(xi(p1)) -> "n_1"; a name given wins *)
-ExpressionToLaTeX[e_, opts___Rule] := With[{names = Flatten[{optionValue[{opts}, {"Names" -> {}}, "Names"]}]},
+Options[ExpressionToLaTeX] = {"Names" -> {}, "Labels" -> {}, "Subscripts" -> {}};
+ExpressionToLaTeX[e_, opts___Rule] := expressionToLaTeX[e, callOptions[ExpressionToLaTeX, {opts}]];
+expressionToLaTeX[e_, opts_List] := With[{names = Flatten[{optionValue[opts, {}, "Names"]}]},
    Block[{$latexNames = Select[names, AtomQ[#[[1]]] &], $latexExpressionNames = Join[Select[names, ! AtomQ[#[[1]]] &], latexLoopMomentumNames[e]],
-     $latexLabels = Flatten[{optionValue[{opts}, {"Labels" -> {}}, "Labels"]}],
-     $latexSubscripts = Flatten[{optionValue[{opts}, {"Subscripts" -> {}}, "Subscripts"]}]},
+     $latexLabels = Flatten[{optionValue[opts, {}, "Labels"]}], $latexSubscripts = Flatten[{optionValue[opts, {}, "Subscripts"]}]},
     latexOfExpression[latexDisplayForm[e]]]];

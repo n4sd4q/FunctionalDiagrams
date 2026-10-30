@@ -86,9 +86,9 @@ termLoopIntegral[t_, externals_List, rules_List, names_, caller_] :=
   With[{data = routeTerm[t, momentumExternals[externals], routingRule /@ rules, names, caller]},
    If[data === $Failed, $Failed, loopIntegralOfRoute[data]]];
 
+Options[DiagramLoopIntegral] = {"LoopMomenta" -> Automatic};
 DiagramLoopIntegral[e_, externals_, rules_List, opts___Rule] := Module[{names, terms},
-   checkOptionNames[DiagramLoopIntegral, {opts}, {"LoopMomenta"}];
-   names = optionValue[{opts}, {"LoopMomenta" -> Automatic}, "LoopMomenta"];
+   names = optionValue[callOptions[DiagramLoopIntegral, {opts}], {}, "LoopMomenta"];
    Which[
     ! externalMomentaQ[externals], Message[DiagramLoopIntegral::external, externals]; $Failed,
     ! checkRuleKinds[rules, $loopLineKinds, DiagramLoopIntegral], $Failed,
@@ -246,9 +246,9 @@ problemText[p_] := Switch[p, "IR", "an infrared divergence", "ScalelessLog", "a 
    "ZeroMomentum", "a massless line of zero momentum", "Irreducible", "an integral that is not nested one-loop",
    {"Numerator", _}, "the numerator " <> ToString[p[[2]], InputForm], _, ToString[p, InputForm]];
 
+Options[InfraredRearrangedIntegral] = {"Routing" -> False};
 InfraredRearrangedIntegral[e_, labels_List, p_, rules_List, eps_Symbol, opts___Rule] := Module[{routing, results},
-   checkOptionNames[InfraredRearrangedIntegral, {opts}, {"Routing"}];
-   routing = optionValue[{opts}, {"Routing" -> False}, "Routing"];
+   routing = optionValue[callOptions[InfraredRearrangedIntegral, {opts}], {}, "Routing"];
    If[! checkRuleKinds[rules, $loopLineKinds, InfraredRearrangedIntegral], $Failed,
     results = rearrangedTerm[#, labels, p, rules, eps] & /@ canonicalTermsOf[e];
     Which[MemberQ[results, $Failed], $Failed, TrueQ[routing], results, True, Total[Table[r[[3]], {r, results}]]]]];
@@ -484,9 +484,9 @@ gSeriesCoefficients[e_, g_, n_] := Module[{t = Together[e], num, den},
 atZeroEpsilon[c_, eps_, what_, caller_] := With[{t = Together[c]},
    If[(Denominator[t] /. eps -> 0) === 0, Message[MessageName[caller, "pole"], eps, what]; $Failed, Together[t /. eps -> 0]]];
 (* g_B = mu^(s eps) Z g: 0 = s eps + (1/g + d ln Z/dg) beta_eps, beta_eps = -s eps g/(1 + g d ln Z/dg) = -s eps g + beta(g) *)
+Options[BetaFunctionFromZ] = {"ScalePower" -> 2};
 BetaFunctionFromZ[z_, g_Symbol, eps_Symbol, n_Integer, opts___Rule] := Module[{s, cs, values},
-   checkOptionNames[BetaFunctionFromZ, {opts}, {"ScalePower"}];
-   s = optionValue[{opts}, {"ScalePower" -> 2}, "ScalePower"];
+   s = optionValue[callOptions[BetaFunctionFromZ, {opts}], {}, "ScalePower"];
    cs = gSeriesCoefficients[-s eps g/(1 + g D[z, g]/z) + s eps g, g, n];
    values = Table[atZeroEpsilon[cs[[j + 1]], eps, "the beta function", BetaFunctionFromZ], {j, 0, n}];
    If[MemberQ[values, $Failed], $Failed, Sum[values[[j + 1]] g^j, {j, 0, n}]]];

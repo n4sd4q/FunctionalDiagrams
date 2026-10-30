@@ -265,11 +265,11 @@ legendreWrittenOut[e_] := e /. {LegendreTransform[phi_, g_ -> s_, opts___Rule] :
     LegendrePropagator[g_ -> _, ___][x_, y_] :> g[x, y]};
 
 Options[ExpandTrace] = {"MaximumOrder" -> None};
-ExpandTrace[e_, opts___Rule] := Catch[expandTraces[e, None, 0, {opts}], operatorFailure];
-ExpandTrace[e_, g0_Symbol, n_Integer, opts___Rule] := Catch[expandTraces[e, g0, n, {opts}], operatorFailure];
+ExpandTrace[e_, opts___Rule] := Catch[expandTraces[e, None, 0, callOptions[ExpandTrace, {opts}]], operatorFailure];
+ExpandTrace[e_, g0_Symbol, n_Integer, opts___Rule] := Catch[expandTraces[e, g0, n, callOptions[ExpandTrace, {opts}]], operatorFailure];
 (* the monomials are written out lazily (orderBounded) only for terms without Grassmann-odd factors (those of the budget of
    truncatedRawTerms) *)
-expandTraces[e_, g0_, n_, opts_List] := Module[{maximum = optionValue[opts, Options[ExpandTrace], "MaximumOrder"], r, terms, lazy},
+expandTraces[e_, g0_, n_, opts_List] := Module[{maximum = optionValue[opts, {"MaximumOrder" -> None}, "MaximumOrder"], r, terms, lazy},
    lazy = MatchQ[maximum, {_, _Integer}] && FreeQ[e, _NonCommutativeMultiply | _GrassmannProduct] &&
      FreeQ[e, Alternatives @@ Join[$grassmannSources, $grassmannOddHeads, $gradedHeads]];
    Block[{$operatorOrder = If[lazy, {maximum[[1]], ! FreeQ[e, maximum[[1]][___]]}, None], functionLowerOrder, graded, lazyMonomial, $lazyCount = 0,
@@ -407,33 +407,37 @@ $superfieldActionStatistics = {"Fermion", "Boson", "ComplexBoson", "Superfield"}
 
 EffectiveAction2PI::meanrule = "\"MeanFields\" -> `1` is not a list of rules field -> head of its mean field: one real boson phi -> phiMean, one superfield NambuField -> X, or both fields of fermions and complex bosons (psi -> Psi, psibar -> Psibar).";
 EffectiveAction2PI::barred = "Which of the means `1` belongs to the barred field cannot be told: give Z0 = Exp[Integral Jbar(x) G0(x, y) J(y)] (the source of the unbarred field in the first slot) or declare the barred field with the sign -1 (DeclareField[phibar, J, -1]).";
-Options[EffectiveAction2PI] = {"Statistics" -> "Fermion", "MeanFields" -> {}, "Method" -> Automatic, "Source" -> None, "MeanFieldDegree" -> All};
+$effectiveAction2PIDefaults = {"Statistics" -> "Fermion", "MeanFields" -> {}, "Method" -> Automatic, "Source" -> None, "MeanFieldDegree" -> All};
+Options[EffectiveAction2PI] = $effectiveAction2PIDefaults;
 (* "Source" -> U: a one-body source in the bare inverse propagator, so that the action always gains Integral (barred
    field) U (field): G0^-1 -> G0^-1 - U for fermions (free action -psibar G0^-1 psi; it gains Integral psibar U psi),
    G0^-1 + U for complex bosons (free action phibar G0^-1 phi; Integral phibar U phi), D0^-1 + U for real bosons (1/2
    Integral phi U phi, as for the density vertex of PerturbativeDensityVertex). Gamma depends on U only through the trace
    term, so that at the stationary point dOmega/dU(x, y) = |kappa| G(y, x): <psibar(x) psi(y)> for fermions, <phibar(x)
    phi(y)> for complex bosons, 1/2 <phi(x) phi(y)> for real bosons *)
-bareInverse[g0_, opts_List] := With[{u = optionValue[opts, Options[EffectiveAction2PI], "Source"]},
+bareInverse[g0_, opts_List] := With[{u = optionValue[opts, $effectiveAction2PIDefaults, "Source"]},
    Which[u === None, Power[g0, -1], statisticsFactors[opts, $superfieldActionStatistics][[1]] === 1, Power[g0, -1] + u, True, Power[g0, -1] - u]];
 (* the default "Statistics" -> "Fermion" on a symmetric or antisymmetric G (a real boson or a superfield): a message, as
    for SelfEnergy and IrreducibleVertex *)
 EffectiveAction2PI::statisticsdefault = "`1` is `2`, and \"Statistics\" is not given: EffectiveAction2PI uses the fermionic trace terms, -Tr ln(-`1`^-1) - Tr(G0^-1 `1` - 1). For `3` give \"Statistics\" -> \"`4`\".";
-checkActionStatisticsGiven[g_, opts_List] := If[! MemberQ[optionKey /@ opts[[All, 1]], "Statistics"],
+checkActionStatisticsGiven[g_, given_List, opts_List] := If[! optionGivenQ[given, "Statistics"] && optionValue[opts, {}, "Statistics"] === "Fermion",
    Which[orderlessQ[g], Message[EffectiveAction2PI::statisticsdefault, g, "symmetric", "a real boson", "Boson"],
     MemberQ[$antisymmetricHeads, g], Message[EffectiveAction2PI::statisticsdefault, g, "antisymmetric", "a superfield", "Superfield"]]];
-EffectiveAction2PI[phi_, g0_Symbol -> g_Symbol, opts___Rule] := Module[{zk = statisticsFactors[{opts}, $superfieldActionStatistics]},
-   checkActionStatisticsGiven[g, {opts}];
+(* the form with Phi given: the options given (for the message statisticsdefault) and resolved *)
+EffectiveAction2PI[phi_, g0_Symbol -> g_Symbol, opts___Rule] := traceTerms2PI[phi, g0 -> g, {opts}, callOptions[EffectiveAction2PI, {opts}]];
+traceTerms2PI[phi_, g0_ -> g_, given_List, opts_List] := Module[{zk = statisticsFactors[opts, $superfieldActionStatistics]},
+   checkActionStatisticsGiven[g, given, opts];
    If[zk[[2]] === 1/2, checkRealBoson[g]];
    If[zk === {-1, -1/2}, checkSuperfield[g]];
-   phi + zk[[2]] TraceLog[zk[[1]] Power[g, -1]] + zk[[2]] OperatorTrace[Dot[bareInverse[g0, {opts}], g] - 1]];
+   phi + zk[[2]] TraceLog[zk[[1]] Power[g, -1]] + zk[[2]] OperatorTrace[Dot[bareInverse[g0, opts], g] - 1]];
 EffectiveAction2PI[z0_, interaction_, n_Integer, g0_Symbol -> g_Symbol, opts___Rule] := Module[
-   {means = optionValue[{opts}, Options[EffectiveAction2PI], "MeanFields"], method = optionValue[{opts}, Options[EffectiveAction2PI], "Method"]},
+   {o = callOptions[EffectiveAction2PI, {opts}], means, method},
+   {means, method} = optionValue[o, {}, #] & /@ {"MeanFields", "Method"};
    If[! MatchQ[means, {(_Symbol -> _Symbol) ...}], Message[EffectiveAction2PI::meanrule, means]; Return[$Failed]];
    Which[
-    means === {}, EffectiveAction2PI[If[n == 0, 0, LuttingerWardFunctional[z0, interaction, n, g0 -> g, "Method" -> method]], g0 -> g, opts],
-    interaction === 0, With[{free = classicalFreeAction[z0, means, g0, {opts}]}, If[free === $Failed, $Failed, free + EffectiveAction2PI[0, g0 -> g, opts]]],
-    True, meanFieldEffectiveAction[z0, interaction, n, g0 -> g, means, {opts}]]];
+    means === {}, traceTerms2PI[If[n == 0, 0, luttingerWardFunctional[z0, interaction, n, {g0 -> g}, {"Method" -> method}]], g0 -> g, {opts}, o],
+    interaction === 0, With[{free = classicalFreeAction[z0, means, g0, o]}, If[free === $Failed, $Failed, free + traceTerms2PI[0, g0 -> g, {opts}, o]]],
+    True, meanFieldEffectiveAction[z0, interaction, n, g0 -> g, means, {opts}, o]]];
 
 (* the free action at the mean fields: 1/2 phibar . D0^-1 . phibar (real bosons, phibar = <phi>), -Psibar . G0^-1 . Psi
    (fermions, Psi = <psi>, Psibar = <psibar>, G0 = -<psi psibar>_0), <phi>* . G0^-1 . <phi> (complex bosons, G0 = <phi phibar>_0). The means are declared as sources
@@ -477,8 +481,13 @@ classicalFreeAction[z0_, means_List, g0_, opts_List] := Module[{zk = statisticsF
 (* LegendreTransform[Phi, G -> S] is inert: F[S] = Phi[G[S]] + kappa Tr(S G[S]), with G[S] the propagator at which the
    self-energy of Phi (SelfEnergy) equals S. Its derivative with respect to S(x, y) is kappa G[S](y, x), written with
    the inert LegendrePropagator; ExpandTrace writes it out as Phi[G] + kappa Tr(S . G). *)
-SelfEnergyFunctional[phi_, g0_Symbol -> s_, g_Symbol, opts___Rule] := With[{zk = statisticsFactors[{opts}]},
-   LegendreTransform[phi, g -> s, opts] + zk[[2]] TraceLog[zk[[1]] (Power[g0, -1] - s)]];
+Options[SelfEnergyFunctional] = {"Statistics" -> "Fermion"};
+SelfEnergyFunctional[phi_, g0_Symbol -> s_, g_Symbol, opts___Rule] := Module[{o = callOptions[SelfEnergyFunctional, {opts}], zk, statistics},
+   zk = statisticsFactors[o];
+   (* the inert LegendreTransform carries the statistics given, or a default other than "Fermion" (SetOptions) *)
+   statistics = Select[{opts}, optionKey[#[[1]]] === "Statistics" &];
+   If[statistics === {} && optionValue[o, {}, "Statistics"] =!= "Fermion", statistics = {"Statistics" -> optionValue[o, {}, "Statistics"]}];
+   LegendreTransform[phi, g -> s, Sequence @@ statistics] + zk[[2]] TraceLog[zk[[1]] (Power[g0, -1] - s)]];
 
 (* ========================================================================= *)
 (*  Zero dimensions                                                          *)
@@ -495,10 +504,10 @@ Options[ZeroDimensionalValue] = {"LoopFactor" -> 1, "Loops" -> Automatic, "Indic
 zeroDimensionalLoopHeadQ[h_Symbol] := Context[h] =!= "System`" && ! orderlessQ[h] && ! MemberQ[$antisymmetricHeads, h] &&
    ! interactionStyleQ[lineStyleOf[h]] && ! MemberQ[{IntegralOver, GrassmannProduct, DummyVariable, OperatorTrace, TraceLog, LegendreTransform}, h];
 zeroDimensionalLoopHeadQ[_] := False;
-ZeroDimensionalValue[e_, rules_List, opts___Rule] /; AnyTrue[rules, MatchQ[#, _Symbol -> _List] &] :=
-  Catch[zeroDimensionalArrayValue[e, rules, {opts}], arrayFailure];
-ZeroDimensionalValue[e_, rules_List, opts___Rule] := Module[{n = optionValue[{opts}, Options[ZeroDimensionalValue], "LoopFactor"],
-    loops = optionValue[{opts}, Options[ZeroDimensionalValue], "Loops"], headRules, valueRules, operatorValue, e1, operators, kernelHeads},
+ZeroDimensionalValue[e_, rules_List, opts___Rule] := With[{o = callOptions[ZeroDimensionalValue, {opts}]},
+   If[AnyTrue[rules, MatchQ[#, _Symbol -> _List] &], Catch[zeroDimensionalArrayValue[e, rules, o], arrayFailure], zeroDimensionalValue[e, rules, o]]];
+zeroDimensionalValue[e_, rules_List, opts_List] := Module[{n = optionValue[opts, {}, "LoopFactor"],
+    loops = optionValue[opts, {}, "Loops"], headRules, valueRules, operatorValue, e1, operators, kernelHeads},
    headRules = Cases[rules, (h_Symbol -> v_) :> (h -> v)];
    valueRules = Join[Cases[rules, (h_Symbol -> v_) :> (h[___] -> v)], Cases[rules, r : ((_[___] -> _) | (_[___] :> _))]];
    operatorValue[a_] := ((a /. Dot -> Times) /. headRules);
@@ -527,9 +536,9 @@ ZeroDimensionalValue::operator = "The operator `1` has no matrix value: give an 
 ZeroDimensionalValue::rank = "The array of `1` has not the rank `2` of its labels.";
 SetAttributes[arrayFailure, HoldFirst];
 arrayFailure[message_, args___] := (Message[message, args]; Throw[$Failed, arrayFailure]);
-zeroDimensionalArrayValue[e_, rules_List, opts_List] := Module[{indices = optionValue[opts, Options[ZeroDimensionalValue], "Indices"],
+zeroDimensionalArrayValue[e_, rules_List, opts_List] := Module[{indices = optionValue[opts, {}, "Indices"],
     arrays, scalars, dim, e1, operators, kernelHeads},
-   If[optionValue[opts, Options[ZeroDimensionalValue], "LoopFactor"] =!= 1, Message[ZeroDimensionalValue::loopfactor]];
+   If[optionValue[opts, {}, "LoopFactor"] =!= 1, Message[ZeroDimensionalValue::loopfactor]];
    arrays = Cases[rules, (h_Symbol -> v_List) :> (h -> v)];
    scalars = Join[Cases[rules, (h_Symbol -> v_) /; ! ListQ[v] :> (h[___] -> v)], Cases[rules, r : ((_[___] -> _) | (_[___] :> _))]];
    dim = Length[arrays[[1, 2]]];
@@ -668,7 +677,7 @@ meanDegreeOfTerm[diagramTerm[c_, o_List, _], heads_List] := Module[{tt},
    Exponent[c /. h_Symbol[a___] /; MemberQ[heads, h] :> tt h[a], tt] + Count[o, h_Symbol[___] /; MemberQ[heads, h]]];
 selectMeanDegree[e_, _, All] := e;
 selectMeanDegree[e_, heads_List, degrees_List] := termListToExpression[Select[canonicalTermsOf[e], MemberQ[degrees, meanDegreeOfTerm[#, heads]] &]];
-meanFieldEffectiveAction[z0_, interaction_, n_Integer, g0_ -> g_, means_List, opts_List] := Module[
+meanFieldEffectiveAction[z0_, interaction_, n_Integer, g0_ -> g_, means_List, given_List, opts_List] := Module[
    {zk = statisticsFactors[opts, $superfieldActionStatistics], free, oddHeads, parts, mass, vertices, gamma2, degrees, keep, tt},
    free = classicalFreeAction[z0, means, g0, opts];
    If[free === $Failed, Return[$Failed]];
@@ -677,13 +686,13 @@ meanFieldEffectiveAction[z0_, interaction_, n_Integer, g0_ -> g_, means_List, op
    If[parts === $Failed, Return[$Failed]];
    mass = -meanConnectedVacuum[z0 /. g0 -> g, parts[[3]], {1}, oddHeads];
    vertices = Total[Drop[parts, 3]];
-   degrees = optionValue[opts, Options[EffectiveAction2PI], "MeanFieldDegree"];
+   degrees = optionValue[opts, $effectiveAction2PIDefaults, "MeanFieldDegree"];
    If[IntegerQ[degrees], degrees = {degrees}];
    keep = If[degrees === All, True &, MemberQ[degrees, Exponent[(Times @@ #) /. {h_Symbol[a___] /; MemberQ[means[[All, 2]], h] :> tt h[a],
          p_meanProxy[a___] :> tt p[a]}, tt]] &];
    gamma2 = If[n == 0 || vertices === 0, 0,
      -meanIrreducibleVacuum[z0, vertices, Range[n], oddHeads, 2, g0, keep] /. g0 -> g];
-   selectMeanDegree[free + parts[[1]] + EffectiveAction2PI[0, g0 -> g, Sequence @@ opts] + mass + gamma2, means[[All, 2]], degrees]];
+   selectMeanDegree[free + parts[[1]] + traceTerms2PI[0, g0 -> g, given, opts] + mass + gamma2, means[[All, 2]], degrees]];
 
 (* ---- the 1PI effective action Gamma[M] (EffectiveAction1PI) ----
    Gamma[M] = S[M] + 1/2 Tr ln S''[M] + Gamma1[M], Gamma1 = -(connected 1PI vacuum diagrams, with two or more loops, with lines
@@ -700,14 +709,15 @@ meanFieldEffectiveAction[z0_, interaction_, n_Integer, g0_ -> g_, means_List, op
 EffectiveAction1PI::onepi = "The 1PI effective action is available for a real boson with one mean field (phi -> phiMean, lines in the background D0 -> Dm or bare D0 -> D0), for fermions with their two Grassmann-odd means ({psi -> Psi, psibar -> Psibar}, bare lines G0 -> G0) and for a superfield with its Grassmann-odd mean (NambuField -> X, \"Statistics\" -> \"Superfield\", bare lines).";
 Options[EffectiveAction1PI] = {"Statistics" -> "Boson"};
 EffectiveAction1PI[z0_, interaction_, n_Integer, field_Symbol -> mean_Symbol, d0_Symbol -> dm_Symbol, opts___Rule] :=
-  onePIEffectiveAction[z0, interaction, n, d0 -> dm, {field -> mean}, Join[{opts}, Options[EffectiveAction1PI]]];
+  onePIEffectiveAction[z0, interaction, n, d0 -> dm, {field -> mean}, callOptions[EffectiveAction1PI, {opts}]];
 EffectiveAction1PI[z0_, interaction_, n_Integer, {field_Symbol -> mean_Symbol}, d0_Symbol -> dm_Symbol, opts___Rule] :=
-  EffectiveAction1PI[z0, interaction, n, field -> mean, d0 -> dm, opts];
+  onePIEffectiveAction[z0, interaction, n, d0 -> dm, {field -> mean}, callOptions[EffectiveAction1PI, {opts}]];
 (* fermions: two fields with Grassmann sources *)
 EffectiveAction1PI[z0_, interaction_, n_Integer, means : {_Symbol -> _Symbol, _Symbol -> _Symbol}, g0_Symbol -> dm_Symbol, opts___Rule] :=
-  If[AllTrue[means[[All, 1]], MemberQ[$grassmannSources, fieldSourceOf[#]] &] && dm === g0,
-   onePIBareLines[z0, interaction, n, g0, means, Join[{"Statistics" -> "Fermion"}, DeleteCases[{opts}, "Statistics" -> _]]],
-   Message[EffectiveAction1PI::onepi]; $Failed];
+  (callOptions[EffectiveAction1PI, {opts}];
+   If[AllTrue[means[[All, 1]], MemberQ[$grassmannSources, fieldSourceOf[#]] &] && dm === g0,
+    onePIBareLines[z0, interaction, n, g0, means, {"Statistics" -> "Fermion"}],
+    Message[EffectiveAction1PI::onepi]; $Failed]);
 fieldSourceOf[field_] := Replace[Cases[$fieldSourceMap, {field, s_, _} :> s], {{} -> None, {s_, ___} :> s}];
 onePIEffectiveAction[z0_, interaction_, n_Integer, g0_ -> dm_, means_List, opts_List] := Module[
    {free, parts, mean, field, source, cubic, x, y, a, u, v, rhs, vacuum},

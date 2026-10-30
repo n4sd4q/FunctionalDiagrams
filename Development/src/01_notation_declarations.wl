@@ -118,9 +118,9 @@ localVertexQ[f_] := ! AtomQ[f] && MemberQ[$localVertexHeads, Head[f]];
    a self-energy; {head, label, shape, fill, axial ports} *)
 $blobShapes = {"Circle", "Box", "Triangle", "TriangleUp", "Diamond"}; $blobFills = {"Hatched", "CrossHatched", "Dotted", "Grey", "White"};
 DeclareBlob::opt = "Unknown value `1` of the option `2` of DeclareBlob; use one of `3`.";
-DeclareBlob[head_Symbol, label_String, opts___Rule] := Module[
-   {shape = optionValue[{opts}, {"Shape" -> "Circle"}, "Shape"], fill = optionValue[{opts}, {"Fill" -> "Hatched"}, "Fill"],
-    axial = optionValue[{opts}, {"AxialPorts" -> Automatic}, "AxialPorts"]},
+Options[DeclareBlob] = {"Shape" -> "Circle", "Fill" -> "Hatched", "AxialPorts" -> Automatic};
+DeclareBlob[head_Symbol, label_String, opts___Rule] := Module[{o = callOptions[DeclareBlob, {opts}], shape, fill, axial},
+   {shape, fill, axial} = optionValue[o, {}, #] & /@ {"Shape", "Fill", "AxialPorts"};
    Which[
     ! MemberQ[$blobShapes, shape], Message[DeclareBlob::opt, shape, "Shape", $blobShapes],
     ! MemberQ[$blobFills, fill], Message[DeclareBlob::opt, fill, "Fill", $blobFills],
@@ -177,3 +177,16 @@ optionKey[k_] := ToString[k];
 optionValue[options_List, defaults_List, name_String] := With[{r = FirstCase[Flatten[options],
       rule : (Rule | RuleDelayed)[k_, _] /; (k === name || (! StringQ[k] && optionKey[k] === name)) :> rule, None, {1}]},
    If[r === None, name /. defaults, r[[2]]]];
+(* the options of a call of a public function f, resolved once, where the call enters the package: the rules given (lists
+   of rules flattened; anything else dropped), each name (a string, or a symbol of that name) checked against those of
+   Options[f], then Options[f] itself, whose defaults SetOptions changes. An unknown name gives the message optx, naming f,
+   the option and the known names, and is dropped: the evaluation goes on without it. The private code below the entry
+   reads the whole list with optionValue; a public function that calls another one calls its private code with the list
+   resolved, so that nothing is checked twice and the defaults of the inner function (SetOptions) do not leak into the
+   outer one. Options[f] lists every name f accepts, those it passes on to another function too *)
+FunctionalDiagrams::optx = "Unknown option `1` of `2`, ignored; the options are `3`.";
+callOptions[f_Symbol, opts_List] := With[{known = optionKey /@ Options[f][[All, 1]]},
+   Join[Select[Cases[Flatten[opts], _Rule | _RuleDelayed], If[MemberQ[known, optionKey[#[[1]]]], True,
+       Message[FunctionalDiagrams::optx, #[[1]], f, known]; False] &], Options[f]]];
+(* whether the option name was given in the call (opts: the rules given, before callOptions) *)
+optionGivenQ[opts_List, name_String] := MemberQ[optionKey /@ Cases[Flatten[opts], _Rule | _RuleDelayed][[All, 1]], name];

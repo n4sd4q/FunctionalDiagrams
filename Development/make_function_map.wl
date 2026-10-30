@@ -9,8 +9,10 @@
      LoopMomentum, GammaMatrix, ...): a name without definitions, or whose definitions only normalize it (they give the
      name again, a number, or an algebraic expression of their arguments);
    - the public names it uses: those that occur in its definitions (OwnValues, DownValues, UpValues, SubValues, NValues) and,
-     transitively, in the definitions of the private helpers reached from them, stopping at public names. The
-     definitions are read without being evaluated. Names bound in a definition (pattern variables, the variables of
+     transitively, in the definitions of the private helpers reached from them, stopping at public names and at the
+     private code of another public function, which stands for it (implementationOf: selfEnergyOf for SelfEnergy, ...,
+     called in place of the public function with the options already resolved). The definitions are read without being
+     evaluated. Names bound in a definition (pattern variables, the variables of
      Module, With, Block and Function, iterators of Table, Do, Sum and Product) are not references. Formatting rules
      (FormatValues) and options are not followed.
    - a size: the private functions reached in this way (helpers; private tables and state variables are followed but
@@ -90,12 +92,25 @@ references[h_HoldComplete] := If[KeyExistsQ[referenceCache, h], referenceCache[h
    referenceCache[h] = DeleteDuplicates[Select[Join @@ (freeSymbols[HoldComplete[#], {}] & /@ definitionsOf[h]),
        KeyExistsQ[publicIndex, #] || helperQ[#] &]]];
 
+(* the private code of a public function, which another public function calls in its place with the options already
+   resolved (callOptions: no second check, and not the defaults of the inner function): reached from another public
+   function, it stands for its public name, an edge where the walk stops; reached from its own public function, it is a
+   helper *)
+implementationOf = Association[(ToExpression["FunctionalDiagrams`Private`" <> #1, InputForm, HoldComplete] ->
+       ToExpression["FunctionalDiagrams`" <> #2, InputForm, HoldComplete]) & @@@ {
+     {"selfEnergyOf", "SelfEnergy"}, {"connectedCorrelationFunction", "ConnectedCorrelationFunction"},
+     {"luttingerWardFunctional", "LuttingerWardFunctional"}, {"betheSalpeterLadder", "BetheSalpeterLadder"},
+     {"diagramPlot", "DiagramPlot"}, {"expandTraces", "ExpandTrace"}}];
+(* the public name that r stands for, seen from the public function p; None for a helper *)
+publicVia[p_HoldComplete, r_HoldComplete] := Which[KeyExistsQ[publicIndex, r], r,
+   KeyExistsQ[implementationOf, r] && implementationOf[r] =!= p, implementationOf[r], True, None];
+
 (* the public names reached from p through private helpers only, and the helpers *)
 reach[p_HoldComplete] := Module[{seen = <|p -> True|>, queue = {p}, current, uses = {}, helpers = {}},
    While[queue =!= {},
     current = First[queue]; queue = Rest[queue];
     Do[If[! KeyExistsQ[seen, r], seen[r] = True;
-       If[KeyExistsQ[publicIndex, r], AppendTo[uses, r], AppendTo[helpers, r]; AppendTo[queue, r]]],
+       With[{u = publicVia[p, r]}, If[u === None, AppendTo[helpers, r]; AppendTo[queue, r], If[! MemberQ[uses, u], AppendTo[uses, u]]]]],
      {r, references[current]}]];
    {uses, helpers}];
 
@@ -103,7 +118,8 @@ reach[p_HoldComplete] := Module[{seen = <|p -> True|>, queue = {p}, current, use
 helperPath[p_HoldComplete, q_HoldComplete] := Module[{parent = <|p -> None|>, queue = {p}, current, path},
    While[queue =!= {} && ! KeyExistsQ[parent, q],
     current = First[queue]; queue = Rest[queue];
-    Do[If[! KeyExistsQ[parent, r], parent[r] = current; If[! KeyExistsQ[publicIndex, r], AppendTo[queue, r]]],
+    Do[If[! KeyExistsQ[parent, r], parent[r] = current;
+       With[{u = publicVia[p, r]}, Which[u === None, AppendTo[queue, r], u =!= r && ! KeyExistsQ[parent, u], parent[u] = r]]],
      {r, references[current]}]];
    If[! KeyExistsQ[parent, q], {}, path = {q}; While[parent[First[path]] =!= None, PrependTo[path, parent[First[path]]]];
     Replace[#, HoldComplete[s_] :> SymbolName[Unevaluated[s]]] & /@ path]];

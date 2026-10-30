@@ -218,10 +218,10 @@ photonParameters[par_] := If[ListQ[par], par, {par, 0}];
 qedRulesQ[rules_List] := checkRuleKinds[rules, {"Fermion", "Photon", "Vertex"}, QEDIntegrand] && With[
     {bad = Select[rules, #[[2, 1]] === "Photon" && ListQ[#[[2, 2]]] && Length[#[[2, 2]]] =!= 2 &]},
     Scan[Message[QEDIntegrand::rule, #] &, bad]; bad === {}];
-QEDIntegrand[e_, externals_, rules_List, opts___Rule] := Module[{k, indexRules, terms},
-   checkOptionNames[QEDIntegrand, {opts}, {"LoopMomentum", "Indices"}];
-   k = optionValue[{opts}, {"LoopMomentum" -> LoopMomentum[1]}, "LoopMomentum"];
-   indexRules = optionValue[{opts}, {"Indices" -> {}}, "Indices"];
+Options[QEDIntegrand] = {"LoopMomentum" -> LoopMomentum[1], "Indices" -> {}};
+QEDIntegrand[e_, externals_, rules_List, opts___Rule] := Module[{o = callOptions[QEDIntegrand, {opts}], k, indexRules, terms},
+   k = optionValue[o, {}, "LoopMomentum"];
+   indexRules = optionValue[o, {}, "Indices"];
    Which[
     ! qedRulesQ[rules], $Failed,
     ! externalMomentaQ[externals], Message[QEDIntegrand::external, externals]; $Failed,

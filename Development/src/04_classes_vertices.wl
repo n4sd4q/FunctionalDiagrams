@@ -217,7 +217,7 @@ amputatedTerms[e_, externals_List, lineHeads_List] := canonicalTermList[Join @@ 
 (*  11. The Luttinger-Ward functional, the self-energy and the vertices      *)
 (* ========================================================================= *)
 
-Options[LuttingerWardFunctional] = {"Method" -> Automatic};
+Options[LuttingerWardFunctional] = {"Method" -> Automatic, "CouplingOrder" -> None};
 LuttingerWardFunctional[z0_, interaction_, n_, rule_Rule, opts___Rule] := LuttingerWardFunctional[z0, interaction, n, {rule}, opts];
 (* a full propagator without the symmetry of the bare one (G0 symmetric, G undeclared): G(x, y) and G(y, x) would be
    different terms *)
@@ -228,8 +228,10 @@ checkRuleSymmetry[rules_List] := Scan[Function[r, If[MatchQ[r, _Symbol -> _Symbo
       Message[FunctionalDiagrams::rulesymmetry, r[[1]], "antisymmetric", r[[2]], DeclareAntisymmetric]]]], rules];
 (* several propagators made full at once (e.g. G and the screened interaction W of a Hubbard-Stratonovich field): the
    diagrams that stay connected when any two lines, of any of these kinds, are cut *)
-LuttingerWardFunctional[z0_, interaction_, n_, rules : {__Rule}, opts___Rule] := (Scan[warnIfBuiltin, rules[[All, 2]]]; checkRuleSymmetry[rules];
-  -connectedVacuumDiagrams[z0, interaction, n, {opts}, particleIrreducibleTermQ[#, 2, {}, rules[[All, 1]]] &] /. rules);
+LuttingerWardFunctional[z0_, interaction_, n_, rules : {__Rule}, opts___Rule] :=
+  luttingerWardFunctional[z0, interaction, n, rules, callOptions[LuttingerWardFunctional, {opts}]];
+luttingerWardFunctional[z0_, interaction_, n_, rules_List, opts_List] := (Scan[warnIfBuiltin, rules[[All, 2]]]; checkRuleSymmetry[rules];
+  -connectedVacuumDiagrams[z0, interaction, n, opts, particleIrreducibleTermQ[#, 2, {}, rules[[All, 1]]] &] /. rules);
 
 FunctionalDiagrams::statistics = "The option \"Statistics\" -> `1` is not one of `2`; \"Fermion\" is used.";
 statisticsOption[opts_List, allowed_List : {"Fermion", "Boson"}] := With[{s = optionValue[opts, {"Statistics" -> "Fermion"}, "Statistics"]},
@@ -245,7 +247,7 @@ checkSuperfield[g_Symbol] := If[! MemberQ[$antisymmetricHeads, g], Message[Funct
 (* the default "Statistics" -> "Fermion" on a symmetric or antisymmetric G (the propagator of a real boson or of a
    superfield): a message *)
 FunctionalDiagrams::statisticsdefault = "`1` is `2`, and \"Statistics\" is not given: `3` uses the fermionic convention (\[CapitalSigma](x, y) = \[Delta]\[CapitalPhi]/\[Delta]`1`(y, x), \[CapitalGamma]0(x1, x2; x3, x4) = \[Delta]\[CapitalSigma](x1, x2)/\[Delta]`1`(x4, x3)). For `4` give \"Statistics\" -> \"`5`\".";
-checkStatisticsGiven[f_, g_, opts_List] := If[! MemberQ[optionKey /@ opts[[All, 1]], "Statistics"],
+checkStatisticsGiven[f_, g_, given_List, opts_List] := If[! optionGivenQ[given, "Statistics"] && optionValue[opts, {}, "Statistics"] === "Fermion",
    Which[orderlessQ[g], Message[FunctionalDiagrams::statisticsdefault, g, "symmetric", f, "a real boson", "Boson"],
     MemberQ[$antisymmetricHeads, g], Message[FunctionalDiagrams::statisticsdefault, g, "antisymmetric", f, "a superfield", "Superfield"]]];
 FunctionalDiagrams::vertexlabels = "`1` takes the list of its `2` labels, `3`; `4` was given.";
@@ -271,8 +273,9 @@ propagatorDerivativeMode[g_Symbol] := Which[orderlessQ[g], True, MemberQ[$antisy
 Options[SelfEnergy] = {"Statistics" -> "Fermion"};
 SelfEnergy[phi_, g_Symbol, labels_List, ___Rule] /; Length[labels] != 2 :=
   (Message[FunctionalDiagrams::vertexlabels, SelfEnergy, 2, "{x, y}", labels]; $Failed);
-SelfEnergy[phi_, g_Symbol, {x_, y_}, opts___Rule] := (checkStatisticsGiven[SelfEnergy, g, {opts}]; selfEnergyOf[phi, g, {x, y}, opts]);
-selfEnergyOf[phi_, g_Symbol, {x_, y_}, opts___Rule] := Switch[statisticsOption[{opts}, {"Fermion", "Boson", "ComplexBoson", "Superfield"}],
+SelfEnergy[phi_, g_Symbol, {x_, y_}, opts___Rule] := With[{o = callOptions[SelfEnergy, {opts}]},
+   checkStatisticsGiven[SelfEnergy, g, {opts}, o]; selfEnergyOf[phi, g, {x, y}, o]];
+selfEnergyOf[phi_, g_Symbol, {x_, y_}, opts_List] := Switch[statisticsOption[opts, {"Fermion", "Boson", "ComplexBoson", "Superfield"}],
    "Boson", checkRealBoson[g]; SimplifyDiagrams[-2 derivativeWithRespectToPropagator[phi, g, {x, y}, True]],
    "Superfield", checkSuperfield[g]; SimplifyDiagrams[-2 derivativeWithRespectToPropagator[phi, g, {x, y}, "Antisymmetric"]],
    "ComplexBoson", SimplifyDiagrams[-derivativeWithRespectToPropagator[phi, g, {y, x}, False]],
@@ -286,10 +289,11 @@ FunctionalDiagrams::ppkernel = "The kernel of the particle-particle channel is a
 IrreducibleVertex[phi_, g_Symbol, labels_List, ___Rule] /; Length[labels] != 4 :=
   (Message[FunctionalDiagrams::vertexlabels, IrreducibleVertex, 4, "{x1, x2, x3, x4}", labels]; $Failed);
 IrreducibleVertex[phi_, g_Symbol, labels : {x1_, x2_, x3_, x4_}, opts___Rule] := Module[
-   {statistics = statisticsOption[{opts}, {"Fermion", "Boson", "ComplexBoson", "Superfield"}],
-    channel = optionValue[{opts}, Options[IrreducibleVertex], "Channel"], rest, allowed, first},
-   checkStatisticsGiven[IrreducibleVertex, g, {opts}];
-   rest = Append[Select[{opts}, ! MemberQ[{"Channel", "Statistics"}, optionKey[#[[1]]]] &], "Statistics" -> statistics];
+   {o = callOptions[IrreducibleVertex, {opts}], statistics, channel, rest, allowed, first},
+   statistics = statisticsOption[o, {"Fermion", "Boson", "ComplexBoson", "Superfield"}];
+   channel = optionValue[o, {}, "Channel"];
+   checkStatisticsGiven[IrreducibleVertex, g, {opts}, o];
+   rest = {"Statistics" -> statistics};
    allowed = Switch[statistics, "Boson" | "Superfield", {"s", "t", "u", All}, "Fermion", {"ParticleHole", "TransverseParticleHole"}, _, {}];
    Which[
     channel === Automatic || channel === First[Append[allowed, None]], irreducibleVertexFirstChannel[phi, g, labels, statistics, rest],
@@ -307,11 +311,11 @@ IrreducibleVertex[phi_, g_Symbol, labels : {x1_, x2_, x3_, x4_}, opts___Rule] :=
           "u" -> SimplifyDiagrams[first /. {x2 -> x4, x3 -> x2, x4 -> x3}]}},
        If[channel === All, Association[rules], channel /. rules]]]]]];
 irreducibleVertexFirstChannel[phi_, g_, {x1_, x2_, x3_, x4_}, statistics_, opts_List] := Switch[statistics,
-   "Boson", SimplifyDiagrams[-2 derivativeWithRespectToPropagator[SelfEnergy[phi, g, {x1, x2}, Sequence @@ opts], g, {x3, x4}, True]],
-   "Superfield", SimplifyDiagrams[-2 derivativeWithRespectToPropagator[SelfEnergy[phi, g, {x1, x2}, Sequence @@ opts], g, {x3, x4}, "Antisymmetric"]],
-   _, derivativeWithRespectToPropagator[SelfEnergy[phi, g, {x1, x2}, Sequence @@ opts], g, {x4, x3}, False]];
+   "Boson", SimplifyDiagrams[-2 derivativeWithRespectToPropagator[selfEnergyOf[phi, g, {x1, x2}, opts], g, {x3, x4}, True]],
+   "Superfield", SimplifyDiagrams[-2 derivativeWithRespectToPropagator[selfEnergyOf[phi, g, {x1, x2}, opts], g, {x3, x4}, "Antisymmetric"]],
+   _, derivativeWithRespectToPropagator[selfEnergyOf[phi, g, {x1, x2}, opts], g, {x4, x3}, False]];
 
-Options[PerturbativeFullVertex] = {"Method" -> Automatic};
+Options[PerturbativeFullVertex] = {"Method" -> Automatic, "CouplingOrder" -> None};
 (* the orders of the vertex: n means 1 to n (the vertex has no zeroth order), {k} only k, {kmin, kmax} kmin to kmax *)
 vertexOrders[n_Integer] := {1, n};
 vertexOrders[{k_Integer}] := {k};
@@ -321,14 +325,14 @@ PerturbativeFullVertex[z0_, interaction_, n_, fields_List, labels_List, rules : 
   (Message[FunctionalDiagrams::vertexlabels, PerturbativeFullVertex, 4, "{x1, x2, x3, x4}", labels]; $Failed);
 (* several bare propagators made full at once (one per spin, or G and the screened interaction): a list of rules *)
 PerturbativeFullVertex[z0_, interaction_, n_, fields_List, labels : {x1_, x2_, x3_, x4_}, rule : (_Rule | {__Rule}), opts___Rule] := Module[{correlation, sign, vertexTerms,
-    rules = Flatten[{rule}]},
+    o = callOptions[PerturbativeFullVertex, {opts}], rules = Flatten[{rule}]},
    Scan[warnIfBuiltin, rules[[All, 2]]]; checkRuleSymmetry[rules];
    If[Length[fields] == 2,
     (* fermions: <psi(1) psibar(2) psibar(4) psi(3)>_c = G G F G G *)
-    correlation = ConnectedCorrelationFunction[z0, {fields[[1]][x1], fields[[2]][x2], fields[[2]][x4], fields[[1]][x3]},
-      interaction, vertexOrders[n], opts]; sign = 1,
+    correlation = connectedCorrelationFunction[z0, {fields[[1]][x1], fields[[2]][x2], fields[[2]][x4], fields[[1]][x3]},
+      interaction, vertexOrders[n], o]; sign = 1,
     (* real bosons: F = Gamma^(4) = -(amputated connected four-point function) *)
-    correlation = ConnectedCorrelationFunction[z0, fields[[1]] /@ labels, interaction, vertexOrders[n], opts]; sign = -1];
+    correlation = connectedCorrelationFunction[z0, fields[[1]] /@ labels, interaction, vertexOrders[n], o]; sign = -1];
    (* SkeletonDiagrams[sign AmputateExternalLegs[correlation, ...], ...], with one canonical form instead of three *)
    checkLabels[correlation, labels];
    vertexTerms = amputatedTerms[sign correlation, labels, rules[[All, 1]]];
@@ -341,7 +345,7 @@ dysonChain[pieces_List, {s1_, s2_}, g0_, {x_, y_}] := Module[{k = Length[pieces]
    IntegralOver[g0[x, as[[1]]] Times @@ Table[(pieces[[i]] /. {s1 -> as[[i]], s2 -> bs[[i]]}) If[i < k, g0[bs[[i]], as[[i + 1]]], g0[bs[[i]], y]],
        {i, k}], Join[as, bs]]];
 DysonSeries::zeroth = "The self-energy has a part of order 0 in `1`, which the chains of \"MaximumOrder\" leave out.";
-DysonSeries[sigma_, {s1_, s2_}, g0_, {x_, y_}, m_Integer, opts___Rule] := Module[{maximum = optionValue[{opts}, {"MaximumOrder" -> None}, "MaximumOrder"],
+DysonSeries[sigma_, {s1_, s2_}, g0_, {x_, y_}, m_Integer, opts___Rule] := Module[{maximum = optionValue[callOptions[DysonSeries, {opts}], {}, "MaximumOrder"],
     total = g0[x, y], parts},
    If[maximum === None,
     Do[total = total + dysonChain[Table[sigma, {k}], {s1, s2}, g0, {x, y}], {k, m}],
@@ -403,7 +407,8 @@ ParquetDecomposition[f_, labels_List, lineHeads_List, ___Rule] /; Length[labels]
 ParquetDecomposition[f_, labels_List, g_Symbol, opts___Rule] := ParquetDecomposition[f, labels, {g}, opts];
 ParquetDecomposition[args___] /; ! MatchQ[{args}, {_, _List, _List | _Symbol, ___Rule}] :=
   (Message[ParquetDecomposition::args, Length[{args}], Head /@ {args}]; $Failed);
-ParquetDecomposition[f_, labels_List, lineHeads_List, opts___Rule] := Module[{channels = channelPairings[statisticsOption[{opts}, $parquetStatistics], labels],
+ParquetDecomposition[f_, labels_List, lineHeads_List, opts___Rule] := Module[
+   {channels = channelPairings[statisticsOption[callOptions[ParquetDecomposition, {opts}], $parquetStatistics], labels],
     terms = canonicalTermsOf[f]},
    checkLabels[f, labels];
    Association[(#[[1]] -> termListToExpression[#[[2]]] &) /@ parquetClassTerms[terms, channels, lineHeads, labels]]];
@@ -412,14 +417,16 @@ ParquetDecomposition[f_, labels_List, lineHeads_List, opts___Rule] := Module[{ch
 relabelVertex[v_, labels_List, new_List] := v /. Thread[labels -> new];
 
 Options[BetheSalpeterLadder] = {"Statistics" -> "Fermion", "MaximumOrder" -> None};
-BetheSalpeterLadder[left_, right_, labels : {x1_, x2_, x3_, x4_}, channel_String, g_Symbol, opts___Rule] /;
-   optionValue[{opts}, {"MaximumOrder" -> None}, "MaximumOrder"] =!= None :=
-  Module[{maximum = optionValue[{opts}, {"MaximumOrder" -> None}, "MaximumOrder"], rest = Select[{opts}, optionKey[#[[1]]] =!= "MaximumOrder" &]},
-   (* only the products of total order <= n *)
-   ladderUpToOrder[orderParts[left, maximum[[1]], maximum[[2]]], orderParts[right, maximum[[1]], maximum[[2]]], labels, channel, g,
-    statisticsOption[rest, $parquetStatistics]]];
 BetheSalpeterLadder[left_, right_, labels : {x1_, x2_, x3_, x4_}, channel_String, g_Symbol, opts___Rule] :=
-  SimplifyDiagrams[ladderIntegral[left, right, labels, channel, g, statisticsOption[{opts}, $parquetStatistics]]];
+  betheSalpeterLadder[left, right, labels, channel, g, callOptions[BetheSalpeterLadder, {opts}]];
+betheSalpeterLadder[left_, right_, labels : {_, _, _, _}, channel_String, g_Symbol, opts_List] := With[
+   {maximum = optionValue[opts, {"MaximumOrder" -> None}, "MaximumOrder"], statistics = statisticsOption[opts, $parquetStatistics]},
+   If[maximum === None, SimplifyDiagrams[ladderIntegral[left, right, labels, channel, g, statistics]],
+    (* only the products of total order <= n *)
+    ladderUpToOrder[orderParts[left, maximum[[1]], maximum[[2]]], orderParts[right, maximum[[1]], maximum[[2]]], labels, channel, g,
+     statistics]]];
+(* arguments that BetheSalpeterLadder does not take (from ExactEquation): left as BetheSalpeterLadder[...], unevaluated *)
+betheSalpeterLadder[left_, right_, labels_, channel_, g_, opts_List] := BetheSalpeterLadder[left, right, labels, channel, g, Sequence @@ opts];
 
 (* the parts of order 0, 1, ..., n of the canonical terms (as OrderPart, whose order of a term is termOrder; a term of
    symbolic order, x^m, is in none of them) *)
@@ -457,9 +464,10 @@ ladderIntegral[left_, right_, labels : {x1_, x2_, x3_, x4_}, channel_String, g_S
 Options[CheckParquetEquations] = {"Statistics" -> "Fermion"};
 (* the canonical terms of f are computed once and split by class and by order: the canonical form of an expression made
    of canonical terms gives the same terms, and is not computed again *)
-CheckParquetEquations[f_, labels_List, g_Symbol, x_, n_Integer, opts___Rule] := Module[{pairings, channels, terms, classTerms, part,
-    rightParts, residuals, counts},
-   pairings = channelPairings[statisticsOption[{opts}, $parquetStatistics], labels];
+CheckParquetEquations[f_, labels_List, g_Symbol, x_, n_Integer, opts___Rule] := Module[{statistics, pairings, channels, terms, classTerms,
+    part, rightParts, residuals, counts},
+   statistics = statisticsOption[callOptions[CheckParquetEquations, {opts}], $parquetStatistics];
+   pairings = channelPairings[statistics, labels];
    channels = pairings[[All, 1]];
    terms = canonicalTermsOf[f];
    checkLabels[f, labels];
@@ -468,7 +476,7 @@ CheckParquetEquations[f_, labels_List, g_Symbol, x_, n_Integer, opts___Rule] := 
    rightParts = termListToExpression /@ orderPartsOfTerms[terms, x, ! FreeQ[f, x[___]], n];
    residuals = With[{rules = Table[ch -> Module[{left = Complement[terms, part[ch]], ladder, difference},
           ladder = ladderUpToOrder[termListToExpression /@ orderPartsOfTerms[left, x, ! FreeQ[left, x[___]], n], rightParts, labels, ch, g,
-            statisticsOption[{opts}, $parquetStatistics]];
+            statistics];
           difference = canonicalTermsOf[termListToExpression[part[ch]] - ladder];
           termListToExpression /@ Rest[orderPartsOfTerms[difference, x, ! FreeQ[difference, x[___]], n]]], {ch, channels}]},
      Association[rules]];
@@ -487,13 +495,14 @@ CheckParquetEquations[f_, labels_List, g_Symbol, x_, n_Integer, opts___Rule] := 
    bosons: rho = phi^2/2, G^-1 = G0^-1 + U - Sigma and Lambda = dG^-1/dU, so that <phi(x1) phi(x2) rho(z)>_c = G G Lambda.
    In both cases Lambda = delta(x1, z) delta(x2, z) + corrections. The legs x1, x2 are removed and the skeleton diagrams
    kept; the bare term is added by hand (AmputateExternalLegs removes only legs that end at internal points). *)
-Options[PerturbativeDensityVertex] = {"Method" -> Automatic};
-PerturbativeDensityVertex[z0_, interaction_, n_, fields_List, {x1_, x2_, z_}, rule_Rule, opts___Rule] := Module[{correlation},
+Options[PerturbativeDensityVertex] = {"Method" -> Automatic, "CouplingOrder" -> None};
+PerturbativeDensityVertex[z0_, interaction_, n_, fields_List, {x1_, x2_, z_}, rule_Rule, opts___Rule] := Module[{correlation,
+    o = callOptions[PerturbativeDensityVertex, {opts}]},
    warnIfBuiltin[rule[[2]]];
    correlation = If[Length[fields] == 2,
-     ConnectedCorrelationFunction[z0, {fields[[1]][x1], fields[[2]][x2], fields[[2]][z], fields[[1]][z]}, interaction, vertexOrders[n], opts],
-     1/2 ConnectedCorrelationFunction[z0, {fields[[1]][x1], fields[[1]][x2], fields[[1]][z], fields[[1]][z]}, interaction,
-       vertexOrders[n], opts]];
+     connectedCorrelationFunction[z0, {fields[[1]][x1], fields[[2]][x2], fields[[2]][z], fields[[1]][z]}, interaction, vertexOrders[n], o],
+     1/2 connectedCorrelationFunction[z0, {fields[[1]][x1], fields[[1]][x2], fields[[1]][z], fields[[1]][z]}, interaction,
+       vertexOrders[n], o]];
    SimplifyDiagrams[DeltaFunction[x1, z] DeltaFunction[x2, z] +
      (SkeletonDiagrams[AmputateExternalLegs[correlation, {x1, x2}, {rule[[1]]}], {x1, x2, z}, {rule[[1]]}] /. rule)]];
 
@@ -514,8 +523,9 @@ FunctionalDiagrams::exactname = "Unknown equation `1`; the equations are `2`.";
 $exactEquations = {"Dyson", "BetheSalpeter", "Parquet", "SchwingerDyson", "Vertex", "VertexFromF", "SelfEnergyFromVertex", "Hedin",
    "Response", "Susceptibility"};
 Options[ExactEquation] = {"Statistics" -> "Fermion", "Channel" -> Automatic, "MaximumOrder" -> None};
-ExactEquation[name_String, objects_List, labels_List, opts___Rule] := Module[{statistics = statisticsOption[{opts}], ob, missing,
-    a, b, c, d, u, v, w, g, gbar, gam, given, maximum = optionValue[{opts}, Options[ExactEquation], "MaximumOrder"], side},
+ExactEquation[name_String, objects_List, labels_List, opts___Rule] := Module[{o = callOptions[ExactEquation, {opts}], statistics, ob, missing,
+    a, b, c, d, u, v, w, g, gbar, gam, given, maximum, side},
+   statistics = statisticsOption[o]; maximum = optionValue[o, {}, "MaximumOrder"];
    If[! MemberQ[$exactEquations, name], Message[FunctionalDiagrams::exactname, name, $exactEquations]; Return[$Failed]];
    missing = Select[Switch[name,
       "Dyson", {"G", "G0", "Sigma"}, "BetheSalpeter", {"F", "Gamma0", "G"},
@@ -537,13 +547,13 @@ ExactEquation[name_String, objects_List, labels_List, opts___Rule] := Module[{st
     (* G = G0 + G0 Sigma G *)
     "Dyson", g @@ labels == ob["G0"] @@ labels + IntegralOver[ob["G0"][labels[[1]], u] ob["Sigma"][u, v] g[v, labels[[2]]], {u, v}],
     (* F = Gamma0 + Gamma0 o F in one channel (BetheSalpeterLadder); the particle-hole channel, or s for real bosons *)
-    "BetheSalpeter", With[{channel = Replace[optionValue[{opts}, Options[ExactEquation], "Channel"],
+    "BetheSalpeter", With[{channel = Replace[optionValue[o, {}, "Channel"],
         Automatic -> If[statistics === "Boson", "s", "ParticleHole"]]},
-     ob["F"] @@ labels == ob["Gamma0"] @@ labels + BetheSalpeterLadder[ob["Gamma0"] @@ labels, ob["F"] @@ labels, labels, channel, g,
-       "Statistics" -> statistics, "MaximumOrder" -> maximum]],
+     ob["F"] @@ labels == ob["Gamma0"] @@ labels + betheSalpeterLadder[ob["Gamma0"] @@ labels, ob["F"] @@ labels, labels, channel, g,
+       {"Statistics" -> statistics, "MaximumOrder" -> maximum}]],
     (* F = Lambda + Sum_r Gamma_r o F *)
     "Parquet", ob["F"] @@ labels == ob["Lambda"] @@ labels + Total[Table[
-       BetheSalpeterLadder[ob[ch[[1]]] @@ labels, ob["F"] @@ labels, labels, ch[[2]], g, "Statistics" -> statistics, "MaximumOrder" -> maximum],
+       betheSalpeterLadder[ob[ch[[1]]] @@ labels, ob["F"] @@ labels, labels, ch[[2]], g, {"Statistics" -> statistics, "MaximumOrder" -> maximum}],
        {ch, If[statistics === "Boson", {{"Gammas", "s"}, {"Gammat", "t"}, {"Gammau", "u"}},
          {{"GammaPh", "ParticleHole"}, {"GammaPhbar", "TransverseParticleHole"}, {"GammaPp", "ParticleParticle"}}]}]],
     (* fermions with a density-density interaction V: Sigma = Hartree + Fock - V G G G F; real bosons with the interaction
@@ -889,7 +899,8 @@ superfieldTrace[a_, types_List, normal_List] := With[{m = Catch[collectMonomials
     ! ListQ[m], Message[SuperfieldComponents::trace, OperatorTrace[a]]; keptTrace[OperatorTrace, a],
     AllTrue[m, Function[mono, mono[[2]] === {} || (Length[mono[[2]]] == 2 && Sort[superfieldAtomType[#, types] & /@ mono[[2]]] === {"col", "row"})]],
     2 OperatorTrace[a /. normal],
-    True, With[{identity = Total[Select[m, #[[2]] === {} &][[All, 1]]], rings = ExpandTrace[OperatorTrace[opFromMonomials[Select[m, #[[2]] =!= {} &]]]]},
+    True, With[{identity = Total[Select[m, #[[2]] === {} &][[All, 1]]], rings = Catch[expandTraces[OperatorTrace[opFromMonomials[Select[m, #[[2]] =!= {} &]]], None, 0, {}],
+        operatorFailure]},
      If[! FreeQ[rings, OperatorTrace | $Failed], Message[SuperfieldComponents::trace, OperatorTrace[a]]; keptTrace[OperatorTrace, a],
       2 identity OperatorTrace[1] + rings]]]];
 (* the kernel of a row operator [[0, p], [-p^T, 0]] or of a column operator [[0, -q^T], [q, 0]] *)

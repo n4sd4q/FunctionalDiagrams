@@ -40,14 +40,8 @@ diagramColor[appearance_, key_String] := With[{c = $diagramPalette[key]}, Switch
     "Light", c[[1]], "Dark", c[[2]],
     _, If[key === "Paper", lightDarkColor[c[[1]], Automatic], lightDarkColor @@ c]]];
 
-(* the options of a call: the explicit ones first, then those of the function (which SetOptions changes); unknown
-   names give a message *)
+(* the options of a call (callOptions): the explicit ones first, then those of the function (which SetOptions changes) *)
 Options[DiagramPlot] = $drawingDefaults; Options[DrawDiagram] = $drawingDefaults; Options[DiagramToTikZ] = $drawingDefaults;
-FunctionalDiagrams::optx = "Unknown option `1` of `2`; the options are `3`.";
-drawingOptions[f_Symbol, opts_List] := Module[{given = Select[Flatten[opts], MatchQ[#, _Rule | _RuleDelayed] &]},
-   Scan[If[! MemberQ[$drawingDefaults[[All, 1]], optionKey[#[[1]]]], Message[FunctionalDiagrams::optx, #[[1]], f,
-       $drawingDefaults[[All, 1]]]] &, given];
-   Join[given, Options[f]]];
 
 (* sizes, in layout units *)
 $pixelsPerUnit = 46.; $dotRadius = 0.075; $externalPointRadius = 0.08; $blobRadius = 0.2; $loopRadius = 0.28; $bosonLoopRadius = 0.36;
@@ -3295,16 +3289,16 @@ geometriesOf[e_, ext_List, opts_List] := Module[{ts = termsForDrawing[e], elemen
     Table[ReplacePart[diagramGeometry[ts[[i]], elements[[i]], ext, opts, directions], 1 ->
        anomalousOrientationSign[elements[[i]], ext] displayedWeight[ts[[i]], elements[[i]], opts]], {i, Length[ts]}]]];
 
-DrawDiagram[t_, ext_List : {}, opts___] := Module[{ts = termsForDrawing[t], g, allOpts = drawingOptions[DrawDiagram, {opts}]},
+DrawDiagram[t_, ext_List : {}, opts___] := Module[{ts = termsForDrawing[t], g, allOpts = callOptions[DrawDiagram, {opts}]},
    Which[
     ts === {}, Graphics[{}],
-    Length[ts] > 1, DiagramPlot[t, ext, Sequence @@ allOpts],
+    Length[ts] > 1, diagramPlot[t, ext, allOpts],
     True,
     g = First[geometriesOf[t, ext, allOpts]];
     With[{a = diagramAppearance[allOpts]}, finishGraphics[itemPrimitives[g[[2]], allOpts, a], g[[3]], allOpts, a]]]];
 
-DiagramPlot[e_, ext_List : {}, opts___] := Module[{allOpts = drawingOptions[DiagramPlot, {opts}], gs, n, ww, dw, dh, cw, ch, columns,
-    cells, bb, a},
+DiagramPlot[e_, ext_List : {}, opts___] := diagramPlot[e, ext, callOptions[DiagramPlot, {opts}]];
+diagramPlot[e_, ext_List, allOpts_List] := Module[{gs, n, ww, dw, dh, cw, ch, columns, cells, bb, a},
    a = diagramAppearance[allOpts];
    gs = geometriesOf[e, ext, allOpts]; n = Length[gs];
    Which[

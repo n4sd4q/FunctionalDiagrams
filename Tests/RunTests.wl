@@ -1969,6 +1969,116 @@ section["superfields (Superfields.wl)"];
 Get[FileNameJoin[{testDirectory, "Superfields.wl"}]];
 
 (* ------------------------------------------------------------------------- *)
+(* the options of the public functions (callOptions): names checked, defaults from Options[f]; a fresh start, as for the
+   files above *)
+section["options: unknown names, SetOptions"];
+Quiet[Scan[(Unprotect[#]; ClearAll[#]) &, Complement[Names["Global`*"], harnessNames]]];
+FunctionalDiagrams`ResetDeclarations[];
+DeclareSource[J]; DeclareSymmetric[D0, Gb]; DeclareField[phi, J];
+Z0 = Exp[1/2 IntegralOver[J[x] D0[x, y] J[y], {x, y}]];
+phi4 = lambda/24 IntegralOver[phi[z]^4, {z}];
+phiB = LuttingerWardFunctional[Z0, phi4, 2, D0 -> Gb];
+sigmaB = SelfEnergy[phiB, Gb, {a, b}, "Statistics" -> "Boson"];
+fullB = PerturbativeFullVertex[Z0, phi4, 2, {phi}, {x1, x2, x3, x4}, D0 -> Gb];
+DeclareGrassmannSource[eta, etabar]; DeclareDirectedPropagator[G0, G]; DeclareField[psi, etabar]; DeclareField[psibar, eta, -1];
+DeclareSymmetric[V]; DeclareInteractionLine[V];
+DeclareMatsubaraFrequency[w, "Fermion"];
+Zf = Exp[-IntegralOver[G0[x, y] etabar[x] ** eta[y], {x, y}]];
+Vf = 1/2 IntegralOver[V[x, y] psibar[x] ** psibar[y] ** psi[y] ** psi[x], {x, y}];
+phiF = LuttingerWardFunctional[Zf, Vf, 1, G0 -> G];
+sigmaF = SelfEnergy[phiF, G, {x, y}];
+gasRules = {G0 -> {"Fermion", xi}, G -> {"Fermion", xi}, V -> {"Instantaneous", v}};
+twoPoint = {y -> {k, I w}, x -> {-k, -I w}};
+DeclareSource[Jphoton]; DeclareField[photon, Jphoton]; DeclareSymmetric[PhotonPropagator]; DeclareLocalVertex[QEDVertex];
+DeclareDirectedPropagator[ElectronPropagator];
+qedZ0 = Exp[1/2 IntegralOver[Jphoton[x] PhotonPropagator[x, y] Jphoton[y], {x, y}] + IntegralOver[ElectronPropagator[x, y] etabar[x] ** eta[y], {x, y}]];
+qedVertex = AmputateExternalLegs[ConnectedCorrelationFunction[qedZ0, {psi[x1], psibar[x2], photon[x3]},
+    e IntegralOver[QEDVertex[x, y, z] psibar[x] ** psi[y] photon[z], {x, y, z}], 1], {x1, x2, x3}, {PhotonPropagator, ElectronPropagator}];
+qedRules = {ElectronPropagator -> {"Fermion", m}, PhotonPropagator -> {"Photon", 1}, QEDVertex -> {"Vertex", -I}};
+(* a call of every public function with options; with an unknown option added, the message optx and the same result *)
+optionCalls = {
+   Hold[DeclareBlob[SigmaBlob, "\\Sigma", "Shape" -> "Circle"]],
+   Hold[GaussianExpectationValue[Z0, {phi[a], phi[b], phi[c], phi[d]}]],
+   Hold[PerturbativeCorrelationFunction[Z0, {phi[a], phi[b]}, phi4, 1]],
+   Hold[ConnectedCorrelationFunction[Z0, {phi[a], phi[b]}, phi4, 2, "CouplingOrder" -> {lambda, 2}]],
+   Hold[ConnectedVacuumDiagrams[Z0, phi4, 2]],
+   Hold[LuttingerWardFunctional[Z0, phi4, 2, D0 -> Gb]],
+   Hold[SelfEnergy[phiB, Gb, {a, b}, "Statistics" -> "Boson"]],
+   Hold[IrreducibleVertex[phiB, Gb, {x1, x2, x3, x4}, "Statistics" -> "Boson", "Channel" -> "t"]],
+   Hold[PerturbativeFullVertex[Z0, phi4, 2, {phi}, {x1, x2, x3, x4}, D0 -> Gb]],
+   Hold[DysonSeries[sigmaB, {a, b}, Gb, {x, y}, 2, "MaximumOrder" -> {lambda, 2}]],
+   Hold[ParquetDecomposition[fullB, {x1, x2, x3, x4}, {Gb}, "Statistics" -> "Boson"]],
+   Hold[BetheSalpeterLadder[fullB, fullB, {x1, x2, x3, x4}, "s", Gb, "Statistics" -> "Boson", "MaximumOrder" -> {lambda, 2}]],
+   Hold[CheckParquetEquations[fullB, {x1, x2, x3, x4}, Gb, lambda, 2, "Statistics" -> "Boson"]],
+   Hold[PerturbativeDensityVertex[Zf, Vf, 1, {psi, psibar}, {x1, x2, z}, G0 -> G]],
+   Hold[ExactEquation["BetheSalpeter", {"F" -> LabelFunction[fullB, {x1, x2, x3, x4}], "Gamma0" -> LabelFunction[fullB, {x1, x2, x3, x4}],
+       "G" -> Gb}, {x1, x2, x3, x4}, "Statistics" -> "Boson", "MaximumOrder" -> {lambda, 2}]],
+   Hold[DrawDiagram[sigmaF[[1]], {x, y}]],
+   Hold[DiagramPlot[sigmaF, {x, y}]],
+   Hold[DiagramToTikZ[sigmaF, {x, y}]],
+   Hold[ExpressionToLaTeX[sigmaF, "Names" -> {G -> "G"}]],
+   Hold[MatsubaraSum[1/(z - a), z, "Fermion", "ConvergenceFactor" -> 1]],
+   Hold[DiagramIntegrand[sigmaF, twoPoint, gasRules]],
+   Hold[EvaluateMatsubara[sigmaF, twoPoint, gasRules, "SpinDegeneracy" -> 2]],
+   Hold[CuttingRuleImaginaryPart[sigmaF, twoPoint, gasRules, w -> omega]],
+   Hold[CheckCuttingRules[sigmaF, twoPoint, gasRules, w -> omega]],
+   Hold[DiagramLoopIntegral[sigmaB, {a -> p, b -> -p}, {Gb -> {"Scalar", m}}]],
+   Hold[InfraredRearrangedIntegral[OrderPart[fullB, lambda, 2], {x1, x2, x3, x4}, p, {Gb -> {"Scalar", 0}}, eps]],
+   Hold[BetaFunctionFromZ[1 + 3 lambda/(16 Pi^2 eps), lambda, eps, 2]],
+   Hold[QEDIntegrand[qedVertex, {x2 -> p1, x3 -> p2 - p1, x1 -> -p2}, qedRules, "Indices" -> {x3 -> mu}]],
+   Hold[ExpandTrace[OperatorKernel[Power[Power[G0, -1] - Sg, -1]][x, y], G0, 2]],
+   Hold[EffectiveAction2PI[phiF, G0 -> G]],
+   Hold[EffectiveAction1PI[Z0, phi4, 2, phi -> phiMean, D0 -> D0]],
+   Hold[SelfEnergyFunctional[phiF, G0 -> Sg, G]],
+   Hold[ZeroDimensionalValue[EffectiveAction2PI[phiB, D0 -> Gb, "Statistics" -> "Boson"], {D0 -> d0, Gb -> g}]]};
+withOption[Hold[f_[args___]], rule_] := Hold[f[args, rule]];
+callHead[Hold[f_[___]]] := f;
+(* the public names (strings) of the functions with options *)
+optionFunctions = Select[Symbol["FunctionalDiagrams`" <> #] & /@ FunctionalDiagrams`Private`$publicNames, Options[#] =!= {} &];
+check["every public function with options has a call above", Sort[ToString /@ optionFunctions], Sort[ToString /@ callHead /@ optionCalls]];
+check["an unknown option (a string or a symbol): the message optx and the result without it",
+  Select[optionCalls, Function[call, With[{plain = ReleaseHold[call]}, ! And[
+       messageAndValue[ReleaseHold[withOption[call, "Statistcs" -> "Boson"]], FunctionalDiagrams::optx] === {True, plain},
+       messageAndValue[ReleaseHold[withOption[call, unknownOption -> 1]], FunctionalDiagrams::optx] === {True, plain}]]]], {}];
+(* SetOptions: Options[f] holds the new default until it is restored *)
+check["SetOptions changes the default of every function with options, and restores it",
+  Select[optionFunctions, Function[f, With[{saved = Options[f], name = Options[f][[1, 1]]},
+     SetOptions[f, name -> optionTestValue];
+     ! (Options[f, name] === {name -> optionTestValue} && (SetOptions[f, saved]; Options[f] === saved))]]], {}];
+(* the defaults are read from Options[f]; a function that calls another one passes its own options, not the defaults of
+   the other one *)
+SetOptions[SelfEnergy, "Statistics" -> "Boson"];
+check["SetOptions[SelfEnergy, \"Statistics\" -> \"Boson\"]: the bosonic self-energy, and no message statisticsdefault",
+  messageAndValue[SelfEnergy[phiB, Gb, {a, b}], FunctionalDiagrams::statisticsdefault], {False, sigmaB}];
+SetOptions[SelfEnergy, "Statistics" -> "Fermion"];
+check["SetOptions[SelfEnergy, \"Statistics\" -> \"Fermion\"]: the default again, with its message",
+  messageAndValue[SelfEnergy[phiB, Gb, {a, b}] === sigmaB, FunctionalDiagrams::statisticsdefault], {True, False}];
+SetOptions[ConnectedCorrelationFunction, "CouplingOrder" -> {lambda, 1}];
+check["SetOptions[ConnectedCorrelationFunction, \"CouplingOrder\" -> {lambda, 1}]: its default, not that of PerturbativeFullVertex, which calls it",
+  {SimplifyDiagrams[ConnectedCorrelationFunction[Z0, {phi[a], phi[b]}, phi4, 2] -
+     OrderPart[ConnectedCorrelationFunction[Z0, {phi[a], phi[b]}, phi4, 2, "CouplingOrder" -> None], lambda, 1]],
+   PerturbativeFullVertex[Z0, phi4, 2, {phi}, {x1, x2, x3, x4}, D0 -> Gb] === fullB}, {0, True}];
+SetOptions[ConnectedCorrelationFunction, "CouplingOrder" -> None];
+SetOptions[MatsubaraSum, "ConvergenceFactor" -> -1];
+check["SetOptions[MatsubaraSum, \"ConvergenceFactor\" -> -1]: n_F - 1", MatsubaraSum[1/(z - a), z, "Fermion"], -1 + FermiFunction[a]];
+SetOptions[MatsubaraSum, "ConvergenceFactor" -> Automatic];
+SetOptions[EvaluateMatsubara, "SpinDegeneracy" -> 2];
+check["SetOptions[EvaluateMatsubara, \"SpinDegeneracy\" -> 2]: as the option given",
+  {EvaluateMatsubara[sigmaF, twoPoint, gasRules] === EvaluateMatsubara[sigmaF, twoPoint, gasRules, "SpinDegeneracy" -> 2],
+   EvaluateMatsubara[sigmaF, twoPoint, gasRules] === EvaluateMatsubara[sigmaF, twoPoint, gasRules, "SpinDegeneracy" -> 1]}, {True, False}];
+SetOptions[EvaluateMatsubara, "SpinDegeneracy" -> 1];
+SetOptions[DysonSeries, "MaximumOrder" -> {lambda, 1}];
+check["SetOptions[DysonSeries, \"MaximumOrder\" -> {lambda, 1}]: as the option given",
+  DysonSeries[sigmaB, {a, b}, Gb, {x, y}, 2] === DysonSeries[sigmaB, {a, b}, Gb, {x, y}, 2, "MaximumOrder" -> {lambda, 1}], True];
+SetOptions[DysonSeries, "MaximumOrder" -> None];
+SetOptions[ExpressionToLaTeX, "Names" -> {Gb -> "\\mathcal{G}"}];
+check["SetOptions[ExpressionToLaTeX, \"Names\" -> ...]", ExpressionToLaTeX[Gb[a, b]], "\\mathcal{G}(a,b)"];
+SetOptions[ExpressionToLaTeX, "Names" -> {}];
+SetOptions[DeclareBlob, "Fill" -> "White"]; DeclareBlob[WhiteBlob, "W"]; SetOptions[DeclareBlob, "Fill" -> "Hatched"];
+check["SetOptions[DeclareBlob, \"Fill\" -> \"White\"]: the fill of the blobs declared then",
+  Cases[FunctionalDiagrams`Private`$blobDeclarations, {WhiteBlob, _, _, fill_, _} :> fill], {"White"}];
+
+(* ------------------------------------------------------------------------- *)
 section["loading twice"];
 Get[FileNameJoin[{testDirectory, "..", "FunctionalDiagrams.wl"}]];
 check["package loaded again", $FunctionalDiagramsVersion, "2.5.0"];

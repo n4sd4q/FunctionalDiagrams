@@ -225,10 +225,11 @@ pairingTermsToTermList[pairs_List, vertices_List] := Module[{coefficient = Times
 
 GaussianExpectationValue::method = "Method `1` is not available; using \"Differentiation\".";
 Options[GaussianExpectationValue] = {"Method" -> Automatic};
-GaussianExpectationValue[z0_, operatorList_List, opts___Rule] := Module[{operators = normaliseOperators[operatorList]},
+GaussianExpectationValue[z0_, operatorList_List, opts___Rule] := Module[{o = callOptions[GaussianExpectationValue, {opts}],
+    operators = normaliseOperators[operatorList]},
    If[operators === $Failed, Return[$Failed]];
    checkGeneratingFunctional[z0];
-   If[perturbationMethod[z0, {opts}] === "WickPairings",
+   If[perturbationMethod[z0, o] === "WickPairings",
     termListToExpression[canonicalTermList[pairingTermsToTermList[wickPairingSum[z0, operators, {}, "All"], {}]]],
     expectationByDifferentiation[z0, operators]]];
 
@@ -304,15 +305,19 @@ correlationFunction[z0_, operatorList_List, interaction_, n_, opts_List, mode_St
 
 Options[PerturbativeCorrelationFunction] = {"Method" -> Automatic, "CouplingOrder" -> None};
 PerturbativeCorrelationFunction[z0_, operatorList_List, interaction_, n_, opts___Rule] :=
-  correlationFunction[z0, operatorList, interaction, n, {opts}, "NoVacuumBubbles", DropVacuumBubbles[#1, #2] &];
+  correlationFunction[z0, operatorList, interaction, n, callOptions[PerturbativeCorrelationFunction, {opts}], "NoVacuumBubbles",
+   DropVacuumBubbles[#1, #2] &];
 
 Options[ConnectedCorrelationFunction] = {"Method" -> Automatic, "CouplingOrder" -> None};
 ConnectedCorrelationFunction[z0_, operatorList_List, interaction_, n_, opts___Rule] :=
-  correlationFunction[z0, operatorList, interaction, n, {opts}, "Connected", ConnectedDiagrams[#1, #2] &];
+  connectedCorrelationFunction[z0, operatorList, interaction, n, callOptions[ConnectedCorrelationFunction, {opts}]];
+connectedCorrelationFunction[z0_, operatorList_List, interaction_, n_, opts_List] :=
+  correlationFunction[z0, operatorList, interaction, n, opts, "Connected", ConnectedDiagrams[#1, #2] &];
 
 (* linked-cluster theorem: the connected terms of Z/Z0 are log(Z/Z0) *)
 Options[ConnectedVacuumDiagrams] = {"Method" -> Automatic, "CouplingOrder" -> None};
-ConnectedVacuumDiagrams[z0_, interaction_, n_, opts___Rule] := connectedVacuumDiagrams[z0, interaction, n, {opts}, None];
+ConnectedVacuumDiagrams[z0_, interaction_, n_, opts___Rule] :=
+  connectedVacuumDiagrams[z0, interaction, n, callOptions[ConnectedVacuumDiagrams, {opts}], None];
 (* the connected vacuum diagrams with a property (test, or None for all) *)
 connectedVacuumDiagrams[z0_, interaction_, n_, opts_List, test_] := With[{orders = DeleteCases[orderList[n], 0]},
    checkGeneratingFunctional[z0];
