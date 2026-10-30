@@ -30,7 +30,10 @@
      applied (names only: contracted indices called rho and sigma, eps written after pi, the step function as Theta). A
      formula may be the orders 0 to k (or 1 to k) of the output.
    - A value: \val{Key}, compared with the value of figures/values.txt whose key it is (assemble.py: "check Dyson" is
-     CheckDyson), or with one of its entries; the table figures/parquet_table.tex stands for the values it is made of.
+     CheckDyson), or with one of its entries, or with what assemble.py names by a suffix of that key (KeyN an entry of a
+     list, KeyTotal its total, the entry of an association by its key), never with the value of a key that merely starts
+     the key of the \val; the table figures/parquet_table.tex stands for the values it is made of. Values are not tied
+     to statements: when several \val after a block have the value of an output (residuals 0), any of them shows it.
    - A string (the TikZ code of DiagramToTikZ): \inputfigure{NAME} with figures/NAME.tex written by make_figures.wl.
    - Part of an output shown (some orders of a sum, the first orders of a formula, an element of a list or association
      whose orders are left out in the others) passes, and is listed at the end: the text must say what is shown.
@@ -103,10 +106,20 @@ $values = Module[{text = readFile["values.txt"]},
     Association[Cases[StringSplit[text, "\n"], line_String /; StringContainsQ[line, " :: "] :>
        With[{parts = StringSplit[line, " :: ", 2]}, keyOf[parts[[1]]] ->
          Quiet[Block[{$Context = "Global`"}, ToExpression[parts[[2]], InputForm]]]]]]]];
-(* the values a key of \val can stand for: the value of its line (a key of assemble.py may add the index of an entry to
-   it: CountsSigma2 is the second entry of CountsSigma), and the entries of the value *)
-valuesOfKey[key_String] := Module[{lines = Select[Keys[$values], StringStartsQ[key, #] &]},
-   Flatten[Table[Prepend[entriesOf[$values[k]], $values[k]], {k, lines}], 1]];
+(* the values a key of \val can stand for: the value of its line and the entries of the value, or what assemble.py names
+   by a suffix of the key of a line: an entry of a list by its index (CountsSigma2, an entry of CountsSigma: any entry,
+   the first index being 0, 1 or another), the total of a list of integers (CountsSigmaTotal), the entry of an
+   association by its key (ParquetCountsParticleHole) and an entry of that entry by its index. A key that merely starts
+   with the key of another line (CountsGamma0 and CountsG) stands for none of its values *)
+valuesOfKey[key_String] := Flatten[Table[With[{v = $values[k], s = StringDrop[key, StringLength[k]]}, Which[
+       s === "", Prepend[entriesOf[v], v],
+       ListQ[v] && StringMatchQ[s, DigitCharacter ..], v,
+       ListQ[v] && s === "Total" && VectorQ[v, IntegerQ], {Total[v]},
+       AssociationQ[v], Flatten[Function[a, With[{ka = keyOf[ToString[a]]}, Which[
+            s === ka, Prepend[entriesOf[v[a]], v[a]],
+            ListQ[v[a]] && StringMatchQ[s, ka ~~ DigitCharacter ..], v[a],
+            True, {}]]] /@ Keys[v], 1],
+       True, {}]], {k, Select[Keys[$values], StringStartsQ[key, #] &]}], 1];
 entriesOf[v_] := Which[AssociationQ[v], Join[Values[v], Flatten[entriesOf /@ Values[v], 1]],
    ListQ[v], Join[v, Flatten[entriesOf /@ v, 1]], True, {}];
 (* the tables that assemble.py makes of values: figures/NAME.tex stands for the values of these keys *)

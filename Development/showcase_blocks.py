@@ -9,7 +9,8 @@ the block up to the next one, "boxes": the LaTeX of the output boxes (\\begin{ou
 follow it}. The items, in the order of the page, LaTeX comments left out:
   {"kind": "sum", "rows": [{"label": ..., "name": ...}, ...], "line": n}   \\begin{ordersum}{lhs} \\orderrow{label}{name}
                                                                           ... \\end{ordersum}, one row per band
-  {"kind": "sum", "rows": [{"label": null, "name": name}], "line": n}     \\figuresum[...]{lhs}{name}
+  {"kind": "sum", "rows": [{"label": null, "name": name}], "line": n}     \\figuresum[...]{lhs}{name} (then the items of
+                                                                          its optional argument)
   {"kind": "figure", "name": name, "line": n}                            \\inputfigure{name} elsewhere (not in a
                                                                           left-hand side)
   {"kind": "formula", "name": name, "line": n}                           \\formula, \\formulasplit, \\formulalines
@@ -83,10 +84,16 @@ def items_of(text, first_line):
             items.append(current)
             i = after
         elif command == 'figuresum':
+            # \figuresum[after]{lhs}{name}: the sum, then what its optional argument typesets after it (another
+            # \inputfigure, a second sum on the same line)
+            k = i
             i = skip_optional(text, i)
+            after = text[k:i].strip()
             _, i = argument(text, next_brace(text, i))
             name, i = argument(text, next_brace(text, i))
             items.append({'kind': 'sum', 'rows': [{'label': None, 'name': name.strip()}], 'line': line_at(m.start())})
+            if after.startswith('['):
+                items += items_of(after[1:-1], line_at(m.start()))
         elif command == 'orderrow':
             raise ValueError('\\orderrow outside an ordersum at line %d' % line_at(m.start()))
         elif command in ('formula', 'formulasplit', 'formulalines'):
