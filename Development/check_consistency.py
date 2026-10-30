@@ -4,12 +4,13 @@ FunctionalDiagrams.wl is the concatenation of Development/src, Examples.nb is ge
 name has a usage message and an entry in the manual; one version is stated in the package, PacletInfo.wl, CITATION.cff,
 the install line of the README, the title of the manual and the check of the tests, and every version written in the
 README, index.html, the manual, the showcase (its title: major and minor) and the guided tour is that one; the map of the functions
-(Documentation/function_map.*) is drawn from the current public names and version; the pages of the wiki (wiki/) state
-that version, use only names of the package that exist, and link pages, images and files that exist (their code is run
-by Development/check_wiki.wl, which needs Mathematica), as do the README, index.html, SECURITY.md, CONTRIBUTING.md and the
-links of the issue forms (pages and headings of the wiki, files of the repository, headings of the README); the code
-blocks of the showcase are read by Development/showcase_blocks.py and the pictures and formulas shown after them exist
-(Development/check_showcase.wl runs them). Run from any folder:
+(Documentation/function_map.*) is drawn from the current public names and version; index.html, the landing page of
+GitHub Pages, is what Development/make_site.py writes from its template and the current sources; the pages of the wiki
+(wiki/) state that version, use only names of the package that exist, and link pages, images and files that exist (their
+code is run by Development/check_wiki.wl, which needs Mathematica), as do the README, index.html, SECURITY.md,
+CONTRIBUTING.md and the links of the issue forms (pages and headings of the wiki, files of the repository, headings of the
+README); the code blocks of the showcase are read by Development/showcase_blocks.py and the pictures and formulas shown
+after them exist (Development/check_showcase.wl runs them). Run from any folder:
 python3 Development/check_consistency.py"""
 import json, os, re, subprocess, sys, tempfile, unicodedata
 
@@ -30,6 +31,16 @@ with tempfile.TemporaryDirectory() as tmp:
                    check=True, stdout=subprocess.DEVNULL)
     if open(nb, encoding='utf-8').read() != open(os.path.join(root, 'Examples.nb'), encoding='utf-8').read():
         problems.append('Examples.nb is not generated from Examples.wl: run Development/make_notebook.py')
+
+# the landing page of GitHub Pages, generated from Development/site_template.html, the README and the other sources
+with tempfile.TemporaryDirectory() as tmp:
+    site = os.path.join(tmp, 'index.html')
+    made = subprocess.run([sys.executable, os.path.join(root, 'Development', 'make_site.py'), site],
+                          stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+    if made.returncode:
+        problems.append('Development/make_site.py fails: ' + (made.stderr.strip().splitlines() or ['?'])[-1])
+    elif open(site, encoding='utf-8').read() != open(os.path.join(root, 'index.html'), encoding='utf-8').read():
+        problems.append('index.html is not generated from its sources: run Development/make_site.py')
 
 # public names, usage messages, manual
 package = open(os.path.join(root, 'FunctionalDiagrams.wl'), encoding='utf-8').read()
@@ -264,5 +275,6 @@ for block in showcase:
                 problems.append('Showcase/FunctionalDiagrams_Showcase.tex, line %d: figures/%s is missing (run make_figures.wl '
                                 'and assemble.py)' % (item['line'], alternatives[0]))
 
-print('\n'.join(problems) if problems else 'consistent: package, notebook, %d public names documented, wiki, showcase' % len(public))
+print('\n'.join(problems) if problems else 'consistent: package, notebook, site, %d public names documented, wiki, showcase'
+      % len(public))
 sys.exit(1 if problems else 0)

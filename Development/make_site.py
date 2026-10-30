@@ -5,9 +5,9 @@ template Development/site_template.html and the sources of every fact on it, so 
 - README.md: the tagline, the opening paragraphs, the install lines, the first example (its code blocks, pictures and
   captions, in order), the panels of the gallery with their captions, the text of the map, Checks, Related software, and
   the BibTeX entry of Citing;
-- PacletInfo.wl: the name, the repository (hence the address of the site), the Mathematica version needed, the license and
-  the name of the guided tour among the assets; Development/src/00_header.wl: the version; CITATION.cff: the date of the
-  release, the author and the affiliation;
+- PacletInfo.wl: the name, the repository (hence the address of the site), the Mathematica version needed, the license
+  and the name of the guided tour among the assets; Development/src/00_header.wl: the version; CITATION.cff: the date of
+  the release, the author and the affiliation;
 - Tests/RunTests.out: the number of tests of the last run; Documentation/function_map.json: the numbers of public names
   and dependencies; the PDFs: their numbers of pages; Media/demo.mp4: its length; Logo/social_preview.png: its size.
 
