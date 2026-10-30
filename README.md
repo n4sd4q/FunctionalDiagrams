@@ -29,15 +29,12 @@
 FunctionalDiagrams is a Mathematica package that derives Feynman diagrams the way one does on paper: from a generating
 functional and an interaction, by functional derivatives with respect to the sources and the propagators, with the
 fermion signs of the Grassmann algebra and the symmetry factors that the derivatives produce. It is meant for many-body
-physics and effective actions (Luttinger–Ward functionals, vertices, Bethe–Salpeter, parquet and Hedin's equations, *GW*,
-pairing), and also reaches relativistic field theory: φ⁴ theory and one-loop QED in dimensional regularization, and
-the diagrams of QCD.
+physics and effective actions, and also reaches relativistic field theory: φ⁴ theory, one-loop QED and the diagrams of
+QCD.
 
-The diagrams it produces can be compared up to relabelling, sorted into classes (connected, one- and two-particle
-irreducible, skeleton, reducible in a channel), differentiated again, checked against exact equations, evaluated in a
-few common cases, and drawn in Mathematica or exported as TikZ. Every step is worked out for φ⁴ theory and for the
-electron gas. [Checks](#checks) says how the results are tested, and [Related software](#related-software) how the
-package differs from FeynArts, QGRAF, FeynCalc and DoFun.
+The diagrams can be compared up to relabelling, sorted into classes, differentiated again, checked against exact
+equations, evaluated in a few common cases, and drawn in Mathematica or exported as TikZ. Their labels are symbols, so
+the same diagrams hold in any dimension, at zero or finite temperature and on the Keldysh contour.
 
 <p align="center">
   <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4"><img src="Media/demo_preview.webp" width="720" alt="Preview of the demo video: the
@@ -181,6 +178,19 @@ one-loop gluon self-energy.</p>
 
 ## What it does
 
+- **Diagrams from a generating functional**: Wick's theorem, Z and log Z order by order, and the classes of diagrams:
+  connected, one- and two-particle irreducible, skeleton, reducible in a channel.
+- **Effective actions and exact equations**: the 1PI and 2PI actions, Φ[G] and its derivatives, Bethe–Salpeter and
+  parquet, Schwinger–Dyson and Hedin's equations, pairing with Nambu superfields.
+- **Evaluating diagrams**: Matsubara sums, loop integrals in dimensional regularization, one-loop QED.
+- **Pictures and formulas**: diagrams drawn as in many-body papers, in a notebook or as TikZ, and formulas as LaTeX.
+
+The theories are written in condensed notation, so the same functions serve real and complex bosons, fermions, phonons,
+disorder and QCD (quarks, gluons, ghosts).
+
+<details>
+<summary>Everything it does, with the names of the functions</summary>
+
 **Diagrams from a generating functional**
 - functional derivatives with bosonic and Grassmann sources, chain rule, implicit dependence; a canonical form in which
   equal diagrams are recognized (`FunctionalDerivative`, `SimplifyDiagrams`)
@@ -226,17 +236,15 @@ one-loop gluon self-energy.</p>
   symmetric diagrams drawn symmetric), exact equations with blobs, and formulas as LaTeX (`DiagramPlot`,
   `DiagramToTikZ`, `ExpressionToLaTeX`); in a notebook the pictures follow its light or dark appearance
 
-The theories are written in condensed notation, so the same functions work for real and complex bosons, fermions,
-phonons, disorder and QCD (quarks, gluons, ghosts).
+</details>
 
-**Scope.** The package computes exact symbolic sums of diagrams in the space of labels; it is not a program for the
-numerical evaluation of Feynman integrals. It carries out the frequency sums at finite temperature, leaving the momentum
-integrals symbolic, evaluates the loop integrals that reduce to nested one-loop ones in dimensional regularization, and
-the one-loop diagrams of QED. The number of diagrams grows factorially with the order: the Green function of the
-electron gas has 706 diagrams at fourth order and 8162 at fifth (the
-[FAQ](https://github.com/n4sd4q/FunctionalDiagrams/wiki/FAQ#how-high-an-order-can-i-compute) says how long they take).
-The pictures follow rules made for many-body diagrams and trees of vertex functions; other diagrams get a general
-layout, readable but not always as in a textbook.
+**Scope.** The package computes exact symbolic sums of diagrams; it is not a program for the numerical evaluation of
+Feynman integrals. It does the frequency sums at finite temperature (the momentum integrals stay symbolic), the loop
+integrals that reduce to nested one-loop ones in dimensional regularization, and one-loop QED. The number of diagrams
+grows factorially with the order: the Green function of the electron gas has 706 diagrams at fourth order and 8162 at
+fifth ([timings](https://github.com/n4sd4q/FunctionalDiagrams/wiki/FAQ#how-high-an-order-can-i-compute)). The pictures
+follow rules made for many-body diagrams and trees of vertex functions; other diagrams get a general layout, readable
+but not always as in a textbook.
 
 ## Checks
 
@@ -266,17 +274,15 @@ limited than FeynCalc's, so for real loop calculations the two are better used t
 ## Map of the functions
 
 <p align="center"><a href="https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html"><img
-src="Documentation/function_map.svg" width="100%" alt="Map of the public functions of FunctionalDiagrams in six stages
+src="Documentation/function_map.svg" width="400" alt="Map of the public functions of FunctionalDiagrams in six stages
 of a calculation: declare the symbols, write a functional, differentiate it with FunctionalDerivative (the hub, with
 the functions built on it hanging from it), then classify and check, draw and evaluate the diagrams. Click to open the
 interactive map"></a></p>
 
 The public functions by their role in a calculation: declare the symbols, write a functional, differentiate it, then
-classify, draw and evaluate the diagrams. The colour of a name is its group in the manual; dashed names are inert heads
-used as data. A name indented under another is built on it, and *uses* lists the other names it uses. Click the map for
-the [interactive version](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html), with every
-dependency: select a name to read its usage message and to see the lines to the names it uses and from the names that
-use it.
+classify, draw and evaluate the diagrams. Click the map for the
+[interactive version](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html): select a name to read
+its usage message and to see what it uses and what uses it.
 
 ## Details
 
