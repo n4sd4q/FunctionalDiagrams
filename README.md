@@ -112,6 +112,20 @@ per order"></p>
 <p align="center">The outputs: Φ[G] and its derivatives Σ and Γ⁰, to second order. The legs of Γ⁰ are x₁ (out), x₂
 (in), x₃ (out), x₄ (in), counterclockwise from the top left.</p>
 
+```mathematica
+(* phi^4 theory: a real boson with the free propagator D0 = <phi phi>_0 and the interaction
+   lambda/4! phi^4; its propagator to second order: 1 + 1 + 3 diagrams *)
+DeclareSource[J]; DeclareField[phi, J]; DeclareSymmetric[D0]; DeclareCoupling[lambda];
+Z0phi = Exp[1/2 IntegralOver[J[x] D0[x, y] J[y], {x, y}]];
+DiagramPlot[PerturbativeCorrelationFunction[Z0phi, {phi[a], phi[b]},
+  lambda/4! IntegralOver[phi[z]^4, {z}], 2], {a, b}]
+```
+
+<p align="center"><img src="Documentation/readme_3.svg" width="600" alt="The propagator of phi^4 theory to second order in
+lambda: 1, 1 and 3 diagrams, one band per order"></p>
+<p align="center">The output. A vertex stands for −λ (<code>DeclareCoupling</code>), so that the tadpole has the weight
+½.</p>
+
 The [guided tour](Examples.nb) ([`Examples.wl`](Examples.wl), the same as a script, can be read on GitHub) goes on from
 here in thirteen short sections: the effective actions, the Bethe–Salpeter and parquet equations, pairing, Hedin's
 equations and *GW*, and then linear response, Matsubara sums, phonons, disorder, dimensional regularization, QED and
@@ -122,24 +136,24 @@ in it is computed by the package.
 
 Each panel is drawn by the package from results it computes; the showcase derives and checks all of them.
 
-<p align="center"><img src="Documentation/readme_3.svg" width="600" alt="Exact equations of many-body theory drawn by
+<p align="center"><img src="Documentation/readme_4.svg" width="600" alt="Exact equations of many-body theory drawn by
 the package: the Dyson equation, the Bethe–Salpeter equation, the equation of the vertex of the density and the parquet
 decomposition of the full vertex"></p>
 <p align="center"><b>Exact equations.</b> Drawn with blobs and checked order by order against perturbation theory:
 Dyson, Bethe–Salpeter, the vertex Λ of the density, and the parquet decomposition of the full vertex F.</p>
 
-<p align="center"><img src="Documentation/readme_4.svg" width="600" alt="Hedin's equations for Sigma, W, P and the vertex,
+<p align="center"><img src="Documentation/readme_5.svg" width="600" alt="Hedin's equations for Sigma, W, P and the vertex,
 and the functional Phi[G, W] with its derivatives, the GW self-energy and the polarization"></p>
 <p align="center"><b>Screening.</b> Hedin's equations (the double wavy line is the screened interaction <i>W</i>), and
 the 2PI functional Φ[G, W] of the dressed lines (here the wavy ones are <i>W</i>) with its derivatives: the first diagram
 gives the <i>GW</i> approximation, the next ones its vertex corrections.</p>
 
-<p align="center"><img src="Documentation/readme_5.svg" width="600" alt="Pairing with the Nambu superfield: the first
+<p align="center"><img src="Documentation/readme_6.svg" width="600" alt="Pairing with the Nambu superfield: the first
 order of Phi in the normal and anomalous propagators, the Gor'kov equations, the Hartree–Fock self-energy and the BCS gap"></p>
 <p align="center"><b>Pairing.</b> With the Nambu superfield (ψ, ψ̄) the anomalous propagators (lines with two arrows)
 are variables of Φ: the first order of Φ, the Gor'kov equations, and the Hartree–Fock self-energy and the BCS gap Δ.</p>
 
-<p align="center"><img src="Documentation/readme_6.svg" width="600" alt="Field theory: the second-order self-energy of
+<p align="center"><img src="Documentation/readme_7.svg" width="600" alt="Field theory: the second-order self-energy of
 phi^4 theory in dimensional regularization with its pole and the two-loop beta function; the one-loop electron
 self-energy, vacuum polarization and vertex of QED with delta2, beta(e) and F2(0) = alpha/2pi; the one-loop gluon
 self-energy of QCD"></p>

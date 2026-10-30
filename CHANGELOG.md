@@ -10,6 +10,8 @@
   `DiagramPlot` draws it, its orders in bands, as in the showcase. The notebook of the demo video shows the same
   outputs in bands, and the video starts on its title card in full view (before, on a blank frame). The social preview
   of the repository is unchanged.
+- **φ⁴ theory in the first example of the README**, after the electron gas, as in the other documents: a real boson
+  with the vertex λ/4! and its propagator to second order (1 + 1 + 3 diagrams), with its picture in bands.
 
 ## 2.5.0 (2026-10-29)
 

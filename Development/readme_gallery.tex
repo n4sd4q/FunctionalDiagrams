@@ -1,8 +1,8 @@
 % The pictures of README.md: results of the showcase as the package draws them, one panel per page (each page becomes
 % Documentation/readme_<n>.svg). Built by make_readme_figure.sh, which first copies the figures of Showcase/figures
 % (run Showcase/make_figures.wl first) to \figdir with one unit of length, heavier lines and larger labels for all of
-% them; the formulas are those the showcase computes (\formula). One panel, one theme: the outputs of the first example,
-% then exact equations, screening, pairing, field theory. The outputs of the first example are drawn as DiagramPlot draws
+% them; the formulas are those the showcase computes (\formula). One panel, one theme: the outputs of the first example
+% (the electron gas, then phi^4 theory), then exact equations, screening, pairing, field theory. The outputs of the first example are drawn as DiagramPlot draws
 % them, whole, one band per order (as the showcase prints a sum order by order). Every panel has the same width, so that
 % the README shows them all at the same scale; the titles are captions in README.md. Compiled with \socialpreviewpanel
 % defined, the document is instead the one panel of the social preview (social_preview.tex).
@@ -89,7 +89,16 @@ $\Gamma^0=\dfrac{\delta\Sigma}{\delta G}={}$ & \fig{irreducible_vertex_1}\diagra
 \orderrow{V^2}{\fig{irreducible_vertex_2}}}
 \end{orderpanel}
 \end{panel}
-% 3: exact equations of many-body theory, drawn with blobs: Dyson, Bethe-Salpeter, the vertex of the density, parquet
+% 3: the first example of README.md: the propagator of phi^4 theory to second order
+\begin{panel}
+\begin{orderpanel}{\langle\phi_a\phi_b\rangle}
+\ordersum{\langle\phi_a\phi_b\rangle}{%
+\orderrow{\lambda^0}{\fig{phi4_propagator_0}}
+\orderrow{\lambda}{\fig{phi4_propagator_1}}
+\orderrow{\lambda^2}{\fig{phi4_propagator_2}}}
+\end{orderpanel}
+\end{panel}
+% 4: exact equations of many-body theory, drawn with blobs: Dyson, Bethe-Salpeter, the vertex of the density, parquet
 \begin{panel}
 \begin{rows}
 \fig{exact_dyson_lhs}\,${}={}$ & \fig{exact_dyson}\rowgap
@@ -98,7 +107,7 @@ $\Gamma^0=\dfrac{\delta\Sigma}{\delta G}={}$ & \fig{irreducible_vertex_1}\diagra
 \fig{exact_vertex_lhs}\,${}={}$ & \fig{exact_parquet}
 \end{rows}
 \end{panel}
-% 4: the screened interaction: Hedin's equations, and the functional Phi[G, W] whose derivatives give GW
+% 5: the screened interaction: Hedin's equations, and the functional Phi[G, W] whose derivatives give GW
 \begin{panel}
 \begin{rows}
 $\Sigma(x,y)={}$ & \fig{hedin_sigma}\rowgap
@@ -110,7 +119,7 @@ $\Sigma=\dfrac{\delta\Phi}{\delta G}={}$ & \fig{sigma_gw_1}\rest\rowgap
 $P=-2\dfrac{\delta\Phi}{\delta W}={}$ & \fig{polarization_gw_0}\diagramgap\fig{polarization_gw_1}\rest
 \end{rows}
 \end{panel}
-% 5: pairing: the superfield of Nambu and Gor'kov
+% 6: pairing: the superfield of Nambu and Gor'kov
 \begin{panel}
 \begin{rows}
 $\Phi[G,\mathcal G_{\psi\psi},\mathcal G_{\bar\psi\bar\psi}]={}$ & \fig{nambu_phi_components_1}\rest\rowgap
@@ -120,7 +129,7 @@ $\Phi[G,\mathcal G_{\psi\psi},\mathcal G_{\bar\psi\bar\psi}]={}$ & \fig{nambu_ph
 \fig{nambu_gap_lhs}\,${}={}$ & \fig{nambu_gap}
 \end{rows}
 \end{panel}
-% 6: field theory: phi^4 in dimensional regularization to two loops, QED at one loop (each 1PI function with its main
+% 7: field theory: phi^4 in dimensional regularization to two loops, QED at one loop (each 1PI function with its main
 % result), the gluon self-energy of QCD; the formulas are those the showcase computes
 \begin{panel}
 \begin{rows}
