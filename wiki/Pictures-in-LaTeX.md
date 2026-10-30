@@ -60,7 +60,7 @@ dark (a README, a wiki), put the picture on a white card.
 The options of `DiagramPlot` work here too (`"ExternalOrder"`, `"LegDirections"`, `"Couplings"`, ...); these set the
 look on the page:
 
-| option | value by default | |
+| option | value by default | what it sets |
 |---|---|---|
 | `"Scale"` | `0.7` | centimetres per unit of the drawing |
 | `"LineWidth"` | `Automatic`: 0.7 | the width of the lines in pt; arrow heads, dashes, waves and double lines follow it |

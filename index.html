@@ -320,7 +320,13 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
   .duo { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .intro { grid-template-columns: minmax(0, 1fr); }
   .mapcard { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 920px) {
   .navlinks li:not(:nth-child(3)) { display: none; }
+}
+@media (max-width: 760px) {
+  .facts { gap: 2px 18px; }
+  .facts li + li::before { content: none; }
 }
 @media (max-width: 600px) {
   .wrap { padding: 0 16px; }
@@ -333,8 +339,6 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
   .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .btn { padding: 0 12px; }
   .demo { margin-top: -100px; }
-  .facts { gap: 2px 18px; }
-  .facts li + li::before { content: none; }
   .screen { padding: 6px; border-radius: 14px; }
   .screen video { border-radius: 8px; }
   section { padding: 60px 0; }

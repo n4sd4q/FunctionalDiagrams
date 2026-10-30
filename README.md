@@ -18,12 +18,12 @@
 </p>
 
 <p align="center">
-  <a href="https://n4sd4q.github.io/FunctionalDiagrams/"><b>Website</b></a>
-  ·&nbsp;<a href="https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf"><b>Showcase</b></a>
-  ·&nbsp;<a href="https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf"><b>Manual</b></a>
-  ·&nbsp;<a href="Examples.wl"><b>Guided&nbsp;tour</b></a>
-  ·&nbsp;<a href="https://github.com/n4sd4q/FunctionalDiagrams/wiki"><b>Wiki</b></a>
-  ·&nbsp;<a href="#installation"><b>Installation</b></a>
+  <a href="https://n4sd4q.github.io/FunctionalDiagrams/"><b>Website</b></a>&nbsp;·
+  <a href="https://n4sd4q.github.io/FunctionalDiagrams/Showcase/FunctionalDiagrams_Showcase.pdf"><b>Showcase</b></a>&nbsp;·
+  <a href="https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf"><b>Manual</b></a>&nbsp;·
+  <a href="Examples.wl"><b>Guided&nbsp;tour</b></a>&nbsp;·
+  <a href="https://github.com/n4sd4q/FunctionalDiagrams/wiki"><b>Wiki</b></a>&nbsp;·
+  <a href="#installation"><b>Installation</b></a>
 </p>
 
 FunctionalDiagrams is a Mathematica package that derives Feynman diagrams the way one does on paper: from a generating

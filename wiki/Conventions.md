@@ -130,8 +130,9 @@ is the classical action, written whole, and S'' its second derivative with respe
 <summary>The Nambu blocks, the vertex functions and the expansion in G₀</summary>
 
 - The anomalous blocks of the Nambu matrix S'' of fermions are δ²S/δΨ̄(x)δΨ̄(y) = V(x, y)Ψ(x)Ψ(y) and
-  δ²S/δΨ(x)δΨ(y) = V(x, y)Ψ̄(x)Ψ̄(y). Its normal block is D⁻¹[Ψ̄, Ψ] = G₀⁻¹ − Σ_HF[−ΨΨ̄]: Σ_HF[−ΨΨ̄], the first-order
-  self-energy with −Ψ(x)Ψ̄(y) in place of G(x, y), is the Hartree and Fock potentials of the means.
+  δ²S/δΨ(x)δΨ(y) = V(x, y)Ψ̄(x)Ψ̄(y). Its normal block is D⁻¹[Ψ̄, Ψ] = G₀⁻¹ − Σ_HF[−ΨΨ̄], where Σ_HF[−ΨΨ̄],
+  the first-order self-energy with −Ψ(x)Ψ̄(y) in place of G(x, y), is the sum of the Hartree and Fock potentials of the
+  means.
 - The package computes the 1PI actions of fermions and superfields with bare lines G₀, the vertices of degree two kept
   as vertices: grouped by loops, their diagrams are S_int, the rings of the one loop, and Γ₁ with its lines expanded.
 - At zero means the derivatives of the 1PI action are the vertex functions: for a boson the second is D₀⁻¹ − Σ and the
