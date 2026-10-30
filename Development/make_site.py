@@ -438,10 +438,11 @@ def build():
     tour = [name for name, path in info['assets'].items() if path.endswith('.nb')]
     if not tour:
         fail('PacletInfo.wl has no notebook among its assets')
+    # the line that opens the tour: the README's, if it gives one, else that of the wiki's Installation page for the PDFs
+    opens = [c for c in lines if '"AssetLocation", "%s"' % tour[0] in c]
+    opens = opens[0] if opens else 'SystemOpen[PacletObject["%s"]["AssetLocation", "%s"]]' % (info['name'], tour[0])
     values.update(INSTALL_LINE=code.line(paclet[0], 'the install line'), NEEDS_LINE=code.line(needs[0], 'the Needs line'),
-                  UPDATE_NOTE=inline(update[0], link),
-                  TOUR_LINE=code.line('SystemOpen[PacletObject["%s"]["AssetLocation", "%s"]]' % (info['name'], tour[0]),
-                                      'the line that opens the guided tour'))
+                  UPDATE_NOTE=inline(update[0], link), TOUR_LINE=code.line(opens, 'the line that opens the guided tour'))
 
     # A first example: its code blocks, each with the pictures and captions that follow it, then its paragraphs
     steps, after = [], []
