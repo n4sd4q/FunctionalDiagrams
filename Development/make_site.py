@@ -432,8 +432,8 @@ def build():
     needs = [c for c in lines if c.startswith('Needs[')]
     if not paclet or not needs:
         fail('the Installation of README.md has no PacletInstall line or no Needs line')
-    prose = one_line(' '.join(re.sub(r'^\s*[-*]\s+', '', b[1], flags=re.M) for b in blocks(install) if b[0] == 'para'))
-    update = [s for s in re.split(r'(?<=\.)\s+(?=[A-Z`])', prose) if '$FunctionalDiagramsUpdateCheck' in s]
+    prose = [one_line(re.sub(r'^\s*[-*]\s+', '', b[1], flags=re.M)) for b in blocks(install) if b[0] == 'para']
+    update = [s for p in prose for s in re.split(r'(?<=\.)\s+(?=[A-Z`])', p) if '$FunctionalDiagramsUpdateCheck' in s]
     if not update:
         fail('the Installation of README.md does not say how to turn off the update check')
     tour = [name for name, path in info['assets'].items() if path.endswith('.nb')]

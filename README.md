@@ -41,8 +41,7 @@ the same diagrams hold in any dimension, at zero or finite temperature and on th
   Luttinger–Ward functional and its derivatives Sigma and Gamma0, the Bethe–Salpeter and parquet equations of the
   electron gas, Hedin's equations"></a><br>
   <sub>A preview of the <a href="https://n4sd4q.github.io/FunctionalDiagrams/Media/demo.mp4">demo video</a> (40 s): the
-  electron gas of the first example below typed and run, then a few other results. The
-  <a href="https://n4sd4q.github.io/FunctionalDiagrams/">website</a> plays it in the page.</sub>
+  electron gas of the first example below, typed and run, then a few more results.</sub>
 </p>
 
 ## Installation
@@ -60,21 +59,15 @@ then load it in every session:
 Needs["FunctionalDiagrams`"]
 ```
 
-The paclet (Mathematica's package archive) also carries the guided tour, a notebook to run cell by cell, and the two
-PDFs. To open the tour:
+The guided tour, a notebook to run cell by cell, comes with the paclet:
 
 ```mathematica
 NotebookOpen[PacletObject["FunctionalDiagrams"]["AssetLocation", "Examples"]]
 ```
 
-(`SystemOpen` with `"Manual"` or `"Showcase"` in place of `"Examples"` opens a PDF.) ``?FunctionalDiagrams`*`` lists
-the functions and `?Name` explains each one.
-
-- In a notebook the package asks `api.github.com` once a day, in the background, whether a newer release is out;
-  `$FunctionalDiagramsUpdateCheck = False` before `Needs` turns this off.
-- Other ways (a downloaded `.paclet`, a clone with `PacletDirectoryLoad`, `Get` of the file), updating and removing,
-  and the usual problems: the wiki's [Installation](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Installation)
-  page.
+In a notebook the package looks for a newer release on GitHub once a day; `$FunctionalDiagramsUpdateCheck = False`
+before `Needs` turns this off ([`SECURITY.md`](SECURITY.md) says more). Other ways to install, updating and the usual
+problems: the wiki's [Installation](https://github.com/n4sd4q/FunctionalDiagrams/wiki/Installation) page.
 
 ## A first example
 
