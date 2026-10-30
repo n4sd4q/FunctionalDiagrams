@@ -98,7 +98,11 @@ developer (language, machine, local workflow) go in `CLAUDE.local.md`, which is 
    the documents show the derivative that produces an object before any shortcut function.
 5. `python3 Development/check_consistency.py` (also run by GitHub on every push) checks that the package, the notebook
    and the documentation of the public names are up to date; `Development/make_readme_figure.sh` redraws the pictures of
-   the README (`Development/readme_gallery.tex`) and the social preview from the figures of the showcase. The README uses
+   the README (`Development/readme_gallery.tex`) and the social preview from the figures of the showcase (the social
+   preview keeps a panel of its own, `\socialpreviewpanel`: the PNG is uploaded by hand, so it must not change unasked);
+   `wolfram -script Development/check_readme.wl` runs the first example of the README and checks that each `DiagramPlot`
+   gives the bands of the panel after it, weights and pictures (run it when the example, its panels or the figures
+   change). The README uses
    plain `<img>` elements, one file legible on light and dark pages for each picture: no `<picture>` (the GitHub mobile
    apps do not show it). When public names or their dependencies change, redraw the map of the
    functions: `wolfram -script Development/make_function_map.wl && python3 Development/make_function_map.py` (about
@@ -334,10 +338,11 @@ Semantic versioning, MAJOR.MINOR.PATCH: the largest change since the last releas
 Changes to the documents alone (README, showcase, manual text, wiki, video, logo) need no release: GitHub Pages serves main. A
 tag and its paclet never move: a mistake in a release is corrected by the next patch release. A release: the version in
 `00_header.wl`, `PacletInfo.wl`, `CITATION.cff` (with `date-released`), the check of `Tests/RunTests.wl`, the README
-(install line, latest release), the manual (title, install line, latest release, the value of
-`$FunctionalDiagramsVersion`, how to cite), the showcase (title, values), `Examples.wl`, the wiki (`Home.md`,
+(install line), the manual (title, install line, latest release, the value of
+`$FunctionalDiagramsVersion`, how to cite), the showcase (title, values), `Examples.wl`, `index.html`, the wiki (`Home.md`,
 `Installation.md`, `_Footer.md`) and the map of the functions
-(`git grep` the old number: only `CHANGELOG.md` keeps it); `## Unreleased` of `CHANGELOG.md` becomes `## X.Y.Z (date)`;
+(`git grep` the old number: only `CHANGELOG.md` keeps it; `check_consistency.py` reports any other x.y.z in the README,
+`index.html`, the manual, the showcase, `Examples.wl` and the wiki, and the x.y of the showcase's title); `## Unreleased` of `CHANGELOG.md` becomes `## X.Y.Z (date)`;
 everything rebuilt and `check_consistency.py` passing, a commit "FunctionalDiagrams X.Y.Z"; the paclet built from a
 clean checkout (`Development/build_paclet.wl`); the GitHub release vX.Y.Z with the paclet and the two PDFs.
 

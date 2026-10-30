@@ -58,6 +58,11 @@
   the manual on the page that opens a new issue. `SECURITY.md` states the package's only access to the network, the
   daily update check of a notebook, what it keeps on disk and how to turn it off, and how to report a vulnerability
   privately.
+- **Checks of the documents.** `Development/check_readme.wl` runs the first example of the README in a fresh kernel and
+  checks that every `DiagramPlot` gives the panel that follows it: the orders of its bands and, in each, the weights
+  and the TikZ code of the showcase's figures. `check_consistency.py` checks the version wherever it is written in the
+  README, `index.html`, the manual, the showcase (whose title gives major and minor) and the guided tour, as it did in
+  the wiki: a number x.y.z that is not the version is reported, unless it is listed as not a version of the package.
 
 ## 2.5.0 (2026-10-29)
 

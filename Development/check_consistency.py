@@ -2,7 +2,8 @@
 """Checks that the generated files are up to date and that the public functions are documented (no Mathematica needed):
 FunctionalDiagrams.wl is the concatenation of Development/src, Examples.nb is generated from Examples.wl, and every public
 name has a usage message and an entry in the manual; one version is stated in the package, PacletInfo.wl, CITATION.cff,
-the install line of the README, the title of the manual and the check of the tests; the map of the functions
+the install line of the README, the title of the manual and the check of the tests, and every version written in the
+README, index.html, the manual, the showcase (its title: major and minor) and the guided tour is that one; the map of the functions
 (Documentation/function_map.*) is drawn from the current public names and version; the pages of the wiki (wiki/) state
 that version, use only names of the package that exist, and link pages, images and files that exist (their code is run
 by Development/check_wiki.wl, which needs Mathematica). Run from any folder:
@@ -60,6 +61,30 @@ versions = {
 }
 if len(set(versions.values())) > 1:
     problems.append('different versions: ' + ', '.join('%s %s' % kv for kv in versions.items()))
+version = versions['FunctionalDiagrams.wl']
+
+# every number x.y.z written in the documents (the README, the landing page, the manual, the showcase, the guided tour,
+# and the wiki below) is the version of the package; CHANGELOG.md, the history, is not read, and two-part numbers (12.1,
+# 14.3) are not versions. A number of that form that is not a version of the package (the version of another program,
+# a part of a DOI) goes in not_versions, under the file that writes it
+version_number = re.compile(r'(?<![\d.])v?(\d+\.\d+\.\d+)(?![\d.])')
+not_versions = {}
+
+def other_versions(name, text):
+    """the numbers x.y.z of a file that are neither the version nor in not_versions"""
+    return sorted(set(version_number.findall(text)) - {version} - not_versions.get(name, set()))
+
+for name in ('README.md', 'index.html', 'Examples.wl', 'Documentation/FunctionalDiagrams_Manual.tex',
+             'Showcase/FunctionalDiagrams_Showcase.tex'):
+    if os.path.exists(os.path.join(root, name)):
+        for v in other_versions(name, open(os.path.join(root, name), encoding='utf-8').read()):
+            problems.append('%s states the version %s, not %s (a number that is not a version of the package goes in '
+                            'not_versions of check_consistency.py)' % (name, v, version))
+# the title of the showcase states the major and minor version
+minor = stated(os.path.join('Showcase', 'FunctionalDiagrams_Showcase.tex'),
+               r'SISSA \\textperiodcentered\{\} version (\S+) \\textperiodcentered')
+if minor != '.'.join(version.split('.')[:2]):
+    problems.append('the title of the showcase states the version %s, not %s' % (minor, '.'.join(version.split('.')[:2])))
 
 # the badge of the README: the number of checks of the last run of the tests
 readme = open(os.path.join(root, 'README.md'), encoding='utf-8').read()
@@ -125,7 +150,6 @@ def slug(heading):
 
 wiki = os.path.join(root, 'wiki')
 if os.path.isdir(wiki):
-    version = versions['FunctionalDiagrams.wl']
     pages = {f[:-3]: open(os.path.join(wiki, f), encoding='utf-8').read() for f in sorted(os.listdir(wiki)) if f.endswith('.md')}
     images = set(os.listdir(os.path.join(wiki, 'images'))) if os.path.isdir(os.path.join(wiki, 'images')) else set()
     anchors = {name: {slug(h) for h in re.findall(r'^#+ (.*)$', re.sub(r'```.*?```', '', text, flags=re.S), re.M)}
@@ -159,7 +183,7 @@ if os.path.isdir(wiki):
         return found
     for name, text in pages.items():
         where = 'wiki/%s.md' % name
-        for v in sorted(set(re.findall(r'(?<![\d.])v?(\d+\.\d+\.\d+)(?![\d.])', text)) - {version}):
+        for v in other_versions(where, text):
             problems.append('%s states the version %s, not %s' % (where, v, version))
         symbols = set()
         for snippet in code[name] + inline[name]:
