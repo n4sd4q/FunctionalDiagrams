@@ -1,7 +1,5 @@
-Short answers to the questions that come up in the first days with the package, with links to the pages and to the
-sections of the [manual](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf) that say
-more. The code on this page runs in one session, from the top: the second answer declares the electron gas, which the
-later ones use.
+The code on this page runs in one session, from the top; the second answer declares the electron gas that the later
+ones use.
 
 ## Which function gives the object I need?
 
@@ -18,13 +16,12 @@ that give the same results. For the electron gas of the README (`Z0`, `interacti
 | Luttinger–Ward functional Φ[G] | minus the 2PI vacuum diagrams, with G₀ → G | `LuttingerWardFunctional[Z0, interaction, n, G0 -> G]` |
 | self-energy Σ(x, y) | δΦ/δG(y, x): `FunctionalDerivative[Phi, G[y, x]]` | `SelfEnergy[Phi, G, {x, y}]` |
 | irreducible vertex Γ⁰(x₁, x₂; x₃, x₄) | δ²Φ/δG(x₄, x₃)δG(x₂, x₁): `FunctionalDerivative[Phi, G[x4, x3], G[x2, x1]]` | `IrreducibleVertex[Phi, G, {x1, x2, x3, x4}]` |
-| 1PI effective action Γ[Ψ̄, Ψ] | the Legendre transform of −log Z with respect to η and η̄: S[Ψ̄, Ψ] − ½ Tr ln(−S''[Ψ̄, Ψ]) + Γ₁[Ψ̄, Ψ] | `EffectiveAction1PI[Z0, interaction, n, {psi -> Psi, psibar -> Psibar}, G0 -> G0]` |
+| 1PI effective action Γ[Ψ̄, Ψ] | Legendre transform of −log Z in η, η̄ | `EffectiveAction1PI[Z0, interaction, n, {psi -> Psi, psibar -> Psibar}, G0 -> G0]` |
 | full vertex F(x₁, x₂; x₃, x₄) | the fourth derivative of the 1PI action with respect to the means | `PerturbativeFullVertex[Z0, interaction, n, {psi, psibar}, {x1, x2, x3, x4}, G0 -> G]` |
 | vertex of the density Λ(x₁, x₂; z) | −δG⁻¹(x₁, x₂)/δU(z), U coupled to the density | `PerturbativeDensityVertex[Z0, interaction, n, {psi, psibar}, {x1, x2, z}, G0 -> G]` |
-| 2PI effective action Γ[G] | the Legendre transform of −log Z with respect to the two-point source: Φ[G] − Tr ln(−G⁻¹) − Tr(G₀⁻¹G − 1) | `EffectiveAction2PI[Phi, G0 -> G]` |
+| 2PI effective action Γ[G] | Legendre transform of −log Z in the two-point source | `EffectiveAction2PI[Phi, G0 -> G]` |
 
-The effective actions, with their notation (S the classical action, S'' its second derivative, Γ₁ and Γ₂), are in
-[Conventions](Conventions#effective-actions). The
+The effective actions are written out in [Conventions](Conventions#effective-actions). The
 [map of the functions](https://n4sd4q.github.io/FunctionalDiagrams/Documentation/function_map.html) places every
 public name by its role in a calculation, and `?Name` gives its usage message.
 
@@ -139,8 +136,7 @@ is `0` exactly when they are the same sum of diagrams; see
 
 The pictures draw what the declarations say: an arrow for a propagator declared with `DeclareDirectedPropagator`, a
 wavy line for `DeclareInteractionLine`, a dashed one for `DeclareLineStyle[h, "Dashed"]`, and so on. A two-label factor
-that is not declared is a plain line, and a factor of three or more labels a small hatched disc (a vertex function
-`VertexFunction` a cross-hatched one):
+that is not declared is a plain line, and a factor of three or more labels a small hatched disc:
 
 ```mathematica
 fock = IntegralOver[Gx[x, u] Vx[u, v] Gx[u, v] Gx[v, y], {u, v}];
@@ -210,8 +206,7 @@ True
 
 ## How high an order can I compute?
 
-The numbers of diagrams grow quickly, and the package is fast enough for the orders at which one can still look at
-them. The Green function of the electron gas at fourth order:
+The number of diagrams grows factorially with the order. The Green function of the electron gas at fourth order:
 
 ```mathematica
 green4 = -PerturbativeCorrelationFunction[Z0, {psi[x], psibar[y]}, interaction, {4}];
@@ -222,9 +217,8 @@ Length[DiagramTerms[green4]]
 706
 ```
 
-This takes about a second; the fifth order (8162 diagrams) about twenty seconds. The showcase writes the time of each
-of its steps in [`Showcase/figures/values.txt`](https://github.com/n4sd4q/FunctionalDiagrams/blob/main/Showcase/figures/values.txt).
-Compute only the orders you need: [Orders and simplification](Orders-and-Simplification#selecting-and-counting-orders).
+This takes about a second; the fifth order (8162 diagrams) about twenty seconds. Compute only the orders you need:
+[Orders and simplification](Orders-and-Simplification#selecting-and-counting-orders).
 
 ## Does the package do the momentum integrals?
 
