@@ -1165,22 +1165,22 @@ HTML_PAGE = r'''<!doctype html>
         if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
 </script>
 <style>
-:root { color-scheme: light; {{LIGHT}} --page: #ffffff; --sheet: #f6f8fa; --button: #f6f8fa; --ring: #0969da; --bar: #1f4e79; }
+:root { color-scheme: light; {{LIGHT}} --page: #ffffff; --sheet: #f6f8fa; --button: #f6f8fa; --ring: #0969da; --bar: #173b6c; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { color-scheme: dark; {{DARK}} --page: #0d1117; --sheet: #151b23; --button: #212830; --ring: #4493f8; --bar: #163b5e; }
+  :root:not([data-theme="light"]) { color-scheme: dark; {{DARK}} --page: #0d1117; --sheet: #151b23; --button: #212830; --ring: #4493f8; --bar: #122e54; }
 }
-:root[data-theme="dark"] { color-scheme: dark; {{DARK}} --page: #0d1117; --sheet: #151b23; --button: #212830; --ring: #4493f8; --bar: #163b5e; }
+:root[data-theme="dark"] { color-scheme: dark; {{DARK}} --page: #0d1117; --sheet: #151b23; --button: #212830; --ring: #4493f8; --bar: #122e54; }
 * { box-sizing: border-box; }
 html { overflow-x: hidden; }  /* on html only: on body it would make body a scroll container, and the side panel would not stick */
 body { margin: 0; background: var(--page); color: var(--ink); font-family: {{FONTS}}; font-size: 14px; line-height: 1.45; }
 .site { background: var(--bar); color: #ffffff; }
 .site .in { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 18px; padding: 6px 20px; min-height: 52px; }
-.site a { display: inline-flex; align-items: center; min-height: 36px; color: #d6e5f2; text-decoration: none; font-size: 14px; }
+.site a { display: inline-flex; align-items: center; min-height: 36px; color: #ccecf2; text-decoration: none; font-size: 14px; }
 .site a:hover { color: #ffffff; text-decoration: underline; text-underline-offset: 3px; }
 .site a:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; border-radius: 4px; }
 .site .home { gap: 9px; margin-right: auto; color: #ffffff; font-weight: 650; font-size: 15px; }
 .site .home svg { width: 26px; height: 26px; flex: none; }
-.site .home span { color: #b9cfe3; font-weight: 400; }
+.site .home span { color: #bfe7ee; font-weight: 400; }
 .site nav { display: flex; flex-wrap: wrap; gap: 0 16px; }
 header { padding: 16px 20px 8px; display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: flex-end; justify-content: space-between; }
 h1 { margin: 0; font-size: 20px; font-weight: 700; }
