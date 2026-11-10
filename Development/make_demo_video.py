@@ -533,7 +533,7 @@ def badge_image(big):
     return badge
 
 
-def logo_image(size, tau, turn=None):
+def logo_image(size, tau, turn=None, turn_t=None):
     """The badge of Development/make_logo.py (a 128 x 128 picture: a fermion loop of radius 38, slim lines, large arrow
     heads, an interaction line across it, six half waves) drawn at `size` px at the time tau (s), from its geometry: the phase of the wavy line runs, so that
     it ripples between its two fixed ends, and the loop breathes. With a Turn, the arrow heads travel around the loop in
@@ -547,9 +547,10 @@ def logo_image(size, tau, turn=None):
     img = badge_image(big).copy()
     d = ImageDraw.Draw(img)
     c = 64.0
-    theta = turn(tau) if turn else 0.0
-    speed = turn.speed(tau) if turn else 0.0
-    rest = 1 - turn.active(tau) if turn else 1.0
+    turn_t = tau if turn_t is None else turn_t      # the turn runs on the time of the card, the ripple on `tau`
+    theta = turn(turn_t) if turn else 0.0
+    speed = turn.speed(turn_t) if turn else 0.0
+    rest = 1 - turn.active(turn_t) if turn else 1.0
     r = LOGO_R * (1 + 0.035 * rest * math.sin(2 * math.pi * tau / 2.2) + 0.03 * speed ** 2)
     phase = 2 * math.pi * tau / 1.2 + math.radians(theta)
     amplitude = LOGO_AMPLITUDE * (1 + 0.15 * rest * math.sin(2 * math.pi * tau / 1.7 + 1.0) + 0.22 * speed ** 2)
@@ -610,8 +611,10 @@ class LogoItem:
     """The logo, alive: it pops in (scaled up from 80%, a little beyond its size and back) at t0, then ripples; with
     `turn` (a time after t0), its fermion loop turns once (Turn)."""
 
-    def __init__(self, size, x, y, t0=0.0, fade=0.45, turn=None):
-        self.size, self.x, self.y, self.t0, self.fade = size, x, y, t0, fade
+    def __init__(self, size, x, y, t0=0.0, fade=0.45, turn=None, clock=0.0):
+        # clock: the time of the ripple at the start of the card (the title card goes on from the end card, so that the
+        # video loops without a seam)
+        self.size, self.x, self.y, self.t0, self.fade, self.clock = size, x, y, t0, fade, clock
         self.turn = Turn(turn) if turn is not None else None
 
     def draw(self, frame, t, dy=0):
@@ -620,7 +623,7 @@ class LogoItem:
         u = (t - self.t0) / self.fade if self.fade else 1.0
         scale = 0.8 + 0.2 * ease_out_back(u)
         size = max(ipx(8), int(round(self.size * scale)))
-        img = with_alpha(logo_image(size, t, self.turn), ease_out(1.6 * u))
+        img = with_alpha(logo_image(size, t + self.clock, self.turn, t), ease_out(1.6 * u))
         paste_clipped(frame, img, int(round(self.x + (self.size - size) / 2)), int(round(self.y - dy + (self.size - size) / 2)))
 
 
@@ -669,7 +672,7 @@ def centred(img, y):
     return (W - img.width) / 2, y
 
 
-def title_scene(el, duration, url, fade_out=None, turn=None, shown=False):
+def title_scene(el, duration, url, fade_out=None, turn=None, shown=False, clock=0.0):
     """The logo, the name and the tagline (and the address of the repository), stacked in the middle; the title card
     fades out, the end card only with `fade_out` (the preview, which loops). With `turn` (a time), the fermion loop of
     the logo turns once from then on (Turn: about two seconds to come to rest). With `shown`, the card is in full view
@@ -684,7 +687,7 @@ def title_scene(el, duration, url, fade_out=None, turn=None, shown=False):
         if p == "logo":
             size = round(2.6 / 2.54 * DPI)     # the height of the logo in elements()
             items.append(LogoItem(size, (W - size) / 2, y + (el[p].height - size) / 2, 0.0 if shown else times[p],
-                                  fade=0 if shown else 0.45, turn=turn))
+                                  fade=0 if shown else 0.45, turn=turn, clock=clock))
         else:
             x, _ = centred(el[p], y)
             items.append(Item(el[p], x, y, 0.0 if shown else times[p], fade=0 if shown else 0.35))
@@ -935,7 +938,8 @@ def timeline(el, preview=False):
                                     ("qed_vertex", "qed_vertex_result")], 4.5, gap=12)
     tikz = card_scene(el, "tikz", [tikz_code_panel(), arrow_image(), "tikz_picture"], 3.0, horizontal=True, gap=36, stagger=0.24)
     # the title card in full view from the first frame, which a player shows before the video plays
-    return [title_scene(el, 2.4, url=False, turn=0.3, shown=True), Scene(notebook.duration, draw=notebook.draw, fade_out=0.25),
+    # the title card is the end card, its logo going on from the last frame of the end card: the video loops without a seam
+    return [title_scene(el, 2.4, url=True, turn=0.3, shown=True, clock=end.duration), Scene(notebook.duration, draw=notebook.draw, fade_out=0.25),
             twoparticle, parquet, hedin, matsubara, qed, tikz, end]
 
 

@@ -9,6 +9,13 @@ The versions are MAJOR.MINOR.PATCH (semantic versioning), read for this package 
 
 Changes to the documents alone need no release; they are listed under the next version.
 
+## Unreleased
+
+### Documents
+
+- **The demo video loops without a seam.** Its title card is its end card, with the address of the repository, and the
+  wavy line of the logo goes on from the last frame to the first.
+
 ## 2.6.1 (2026-11-10)
 
 Since 2.6.0: the load banner and the documents in the colours of the family of packages, and lighter documents. The
