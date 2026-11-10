@@ -1,6 +1,7 @@
 """Write the logo of FunctionalDiagrams: the exchange (Fock) vacuum diagram -- a closed fermion loop with an
-interaction line across it -- the first diagram of the Luttinger-Ward functional, white and light blue on a blue
-badge. The badge has a faint light edge, so that one file reads on light and on dark pages (the README uses it alone).
+interaction line across it -- the first diagram of the Luttinger-Ward functional, white and a light tint on a badge in
+the gradient of the family of packages ("Ocean": from the top left to the bottom right), lit from the top left. The badge
+has a faint light edge, so that one file reads on light and on dark pages (the README uses it alone).
 Output, in the folder given as argument (default Logo/):
   FunctionalDiagrams_logo.svg / .pdf         the badge
   FunctionalDiagrams_logo_white.svg / .pdf   the diagram alone, for dark backgrounds (title pages of the manual and
@@ -12,7 +13,8 @@ import math, os, shutil, subprocess, sys
 
 out = sys.argv[1] if len(sys.argv) > 1 else 'Logo'
 os.makedirs(out, exist_ok=True)
-accent, light = '#1F4E79', '#9FC5E8'
+# the colours of the family: the gradient of the badge (start, end) and the tint of the wavy line
+start, end, light = '#173B6C', '#18758F', '#98D8E4'
 C = 64.0  # centre of the 128 x 128 picture
 
 
@@ -49,7 +51,14 @@ def logo(badge, r=38, loop_width=6.5, wave_width=6, amplitude=7.5, halfwaves=6, 
     parts = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">',
              '<title>FunctionalDiagrams</title>']
     if badge:
-        parts += ['<rect width="128" height="128" rx="28" fill="%s"/>' % accent,
+        # the gradient, then a soft light from the top left, then the hairline
+        parts += ['<defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="128" y2="128">'
+                  '<stop offset="0" stop-color="%s"/><stop offset="1" stop-color="%s"/></linearGradient>'
+                  '<radialGradient id="gl" gradientUnits="userSpaceOnUse" cx="36" cy="20" r="96">'
+                  '<stop offset="0" stop-color="#ffffff" stop-opacity="0.2"/>'
+                  '<stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient></defs>' % (start, end),
+                  '<rect width="128" height="128" rx="28" fill="url(#g)"/>',
+                  '<rect width="128" height="128" rx="28" fill="url(#gl)"/>',
                   '<rect x="1" y="1" width="126" height="126" rx="27" fill="none" stroke="#ffffff" stroke-opacity="0.16" '
                   'stroke-width="2"/>']
     parts += ['<path d="%s" fill="none" stroke="%s" stroke-width="%g" stroke-linecap="round" stroke-linejoin="round"/>'
