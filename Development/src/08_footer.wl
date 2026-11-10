@@ -29,12 +29,33 @@ $publicNames = {"IntegralOver", "DeltaFunction", "GrassmannProduct", "DummyVaria
 With[{bad = Select[$publicNames, With[{sym = Symbol[#]}, Context[sym]] =!= "FunctionalDiagrams`" &]},
   If[bad =!= {}, Message[FunctionalDiagrams::clash, bad]]];
 
-(* the banner shown when the package is loaded in a notebook: the logo (the exchange vacuum diagram on a blue badge,
-   the geometry of Development/make_logo.py in a 128 x 128 box, y upwards), the attribution "FunctionalDiagrams, by
+(* the banner shown when the package is loaded in a notebook: the logo (the exchange vacuum diagram on a badge in the
+   gradient of the family of packages, the geometry of Development/make_logo.py in a 128 x 128 box, y upwards), the attribution "FunctionalDiagrams, by
    Nazzareno Africani" word for word (term (b) of NOTICE), the version, license and how to cite, with links to the
    repository and the manual; built here, printed by the footer only when $Notebooks *)
-$logoAccent = RGBColor[31/255, 78/255, 121/255];
-$logoLight = RGBColor[159/255, 197/255, 232/255];
+$logoStart = RGBColor[23/255, 59/255, 108/255];
+$logoEnd = RGBColor[24/255, 117/255, 143/255];
+$logoAccent = RGBColor[24/255, 88/255, 126/255];
+$logoLight = RGBColor[152/255, 216/255, 228/255];
+(* the badge as make_logo.py draws it: the rounded square (corners of radius 28) in the gradient from $logoStart at the
+   top left to $logoEnd at the bottom right, under a soft white light centred at (36, 108), of radius 96 and opacity 0.2
+   at its centre. A mesh of rings around the centre, each vertex with its colour (VertexColors, from Mathematica 12.1;
+   the colours are interpolated linearly on each triangle, so the gradient is exact and the light nearly so) *)
+logoBadgeOutline[] := N[Join @@ Table[
+    With[{c = {{100, 100}, {28, 100}, {28, 28}, {100, 28}}[[q]], next = {{28, 100}, {28, 28}, {100, 28}, {100, 100}}[[q]],
+       side = {Cos[90 q Degree], Sin[90 q Degree]}},
+      Join[Table[c + 28 {Cos[a Degree], Sin[a Degree]}, {a, 90 (q - 1), 90 q - 15, 15}],
+        Table[c + 28 side + s (next - c), {s, 0, 5/6, 1/6}]]], {q, 4}]];
+logoBadgeColour[{x_, y_}] := With[{t = (x + 128 - y)/256, a = 0.2 Max[0, 1 - Norm[{x, y} - {36, 108}]/96]},
+   Blend[{Blend[{$logoStart, $logoEnd}, t], White}, a]];
+logoBadge[] := Module[{outline = logoBadgeOutline[], rings = 4, n, points},
+    n = Length[outline];
+    points = Prepend[Join @@ Table[{64., 64.} + k/rings (# - {64., 64.}) & /@ outline, {k, rings}], {64., 64.}];
+    GraphicsComplex[points,
+      Polygon[Join[Table[{1, 1 + i, 2 + Mod[i, n]}, {i, n}],
+        Join @@ Join @@ Table[With[{a = 1 + (k - 1) n + i, b = 2 + (k - 1) n + Mod[i, n]}, {{a, b, b + n}, {a, b + n, a + n}}],
+          {k, rings - 1}, {i, n}]]],
+      VertexColors -> (logoBadgeColour /@ points)]];
 logoWavyPoints[{ax_, ay_}, {bx_, by_}, amplitude_, halfwaves_, n_:120] :=
   Module[{length = Sqrt[(bx - ax)^2 + (by - ay)^2], nx, ny},
     {nx, ny} = {-(by - ay), bx - ax}/length;
@@ -52,7 +73,7 @@ packageLogo[size_:30, small_:True] :=
   Module[{r, loop, wave, amplitude, halfwaves},
     {r, loop, wave, amplitude, halfwaves} = If[small, {42, 12, 10, 9, 4}, {38, 6.5, 6, 7.5, 6}];
     Graphics[{
-       $logoAccent, Rectangle[{0, 0}, {128, 128}, RoundingRadius -> 28],
+       logoBadge[],
        {EdgeForm[{White, Opacity[0.16], Thickness[2/128]}], FaceForm[None],
         Rectangle[{1, 1}, {127, 127}, RoundingRadius -> 27]},
        CapForm["Round"], JoinForm["Round"], $logoLight, Thickness[wave/128],
@@ -63,7 +84,9 @@ packageLogo[size_:30, small_:True] :=
       BaselinePosition -> Scaled[0.2]]];
 (* lightDarkColor (a colour for light notebooks and one for dark notebooks) is defined with the pictures *)
 $repositoryURL = "https://github.com/n4sd4q/FunctionalDiagrams";
-(* the name in the blue of the logo (light blue in a dark notebook), the rest in grey (contrast above 4.5:1 on both
+(* the manual on GitHub Pages, which opens the PDF in the browser (GitHub's page of the file does not) *)
+$manualURL = "https://n4sd4q.github.io/FunctionalDiagrams/Documentation/FunctionalDiagrams_Manual.pdf";
+(* the name in the accent of the logo (its light tint in a dark notebook), the rest in grey (contrast above 4.5:1 on both
    backgrounds); U+2010 (a hyphen, not a minus sign), U+00B7 and U+00A0 by character code, so that the file stays plain
    ASCII. The front end may break a line between any two items of a Row, so the attribution, the version, the license,
    "please cite it: CITATION.cff" and GitHub are each one unbreakable group (LineBreakWithin -> False) ending with its
@@ -71,21 +94,21 @@ $repositoryURL = "https://github.com/n4sd4q/FunctionalDiagrams";
    loadBanner[release] adds a third line, the notice of a newer release (updateNotice) *)
 bannerDot[] := With[{nbsp = FromCharacterCode[160]}, nbsp <> nbsp <> FromCharacterCode[183] <> nbsp <> " "];
 bannerGroup[items__] := Style[Row[{items}], LineBreakWithin -> False];
-bannerBlue[] := lightDarkColor[$logoAccent, $logoLight];
+bannerAccent[] := lightDarkColor[$logoAccent, $logoLight];
 bannerGrey[] := lightDarkColor[GrayLevel[0.45], GrayLevel[0.6]];
 loadBanner[release_ : None] :=
-  Module[{dot = bannerDot[], group = bannerGroup, blue = bannerBlue[], grey = bannerGrey[],
+  Module[{dot = bannerDot[], group = bannerGroup, accent = bannerAccent[], grey = bannerGrey[],
      file = $repositoryURL <> "/blob/main/"},
     Style[Grid[{{packageLogo[30],
        Column[{
-         Row[{group[Style["FunctionalDiagrams", Bold, 14, blue], Style[", by Nazzareno Africani", 14, blue],
+         Row[{group[Style["FunctionalDiagrams", Bold, 14, accent], Style[", by Nazzareno Africani", 14, accent],
              Style[dot, 12, grey]],
            Style["functional derivatives and the Feynman diagrams they generate", 12, grey]}],
          Style[Row[{group["version " <> $FunctionalDiagramsVersion, dot],
              group[StringReplace["GPL-3.0-or-later", "-" -> FromCharacterCode[8208]], dot],
              group["please cite it: ", Hyperlink["CITATION.cff", file <> "CITATION.cff"], dot],
              group[Hyperlink["GitHub", $repositoryURL], dot],
-             Hyperlink["Manual", file <> "Documentation/FunctionalDiagrams_Manual.pdf"]}], 11, grey],
+             Hyperlink["Manual", $manualURL]}], 11, grey],
          If[AssociationQ[release], updateNotice[release], Nothing]},
         Spacings -> 0.1]}},
       Alignment -> {Left, Center}, Spacings -> {0.7, 0}], FontFamily -> "Source Sans Pro", LineIndent -> 0]];
@@ -136,7 +159,7 @@ installLine[release_Association] := "PacletInstall[\"" <> release["Paclet"] <> "
 (* the third line of the banner: the newer version, a link to its page and the line that installs it, as code to copy
    (its hyphens not drawn as dashes: "OperatorSubstitution" -> False); in a script, the same as text *)
 updateNotice[release_Association] := With[{dot = bannerDot[], group = bannerGroup},
-   Style[Row[{group[Style["version " <> release["Version"] <> " is available", Bold, bannerBlue[]], dot],
+   Style[Row[{group[Style["version " <> release["Version"] <> " is available", Bold, bannerAccent[]], dot],
       group[Hyperlink["what is new", release["Page"]], dot],
       With[{url = release["Paclet"]}, Style[Defer[PacletInstall[url]], ShowStringCharacters -> True,
         PrivateFontOptions -> {"OperatorSubstitution" -> False}]]}], 11, bannerGrey[]]];

@@ -29,7 +29,8 @@ Changes to the documents alone need no release; they are listed under the next v
 - **The colours of the family.** The logo, the website, the manual and the showcase, the map of the functions, the demo
   video and the badges of the README leave the flat navy for a gradient from #173B6C to #18758F, with the accent
   #18587E and the light tint #98D8E4: the look shared with FermiWick and with the hub of the packages,
-  https://n4sd4q.github.io/.
+  https://n4sd4q.github.io/. The load banner draws the same badge (`packageLogo`, the gradient and its light) and writes
+  the name in the accent; its link to the manual opens the PDF on GitHub Pages, no longer GitHub's page of the file.
 - **A way to the other packages.** The bar of the website has a button, All packages, with the mark of the hub
   (https://n4sd4q.github.io/), beside GitHub; the footer links the hub too.
 
