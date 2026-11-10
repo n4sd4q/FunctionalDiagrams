@@ -18,6 +18,7 @@ mathpazo, Source Code Pro, varwidth), pdftocairo (poppler), python3 with PIL, ff
     python3 Development/make_demo_video.py --poster   (only the poster, a few seconds)
 """
 import concurrent.futures
+import functools
 import math
 import multiprocessing
 import os
@@ -58,10 +59,13 @@ PREVIEW_W, PREVIEW_H, PREVIEW_FPS, PREVIEW_QUALITY = 960, 540, 60, 90
 # the LaTeX pages are drawn for a frame 16 cm wide: 80 px to the centimetre
 DPI = W / (16 / 2.54)
 
-ACCENT = (31, 78, 121)
+# the colours of the family of packages ("Ocean", as in the documents): the solid accent, and the gradient of the badge
+# of the logo from its top left to its bottom right
+ACCENT = (24, 88, 126)
+LOGO_START, LOGO_END = (23, 59, 108), (24, 117, 143)
 MUTED = (89, 99, 110)
-CODE_BG = (245, 247, 250)
-CODE_FRAME = (201, 211, 223)
+CODE_BG = (246, 248, 250)
+CODE_FRAME = (197, 213, 223)
 WHITE = (255, 255, 255)
 # Mathematica's colours in an input cell: comments and strings grey, undefined symbols blue, the rest black
 CODE_COLORS = {"comment": (140, 140, 140), "string": (110, 110, 110), "symbol": (36, 74, 170), "plain": (0, 0, 0)}
@@ -138,9 +142,9 @@ PREAMBLE = r"""\documentclass[12pt,multi=elem,border=3pt]{standalone}
 \usepackage[scale=0.9]{sourcecodepro}
 \usepackage{amsmath,slashed,tikz,xcolor,graphicx,varwidth}
 \usetikzlibrary{decorations.pathmorphing}
-\definecolor{accent}{HTML}{1F4E79}\definecolor{muted}{HTML}{59636E}
-\definecolor{codebg}{HTML}{F5F7FA}\definecolor{codeframe}{HTML}{C9D3DF}
-\definecolor{bandA}{HTML}{EEF3F9}\definecolor{bandB}{HTML}{F7F9FC}
+\definecolor{accent}{HTML}{18587E}\definecolor{muted}{HTML}{59636E}
+\definecolor{codebg}{HTML}{F6F8FA}\definecolor{codeframe}{HTML}{C5D5DF}
+\definecolor{bandA}{HTML}{EFF3F6}\definecolor{bandB}{HTML}{F7F9FA}
 \newcommand{\diagramgap}{\hskip 0.9em\relax}
 \newcommand{\figlines}{\lineskiplimit=9pt\lineskip=9pt\relax}
 \newcommand{\rest}{\unskip\nobreak\diagramgap\mbox{${}+\cdots$}}
@@ -429,7 +433,7 @@ class Item:
         paste_clipped(frame, with_alpha(self.img, a), int(round(self.x)), y)
 
 
-LOGO_LIGHT = (159, 197, 232)   # the light blue of the wavy line (make_logo.py)
+LOGO_LIGHT = (152, 216, 228)   # the tint of the wavy line (make_logo.py)
 
 
 def smootherstep(u):
@@ -501,6 +505,34 @@ LOGO_R, LOGO_LOOP, LOGO_WAVE, LOGO_DOT, LOGO_AMPLITUDE = 38.0, 6.5, 6.0, 7.0, 7.
 LOGO_HEAD, LOGO_HEAD_LENGTH, LOGO_HEAD_WIDTH = 13.0, 0.58, 0.72     # arrowhead(r, angle, size, length, width)
 
 
+@functools.lru_cache(maxsize=64)
+def badge_image(big):
+    """The badge of Development/make_logo.py at `big` px, without the drawing: the rounded square in the gradient from
+    LOGO_START (top left) to LOGO_END (bottom right), under a soft white light centred at (36, 20) of the 128 x 128
+    picture (opacity 0.2 at its centre, falling linearly to none 96 units away), and the faint white edge (opacity
+    0.16). Both gradients are smooth: they are computed on a grid of 256 x 256 (two points per unit) and enlarged. The
+    badge does not move: one image per size, the same in every frame."""
+    f = big / 128.0
+    n = 256
+    units = [(i + 0.5) * 128.0 / n for i in range(n)]
+    along = bytes(min(255, int(255 * (x + y) / 256 + 0.5)) for y in units for x in units)       # x1 0 y1 0 x2 128 y2 128
+    light = bytes(int(255 * 0.2 * max(0.0, 1 - math.hypot(x - 36, y - 20) / 96) + 0.5) for y in units for x in units)
+    along = Image.frombytes("L", (n, n), along).resize((big, big), Image.BILINEAR)
+    light = Image.frombytes("L", (n, n), light).resize((big, big), Image.BILINEAR)
+    white = Image.new("L", (big, big), 255)
+    badge = Image.composite(Image.new("RGBA", (big, big), LOGO_END + (255,)),
+                            Image.new("RGBA", (big, big), LOGO_START + (255,)), along)
+    badge.alpha_composite(Image.merge("RGBA", (white, white, white, light)))
+    edge = Image.new("L", (big, big), 0)
+    ImageDraw.Draw(edge).rounded_rectangle([f, f, big - 1 - f, big - 1 - f], radius=int(27 * f), outline=round(0.16 * 255),
+                                           width=int(2 * f))
+    badge.alpha_composite(Image.merge("RGBA", (white, white, white, edge)))
+    shape = Image.new("L", (big, big), 0)
+    ImageDraw.Draw(shape).rounded_rectangle([0, 0, big - 1, big - 1], radius=int(28 * f), fill=255)
+    badge.putalpha(shape)
+    return badge
+
+
 def logo_image(size, tau, turn=None):
     """The badge of Development/make_logo.py (a 128 x 128 picture: a fermion loop of radius 38, slim lines, large arrow
     heads, an interaction line across it, six half waves) drawn at `size` px at the time tau (s), from its geometry: the phase of the wavy line runs, so that
@@ -512,11 +544,8 @@ def logo_image(size, tau, turn=None):
     k = 4
     big = size * k
     f = big / 128.0
-    img = Image.new("RGBA", (big, big), (0, 0, 0, 0))
+    img = badge_image(big).copy()
     d = ImageDraw.Draw(img)
-    d.rounded_rectangle([0, 0, big - 1, big - 1], radius=int(28 * f), fill=ACCENT + (255,))
-    edge = tuple(int(v + 0.16 * (255 - v)) for v in ACCENT)    # the faint light edge of the badge
-    d.rounded_rectangle([f, f, big - 1 - f, big - 1 - f], radius=int(27 * f), outline=edge + (255,), width=int(2 * f))
     c = 64.0
     theta = turn(tau) if turn else 0.0
     speed = turn.speed(tau) if turn else 0.0
