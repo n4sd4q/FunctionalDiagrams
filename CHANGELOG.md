@@ -9,7 +9,16 @@ The versions are MAJOR.MINOR.PATCH (semantic versioning), read for this package 
 
 Changes to the documents alone need no release; they are listed under the next version.
 
-## Unreleased
+## 2.6.1 (2026-11-10)
+
+Since 2.6.0: the load banner and the documents in the colours of the family of packages, and lighter documents. The
+expressions, the pictures and the public names (133) are those of 2.6.0; 875 tests.
+
+### The load banner
+
+- The badge of the logo in the gradient of the family, with its light, and the name of the package in its accent (the
+  light tint in a dark notebook); the link to the manual opens the PDF on GitHub Pages, no longer GitHub's page of the
+  file.
 
 ### Documents
 
@@ -29,8 +38,7 @@ Changes to the documents alone need no release; they are listed under the next v
 - **The colours of the family.** The logo, the website, the manual and the showcase, the map of the functions, the demo
   video and the badges of the README leave the flat navy for a gradient from #173B6C to #18758F, with the accent
   #18587E and the light tint #98D8E4: the look shared with FermiWick and with the hub of the packages,
-  https://n4sd4q.github.io/. The load banner draws the same badge (`packageLogo`, the gradient and its light) and writes
-  the name in the accent; its link to the manual opens the PDF on GitHub Pages, no longer GitHub's page of the file.
+  https://n4sd4q.github.io/.
 - **A way to the other packages.** The bar of the website has a button, All packages, with the mark of the hub
   (https://n4sd4q.github.io/), beside GitHub; the footer links the hub too.
 

@@ -48,7 +48,7 @@ The package needs Mathematica 12.1 or later. Install the paclet of the latest
 [release](https://github.com/n4sd4q/FunctionalDiagrams/releases) once:
 
 ```mathematica
-PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.6.0/FunctionalDiagrams-2.6.0.paclet"]
+PacletInstall["https://github.com/n4sd4q/FunctionalDiagrams/releases/download/v2.6.1/FunctionalDiagrams-2.6.1.paclet"]
 ```
 
 then load it in every session:
