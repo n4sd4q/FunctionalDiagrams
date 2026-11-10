@@ -11,8 +11,8 @@
 <link rel="canonical" href="https://n4sd4q.github.io/FunctionalDiagrams/">
 <link rel="icon" href="Logo/FunctionalDiagrams_logo_small.svg" type="image/svg+xml">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#1f4e79" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#123352" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#173b6c" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#122e54" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="FunctionalDiagrams">
 <meta property="og:title" content="FunctionalDiagrams: Feynman diagrams from functional derivatives">
@@ -28,7 +28,7 @@
         if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
 </script>
 <style>
-/* Colours: the navy and the light blue of the logo. The light tokens come first; the dark ones are written once, under
+/* Colours: the Ocean gradient of the logo (#173b6c to #18758f), its accent #18587e and its light tint #98d8e4. The light tokens come first; the dark ones are written once, under
    :root[data-theme="dark"], and make_site.py copies them into the media query of the system's dark mode. */
 :root {
   color-scheme: light;
@@ -40,23 +40,24 @@
   --text-2: #4a5866;
   --line: #d9e1e9;
   --line-strong: #bfcbd7;
-  --accent: #1f4e79;
-  --accent-soft: #e7eff7;
-  --link: #1d5a8f;
+  --accent: #18587e;
+  --accent-soft: #eaf0f3;
+  --link: #18587e;
   --code-bg: #f6f8fb;
   --code-head: #ebf1f6;
   --code-text: #1b2836;
   --code-comment: #5c6c7c;
-  --code-name: #1d5a8f;
+  --code-name: #18587e;
   --code-string: #2b6a3c;
-  --focus: #2a78c9;
-  --hero-1: #1f4e79;
-  --hero-2: #173f63;
-  --hero-text-2: #cadcec;
-  --bar: rgba(29, 74, 115, 0.94);
+  --focus: #18587e;
+  --hero-1: #173b6c;
+  --hero-2: #18758f;
+  --hero-text-2: #ccecf2;
+  --bar: rgba(21, 54, 99, 0.94);
+  --glow: rgba(152, 216, 228, 0.24);
   --primary-bg: #ffffff;
-  --primary-text: #143c61;
-  --primary-hover: #e6f0f9;
+  --primary-text: #173b6c;
+  --primary-hover: #ecf8fa;
   --shadow-sm: 0 1px 2px rgba(15, 35, 55, 0.06), 0 4px 14px rgba(15, 35, 55, 0.06);
   --shadow-lg: 0 2px 6px rgba(15, 35, 55, 0.08), 0 24px 60px rgba(15, 35, 55, 0.16);
   --paper-shadow: 0 1px 2px rgba(15, 35, 55, 0.08);
@@ -75,23 +76,24 @@
   --text-2: #a6b4c2;
   --line: #233545;
   --line-strong: #31485d;
-  --accent: #9fc5e8;
-  --accent-soft: #18304a;
-  --link: #9fc5e8;
+  --accent: #98d8e4;
+  --accent-soft: #22333d;
+  --link: #98d8e4;
   --code-bg: #0e1823;
   --code-head: #142231;
   --code-text: #dbe4ec;
   --code-comment: #8a9aab;
-  --code-name: #9fc5e8;
+  --code-name: #98d8e4;
   --code-string: #a7d5aa;
-  --focus: #82bcf0;
-  --hero-1: #163b5e;
-  --hero-2: #0e243a;
-  --hero-text-2: #b9cfe3;
-  --bar: rgba(18, 47, 76, 0.94);
-  --primary-bg: #9fc5e8;
-  --primary-text: #0b2036;
-  --primary-hover: #bcd8f1;
+  --focus: #98d8e4;
+  --hero-1: #122e54;
+  --hero-2: #0f4959;
+  --hero-text-2: #bfe7ee;
+  --bar: rgba(16, 41, 76, 0.94);
+  --glow: rgba(152, 216, 228, 0.16);
+  --primary-bg: #98d8e4;
+  --primary-text: #0e2341;
+  --primary-hover: #b7e4ec;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 18px rgba(0, 0, 0, 0.25);
   --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.35), 0 28px 70px rgba(0, 0, 0, 0.55);
   --paper-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 6px 18px rgba(0, 0, 0, 0.35);
@@ -108,23 +110,24 @@
     --text-2: #a6b4c2;
     --line: #233545;
     --line-strong: #31485d;
-    --accent: #9fc5e8;
-    --accent-soft: #18304a;
-    --link: #9fc5e8;
+    --accent: #98d8e4;
+    --accent-soft: #22333d;
+    --link: #98d8e4;
     --code-bg: #0e1823;
     --code-head: #142231;
     --code-text: #dbe4ec;
     --code-comment: #8a9aab;
-    --code-name: #9fc5e8;
+    --code-name: #98d8e4;
     --code-string: #a7d5aa;
-    --focus: #82bcf0;
-    --hero-1: #163b5e;
-    --hero-2: #0e243a;
-    --hero-text-2: #b9cfe3;
-    --bar: rgba(18, 47, 76, 0.94);
-    --primary-bg: #9fc5e8;
-    --primary-text: #0b2036;
-    --primary-hover: #bcd8f1;
+    --focus: #98d8e4;
+    --hero-1: #122e54;
+    --hero-2: #0f4959;
+    --hero-text-2: #bfe7ee;
+    --bar: rgba(16, 41, 76, 0.94);
+    --glow: rgba(152, 216, 228, 0.16);
+    --primary-bg: #98d8e4;
+    --primary-text: #0e2341;
+    --primary-hover: #b7e4ec;
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 18px rgba(0, 0, 0, 0.25);
     --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.35), 0 28px 70px rgba(0, 0, 0, 0.55);
     --paper-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 6px 18px rgba(0, 0, 0, 0.35);
@@ -144,7 +147,7 @@ a code { padding: 0.05em 0.2em; }
 p { margin: 0 0 1em; }
 .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-.skip { position: absolute; left: -9999px; top: 10px; z-index: 100; background: #fff; color: #143c61; padding: 10px 16px; border-radius: 8px; font-weight: 600; }
+.skip { position: absolute; left: -9999px; top: 10px; z-index: 100; background: #fff; color: #173b6c; padding: 10px 16px; border-radius: 8px; font-weight: 600; }
 .skip:focus { left: 16px; }
 
 /* the bar at the top */
@@ -155,7 +158,7 @@ p { margin: 0 0 1em; }
          font-weight: 650; font-size: 1.05rem; letter-spacing: 0.005em; min-height: 44px; }
 .brand img { width: 30px; height: 30px; }
 .navlinks { display: flex; gap: 2px; list-style: none; margin: 0 6px 0 0; padding: 0; }
-.navlinks a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: 9px; color: #d6e5f2;
+.navlinks a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: 9px; color: #ccecf2;
               text-decoration: none; font-size: 0.95rem; }
 .navlinks a:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
 .iconbtn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 44px; height: 44px;
@@ -172,16 +175,16 @@ p { margin: 0 0 1em; }
   :root:not([data-theme="light"]) .theme .moon { display: none; }
 }
 
-/* the hero, in the navy of the logo in both themes */
+/* the hero, in the Ocean gradient of the logo in both themes, under a soft light */
 .hero { color: #fff; text-align: center; padding: 44px 0 190px;
-        background: radial-gradient(900px 420px at 50% 0%, rgba(159, 197, 232, 0.22), rgba(159, 197, 232, 0) 70%),
-                    linear-gradient(180deg, var(--hero-1) 0%, var(--hero-2) 100%); }
+        background: radial-gradient(900px 420px at 50% 0%, var(--glow), rgba(152, 216, 228, 0) 70%),
+                    linear-gradient(135deg, var(--hero-1), var(--hero-2)); }
 .hero-logo { width: 92px; height: 92px; display: block; margin: 0 auto; }
 .hero h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(2.3rem, 6vw, 3.7rem); line-height: 1.08;
            letter-spacing: -0.01em; margin: 16px 0 12px; }
 .tagline { font-family: var(--serif); font-size: clamp(1.3rem, 2.7vw, 1.75rem); line-height: 1.3; margin: 0 auto; max-width: 46ch; text-wrap: balance; }
 .subline { color: var(--hero-text-2); font-size: 1.07rem; margin: 8px auto 0; max-width: 48rem; text-wrap: balance; }
-.wave { display: block; width: 150px; height: 18px; margin: 22px auto 24px; color: #9fc5e8; }
+.wave { display: block; width: 150px; height: 18px; margin: 22px auto 24px; color: #98d8e4; }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 22px;
        border-radius: 12px; border: 1px solid transparent; font-weight: 650; font-size: 1rem; text-decoration: none; }
