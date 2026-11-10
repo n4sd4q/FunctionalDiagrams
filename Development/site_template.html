@@ -301,7 +301,9 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
 }
 @media (max-width: 600px) {
   .wrap { padding: 0 16px; }
-  .topbar .wrap { height: 58px; }
+  .topbar .wrap { height: 58px; gap: 4px; }
+  .brand { gap: 8px; font-size: 0.95rem; }
+  .iconbtn { min-width: 40px; padding: 0 10px; }
   .navlinks { display: none; }
   .iconbtn .label { display: none; }
   .hero { padding: 40px 0 128px; }
@@ -348,6 +350,7 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
         <li><a href="#cite">Cite</a></li>
       </ul>
     </nav>
+    <a class="iconbtn" href="{{HUB_URL}}" aria-label="All the packages of the author">{{ICON_HUB}}<span class="label">All packages</span></a>
     <a class="iconbtn" href="{{REPO}}" aria-label="The repository on GitHub">{{ICON_GITHUB}}<span class="label">GitHub</span></a>
     <button class="iconbtn theme" id="theme" type="button" aria-label="Switch between the light and the dark theme">{{ICON_MOON}}{{ICON_SUN}}</button>
   </div>
@@ -514,6 +517,7 @@ footer { padding: 44px 0 56px; color: var(--text-2); font-size: 0.93rem; border-
           <li><a href="{{REPO}}/blob/main/CHANGELOG.md">Changelog</a></li>
           <li><a href="{{REPO}}/wiki">Wiki</a></li>
           <li><a href="{{REPO}}/blob/main/LICENSE">License</a></li>
+          <li><a href="{{HUB_URL}}">All the packages</a></li>
         </ul>
       </nav>
     </div>

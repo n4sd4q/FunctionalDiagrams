@@ -30,6 +30,8 @@ Changes to the documents alone need no release; they are listed under the next v
   video and the badges of the README leave the flat navy for a gradient from #173B6C to #18758F, with the accent
   #18587E and the light tint #98D8E4: the look shared with FermiWick and with the hub of the packages,
   https://n4sd4q.github.io/.
+- **A way to the other packages.** The bar of the website has a button, All packages, with the mark of the hub
+  (https://n4sd4q.github.io/), beside GitHub; the footer links the hub too.
 
 ## 2.6.0 (2026-10-30)
 

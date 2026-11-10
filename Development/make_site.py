@@ -279,6 +279,13 @@ ICONS = {
            '12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></g></svg>',
     'ARROW': '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M12.5 6l6 6-6 6" fill="none" '
              'stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    # the mark of the hub (a plaquette of four sites), for the link to all the packages
+    'HUB': '<svg viewBox="22 22 84 84" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-line'
+           'cap="round"><path d="M36 36H92V92H36Z" stroke-width="7"/><path d="M47 81 L50 82 L52 82 L53 80 L52 77 L51 74 L51 '
+           '71 L52 70 L55 71 L58 72 L61 72 L63 72 L63 69 L61 66 L60 63 L61 61 L63 60 L66 61 L69 63 L72 63 L72 61 L72 58 L71 '
+           '55 L70 52 L71 51 L74 51 L77 52 L80 53 L82 52 L82 50 L81 47" stroke-width="6" stroke-linejoin="round" opacity="0.'
+           '8"/></g><g fill="currentColor"><circle cx="36" cy="36" r="10"/><circle cx="92" cy="36" r="10"/><circle cx="92" c'
+           'y="92" r="10"/><circle cx="36" cy="92" r="10"/></g></svg>',
     'COPY': '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" '
             'stroke-width="1.8" stroke-linejoin="round"><rect x="8.5" y="8.5" width="12" height="12" rx="2.2"/><path d="M15.5 '
             '8.5V5.7a2.2 2.2 0 0 0-2.2-2.2H5.7a2.2 2.2 0 0 0-2.2 2.2v7.6a2.2 2.2 0 0 0 2.2 2.2h2.8"/></g></svg>',
@@ -487,6 +494,7 @@ def build():
     wolfram = re.fullmatch(r'(\d+(?:\.\d+)*)\+', info['wolfram'])
     values.update(VERSION=esc(version), RELEASE_DATE=cite['date'], AUTHOR=esc(cite['author']),
                   AFFILIATION=esc(cite['affiliation']), LICENSE=esc(info['license']), REPO=esc(repo), SITE_URL=esc(site),
+                  HUB_URL=esc(site[:site.index('.github.io/') + len('.github.io/')]),
                   REQUIREMENT='Mathematica %s or later' % wolfram.group(1) if wolfram else 'Mathematica ' + esc(info['wolfram']),
                   TESTS=str(tests_passed()), TESTS_OUT=esc(repo + '/blob/main/Tests/RunTests.out'),
                   SHOWCASE='Showcase/FunctionalDiagrams_Showcase.pdf', MANUAL='Documentation/FunctionalDiagrams_Manual.pdf',
