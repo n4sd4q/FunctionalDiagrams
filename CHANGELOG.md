@@ -26,6 +26,10 @@ Changes to the documents alone need no release; they are listed under the next v
 - **The website's demo plays by itself**, muted and looping, from its title card (its poster, the first frame of the
   video), with no caption under it; with reduced motion asked for it waits to be played. The README's preview of the
   video has no caption either: it links the video.
+- **The colours of the family.** The logo, the website, the manual and the showcase, the map of the functions, the demo
+  video and the badges of the README leave the flat navy for a gradient from #173B6C to #18758F, with the accent
+  #18587E and the light tint #98D8E4: the look shared with FermiWick and with the hub of the packages,
+  https://n4sd4q.github.io/.
 
 ## 2.6.0 (2026-10-30)
 
