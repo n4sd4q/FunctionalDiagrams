@@ -29,13 +29,18 @@
 \usepackage[colorlinks=true,linkcolor=accent,urlcolor=accent]{hyperref}
 \hypersetup{pdftitle={FunctionalDiagrams: functional derivatives and Feynman diagrams}, pdfauthor={Nazzareno Africani}}
 
-\definecolor{accent}{HTML}{1F4E79}
-\definecolor{accentlight}{HTML}{DCE6F2}
-\definecolor{accentpale}{HTML}{EEF3F9}
-\definecolor{codebg}{HTML}{F5F7FA}
-\definecolor{codeframe}{HTML}{C9D3DF}
-\definecolor{keyword}{HTML}{1F4E79}
-\definecolor{comment}{HTML}{6A7B8C}
+% the colours of the family of packages ("Ocean"): the solid accent, the gradient of the title band (from
+% accentstart to accentend) and the light tint of the logo, used on the band
+\definecolor{accent}{HTML}{18587E}
+\definecolor{accentstart}{HTML}{173B6C}
+\definecolor{accentend}{HTML}{18758F}
+\definecolor{accenttint}{HTML}{98D8E4}
+\definecolor{accentlight}{HTML}{DCE6EC}
+\definecolor{accentpale}{HTML}{EFF3F6}
+\definecolor{codebg}{HTML}{F6F8FA}
+\definecolor{codeframe}{HTML}{C5D5DF}
+\definecolor{keyword}{HTML}{18587E}
+\definecolor{comment}{HTML}{687B86}
 \definecolor{checkgreen}{HTML}{2E7D32}
 \definecolor{highlight}{HTML}{C0504D}
 
@@ -147,8 +152,8 @@
 \newcommand{\figuresum}[3][]{\begin{diagramsum}{#2}\inputfigure{#3}#1\end{diagramsum}}
 % a sum written order by order: \begin{ordersum}{lhs} \orderrow{order}{name} ... \end{ordersum}, one coloured band per
 % order, with the order on the left; the left-hand side starts a page when the first band would not fit below it
-\definecolor{bandA}{HTML}{EEF3F9}
-\definecolor{bandB}{HTML}{F7F9FC}
+\definecolor{bandA}{HTML}{EFF3F6}
+\definecolor{bandB}{HTML}{F7F9FA}
 \newcounter{fdband}
 \newlength{\orderlabelwidth}\setlength{\orderlabelwidth}{0.95cm}
 \newenvironment{ordersum}[1]{%
@@ -171,11 +176,11 @@
 % ------------------------------------------------------------------ title
 \thispagestyle{empty}
 \begin{tikzpicture}[remember picture, overlay]
-  \fill[accent] (current page.north west) rectangle ([yshift=-6.0cm]current page.north east);
+  \shade[left color=accentstart, right color=accentend] (current page.north west) rectangle ([yshift=-6.0cm]current page.north east);
   \node[anchor=north west, text=white, font=\sffamily\bfseries\fontsize{34}{38}\selectfont] at ([xshift=2.2cm, yshift=-1.45cm]current page.north west) {FunctionalDiagrams};
   \node[anchor=north west, text=white, font=\sffamily\Large, text width=12.2cm] at ([xshift=2.2cm, yshift=-2.9cm]current page.north west)
     {Functional derivatives and Feynman diagrams\\[2pt]\large a Mathematica package for diagrammatic many-body theory};
-  \node[anchor=north west, text=accentlight, font=\sffamily\normalsize] at ([xshift=2.2cm, yshift=-4.7cm]current page.north west)
+  \node[anchor=north west, text=accenttint, font=\sffamily\normalsize] at ([xshift=2.2cm, yshift=-4.7cm]current page.north west)
     {Nazzareno Africani \textperiodcentered{} SISSA \textperiodcentered{} version 2.6 \textperiodcentered{} October 2026};
   \IfFileExists{../Logo/FunctionalDiagrams_logo_white.pdf}{\node[anchor=north east] at ([xshift=-2.0cm, yshift=-1.2cm]current page.north east)
     {\includegraphics[height=3.6cm]{../Logo/FunctionalDiagrams_logo_white.pdf}};}{}
