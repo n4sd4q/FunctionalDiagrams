@@ -14,7 +14,7 @@ Changes to the documents alone need no release; they are listed under the next v
 ### Documents
 
 - **The demo video loops without a seam.** Its title card is its end card, with the address of the repository, and the
-  wavy line of the logo goes on from the last frame to the first.
+  wavy line of the logo goes on from the last frame to the first. On the end card the logo draws itself in.
 
 ## 2.6.1 (2026-11-10)
 

@@ -9,8 +9,10 @@ by Showcase/make_figures.wl; run it first), redrawn with one unit of length as i
 typed in the notebook is the first example of README.md (the electron gas). The pictures go through pdflatex and pdftocairo (one PNG per
 element, transparent), the frames are put together with PIL (at 1920 x 1080; the preview is reduced from them) and
 encoded by ffmpeg. The logo of the first and the last card is drawn again in every frame from the geometry of
-Development/make_logo.py, its wavy line rippling, its loop breathing and turning once (the arrow heads travel around it,
-with a soft start, a glide and a slight overshoot before they settle on their rest positions). Needs pdflatex (TeX Live:
+Development/make_logo.py, its wavy line rippling, its loop breathing; on the title card the loop turns once (the arrow
+heads travel around it, with a soft start, a glide and a slight overshoot before they settle on their rest positions),
+on the end card the logo draws itself (the vertices, the fermion lines with their arrow heads, the wavy line) and
+ripples on to the last frame, from which the title card goes on: the video loops without a seam. Needs pdflatex (TeX Live:
 mathpazo, Source Code Pro, varwidth), pdftocairo (poppler), python3 with PIL, ffmpeg with libx264. Run from any folder:
     python3 Development/make_demo_video.py            (all three files, about four minutes: most of it the WebP)
     python3 Development/make_demo_video.py --frames   (also a few frames as PNG in build/video/frames, to look at;
@@ -533,14 +535,17 @@ def badge_image(big):
     return badge
 
 
-def logo_image(size, tau, turn=None, turn_t=None):
+def logo_image(size, tau, turn=None, turn_t=None, build=None):
     """The badge of Development/make_logo.py (a 128 x 128 picture: a fermion loop of radius 38, slim lines, large arrow
     heads, an interaction line across it, six half waves) drawn at `size` px at the time tau (s), from its geometry: the phase of the wavy line runs, so that
     it ripples between its two fixed ends, and the loop breathes. With a Turn, the arrow heads travel around the loop in
     the direction they point, tangent to it: the ripple is driven by the turn (its phase advances with the angle and its
     waves rise with the speed), the breathing pauses and gives way to a slight swell of the loop at speed, and behind each
-    head a faint wake shows where it has just been. At rest the logo is the static one. Drawn four times larger and
-    reduced, for smooth edges."""
+    head a faint wake shows where it has just been. At rest the logo is the static one. With `build` (what LogoBuild
+    gives while the logo draws itself), only part of it: the dots at their sizes, each fermion line drawn over `arc`
+    degrees from the vertex it leaves, the arrow heads `heads` degrees from those vertices at the size given, the wavy
+    line drawn from the left vertex over the fraction `wave` of its length; the rest of the drawing, at the time tau,
+    is the same as without. Drawn four times larger and reduced, for smooth edges."""
     k = 4
     big = size * k
     f = big / 128.0
@@ -561,16 +566,27 @@ def logo_image(size, tau, turn=None, turn_t=None):
         s = amplitude * min(1.0, 6 * u, 6 * (1 - u)) * math.sin(math.pi * 6 * u - phase)
         wave.append(((c - r + 2 * r * u) * f, (c + s) * f))
     half = LOGO_WAVE / 2 * f    # the wavy line, with round ends: discs along it (PIL's wide polylines have gaps)
-    for x, y in wave:
+    drawn = len(wave) if build is None else (int(build["wave"] * n + 0.5) + 1 if build["wave"] > 0 else 0)
+    for x, y in wave[:drawn]:
         d.ellipse([x - half, y - half, x + half, y + half], fill=LOGO_LIGHT + (255,))
     # the loop, centred on the radius r (PIL draws the outline inside the box)
     hw = LOGO_LOOP / 2
-    d.ellipse([(c - r - hw) * f, (c - r - hw) * f, (c + r + hw) * f, (c + r + hw) * f], outline=(255, 255, 255, 255),
-              width=int(round(LOGO_LOOP * f)))
+    box = [(c - r - hw) * f, (c - r - hw) * f, (c + r + hw) * f, (c + r + hw) * f]
+    if build is None or build["arc"] >= 180:
+        d.ellipse(box, outline=(255, 255, 255, 255), width=int(round(LOGO_LOOP * f)))
+    elif build["arc"] > 0:
+        # the two fermion lines, each from the vertex it leaves in the direction of its arrow (towards smaller angles:
+        # the upper one from the right vertex, the lower one from the left), the pen with a round tip
+        for leave in (0, 180):
+            d.arc(box, leave - build["arc"], leave, fill=(255, 255, 255, 255), width=int(round(LOGO_LOOP * f)))
+            a = math.radians(leave - build["arc"])
+            d.ellipse([(c + r * math.cos(a) - hw) * f, (c + r * math.sin(a) - hw) * f, (c + r * math.cos(a) + hw) * f,
+                       (c + r * math.sin(a) + hw) * f], fill=(255, 255, 255, 255))
 
-    def head(angle):
-        """The arrow head centred on the loop at `angle` (degrees, y down), pointing towards smaller angles."""
-        a, ln, wd = math.radians(angle), LOGO_HEAD * LOGO_HEAD_LENGTH, LOGO_HEAD * LOGO_HEAD_WIDTH
+    def head(angle, g=1.0):
+        """The arrow head centred on the loop at `angle` (degrees, y down), pointing towards smaller angles, at the size
+        g (1: its own)."""
+        a, ln, wd = math.radians(angle), g * LOGO_HEAD * LOGO_HEAD_LENGTH, g * LOGO_HEAD * LOGO_HEAD_WIDTH
         px, py = c + r * math.cos(a), c + r * math.sin(a)
         tx, ty = math.sin(a), -math.cos(a)
         nx, ny = -ty, tx
@@ -600,21 +616,73 @@ def logo_image(size, tau, turn=None, turn_t=None):
                 ld.polygon(outer + inner[::-1], fill=int(255 * 0.55 * speed ** 2 / layers))
             mask = ImageChops.add(mask, layer)
         img.paste(Image.new("RGBA", (big, big), (255, 255, 255, 255)), (0, 0), mask)
-    for rest_angle in (-90, 90):
-        d.polygon(head(rest_angle - theta), fill=(255, 255, 255, 255))
-    for x in (c - r, c + r):
-        d.ellipse([(x - LOGO_DOT) * f, (c - LOGO_DOT) * f, (x + LOGO_DOT) * f, (c + LOGO_DOT) * f], fill=(255, 255, 255, 255))
+    if build is None:
+        for rest_angle in (-90, 90):
+            d.polygon(head(rest_angle - theta), fill=(255, 255, 255, 255))
+    elif build["head_size"] > 0.02:
+        # the heads leave with the pens, from the right vertex (0) and the left one (180), towards their places
+        for leave in (0, 180):
+            d.polygon(head(leave - build["heads"], build["head_size"]), fill=(255, 255, 255, 255))
+    for x, k in zip((c - r, c + r), (1.0, 1.0) if build is None else build["dots"]):
+        if k > 0.02:
+            d.ellipse([(x - k * LOGO_DOT) * f, (c - k * LOGO_DOT) * f, (x + k * LOGO_DOT) * f, (c + k * LOGO_DOT) * f],
+                      fill=(255, 255, 255, 255))
     return img.resize((size, size), Image.LANCZOS)
+
+
+def bump(u):
+    """0 at u = 0 and 1, up to 1 in the middle, with zero slope at both ends: a pulse."""
+    return 16 * u * u * (1 - u) * (1 - u) if 0 < u < 1 else 0.0
+
+
+PULSE, PULSE_TIME = 0.16, 0.34      # how much the vertices swell as the loop closes, and for how long
+
+
+class LogoBuild:
+    """The logo drawing itself on its badge (the end card): from `start` the two vertices pop in (a little beyond their
+    size and back), then the two fermion lines are drawn along the loop from one vertex to the other, each in the
+    direction of its arrow (the pens with a soft start and stop, in `draw` s), the arrow heads riding behind the pens
+    on a stiff spring (natural frequency `omega`, damping ratio `zeta`) and settling on their places, and the vertices
+    swell a little as the loop closes; then the wavy line is drawn from the left vertex to the right one. All the while
+    the drawing breathes and ripples as at every other time; from `end` on, the logo is the whole one (None)."""
+
+    def __init__(self, start=0.2, stagger=0.08, pop=0.36, pen=0.45, draw=0.8, wave=1.05, wave_draw=0.6, omega=17.0,
+                 zeta=0.55, settle=0.5):
+        self.start, self.stagger, self.pop, self.pen, self.draw = start, stagger, pop, pen, draw
+        self.wave, self.wave_draw = wave, wave_draw
+        self.close = start + pen + draw                                          # the loop closed
+        self.end = max(self.close + 0.04 + PULSE_TIME, start + wave + wave_draw, self.close + settle) + 1 / 240
+        # the heads: the angle (degrees) they have travelled from their vertices, following the pens up to their places
+        # (90 degrees on) through the spring; the residual of the settling faded out, so that they end exactly there
+        self.dt, x, w, self.table = 1 / 2400, 0.0, 0.0, [0.0]
+        for k in range(int((pen + draw + settle) / self.dt) + 2):
+            t = k * self.dt
+            target = min(180 * smootherstep((t - pen) / draw), 90.0)
+            w += (omega ** 2 * (target - x) - 2 * zeta * omega * w) * self.dt
+            x += w * self.dt
+            self.table.append(max(0.0, 90 + (x - 90) * (1 - smootherstep((t - pen - draw) / settle))))
+
+    def __call__(self, t):
+        """What the logo shows at the time t (logo_image's `build`), or None once it is whole."""
+        if t >= self.end:
+            return None
+        heads = self.table[min(max(int((t - self.start) / self.dt), 0), len(self.table) - 1)]
+        pulse = 1 + PULSE * bump((t - self.close + 0.04) / PULSE_TIME)
+        dots = [ease_out_back((t - self.start - k * self.stagger) / self.pop, 1.2) * pulse
+                if t > self.start + k * self.stagger else 0.0 for k in (0, 1)]
+        return dict(dots=dots, arc=180 * smootherstep((t - self.start - self.pen) / self.draw), heads=heads,
+                    head_size=smootherstep(heads / 25), wave=smootherstep((t - self.start - self.wave) / self.wave_draw))
 
 
 class LogoItem:
     """The logo, alive: it pops in (scaled up from 80%, a little beyond its size and back) at t0, then ripples; with
-    `turn` (a time after t0), its fermion loop turns once (Turn)."""
+    `turn` (a time after t0), its fermion loop turns once (Turn); with `build` (LogoBuild), its drawing builds up on the
+    badge as it pops in."""
 
-    def __init__(self, size, x, y, t0=0.0, fade=0.45, turn=None, clock=0.0):
+    def __init__(self, size, x, y, t0=0.0, fade=0.45, turn=None, clock=0.0, build=None):
         # clock: the time of the ripple at the start of the card (the title card goes on from the end card, so that the
         # video loops without a seam)
-        self.size, self.x, self.y, self.t0, self.fade, self.clock = size, x, y, t0, fade, clock
+        self.size, self.x, self.y, self.t0, self.fade, self.clock, self.build = size, x, y, t0, fade, clock, build
         self.turn = Turn(turn) if turn is not None else None
 
     def draw(self, frame, t, dy=0):
@@ -623,7 +691,8 @@ class LogoItem:
         u = (t - self.t0) / self.fade if self.fade else 1.0
         scale = 0.8 + 0.2 * ease_out_back(u)
         size = max(ipx(8), int(round(self.size * scale)))
-        img = with_alpha(logo_image(size, t + self.clock, self.turn, t), ease_out(1.6 * u))
+        img = with_alpha(logo_image(size, t + self.clock, self.turn, t, self.build(t - self.t0) if self.build else None),
+                         ease_out(1.6 * u))
         paste_clipped(frame, img, int(round(self.x + (self.size - size) / 2)), int(round(self.y - dy + (self.size - size) / 2)))
 
 
@@ -672,11 +741,12 @@ def centred(img, y):
     return (W - img.width) / 2, y
 
 
-def title_scene(el, duration, url, fade_out=None, turn=None, shown=False, clock=0.0):
+def title_scene(el, duration, url, fade_out=None, turn=None, shown=False, clock=0.0, build=None):
     """The logo, the name and the tagline (and the address of the repository), stacked in the middle; the title card
     fades out, the end card only with `fade_out` (the preview, which loops). With `turn` (a time), the fermion loop of
-    the logo turns once from then on (Turn: about two seconds to come to rest). With `shown`, the card is in full view
-    from its first frame (the first frame of the video, which a player shows before it plays) instead of building up."""
+    the logo turns once from then on (Turn: about two seconds to come to rest); with `build` (LogoBuild), the logo draws
+    itself on its badge as it pops in. With `shown`, the card is in full view from its first frame (the first frame of
+    the video, which a player shows before it plays) instead of building up."""
     parts = ["logo", "name", "tagline"] + (["url"] if url else [])
     gaps = {"name": px(26), "tagline": px(12), "url": px(34)}
     height = sum(el[p].height for p in parts) + sum(gaps[p] for p in parts[1:])
@@ -687,7 +757,7 @@ def title_scene(el, duration, url, fade_out=None, turn=None, shown=False, clock=
         if p == "logo":
             size = round(2.6 / 2.54 * DPI)     # the height of the logo in elements()
             items.append(LogoItem(size, (W - size) / 2, y + (el[p].height - size) / 2, 0.0 if shown else times[p],
-                                  fade=0 if shown else 0.45, turn=turn, clock=clock))
+                                  fade=0 if shown else 0.45, turn=turn, clock=clock, build=build))
         else:
             x, _ = centred(el[p], y)
             items.append(Item(el[p], x, y, 0.0 if shown else times[p], fade=0 if shown else 0.35))
@@ -925,8 +995,9 @@ def timeline(el, preview=False):
     hedin = card_scene(el, "hedin", ["hedin_sigma", "hedin_w", "hedin_p", "hedin_lambda"], d(3.4, 3.0), gap=0, stagger=0.22)
     # the end card of the preview fades out like the others, and the first card builds up again (a fade redraws the
     # whole card in every frame of the preview: kept as short as those of the other cards); the preview starts inside
-    # that first card, in full view (PREVIEW_START)
-    end = title_scene(el, d(3.4, 2.8), url=True, fade_out=d(0, 0.22), turn=d(0.55, 0.45))
+    # that first card, in full view (PREVIEW_START). On the end card the logo draws itself (LogoBuild: whole after about
+    # 2 s), then ripples on to its last frame, from which the title card goes on
+    end = title_scene(el, d(3.4, 2.8), url=True, fade_out=d(0, 0.22), build=LogoBuild())
     if preview:
         derivatives = card_scene(el, "derivatives", ["card_phi", "card_sigma", "card_gamma"], 3.4, gap=26, stagger=0.35)
         return [derivatives, twoparticle, parquet, hedin, end]
