@@ -15,6 +15,9 @@ Changes to the documents alone need no release; they are listed under the next v
 
 - **The demo video loops without a seam.** Its title card is its end card, with the address of the repository, and the
   wavy line of the logo goes on from the last frame to the first. On the end card the logo draws itself in.
+- **The wiki is published by content.** The workflow that mirrors `wiki/` into the GitHub wiki compares the pages by
+  content (`rsync --checksum`): a page changed without changing its size (the version number in the installation line
+  and in the footer) could be skipped, and the wiki would keep the old text.
 
 ## 2.6.1 (2026-11-10)
 

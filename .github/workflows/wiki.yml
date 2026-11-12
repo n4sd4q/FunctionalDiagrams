@@ -28,8 +28,10 @@ jobs:
             echo "::error title=No wiki to publish to::Cannot clone https://github.com/${GITHUB_REPOSITORY}.wiki.git. The wiki must be enabled (Settings, Features, Wikis) and have at least one page: create any first page on GitHub, then run this workflow again."
             exit 1
           fi
+      # by content (--checksum): both folders are checked out within the same second, and rsync would otherwise skip a
+      # page whose size has not changed (a version number)
       - name: Mirror wiki/ into the wiki
-        run: rsync -a --delete --exclude .git wiki/ "$RUNNER_TEMP/wiki/"
+        run: rsync -a --checksum --delete --exclude .git wiki/ "$RUNNER_TEMP/wiki/"
       - name: Commit and push
         working-directory: ${{ runner.temp }}/wiki
         run: |
